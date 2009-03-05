@@ -1,0 +1,119 @@
+Torora Requirements
+-------------------
+
+A - Torora Security Requirements
+----------------------------
+
+1. Proxy Obedience
+  The browser MUST NOT bypass Tor proxy settings for any content.
+  
+2. Network Isolation
+  Pages MUST NOT perform any network activity in a Tor state different from
+  the state they were originally loaded in.
+  
+3. State Separation
+  Browser state (cookies, cache, history, 'DOM storage'), accumulated in one
+  Tor state MUST NOT be accessible via the network in another Tor state.
+  
+4. Tor Undiscoverability
+  With the advent of bridge support in Tor 0.2.0.x, there are now a class of
+  Tor users whose network fingerprint does not obviously betray the fact that
+  they are using Tor. This should extend to the browser as well - Torbutton
+  MUST NOT reveal its presence while Tor is disabled.
+  
+5. Disk Avoidance
+  The browser SHOULD NOT write any Tor-related state to disk, or store it in
+  memory beyond the duration of one Tor toggle.
+  
+6. Location Neutrality
+  The browser SHOULD NOT leak location-specific information, such as timezone
+  or locale via Tor.
+
+7. Anonymity Set Preservation
+  The browser SHOULD NOT leak any other anonymity set reducing information
+  (such as user agent, extension presence, and resolution information)
+  automatically via Tor. The assessment of the attacks above should make
+  it clear that anonymity set reduction is a very powerful method of
+  tracking and eventually identifying anonymous users.
+
+  Specific attacks to defend against:
+   (i) Use of 'a:visited' CSS tag to determine the sites the user has
+       visited. (ref: http://ha.ckers.org/weird/CSS-history.cgi)
+   (ii) Inserting Javascript:
+        a. to execute history disclosure attacks (http://gemal.dk/browserspy/css.html);
+        b. query the user's timezone;
+        c. query the browser's properties;
+   (iii) Plugins bypassing network settings.
+   (iv) Use cache to create arbitrary cached content.
+   (v) Cookies can track users across browsing sessions.
+   (vi) Cookies can track users within the same browsing session.
+
+8. Update Safety
+  The browser SHOULD NOT perform unauthenticated updates or upgrades via Tor.
+
+9. Interoperability
+   Torbutton SHOULD interoperate with third-party proxy switchers that enable
+   the user to switch between a number of different proxies. It MUST provide
+   full Tor protection in the event a third-party proxy switcher has enabled
+   the Tor proxy settings.
+
+10. Transparency
+    The user should receive some assurance that they are indeed using tor.
+
+B - Torora Functionality Requirements
+-------------------------------------
+
+
+Specification Roadmap
+---------------------
+- = Not Done
+o = Done
+(=1) = Fully satisfies requirement 1
+(+2) = Partially satisfies requirement 2
+
+Torora Version: 0.1X   Released:XX-XX-XX
+----------------------------------------
+  MUST:
+    - Enforce use of a http proxy (i.e. privoxy/polipo) and disable option to
+      deselect use of proxy entirely.
+        Reqs: (=1,=2,=3,=4,=5)
+    - Disable javascript completely.
+        Reqs: (+6,=7.2)
+    - Disable plugins completely.
+        Reqs: (+6,=7.3)
+    - Force 'Remove History Items: On Application Exit' and disable control.
+        Reqs: (+7.1)
+    - Force 'Keep Cookies: Until I Exit the Application' and disable control.
+        Reqs: (=7.5)
+    - Disable caching completely.
+        Reqs: (=7.4)
+    - Use tor status-check as homepage.
+       Reqs: (+10)
+
+  SHOULD:
+    - Offer privoxy/polipo defaults in a drop-down selection
+       Reqs: Usability
+    - Fetch tor status-check periodically in background and verify result.
+      Warn user if check fails.
+       Reqs: (+10)
+    - Create option 'Remove History Items: Immediately' and disable control.
+        Reqs: (=7.1)
+
+  Requirements not fully met:
+    * 8 and 9 are out of scope.
+
+
+Torora Version: 0.2X   Released:XX-XX-XX
+----------------------------------------
+  MUST:
+    - Integrate
+
+
+Undecided Specifications:
+-------------------------
+    - Clear/Manipulate Headers in outgoing network requests.
+        e.g.:
+            foreach(const QByteArray &header, req.rawHeaderList()) {
+            request.setRawHeader(header, "");
+            }
+   
