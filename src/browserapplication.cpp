@@ -275,7 +275,9 @@ void BrowserApplication::loadSettings()
     defaultSettings->setFontFamily(QWebSettings::FixedFont, fixedFont.family());
     defaultSettings->setFontSize(QWebSettings::DefaultFixedFontSize, fixedFont.pointSize());
 
+    /* Torora: Candidate location for disabling javascript */
     defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
+    /* Torora: Candidate location for disabling plugins */
     defaultSettings->setAttribute(QWebSettings::PluginsEnabled, settings.value(QLatin1String("enablePlugins"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::AutoLoadImages, settings.value(QLatin1String("enableImages"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, settings.value(QLatin1String("enableInspector"), false).toBool());
@@ -429,6 +431,10 @@ BrowserMainWindow *BrowserApplication::newMainWindow()
     m_mainWindows.prepend(browser);
     connect(this, SIGNAL(privacyChanged(bool)),
             browser, SLOT(slotPrivacyChanged(bool)));
+#if defined(TORORA)
+    connect(this, SIGNAL(torChanged(bool)),
+            browser, SLOT(slotTorChanged(bool)));
+#endif
     browser->show();
     return browser;
 }
@@ -552,3 +558,19 @@ void BrowserApplication::setEventKeyboardModifiers(Qt::KeyboardModifiers modifie
     m_eventKeyboardModifiers = modifiers;
 }
 
+#if defined(TORORA)
+bool BrowserApplication::isTor()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Torora"));
+    return settings.value(QLatin1String("torBrowsing")).toBool();
+}
+
+void BrowserApplication::setTor(bool isTor)
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Torora"));
+    settings.setValue(QLatin1String("torBrowsing"),true);
+    emit instance()->torChanged(isTor);
+}
+#endif

@@ -123,7 +123,9 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     setupToolBar();
 
     m_filePrivateBrowsingAction->setChecked(BrowserApplication::isPrivate());
-
+#if defined(TORORA)
+    m_filePrivateBrowsingAction->setChecked(true);
+#endif
     QWidget *centralWidget = new QWidget(this);
     BookmarksModel *boomarksModel = BrowserApplication::bookmarksManager()->bookmarksModel();
     m_bookmarksToolbar = new BookmarksToolBar(boomarksModel, this);
@@ -426,6 +428,15 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addAction(m_filePrivateBrowsingAction);
     m_fileMenu->addSeparator();
 
+#if defined (TORORA)
+    m_fileTorBrowsingAction = new QAction(m_fileMenu);
+    connect(m_fileTorBrowsingAction, SIGNAL(triggered()),
+            this, SLOT(slotTorBrowsing()));
+    m_fileTorBrowsingAction->setCheckable(true);
+    m_fileMenu->addAction(m_fileTorBrowsingAction);
+    m_fileMenu->addSeparator();
+#endif
+
     m_fileQuit = new QAction(m_fileMenu);
 #if defined(Q_WS_MAC)
     connect(m_fileQuit, SIGNAL(triggered()), BrowserApplication::instance(), SLOT(quitBrowser()));
@@ -694,6 +705,9 @@ void BrowserMainWindow::retranslate()
     m_filePrintPreviewAction->setText(tr("P&rint Preview..."));
     m_filePrintAction->setText(tr("&Print..."));
     m_filePrivateBrowsingAction->setText(tr("Private &Browsing..."));
+#if defined(TORORA)
+    m_filePrivateBrowsingAction->setText(tr("Tor &Browsing..."));
+#endif
     m_fileQuit->setText(tr("&Quit"));
 
     m_editMenu->setTitle(tr("&Edit"));
@@ -1009,6 +1023,35 @@ void BrowserMainWindow::slotPrivateBrowsing()
     }
 }
 
+#if defined(TORORA)
+void BrowserMainWindow::slotTorBrowsing()
+{
+    if (!BrowserApplication::isTor()) {
+        QString title = tr("Are you sure you want to turn on private browsing?");
+        QString text = tr("<b>%1</b><br><br>When private browsing is turned on,"
+            " some actions concerning your privacy will be disabled:"
+            "<ul><li> Webpages are not added to the history.</li>"
+            "<li> Items are automatically removed from the Downloads window.</li>"
+            "<li> New cookies are not stored, current cookies can't be accessed.</li>"
+            "<li> Site icons won't be stored, session won't be saved.</li>"
+            "<li> Searches are not addded to the pop-up menu in the search box.</li></ul>"
+            "Until you close the window, you can still click the Back and Forward buttons"
+            " to return to the webpages you have opened.").arg(title);
+
+        QMessageBox::StandardButton button = QMessageBox::question(this, QString(), text,
+                               QMessageBox::Ok | QMessageBox::Cancel,
+                               QMessageBox::Ok);
+        if (button == QMessageBox::Ok) {
+            BrowserApplication::setTor(true);
+        } else {
+            m_fileTorBrowsingAction->setChecked(false);
+        }
+    } else {
+        BrowserApplication::setTor(false);
+    }
+}
+#endif
+
 void BrowserMainWindow::slotZoomTextOnlyChanged(bool textOnly)
 {
     m_viewZoomTextOnlyAction->setChecked(textOnly);
@@ -1020,6 +1063,15 @@ void BrowserMainWindow::slotPrivacyChanged(bool isPrivate)
     if (!isPrivate)
         tabWidget()->clear();
 }
+
+#if defined(TORORA)
+void BrowserMainWindow::slotTorChanged(bool isTor)
+{
+    m_fileTorBrowsingAction->setChecked(isPrivate);
+    if (!isTor)
+        tabWidget()->clear();
+}
+#endif
 
 void BrowserMainWindow::closeEvent(QCloseEvent *event)
 {

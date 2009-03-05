@@ -728,6 +728,7 @@ void TabWidget::webViewTitleChanged(const QString &title)
     }
     if (currentIndex() == index)
         emit setCurrentTitle(title);
+    /* Torora: candidate location for clearing history after each site visit */
     BrowserApplication::historyManager()->updateHistoryEntry(webView->url(), title);
 }
 

@@ -93,6 +93,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     connect(cookiesButton, SIGNAL(clicked()), this, SLOT(showCookies()));
     connect(standardFontButton, SIGNAL(clicked()), this, SLOT(chooseFont()));
     connect(fixedFontButton, SIGNAL(clicked()), this, SLOT(chooseFixedFont()));
+#if defined(TORORA)
+    connect(proxyName, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProxyPort(int)));
+#endif
 
 #if QT_VERSION < 0x040500
     oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
@@ -115,7 +118,6 @@ void SettingsDialog::loadDefaults()
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
 
     downloadsLocation->setText(QDesktopServices::storageLocation(QDesktopServices::DesktopLocation));
-    blockPopupWindows->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
 
     /* Torora: Javascript is always disabled */
 #if defined(TORORA)
@@ -178,7 +180,6 @@ void SettingsDialog::loadFromSettings()
 
     standardLabel->setText(QString(QLatin1String("%1 %2")).arg(standardFont.family()).arg(standardFont.pointSize()));
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
-    blockPopupWindows->setChecked(settings.value(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked()).toBool());
 
     /* Torora: javascript is disabled */
     enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
@@ -288,7 +289,6 @@ void SettingsDialog::saveToSettings()
     settings.setValue(QLatin1String("fixedFont"), fixedFont);
     settings.setValue(QLatin1String("standardFont"), standardFont);
 
-    settings.setValue(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked());
     settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
     settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
     settings.setValue(QLatin1String("enableImages"), enableImages->isChecked());
@@ -426,3 +426,9 @@ void SettingsDialog::setHomeToCurrentPage()
         homeLineEdit->setText(QString::fromUtf8(webView->url().toEncoded()));
 }
 
+#if defined(TORORA)
+void SettingsDialog::updateProxyPort(int index)
+{
+  proxyPort->setValue(proxies[index]);
+}
+#endif

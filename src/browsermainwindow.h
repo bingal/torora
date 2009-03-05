@@ -106,6 +106,9 @@ public slots:
     void slotHome();
     void slotPrivacyChanged(bool isPrivate);
     void slotZoomTextOnlyChanged(bool textOnly);
+#if defined(TORORA)
+    void slotTorChanged(bool isTor);
+#endif
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -180,6 +183,9 @@ private:
     QAction *m_filePrintPreviewAction;
     QAction *m_filePrintAction;
     QAction *m_filePrivateBrowsingAction;
+#if defined(TORORA)
+    QAction *m_fileTorBrowsingAction;
+#endif
     QAction *m_fileQuit;
 
     QMenu *m_editMenu;
