@@ -1,8 +1,8 @@
 TEMPLATE = app
 
-TARGET = arora
+TARGET = torora
 mac {
-    TARGET = Arora
+    TARGET = Torora
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 }
 

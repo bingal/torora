@@ -706,13 +706,10 @@ void BrowserMainWindow::retranslate()
     m_filePrintPreviewAction->setText(tr("P&rint Preview..."));
     m_filePrintAction->setText(tr("&Print..."));
     m_filePrivateBrowsingAction->setText(tr("Private &Browsing..."));
-<<<<<<< HEAD:src/browsermainwindow.cpp
 #if defined(TORORA)
     m_filePrivateBrowsingAction->setText(tr("Tor &Browsing..."));
 #endif
-=======
     m_fileCloseWindow->setText(tr("Close Window"));
->>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/browsermainwindow.cpp
     m_fileQuit->setText(tr("&Quit"));
 
     m_editMenu->setTitle(tr("&Edit"));
