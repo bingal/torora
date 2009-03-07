@@ -86,6 +86,8 @@
 
 #include <qdebug.h>
 
+//#define USERMODIFIEDBEHAVIOR_DEBUG
+
 TabWidget::TabWidget(QWidget *parent)
     : QTabWidget(parent)
     , m_recentlyClosedTabsAction(0)
@@ -184,7 +186,6 @@ TabWidget::TabWidget(QWidget *parent)
 
         connect(m_tabBar, SIGNAL(tabCloseRequested(int)),
                 this, SLOT(closeTab(int)));
-        m_tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
     }
 #endif
 
@@ -422,12 +423,6 @@ BrowserMainWindow *TabWidget::mainWindow()
 
 WebView *TabWidget::makeNewTab(bool makeCurrent)
 {
-    if (!makeCurrent) {
-        QSettings settings;
-        settings.beginGroup(QLatin1String("tabs"));
-        makeCurrent = settings.value(QLatin1String("selectNewTabs"), false).toBool();
-    }
-
     // line edit
     LocationBar *locationBar = new LocationBar;
     if (!m_lineEditCompleter) {
@@ -934,14 +929,25 @@ void TabWidget::loadUrlFromUser(const QUrl &url, const QString &title)
 TabWidget::OpenUrlIn TabWidget::modifyWithUserBehavior(OpenUrlIn tab) {
     Qt::KeyboardModifiers modifiers = BrowserApplication::instance()->eventKeyboardModifiers();
     Qt::MouseButtons buttons = BrowserApplication::instance()->eventMouseButtons();
+#ifdef USERMODIFIEDBEHAVIOR_DEBUG
+    qDebug() << __FUNCTION__ << "start" << modifiers << buttons << tab;
+#endif
     if (modifiers & Qt::ControlModifier || buttons == Qt::MidButton) {
-        if (modifiers & Qt::AltModifier)
+        if (modifiers & Qt::AltModifier) {
             tab = NewWindow;
-        else if (modifiers & Qt::ShiftModifier)
-            tab = NewSelectedTab;
-        else
-            tab = NewNotSelectedTab;
+        } else {
+            QSettings settings;
+            settings.beginGroup(QLatin1String("tabs"));
+            bool select = settings.value(QLatin1String("selectNewTabs"), false).toBool();
+            if (modifiers & Qt::ShiftModifier)
+                tab = !select ? NewSelectedTab : NewNotSelectedTab;
+            else
+                tab = select ? NewSelectedTab : NewNotSelectedTab;
+        }
     }
+#ifdef USERMODIFIEDBEHAVIOR_DEBUG
+    qDebug() << __FUNCTION__ << "end" << modifiers << buttons << tab;
+#endif
     BrowserApplication::instance()->setEventKeyboardModifiers(0);
     BrowserApplication::instance()->setEventMouseButtons(Qt::NoButton);
     return tab;
@@ -972,6 +978,9 @@ WebView *TabWidget::getView(OpenUrlIn tab, WebView *currentView)
     WebView *webView = 0;
     switch (tab) {
         case NewWindow: {
+#ifdef USERMODIFIEDBEHAVIOR_DEBUG
+            qDebug() << __FUNCTION__ << "NewWindow";
+#endif
             BrowserApplication::instance()->newMainWindow();
             BrowserMainWindow *newMainWindow = BrowserApplication::instance()->mainWindow();
             webView = newMainWindow->currentTab();
@@ -980,18 +989,27 @@ WebView *TabWidget::getView(OpenUrlIn tab, WebView *currentView)
         }
 
         case NewSelectedTab: {
+#ifdef USERMODIFIEDBEHAVIOR_DEBUG
+            qDebug() << __FUNCTION__ << "NewSelectedTab";
+#endif
             webView = makeNewTab(true);
             webView->setFocus();
             break;
         }
 
         case NewNotSelectedTab: {
+#ifdef USERMODIFIEDBEHAVIOR_DEBUG
+            qDebug() << __FUNCTION__ << "NewNotSelectedTab";
+#endif
             webView = makeNewTab(false);
             break;
         }
 
         case CurrentTab:
         default:
+#ifdef USERMODIFIEDBEHAVIOR_DEBUG
+            qDebug() << __FUNCTION__ << "CurrentTab";
+#endif
             webView = currentView;
             if (!webView)
                 return 0;

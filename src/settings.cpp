@@ -119,6 +119,7 @@ void SettingsDialog::loadDefaults()
 
     downloadsLocation->setText(QDesktopServices::storageLocation(QDesktopServices::DesktopLocation));
 
+    blockPopupWindows->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
     /* Torora: Javascript is always disabled */
 #if defined(TORORA)
     enableJavascript->setChecked(false);
@@ -181,7 +182,11 @@ void SettingsDialog::loadFromSettings()
     standardLabel->setText(QString(QLatin1String("%1 %2")).arg(standardFont.family()).arg(standardFont.pointSize()));
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
 
+<<<<<<< HEAD:src/settings.cpp
     /* Torora: javascript is disabled */
+=======
+    blockPopupWindows->setChecked(settings.value(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked()).toBool());
+>>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/settings.cpp
     enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
     /* Torora: plugins are disabled */
     enablePlugins->setChecked(settings.value(QLatin1String("enablePlugins"), enablePlugins->isChecked()).toBool());
@@ -289,6 +294,10 @@ void SettingsDialog::saveToSettings()
     settings.setValue(QLatin1String("fixedFont"), fixedFont);
     settings.setValue(QLatin1String("standardFont"), standardFont);
 
+<<<<<<< HEAD:src/settings.cpp
+=======
+    settings.setValue(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked());
+>>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/settings.cpp
     settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
     settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
     settings.setValue(QLatin1String("enableImages"), enableImages->isChecked());
@@ -301,12 +310,18 @@ void SettingsDialog::saveToSettings()
 
     //Privacy
     settings.beginGroup(QLatin1String("cookies"));
+<<<<<<< HEAD:src/settings.cpp
 
+=======
+>>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/settings.cpp
     CookieJar::AcceptPolicy acceptCookies;
+<<<<<<< HEAD:src/settings.cpp
 #if defined (TORORA)
     /* Torora: Cookies are only kept for a single session */
     acceptCookies = CookieJar::AcceptOnlyFromSitesNavigatedTo;
 #else
+=======
+>>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/settings.cpp
     switch (acceptCombo->currentIndex()) {
     default:
     case 0:
@@ -319,7 +334,11 @@ void SettingsDialog::saveToSettings()
         acceptCookies = CookieJar::AcceptOnlyFromSitesNavigatedTo;
         break;
     }
+<<<<<<< HEAD:src/settings.cpp
 #endif
+=======
+
+>>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/settings.cpp
     CookieJar *jar = BrowserApplication::cookieJar();
     QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
     settings.setValue(QLatin1String("acceptCookies"), QLatin1String(acceptPolicyEnum.valueToKey(acceptCookies)));

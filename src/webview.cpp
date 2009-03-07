@@ -138,7 +138,12 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
     }
     openIn = TabWidget::modifyWithUserBehavior(openIn);
 
-    if (openIn != TabWidget::CurrentTab) {
+    // handle the case where we want to do something different then
+    // what qwebpage would do
+    if ((!frame && openIn == TabWidget::CurrentTab)
+        || openIn == TabWidget::NewSelectedTab
+        || openIn == TabWidget::NewNotSelectedTab
+        || (frame && openIn == TabWidget::NewWindow)) {
         WebView *webView = tabWidget()->getView(openIn,  qobject_cast<WebView*>(this->view()));
         webView->page()->mainFrame()->load(request);
         return false;
@@ -507,7 +512,18 @@ void WebView::mousePressEvent(QMouseEvent *event)
 {
     BrowserApplication::instance()->setEventMouseButtons(event->buttons());
     BrowserApplication::instance()->setEventKeyboardModifiers(event->modifiers());
-    QWebView::mousePressEvent(event);
+
+    switch(event->button()) {
+    case Qt::XButton1:
+        pageAction(WebPage::Back)->trigger();
+        break;
+    case Qt::XButton2:
+        pageAction(WebPage::Forward)->trigger();
+        break;
+    default:
+        QWebView::mousePressEvent(event);
+        break;
+    }
 }
 
 void WebView::dragEnterEvent(QDragEnterEvent *event)

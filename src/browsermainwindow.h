@@ -186,6 +186,7 @@ private:
 #if defined(TORORA)
     QAction *m_fileTorBrowsingAction;
 #endif
+    QAction *m_fileCloseWindow;
     QAction *m_fileQuit;
 
     QMenu *m_editMenu;

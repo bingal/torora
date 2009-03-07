@@ -179,8 +179,6 @@ void BrowserApplication::messageRecieved(const QString &message)
     mainWindow()->activateWindow();
 }
 
-#if defined(Q_WS_MAC)
-#include <qmessagebox.h>
 void BrowserApplication::quitBrowser()
 {
     clean();
@@ -202,7 +200,6 @@ void BrowserApplication::quitBrowser()
     saveSession();
     exit(0);
 }
-#endif
 
 /*!
     Any actions that can be delayed until the window is visible
@@ -275,6 +272,7 @@ void BrowserApplication::loadSettings()
     defaultSettings->setFontFamily(QWebSettings::FixedFont, fixedFont.family());
     defaultSettings->setFontSize(QWebSettings::DefaultFixedFontSize, fixedFont.pointSize());
 
+    defaultSettings->setAttribute(QWebSettings::JavascriptCanOpenWindows, !(settings.value(QLatin1String("blockPopupWindows"), true).toBool()));
     /* Torora: Candidate location for disabling javascript */
     defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
     /* Torora: Candidate location for disabling plugins */
@@ -408,7 +406,8 @@ bool BrowserApplication::event(QEvent *event)
     }
     case QEvent::FileOpen:
         if (!m_mainWindows.isEmpty()) {
-            mainWindow()->loadPage(static_cast<QFileOpenEvent *>(event)->file());
+            QString file = static_cast<QFileOpenEvent *>(event)->file();
+            mainWindow()->tabWidget()->loadUrl(QUrl::fromLocalFile(file));
             return true;
         }
     default:

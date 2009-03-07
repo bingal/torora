@@ -437,12 +437,13 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addSeparator();
 #endif
 
+    m_fileCloseWindow = new QAction(m_fileMenu);
+    connect(m_fileCloseWindow, SIGNAL(triggered()), this, SLOT(close()));
+    m_fileCloseWindow->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_W));
+    m_fileMenu->addAction(m_fileCloseWindow);
+
     m_fileQuit = new QAction(m_fileMenu);
-#if defined(Q_WS_MAC)
     connect(m_fileQuit, SIGNAL(triggered()), BrowserApplication::instance(), SLOT(quitBrowser()));
-#else
-    connect(m_fileQuit, SIGNAL(triggered()), this, SLOT(close()));
-#endif
     m_fileQuit->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
     m_fileMenu->addAction(m_fileQuit);
 
@@ -705,9 +706,13 @@ void BrowserMainWindow::retranslate()
     m_filePrintPreviewAction->setText(tr("P&rint Preview..."));
     m_filePrintAction->setText(tr("&Print..."));
     m_filePrivateBrowsingAction->setText(tr("Private &Browsing..."));
+<<<<<<< HEAD:src/browsermainwindow.cpp
 #if defined(TORORA)
     m_filePrivateBrowsingAction->setText(tr("Tor &Browsing..."));
 #endif
+=======
+    m_fileCloseWindow->setText(tr("Close Window"));
+>>>>>>> 8b2f43e564bc40a5b57eebd82eb4565b9bb8362a:src/browsermainwindow.cpp
     m_fileQuit->setText(tr("&Quit"));
 
     m_editMenu->setTitle(tr("&Edit"));
