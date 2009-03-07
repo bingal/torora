@@ -101,6 +101,9 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
                     .arg(QLatin1String(GITCHANGENUMBER))
                     .arg(QLatin1String(GITVERSION));
 
+#if defined(TORORA)
+    setTor(true);
+#endif
     QCoreApplication::setApplicationVersion(version);
 #ifndef AUTOTESTS
     QStringList args = QCoreApplication::arguments();
@@ -273,10 +276,13 @@ void BrowserApplication::loadSettings()
     defaultSettings->setFontSize(QWebSettings::DefaultFixedFontSize, fixedFont.pointSize());
 
     defaultSettings->setAttribute(QWebSettings::JavascriptCanOpenWindows, !(settings.value(QLatin1String("blockPopupWindows"), true).toBool()));
-    /* Torora: Candidate location for disabling javascript */
-    defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
-    /* Torora: Candidate location for disabling plugins */
-    defaultSettings->setAttribute(QWebSettings::PluginsEnabled, settings.value(QLatin1String("enablePlugins"), true).toBool());
+    if (isTor()) {
+      defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, false);
+      defaultSettings->setAttribute(QWebSettings::PluginsEnabled, false);
+    } else {
+      defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
+      defaultSettings->setAttribute(QWebSettings::PluginsEnabled, settings.value(QLatin1String("enablePlugins"), true).toBool());
+    }
     defaultSettings->setAttribute(QWebSettings::AutoLoadImages, settings.value(QLatin1String("enableImages"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, settings.value(QLatin1String("enableInspector"), false).toBool());
 
@@ -430,10 +436,8 @@ BrowserMainWindow *BrowserApplication::newMainWindow()
     m_mainWindows.prepend(browser);
     connect(this, SIGNAL(privacyChanged(bool)),
             browser, SLOT(slotPrivacyChanged(bool)));
-#if defined(TORORA)
     connect(this, SIGNAL(torChanged(bool)),
             browser, SLOT(slotTorChanged(bool)));
-#endif
     browser->show();
     return browser;
 }
@@ -557,7 +561,6 @@ void BrowserApplication::setEventKeyboardModifiers(Qt::KeyboardModifiers modifie
     m_eventKeyboardModifiers = modifiers;
 }
 
-#if defined(TORORA)
 bool BrowserApplication::isTor()
 {
     QSettings settings;
@@ -569,7 +572,6 @@ void BrowserApplication::setTor(bool isTor)
 {
     QSettings settings;
     settings.beginGroup(QLatin1String("Torora"));
-    settings.setValue(QLatin1String("torBrowsing"),true);
+    settings.setValue(QLatin1String("torBrowsing"),isTor);
     emit instance()->torChanged(isTor);
 }
-#endif

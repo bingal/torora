@@ -113,10 +113,8 @@ public:
     static bool isPrivate();
     static void setPrivate(bool isPrivate);
 
-#if defined(TORORA)
     static bool isTor();
     static void setTor(bool isTor);
-#endif
 
 #if defined(Q_WS_MAC)
     bool event(QEvent *event);
@@ -145,6 +143,7 @@ signals:
 #endif
     void privacyChanged(bool isPrivate);
 
+    void torChanged(bool isTor);
 private:
     void clean();
 

@@ -124,7 +124,9 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
     m_filePrivateBrowsingAction->setChecked(BrowserApplication::isPrivate());
 #if defined(TORORA)
-    m_filePrivateBrowsingAction->setChecked(true);
+    m_fileTorBrowsingAction->setChecked(true);
+#else
+    m_fileTorBrowsingAction->setChecked(BrowserApplication::isTor());
 #endif
     QWidget *centralWidget = new QWidget(this);
     BookmarksModel *boomarksModel = BrowserApplication::bookmarksManager()->bookmarksModel();
@@ -382,10 +384,16 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addAction(m_fileOpenFileAction);
 
     m_fileOpenLocationAction = new QAction(m_fileMenu);
-    m_fileOpenLocationAction->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_L));
     connect(m_fileOpenLocationAction, SIGNAL(triggered()),
             this, SLOT(slotSelectLineEdit()));
     m_fileMenu->addAction(m_fileOpenLocationAction);
+
+    /* Add the location bar shortcuts familiar to users from other browsers */
+    QList<QKeySequence> openLocationShortcuts;
+    openLocationShortcuts.append(QKeySequence(Qt::ControlModifier + Qt::Key_L));
+    openLocationShortcuts.append(QKeySequence(Qt::AltModifier + Qt::Key_O));
+    openLocationShortcuts.append(QKeySequence(Qt::AltModifier + Qt::Key_D));
+    m_fileOpenLocationAction->setShortcuts(openLocationShortcuts);
 
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_tabWidget->closeTabAction());
@@ -428,14 +436,12 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addAction(m_filePrivateBrowsingAction);
     m_fileMenu->addSeparator();
 
-#if defined (TORORA)
     m_fileTorBrowsingAction = new QAction(m_fileMenu);
     connect(m_fileTorBrowsingAction, SIGNAL(triggered()),
             this, SLOT(slotTorBrowsing()));
     m_fileTorBrowsingAction->setCheckable(true);
     m_fileMenu->addAction(m_fileTorBrowsingAction);
     m_fileMenu->addSeparator();
-#endif
 
     m_fileCloseWindow = new QAction(m_fileMenu);
     connect(m_fileCloseWindow, SIGNAL(triggered()), this, SLOT(close()));
@@ -560,10 +566,12 @@ void BrowserMainWindow::setupMenu()
     connect(m_viewZoomTextOnlyAction, SIGNAL(triggered()),
             this, SLOT(slotZoomOut()));
     m_viewZoomTextOnlyAction->setCheckable(true);
+#if QT_VERSION >= 0x040500
     connect(m_viewZoomTextOnlyAction, SIGNAL(toggled(bool)),
             BrowserApplication::instance(), SLOT(setZoomTextOnly(bool)));
     connect(BrowserApplication::instance(), SIGNAL(zoomTextOnlyChanged(bool)),
             this, SLOT(slotZoomTextOnlyChanged(bool)));
+#endif
 #if QT_VERSION >= 0x040500
     m_viewMenu->addAction(m_viewZoomTextOnlyAction);
 #endif
@@ -706,9 +714,7 @@ void BrowserMainWindow::retranslate()
     m_filePrintPreviewAction->setText(tr("P&rint Preview..."));
     m_filePrintAction->setText(tr("&Print..."));
     m_filePrivateBrowsingAction->setText(tr("Private &Browsing..."));
-#if defined(TORORA)
-    m_filePrivateBrowsingAction->setText(tr("Tor &Browsing..."));
-#endif
+    m_fileTorBrowsingAction->setText(tr("Tor &Browsing..."));
     m_fileCloseWindow->setText(tr("Close Window"));
     m_fileQuit->setText(tr("&Quit"));
 
@@ -1025,7 +1031,6 @@ void BrowserMainWindow::slotPrivateBrowsing()
     }
 }
 
-#if defined(TORORA)
 void BrowserMainWindow::slotTorBrowsing()
 {
     if (!BrowserApplication::isTor()) {
@@ -1052,7 +1057,6 @@ void BrowserMainWindow::slotTorBrowsing()
         BrowserApplication::setTor(false);
     }
 }
-#endif
 
 void BrowserMainWindow::slotZoomTextOnlyChanged(bool textOnly)
 {
@@ -1066,14 +1070,12 @@ void BrowserMainWindow::slotPrivacyChanged(bool isPrivate)
         tabWidget()->clear();
 }
 
-#if defined(TORORA)
 void BrowserMainWindow::slotTorChanged(bool isTor)
 {
-    m_fileTorBrowsingAction->setChecked(isPrivate);
+    m_fileTorBrowsingAction->setChecked(isTor);
     if (!isTor)
         tabWidget()->clear();
 }
-#endif
 
 void BrowserMainWindow::closeEvent(QCloseEvent *event)
 {

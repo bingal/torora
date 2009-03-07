@@ -81,25 +81,25 @@
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
 {
-#if defined(TORORA)
     /* Privoxy */
     proxies << 8118;
     /* Polipo */
     proxies << 1808;
-#endif
+
     setupUi(this);
     connect(exceptionsButton, SIGNAL(clicked()), this, SLOT(showExceptions()));
     connect(setHomeToCurrentPageButton, SIGNAL(clicked()), this, SLOT(setHomeToCurrentPage()));
     connect(cookiesButton, SIGNAL(clicked()), this, SLOT(showCookies()));
     connect(standardFontButton, SIGNAL(clicked()), this, SLOT(chooseFont()));
     connect(fixedFontButton, SIGNAL(clicked()), this, SLOT(chooseFixedFont()));
-#if defined(TORORA)
     connect(proxyName, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProxyPort(int)));
-#endif
-
 #if QT_VERSION < 0x040500
     oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
 #endif
+
+    if (!BrowserApplication::isTor())
+      proxyName->setVisible(false); 
+
     loadDefaults();
     loadFromSettings();
 }
@@ -120,18 +120,13 @@ void SettingsDialog::loadDefaults()
     downloadsLocation->setText(QDesktopServices::storageLocation(QDesktopServices::DesktopLocation));
 
     blockPopupWindows->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
-    /* Torora: Javascript is always disabled */
-#if defined(TORORA)
-    enableJavascript->setChecked(false);
-#else
-    enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
-#endif
-    /* Torora: Plugins are always disabled */
-#if defined(TORORA)
-    enablePlugins->setChecked(false);
-#else
-    enablePlugins->setChecked(defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
-#endif
+    if (BrowserApplication::isTor()) {
+      enableJavascript->setChecked(false);
+      enablePlugins->setChecked(false);
+    } else {
+      enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
+      enablePlugins->setChecked(defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
+    }
     enableImages->setChecked(defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
 }
 
@@ -147,23 +142,24 @@ void SettingsDialog::loadFromSettings()
     settings.beginGroup(QLatin1String("history"));
     int historyExpire = settings.value(QLatin1String("historyLimit")).toInt();
     int idx = 0;
-    switch (historyExpire) {
-    case 1: idx = 0; break;
-    case 7: idx = 1; break;
-    case 14: idx = 2; break;
-    case 30: idx = 3; break;
-    case 365: idx = 4; break;
-    case -1: idx = 5; break;
-    case -2: idx = 6; break;
-    default:
-        /* Torora: Default is 'clear history on exit' */
-#if defined(TORORA)
-        idx = -2;
-#else
-        idx = 5;
-#endif
+    if (BrowserApplication::isTor()) {
+        idx = 6;
+        expireHistory->setCurrentIndex(idx);
+        expireHistory->setEnabled(false);
+    } else {
+      switch (historyExpire) {
+      case 1: idx = 0; break;
+      case 7: idx = 1; break;
+      case 14: idx = 2; break;
+      case 30: idx = 3; break;
+      case 365: idx = 4; break;
+      case -1: idx = 5; break;
+      case -2: idx = 6; break;
+      default:
+          idx = 5;
+      }
+      expireHistory->setCurrentIndex(idx);
     }
-    expireHistory->setCurrentIndex(idx);
     settings.endGroup();
 
     settings.beginGroup(QLatin1String("downloadmanager"));
@@ -183,10 +179,15 @@ void SettingsDialog::loadFromSettings()
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
 
     blockPopupWindows->setChecked(settings.value(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked()).toBool());
-    /* Torora: javascript is disabled */
-    enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
-    /* Torora: plugins are disabled */
-    enablePlugins->setChecked(settings.value(QLatin1String("enablePlugins"), enablePlugins->isChecked()).toBool());
+    if (BrowserApplication::isTor()) {
+      enableJavascript->setChecked(false);
+      enableJavascript->setEnabled(false);
+      enablePlugins->setChecked(false);
+      enablePlugins->setEnabled(false);
+    } else {
+      enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
+      enablePlugins->setChecked(settings.value(QLatin1String("enablePlugins"), enablePlugins->isChecked()).toBool());
+    }
     enableImages->setChecked(settings.value(QLatin1String("enableImages"), enableImages->isChecked()).toBool());
     userStyleSheet->setText(QString::fromUtf8(settings.value(QLatin1String("userStyleSheet")).toUrl().toEncoded()));
     settings.endGroup();
@@ -197,43 +198,56 @@ void SettingsDialog::loadFromSettings()
     CookieJar *jar = BrowserApplication::cookieJar();
     QByteArray value = settings.value(QLatin1String("acceptCookies"), QLatin1String("AcceptOnlyFromSitesNavigatedTo")).toByteArray();
     QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
-    CookieJar::AcceptPolicy acceptCookies = acceptPolicyEnum.keyToValue(value) == -1 ?
-                        CookieJar::AcceptOnlyFromSitesNavigatedTo :
-                        static_cast<CookieJar::AcceptPolicy>(acceptPolicyEnum.keyToValue(value));
-    switch (acceptCookies) {
-    case CookieJar::AcceptAlways:
-        acceptCombo->setCurrentIndex(0);
-        break;
-    case CookieJar::AcceptNever:
-        acceptCombo->setCurrentIndex(1);
-        break;
-    case CookieJar::AcceptOnlyFromSitesNavigatedTo:
+    if (BrowserApplication::isTor()) {
         acceptCombo->setCurrentIndex(2);
-        break;
+        acceptCombo->setEnabled(false);
+    } else {
+      CookieJar::AcceptPolicy acceptCookies = acceptPolicyEnum.keyToValue(value) == -1 ?
+                          CookieJar::AcceptOnlyFromSitesNavigatedTo :
+                          static_cast<CookieJar::AcceptPolicy>(acceptPolicyEnum.keyToValue(value));
+      switch (acceptCookies) {
+      case CookieJar::AcceptAlways:
+          acceptCombo->setCurrentIndex(0);
+          break;
+      case CookieJar::AcceptNever:
+          acceptCombo->setCurrentIndex(1);
+          break;
+      case CookieJar::AcceptOnlyFromSitesNavigatedTo:
+          acceptCombo->setCurrentIndex(2);
+          break;
+      }
     }
-
     value = settings.value(QLatin1String("keepCookiesUntil"), QLatin1String("Expire")).toByteArray();
     QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
-    CookieJar::KeepPolicy keepCookies = keepPolicyEnum.keyToValue(value) == -1 ?
-                        CookieJar::KeepUntilExpire :
-                        static_cast<CookieJar::KeepPolicy>(keepPolicyEnum.keyToValue(value));
-    switch (keepCookies) {
-    case CookieJar::KeepUntilExpire:
-        keepUntilCombo->setCurrentIndex(0);
-        break;
-    case CookieJar::KeepUntilExit:
+    if (BrowserApplication::isTor()) {
         keepUntilCombo->setCurrentIndex(1);
-        break;
-    case CookieJar::KeepUntilTimeLimit:
-        keepUntilCombo->setCurrentIndex(2);
-        break;
+        keepUntilCombo->setEnabled(false);
+    } else {
+      CookieJar::KeepPolicy keepCookies = keepPolicyEnum.keyToValue(value) == -1 ?
+                          CookieJar::KeepUntilExpire :
+                          static_cast<CookieJar::KeepPolicy>(keepPolicyEnum.keyToValue(value));
+      switch (keepCookies) {
+      case CookieJar::KeepUntilExpire:
+          keepUntilCombo->setCurrentIndex(0);
+          break;
+      case CookieJar::KeepUntilExit:
+          keepUntilCombo->setCurrentIndex(1);
+          break;
+      case CookieJar::KeepUntilTimeLimit:
+          keepUntilCombo->setCurrentIndex(2);
+          break;
+      }
     }
     settings.endGroup();
 
 
     // Proxy
     settings.beginGroup(QLatin1String("proxy"));
-    proxySupport->setChecked(settings.value(QLatin1String("enabled"), false).toBool());
+    if (BrowserApplication::isTor()) {
+      proxySupport->setChecked(true);
+    } else {
+      proxySupport->setChecked(settings.value(QLatin1String("enabled"), false).toBool());
+    }
     proxyType->setCurrentIndex(settings.value(QLatin1String("type"), 0).toInt());
     proxyHostName->setText(settings.value(QLatin1String("hostName")).toString());
     proxyPort->setValue(settings.value(QLatin1String("port"), 1080).toInt());
@@ -267,10 +281,6 @@ void SettingsDialog::saveToSettings()
     settings.endGroup();
 
     settings.beginGroup(QLatin1String("history"));
-#if defined(TORORA)
-    /* Torora: Always clear history on application exit */
-    int idx = -2;
-#else
     int historyExpire = expireHistory->currentIndex();
     int idx = -1;
     switch (historyExpire) {
@@ -282,7 +292,6 @@ void SettingsDialog::saveToSettings()
     case 5: idx = -1; break;
     case 6: idx = -2; break;
     }
-#endif
     settings.setValue(QLatin1String("historyLimit"), idx);
     settings.endGroup();
 
@@ -305,10 +314,6 @@ void SettingsDialog::saveToSettings()
     //Privacy
     settings.beginGroup(QLatin1String("cookies"));
     CookieJar::AcceptPolicy acceptCookies;
-#if defined (TORORA)
-    /* Torora: Cookies are only kept for a single session */
-    acceptCookies = CookieJar::AcceptOnlyFromSitesNavigatedTo;
-#else
     switch (acceptCombo->currentIndex()) {
     default:
     case 0:
@@ -321,16 +326,11 @@ void SettingsDialog::saveToSettings()
         acceptCookies = CookieJar::AcceptOnlyFromSitesNavigatedTo;
         break;
     }
-#endif
     CookieJar *jar = BrowserApplication::cookieJar();
     QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
     settings.setValue(QLatin1String("acceptCookies"), QLatin1String(acceptPolicyEnum.valueToKey(acceptCookies)));
 
     CookieJar::KeepPolicy keepPolicy;
-#if defined (TORORA)
-    /* Torora: Cookies are only kept for a single session */
-    keepPolicy = CookieJar::KeepUntilExit;
-#else
     switch (keepUntilCombo->currentIndex()) {
     default:
     case 0:
@@ -343,7 +343,6 @@ void SettingsDialog::saveToSettings()
         keepPolicy = CookieJar::KeepUntilTimeLimit;
         break;
     }
-#endif
 
     QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
     settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(keepPolicy)));
@@ -352,12 +351,7 @@ void SettingsDialog::saveToSettings()
 
     // proxy
     settings.beginGroup(QLatin1String("proxy"));
-#if defined (TORORA)
-    //Proxy Support is always enabled in Torora
-    settings.setValue(QLatin1String("enabled"), true);
-#else
     settings.setValue(QLatin1String("enabled"), proxySupport->isChecked());
-#endif
     settings.setValue(QLatin1String("type"), proxyType->currentIndex());
     settings.setValue(QLatin1String("hostName"), proxyHostName->text());
     settings.setValue(QLatin1String("port"), proxyPort->text());
@@ -428,9 +422,7 @@ void SettingsDialog::setHomeToCurrentPage()
         homeLineEdit->setText(QString::fromUtf8(webView->url().toEncoded()));
 }
 
-#if defined(TORORA)
 void SettingsDialog::updateProxyPort(int index)
 {
   proxyPort->setValue(proxies[index]);
 }
-#endif

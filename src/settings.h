@@ -86,9 +86,12 @@ private slots:
     void chooseFont();
     void chooseFixedFont();
 
+    void updateProxyPort(int);
+
 private:
     QFont standardFont;
     QFont fixedFont;
+    QList<int> proxies;
 };
 
 #endif // SETTINGS_H

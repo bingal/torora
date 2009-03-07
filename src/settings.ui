@@ -26,7 +26,7 @@
    <item row="1" column="0" >
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -112,7 +112,7 @@
        <item row="3" column="1" colspan="2" >
         <widget class="QComboBox" name="expireHistory" >
          <property name="enabled" >
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <item>
           <property name="text" >
@@ -301,18 +301,18 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2" >
           <item>
-           <widget class="QCheckBox" name="blockPopupWindows">
-            <property name="text">
+           <widget class="QCheckBox" name="blockPopupWindows" >
+            <property name="text" >
              <string>Block Popup Windows</string>
             </property>
-            <property name="checked">
+            <property name="checked" >
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="enablePlugins">
-            <property name="text">
+           <widget class="QCheckBox" name="enablePlugins" >
+            <property name="text" >
              <string>Enable Plugins</string>
             </property>
             <property name="checked" >
@@ -323,7 +323,7 @@
           <item>
            <widget class="QCheckBox" name="enableJavascript" >
             <property name="enabled" >
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text" >
              <string>Enable Javascript</string>
