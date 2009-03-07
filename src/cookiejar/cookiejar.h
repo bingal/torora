@@ -118,7 +118,7 @@ public:
 
 public slots:
     void clear();
-    void loadSettings();
+    void loadSettings(bool isTor);
 
 private slots:
     void save();

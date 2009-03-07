@@ -101,9 +101,6 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
                     .arg(QLatin1String(GITCHANGENUMBER))
                     .arg(QLatin1String(GITVERSION));
 
-#if defined(TORORA)
-    setTor(true);
-#endif
     QCoreApplication::setApplicationVersion(version);
 #ifndef AUTOTESTS
     QStringList args = QCoreApplication::arguments();
@@ -217,6 +214,10 @@ void BrowserApplication::postLaunch()
     setWindowIcon(QIcon(QLatin1String(":128x128/arora.png")));
 
     loadSettings();
+
+#if defined(TORORA)
+    setTor(true);
+#endif
 
     // newMainWindow() needs to be called in main() for this to happen
     if (m_mainWindows.count() > 0) {
@@ -574,4 +575,8 @@ void BrowserApplication::setTor(bool isTor)
     settings.beginGroup(QLatin1String("Torora"));
     settings.setValue(QLatin1String("torBrowsing"),isTor);
     emit instance()->torChanged(isTor);
+    BrowserApplication::instance()->loadSettings();
+//     BrowserApplication::networkAccessManager()->loadSettings();
+    BrowserApplication::cookieJar()->loadSettings(isTor);
+//     BrowserApplication::historyManager()->loadSettings(isTor);
 }

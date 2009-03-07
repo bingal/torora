@@ -97,8 +97,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
 #endif
 
-    if (!BrowserApplication::isTor())
+    if (!BrowserApplication::isTor()) {
       proxyName->setVisible(false); 
+      proxyLabel->setVisible(false);
+    }
 
     loadDefaults();
     loadFromSettings();
@@ -245,12 +247,16 @@ void SettingsDialog::loadFromSettings()
     settings.beginGroup(QLatin1String("proxy"));
     if (BrowserApplication::isTor()) {
       proxySupport->setChecked(true);
+      proxyType->setCurrentIndex(2);
+      proxyType->setEnabled(false);
+      proxyName->setCurrentIndex(settings.value(QLatin1String("proxyName"),0).toInt());
+      proxyPort->setValue(proxies[settings.value(QLatin1String("proxyName")).toInt()]);
     } else {
       proxySupport->setChecked(settings.value(QLatin1String("enabled"), false).toBool());
+      proxyType->setCurrentIndex(settings.value(QLatin1String("type"), 0).toInt());
+      proxyPort->setValue(settings.value(QLatin1String("port"), 1080).toInt());
     }
-    proxyType->setCurrentIndex(settings.value(QLatin1String("type"), 0).toInt());
     proxyHostName->setText(settings.value(QLatin1String("hostName")).toString());
-    proxyPort->setValue(settings.value(QLatin1String("port"), 1080).toInt());
     proxyUserName->setText(settings.value(QLatin1String("userName")).toString());
     proxyPassword->setText(settings.value(QLatin1String("password")).toString());
     settings.endGroup();
@@ -280,29 +286,36 @@ void SettingsDialog::saveToSettings()
     settings.setValue(QLatin1String("downloadDirectory"), downloadsLocation->text());
     settings.endGroup();
 
-    settings.beginGroup(QLatin1String("history"));
-    int historyExpire = expireHistory->currentIndex();
-    int idx = -1;
-    switch (historyExpire) {
-    case 0: idx = 1; break;
-    case 1: idx = 7; break;
-    case 2: idx = 14; break;
-    case 3: idx = 30; break;
-    case 4: idx = 365; break;
-    case 5: idx = -1; break;
-    case 6: idx = -2; break;
+    /* For 'Tor Browsing' we do not alter the user's normal settings. Tor settings
+       are enforced when we load settings for each component. */
+    if (!BrowserApplication::isTor()) {
+      settings.beginGroup(QLatin1String("history"));
+      int historyExpire = expireHistory->currentIndex();
+      int idx = -1;
+      switch (historyExpire) {
+      case 0: idx = 1; break;
+      case 1: idx = 7; break;
+      case 2: idx = 14; break;
+      case 3: idx = 30; break;
+      case 4: idx = 365; break;
+      case 5: idx = -1; break;
+      case 6: idx = -2; break;
+      }
+      settings.setValue(QLatin1String("historyLimit"), idx);
+      settings.endGroup();
     }
-    settings.setValue(QLatin1String("historyLimit"), idx);
-    settings.endGroup();
-
     // Appearance
     settings.beginGroup(QLatin1String("websettings"));
     settings.setValue(QLatin1String("fixedFont"), fixedFont);
     settings.setValue(QLatin1String("standardFont"), standardFont);
 
     settings.setValue(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked());
-    settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
-    settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
+
+    if (!BrowserApplication::isTor()) {
+      settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
+      settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
+    }
+
     settings.setValue(QLatin1String("enableImages"), enableImages->isChecked());
     QString userStyleSheetString = userStyleSheet->text();
     if (QFile::exists(userStyleSheetString))
@@ -312,46 +325,51 @@ void SettingsDialog::saveToSettings()
     settings.endGroup();
 
     //Privacy
-    settings.beginGroup(QLatin1String("cookies"));
-    CookieJar::AcceptPolicy acceptCookies;
-    switch (acceptCombo->currentIndex()) {
-    default:
-    case 0:
-        acceptCookies = CookieJar::AcceptAlways;
-        break;
-    case 1:
-        acceptCookies = CookieJar::AcceptNever;
-        break;
-    case 2:
-        acceptCookies = CookieJar::AcceptOnlyFromSitesNavigatedTo;
-        break;
+    if (!BrowserApplication::isTor()) {
+      settings.beginGroup(QLatin1String("cookies"));
+      CookieJar::AcceptPolicy acceptCookies;
+      switch (acceptCombo->currentIndex()) {
+      default:
+      case 0:
+          acceptCookies = CookieJar::AcceptAlways;
+          break;
+      case 1:
+          acceptCookies = CookieJar::AcceptNever;
+          break;
+      case 2:
+          acceptCookies = CookieJar::AcceptOnlyFromSitesNavigatedTo;
+          break;
+      }
+      CookieJar *jar = BrowserApplication::cookieJar();
+      QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
+      settings.setValue(QLatin1String("acceptCookies"), QLatin1String(acceptPolicyEnum.valueToKey(acceptCookies)));
+
+      CookieJar::KeepPolicy keepPolicy;
+      switch (keepUntilCombo->currentIndex()) {
+      default:
+      case 0:
+          keepPolicy = CookieJar::KeepUntilExpire;
+          break;
+      case 1:
+          keepPolicy = CookieJar::KeepUntilExit;
+          break;
+      case 2:
+          keepPolicy = CookieJar::KeepUntilTimeLimit;
+          break;
+      }
+      QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
+      settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(keepPolicy)));
+
+      settings.endGroup();
     }
-    CookieJar *jar = BrowserApplication::cookieJar();
-    QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
-    settings.setValue(QLatin1String("acceptCookies"), QLatin1String(acceptPolicyEnum.valueToKey(acceptCookies)));
-
-    CookieJar::KeepPolicy keepPolicy;
-    switch (keepUntilCombo->currentIndex()) {
-    default:
-    case 0:
-        keepPolicy = CookieJar::KeepUntilExpire;
-        break;
-    case 1:
-        keepPolicy = CookieJar::KeepUntilExit;
-        break;
-    case 2:
-        keepPolicy = CookieJar::KeepUntilTimeLimit;
-        break;
-    }
-
-    QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
-    settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(keepPolicy)));
-
-    settings.endGroup();
 
     // proxy
     settings.beginGroup(QLatin1String("proxy"));
-    settings.setValue(QLatin1String("enabled"), proxySupport->isChecked());
+    if (BrowserApplication::isTor()) {
+      settings.setValue(QLatin1String("enabled"), true);
+      settings.setValue(QLatin1String("proxyName"), proxyName->currentIndex());
+    } else
+      settings.setValue(QLatin1String("enabled"), proxySupport->isChecked());
     settings.setValue(QLatin1String("type"), proxyType->currentIndex());
     settings.setValue(QLatin1String("hostName"), proxyHostName->text());
     settings.setValue(QLatin1String("port"), proxyPort->text());
@@ -372,7 +390,7 @@ void SettingsDialog::saveToSettings()
 
     BrowserApplication::instance()->loadSettings();
     BrowserApplication::networkAccessManager()->loadSettings();
-    BrowserApplication::cookieJar()->loadSettings();
+    BrowserApplication::cookieJar()->loadSettings(BrowserApplication::isTor());
     BrowserApplication::historyManager()->loadSettings();
 }
 

@@ -125,6 +125,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     m_filePrivateBrowsingAction->setChecked(BrowserApplication::isPrivate());
 #if defined(TORORA)
     m_fileTorBrowsingAction->setChecked(true);
+    m_fileTorBrowsingAction->setEnabled(false);
 #else
     m_fileTorBrowsingAction->setChecked(BrowserApplication::isTor());
 #endif

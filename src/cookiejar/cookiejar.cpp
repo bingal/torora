@@ -153,11 +153,23 @@ void CookieJar::load()
     qSort(m_exceptions_allow.begin(), m_exceptions_allow.end());
     qSort(m_exceptions_allowForSession.begin(), m_exceptions_allowForSession.end());
 
-    loadSettings();
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Torora"));
+    bool isTor = settings.value(QLatin1String("torBrowsing")).toBool();
+    loadSettings(isTor);
 }
 
-void CookieJar::loadSettings()
+void CookieJar::loadSettings(bool isTor)
 {
+    if (isTor) {
+      m_keepCookies = KeepUntilExit;
+      m_acceptCookies = AcceptOnlyFromSitesNavigatedTo;
+      setAllCookies(QList<QNetworkCookie>());
+      m_loaded = true;
+      emit cookiesChanged();
+      return;
+    }
+
     QSettings settings;
     settings.beginGroup(QLatin1String("cookies"));
     QByteArray value = settings.value(QLatin1String("acceptCookies"),
