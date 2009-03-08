@@ -38,6 +38,7 @@ public:
 
 public slots:
     void setPrivate(bool isPrivate);
+    void setTor(bool isTor);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -52,6 +53,7 @@ private:
     LocationBarSiteIcon *m_siteIcon;
     QColor m_defaultBaseColor;
     QLabel *m_privacyIndicator;
+    QLabel *m_torIndicator;
 };
 
 #endif // LOCATIONBAR_H

@@ -95,6 +95,14 @@ LocationBar::LocationBar(QWidget *parent)
     addWidget(m_siteIcon, LeftSide);
 
     // privacy indicator at rightmost position
+    m_torIndicator = new QLabel(this);
+    m_torIndicator->setPixmap(QPixmap(QLatin1String(":tor.png")));
+    addWidget(m_torIndicator, RightSide);
+    connect(BrowserApplication::instance(), SIGNAL(torChanged(bool)),
+            this, SLOT(setTor(bool)));
+    setTor(BrowserApplication::isTor());
+
+    // privacy indicator at rightmost position
     m_privacyIndicator = new QLabel(this);
     m_privacyIndicator->setPixmap(QPixmap(QLatin1String(":private.png")));
     addWidget(m_privacyIndicator, RightSide);
@@ -134,6 +142,11 @@ void LocationBar::setWebView(WebView *webView)
 void LocationBar::setPrivate(bool isPrivate)
 {
     m_privacyIndicator->setVisible(isPrivate);
+}
+
+void LocationBar::setTor(bool isTor)
+{
+    m_torIndicator->setVisible(isTor);
 }
 
 void LocationBar::webViewUrlChanged(const QUrl &url)
