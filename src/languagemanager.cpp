@@ -37,6 +37,7 @@
 #include <qfileinfo.h>
 #include <qinputdialog.h>
 #include <qlibraryinfo.h>
+#include <qmessagebox.h>
 #include <qlocale.h>
 #include <qsettings.h>
 #include <qtranslator.h>
@@ -117,6 +118,7 @@ bool LanguageManager::setCurrentLanguage(const QString &language)
         delete m_sysTranslator;
         m_appTranslator = 0;
         m_sysTranslator = 0;
+        emit languageChanged(currentLanguage());
         return true;
     }
 
@@ -147,6 +149,7 @@ bool LanguageManager::setCurrentLanguage(const QString &language)
     m_appTranslator = newAppTranslator;
     m_sysTranslator = newSysTranslator;
     BrowserApplication::bookmarksManager()->retranslate();
+    emit languageChanged(currentLanguage());
     return true;
 }
 
@@ -165,6 +168,13 @@ void LanguageManager::chooseNewLanguage()
     qDebug() << "LanguageManager::" << __FUNCTION__;
 #endif
     loadAvailableLanguages();
+    if (m_languages.isEmpty()) {
+        QMessageBox messageBox;
+        messageBox.setText(tr("No translation files are installed."));
+        messageBox.setStandardButtons(QMessageBox::Ok);
+        messageBox.exec();
+        return;
+    }
 
     QStringList items;
     int defaultItem = -1;
@@ -181,10 +191,9 @@ void LanguageManager::chooseNewLanguage()
             defaultItem = items.count();
         items << string;
     }
-    if (defaultItem == -1) {
-        defaultItem = items.count();
-        items << tr("Default");
-    }
+    items << QLatin1String("English (en_US)");
+    if (defaultItem == -1)
+        defaultItem = items.count() - 1;
 
     bool ok;
     QString item = QInputDialog::getItem(0,
@@ -197,19 +206,18 @@ void LanguageManager::chooseNewLanguage()
         return;
 
     int selection = items.indexOf(item);
-    if (selection != m_languages.count())
-        setCurrentLanguage(m_languages.value(selection));
+    setCurrentLanguage(m_languages.value(selection));
 }
 
 QString LanguageManager::translationLocation() const
 {
-#ifdef LANGUAGEMANAGER_DEBUG
-    qDebug() << "LanguageManager::" << __FUNCTION__;
-#endif
     QString directory = BrowserApplication::dataDirectory() + QLatin1Char('/') + QLatin1String("locale");
     // work without installing
     if (!QFile::exists(directory))
         directory = QLatin1String(".qm/locale");
+#ifdef LANGUAGEMANAGER_DEBUG
+    qDebug() << "LanguageManager::" << __FUNCTION__ << directory;
+#endif
     return directory;
 }
 

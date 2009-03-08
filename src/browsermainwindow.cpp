@@ -385,6 +385,12 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addAction(m_fileOpenFileAction);
 
     m_fileOpenLocationAction = new QAction(m_fileMenu);
+    // Add the location bar shortcuts familiar to users from other browsers
+    QList<QKeySequence> openLocationShortcuts;
+    openLocationShortcuts.append(QKeySequence(Qt::ControlModifier + Qt::Key_L));
+    openLocationShortcuts.append(QKeySequence(Qt::AltModifier + Qt::Key_O));
+    openLocationShortcuts.append(QKeySequence(Qt::AltModifier + Qt::Key_D));
+    m_fileOpenLocationAction->setShortcuts(openLocationShortcuts);
     connect(m_fileOpenLocationAction, SIGNAL(triggered()),
             this, SLOT(slotSelectLineEdit()));
     m_fileMenu->addAction(m_fileOpenLocationAction);
@@ -522,7 +528,7 @@ void BrowserMainWindow::setupMenu()
 
     QAction *viewTabBarAction = m_tabWidget->tabBar()->viewTabBarAction();
     m_viewMenu->addAction(viewTabBarAction);
-    connect(viewTabBarAction, SIGNAL(changed()),
+    connect(viewTabBarAction, SIGNAL(toggled(bool)),
             m_autoSaver, SLOT(changeOccurred()));
 
     m_viewStatusbarAction = new QAction(m_viewMenu);
@@ -564,16 +570,12 @@ void BrowserMainWindow::setupMenu()
     m_viewMenu->addAction(m_viewZoomOutAction);
 
     m_viewZoomTextOnlyAction = new QAction(m_viewMenu);
-    connect(m_viewZoomTextOnlyAction, SIGNAL(triggered()),
-            this, SLOT(slotZoomOut()));
     m_viewZoomTextOnlyAction->setCheckable(true);
 #if QT_VERSION >= 0x040500
     connect(m_viewZoomTextOnlyAction, SIGNAL(toggled(bool)),
             BrowserApplication::instance(), SLOT(setZoomTextOnly(bool)));
     connect(BrowserApplication::instance(), SIGNAL(zoomTextOnlyChanged(bool)),
             this, SLOT(slotZoomTextOnlyChanged(bool)));
-#endif
-#if QT_VERSION >= 0x040500
     m_viewMenu->addAction(m_viewZoomTextOnlyAction);
 #endif
 
@@ -625,9 +627,11 @@ void BrowserMainWindow::setupMenu()
     m_historyMenu->setInitialActions(historyActions);
 
     // Bookmarks
-    m_bookmarksMenu = new BookmarksMenu(this);
+    m_bookmarksMenu = new BookmarksMenuBarMenu(this);
     connect(m_bookmarksMenu, SIGNAL(openUrl(const QUrl&, const QString &)),
             m_tabWidget, SLOT(loadUrlFromUser(const QUrl&, const QString&)));
+    connect(m_bookmarksMenu, SIGNAL(openUrl(const QUrl&, TabWidget::OpenUrlIn, const QString&)),
+            m_tabWidget, SLOT(loadUrl(const QUrl&, TabWidget::OpenUrlIn, const QString&)));
     menuBar()->addMenu(m_bookmarksMenu);
 
     m_bookmarksShowAllAction = new QAction(this);
@@ -689,6 +693,8 @@ void BrowserMainWindow::setupMenu()
     m_helpChangeLanguageAction = new QAction(m_helpMenu);
     connect(m_helpChangeLanguageAction, SIGNAL(triggered()),
             BrowserApplication::languageManager(), SLOT(chooseNewLanguage()));
+    connect(BrowserApplication::languageManager(), SIGNAL(languageChanged(const QString&)),
+            BrowserApplication::networkAccessManager(), SLOT(loadSettings()));
     m_helpMenu->addAction(m_helpChangeLanguageAction);
     m_helpMenu->addSeparator();
 

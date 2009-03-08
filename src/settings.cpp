@@ -62,6 +62,7 @@
 
 #include "settings.h"
 
+#include "acceptlanguagedialog.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "cookiedialog.h"
@@ -92,7 +93,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     connect(cookiesButton, SIGNAL(clicked()), this, SLOT(showCookies()));
     connect(standardFontButton, SIGNAL(clicked()), this, SLOT(chooseFont()));
     connect(fixedFontButton, SIGNAL(clicked()), this, SLOT(chooseFixedFont()));
+    connect(languageButton, SIGNAL(clicked()), this, SLOT(chooseAcceptLanguage()));
     connect(proxyName, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProxyPort(int)));
+
 #if QT_VERSION < 0x040500
     oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
 #endif
@@ -444,4 +447,10 @@ void SettingsDialog::setHomeToCurrentPage()
 void SettingsDialog::updateProxyPort(int index)
 {
   proxyPort->setValue(proxies[index]);
+}
+
+void SettingsDialog::chooseAcceptLanguage()
+{
+    AcceptLanguageDialog dialog;
+    dialog.exec();
 }

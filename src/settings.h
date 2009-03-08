@@ -85,6 +85,7 @@ private slots:
 
     void chooseFont();
     void chooseFixedFont();
+    void chooseAcceptLanguage();
 
     void updateProxyPort(int);
 

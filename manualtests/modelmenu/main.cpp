@@ -1,6 +1,5 @@
-/*
- * Copyright 2008 Diego Iastrubni, elcuco, at, kde.org
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+/**
+ * Copyright (c) 2009, Benjamin C. Meyer
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,43 +26,72 @@
  * SUCH DAMAGE.
  */
 
-#ifndef LANGUAGEMANAGER_H
-#define LANGUAGEMANAGER_H
+#include <QtGui>
 
-#include <qobject.h>
+#include <modelmenu.h>
 
-#include <qstringlist.h>
-
-class QTranslator;
-class LanguageManager : public QObject
+class Menu : public ModelMenu
 {
     Q_OBJECT
-    Q_PROPERTY(QString currentLanguage READ currentLanguage WRITE setCurrentLanguage)
-
-signals:
-    void languageChanged(const QString &language);
 
 public:
-    LanguageManager(QObject *parent = 0);
+    Menu(QWidget *parent);
 
-    QString currentLanguage() const;
-    bool setCurrentLanguage(const QString &language);
-    QStringList languages() const;
+protected:
+    bool prePopulated();
+    void postPopulated();
+    ModelMenu *createBaseMenu();
 
-public slots:
-    void chooseNewLanguage();
+private slots:
+    void activated2(const QModelIndex &index);
 
-private:
-    bool isLanguageAvailable(const QString &language) const;
-    QString translationLocation() const;
-    void loadAvailableLanguages() const;
-
-    QString m_currentLanguage;
-    QTranslator *m_sysTranslator;
-    QTranslator *m_appTranslator;
-    mutable bool m_loaded;
-    mutable QStringList m_languages;
 };
 
-#endif //LANGUAGEMANAGER_H
+Menu::Menu(QWidget *parent)
+    : ModelMenu(parent)
+{
+    connect(this, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(activated2(const QModelIndex &)));
+}
+
+bool Menu::prePopulated()
+{
+    qDebug() << __FUNCTION__;
+    return ModelMenu::prePopulated();
+}
+
+void Menu::postPopulated()
+{
+    qDebug() << __FUNCTION__;
+    return ModelMenu::postPopulated();
+}
+
+ModelMenu *Menu::createBaseMenu()
+{
+    qDebug() << __FUNCTION__;
+    return new Menu(this);
+    return ModelMenu::createBaseMenu();
+}
+
+void Menu::activated2(const QModelIndex &index)
+{
+    qDebug() << __FUNCTION__ << index.data() << this;
+}
+
+int main(int argc, char **argv)
+{
+    QApplication app(argc, argv);
+
+    QMainWindow mainWindow;
+    Menu *menu = new Menu(&mainWindow);
+    menu->setTitle("Test");
+    QDirModel *model = new QDirModel(menu);
+    menu->setModel(model);
+    menu->setRootIndex(model->index(QDir::homePath()));
+    mainWindow.menuBar()->addMenu(menu);
+    mainWindow.show();
+    return app.exec();
+}
+
+#include "main.moc"
 

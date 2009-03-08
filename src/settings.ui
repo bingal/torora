@@ -237,9 +237,9 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" >
-        <widget class="QPushButton" name="standardFontButton" >
-         <property name="text" >
+       <item row="0" column="3">
+        <widget class="QPushButton" name="standardFontButton">
+         <property name="text">
           <string>Select...</string>
          </property>
         </widget>
@@ -267,16 +267,30 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2" >
-        <widget class="QPushButton" name="fixedFontButton" >
-         <property name="text" >
+       <item row="1" column="3">
+        <widget class="QPushButton" name="fixedFontButton">
+         <property name="text">
           <string>Select...</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
+       <item row="2" column="0" colspan="3">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Prefured langauges for viewing webpages in:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QPushButton" name="languageButton">
+         <property name="text">
+          <string>Select...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0" >

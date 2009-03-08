@@ -96,6 +96,7 @@ TabWidget::TabWidget(QWidget *parent)
     , m_nextTabAction(0)
     , m_previousTabAction(0)
     , m_recentlyClosedTabsMenu(0)
+    , m_swappedDelayedWidget(false)
     , m_lineEditCompleter(0)
     , m_lineEdits(0)
     , m_tabBar(new TabBar(this))
@@ -375,6 +376,7 @@ WebView *TabWidget::webView(int index) const
             if (giveBackFocus)
                 currentLocationBar->setFocus();
             that->setUpdatesEnabled(true);
+            that->m_swappedDelayedWidget = true;
             return currentWebView();
         }
     }
@@ -623,7 +625,7 @@ void TabWidget::closeTab(int index)
     webViewWithSearch->deleteLater();
 
     emit tabsChanged();
-    if (hasFocus && count() > 0)
+    if (hasFocus && count() > 0 && currentWebView())
         currentWebView()->setFocus();
     if (count() == 0)
         emit lastTabClosed();
@@ -1048,6 +1050,10 @@ QByteArray TabWidget::saveState() const
 
     QStringList tabs;
     for (int i = 0; i < count(); ++i) {
+        if (!m_swappedDelayedWidget) {
+            tabs.append(QString::null);
+            continue;
+        }
         if (WebView *tab = webView(i)) {
             tabs.append(QString::fromUtf8(tab->url().toEncoded()));
         } else {

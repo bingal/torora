@@ -62,6 +62,7 @@
 
 #include "networkaccessmanager.h"
 
+#include "acceptlanguagedialog.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "ui_passworddialog.h"
@@ -180,6 +181,12 @@ void NetworkAccessManager::loadSettings()
     sslCfg.setCaCertificates(ca_list);
     QSslConfiguration::setDefaultConfiguration(sslCfg);
 #endif
+
+    settings.beginGroup(QLatin1String("network"));
+    QStringList acceptList = settings.value(QLatin1String("acceptLanguages"),
+            AcceptLanguageDialog::defaultAcceptList()).toStringList();
+    acceptLanguage = AcceptLanguageDialog::httpString(acceptList);
+    settings.endGroup();
 }
 
 void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth)
@@ -288,7 +295,15 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
 
 QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData)
 {
-    QNetworkReply *reply = QNetworkAccessManager::createRequest(op, request, outgoingData);
-    emit requestCreated(op, request, reply);
+    QNetworkReply *reply;
+    if (!acceptLanguage.isEmpty()) {
+        QNetworkRequest req = request;
+        req.setRawHeader("Accept-Language", acceptLanguage);
+        reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
+        emit requestCreated(op, req, reply);
+    } else {
+        reply = QNetworkAccessManager::createRequest(op, request, outgoingData);
+        emit requestCreated(op, request, reply);
+    }
     return reply;
 }
