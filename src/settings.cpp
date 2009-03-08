@@ -203,6 +203,7 @@ void SettingsDialog::loadFromSettings()
     if (BrowserApplication::isTor()) {
         acceptCombo->setCurrentIndex(2);
         acceptCombo->setEnabled(false);
+        exceptionsButton->setEnabled(false);
     } else {
       CookieJar::AcceptPolicy acceptCookies = acceptPolicyEnum.keyToValue(value) == -1 ?
                           CookieJar::AcceptOnlyFromSitesNavigatedTo :
