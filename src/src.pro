@@ -25,7 +25,7 @@ unix {
     translations.files += .qm/locale
 
     desktop.path = $$DATADIR/applications
-    desktop.files += arora.desktop
+    desktop.files += torora.desktop
 
     iconxpm.path = $$DATADIR/pixmaps
     iconxpm.files += data/arora.xpm

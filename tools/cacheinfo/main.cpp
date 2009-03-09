@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication application(argc, argv);
     QCoreApplication::setOrganizationDomain(QLatin1String("arora-browser.org"));
-    QCoreApplication::setApplicationName(QLatin1String("Arora"));
+    QCoreApplication::setApplicationName(QLatin1String("Torora"));
 
     QStringList args = application.arguments();
     args.takeFirst();
