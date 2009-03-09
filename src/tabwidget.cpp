@@ -352,6 +352,12 @@ QLineEdit *TabWidget::lineEdit(int index) const
     return qobject_cast<LocationBar*>(m_lineEdits->widget(index));
 }
 
+void TabWidget::setLocationBarEnabled(int enabled)
+{
+    LocationBar *currentLocationBar = qobject_cast<LocationBar*>(m_lineEdits->widget(0));
+    currentLocationBar->setEnabled(enabled);
+}
+
 WebView *TabWidget::webView(int index) const
 {
     QWidget *widget = this->widget(index);

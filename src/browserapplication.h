@@ -68,6 +68,7 @@
 #include <qicon.h>
 #include <qpointer.h>
 #include <qurl.h>
+#include <qhttp.h>
 
 class BookmarksManager;
 class BrowserMainWindow;
@@ -136,7 +137,10 @@ private slots:
     void messageRecieved(const QString &message);
     void postLaunch();
     void openUrl(const QUrl &url);
-
+#if defined(TORORA)
+    void torCheckComplete(const QHttpResponseHeader &header);
+    void torCheckForErrors(int id, bool error);
+#endif
 signals:
 #if QT_VERSION >= 0x040500
     void zoomTextOnlyChanged(bool textOnly);
@@ -146,6 +150,10 @@ signals:
     void torChanged(bool isTor);
 private:
     void clean();
+#if defined(TORORA)
+    void checkTorInstallation();
+    void reportTorCheckResults(int page);
+#endif
 
     static HistoryManager *s_historyManager;
     static DownloadManager *s_downloadManager;
@@ -156,7 +164,7 @@ private:
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QByteArray m_lastSession;
     bool quiting;
-
+    QHttp *http;
     Qt::MouseButtons m_eventMouseButtons;
     Qt::KeyboardModifiers m_eventKeyboardModifiers;
 };

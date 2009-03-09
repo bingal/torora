@@ -144,6 +144,8 @@ public:
     static OpenUrlIn modifyWithUserBehavior(OpenUrlIn tab);
     WebView *getView(OpenUrlIn tab, WebView *currentView);
 
+    void setLocationBarEnabled(int enabled);
+
 #if QT_VERSION < 0x040500
 protected:
     void contextMenuEvent(QContextMenuEvent *event);

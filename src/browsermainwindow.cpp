@@ -948,7 +948,7 @@ void BrowserMainWindow::slotUpdateWindowTitle(const QString &title)
 #if defined(Q_WS_MAC)
         setWindowTitle(title);
 #else
-        setWindowTitle(tr("%1 - Arora", "Page title and Browser name").arg(title));
+        setWindowTitle(tr("%1 - Torora", "Page title and Browser name").arg(title));
 #endif
     }
 }
@@ -1034,14 +1034,14 @@ void BrowserMainWindow::slotPrivateBrowsing()
 void BrowserMainWindow::slotTorBrowsing()
 {
     if (!BrowserApplication::isTor()) {
-        QString title = tr("Are you sure you want to turn on private browsing?");
-        QString text = tr("<b>%1</b><br><br>When private browsing is turned on,"
-            " some actions concerning your privacy will be disabled:"
-            "<ul><li> Webpages are not added to the history.</li>"
+        QString title = tr("Are you sure you want to turn on Tor browsing?");
+        QString text = tr("<b>%1</b><br><br>When Tor browsing is turned on,"
+            " some actions concerning your anonymity will be disabled:"
+/*            "<ul><li> Webpages are not added to the history.</li>"
             "<li> Items are automatically removed from the Downloads window.</li>"
             "<li> New cookies are not stored, current cookies can't be accessed.</li>"
             "<li> Site icons won't be stored, session won't be saved.</li>"
-            "<li> Searches are not addded to the pop-up menu in the search box.</li></ul>"
+            "<li> Searches are not addded to the pop-up menu in the search box.</li></ul>"*/
             "Until you close the window, you can still click the Back and Forward buttons"
             " to return to the webpages you have opened.").arg(title);
 
@@ -1355,3 +1355,11 @@ void BrowserMainWindow::showNetworkMonitor()
     monitor->show();
 }
 
+void BrowserMainWindow::enableBookmarksToolbar(bool enabled)
+{
+    m_bookmarksToolbar->setEnabled(enabled);
+    m_fileMenu->setEnabled(enabled);
+    m_historyMenu->setEnabled(enabled);
+    m_bookmarksMenu->setEnabled(enabled);
+    m_windowMenu->setEnabled(enabled);
+}

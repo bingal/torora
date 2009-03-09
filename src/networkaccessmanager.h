@@ -92,6 +92,7 @@ signals:
 
 public:
     NetworkAccessManager(QObject *parent = 0);
+    QNetworkProxy currentProxy();
 
 protected:
     QNetworkReply *createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData = 0);

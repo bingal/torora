@@ -101,6 +101,7 @@ public:
     QByteArray saveState(bool withTabs = true) const;
     bool restoreState(const QByteArray &state);
     QAction *showMenuBarAction() const;
+    void enableBookmarksToolbar(bool enabled);
 
 public slots:
     void slotHome();

@@ -215,6 +215,10 @@ void HistoryManager::checkForExpired()
 
 void HistoryManager::addHistoryEntry(const HistoryEntry &item)
 {
+// Torora: Pending webkit bug for CSSKeepVisitedLinksPrivate
+#if defined(TORORA)
+    return;
+#endif
     QWebSettings *globalSettings = QWebSettings::globalSettings();
     if (globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled))
         return;

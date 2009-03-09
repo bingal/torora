@@ -70,6 +70,7 @@
 #include "languagemanager.h"
 #include "networkaccessmanager.h"
 #include "tabwidget.h"
+#include "toolbarsearch.h"
 #include "webview.h"
 
 #include <qbuffer.h>
@@ -80,6 +81,7 @@
 #include <qmessagebox.h>
 #include <qsettings.h>
 #include <qwebsettings.h>
+#include <qwebframe.h>
 
 #include <qdebug.h>
 
@@ -94,7 +96,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     , quiting(false)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("arora-browser.org"));
-    QCoreApplication::setApplicationName(QLatin1String("Arora"));
+    QCoreApplication::setApplicationName(QLatin1String("Torora"));
     QString version = QLatin1String("0.5");
     if (QLatin1String(GITCHANGENUMBER) != QLatin1String("0"))
         version += QString(tr(" (Change: %1 %2)"))
@@ -201,6 +203,115 @@ void BrowserApplication::quitBrowser()
     exit(0);
 }
 
+#if defined(TORORA)
+#define TOR_CHECK 1
+#define TOR_SUCCESS 2
+#define TOR_FAIL 3
+
+void BrowserApplication::torCheckComplete(const QHttpResponseHeader &)
+{
+  int success = TOR_FAIL;
+  QByteArray data;
+  data = http->readAll();
+  qDebug() << data << endl;
+  QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
+                  "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
+                  "></a></body></html>");
+  if (pass == data) {
+    mainWindow()->tabWidget()->setLocationBarEnabled(true);
+    mainWindow()->toolbarSearch()->setEnabled(true);
+    mainWindow()->enableBookmarksToolbar(true);
+    success = TOR_SUCCESS;
+    qDebug() << "success" << endl;
+  }
+  reportTorCheckResults(success);
+
+}
+
+void BrowserApplication::reportTorCheckResults(int page)
+{
+
+    QFile file(QLatin1String(":/notfound.html"));
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open notfound.html";
+        return;
+    }
+    QString title, headline, bulletone, bullettwo, bulletthree, img;
+    switch (page) {
+      case TOR_CHECK:
+        title = tr("Checking Tor..");
+        headline = tr("Checking Tor..");
+        bulletone = tr("Torora is checking https://check.torproject.org.");
+        bullettwo = tr("");
+        bulletthree = tr("");
+        img = QLatin1String(":tor-off.png");
+        break;
+      case TOR_SUCCESS:
+        title = tr("Torora Ready For Use..");
+        headline = tr("Tor is Working Properly. You Can Browse Anonymously.");
+        bulletone = tr("You can confirm this yourself by visiting https://check.torproject.org.");
+        bullettwo = tr("The bookmark toolbar contains some well known hidden services you can check out.");
+        bulletthree = tr("Some options in Edit->Preferences have been disabled to protect your anonymity.");
+        img = QLatin1String(":tor-on.png");
+        break;
+      default:
+        title = tr("Check Your Tor Installation");
+        headline = tr("Torora Is Not Using Tor for Some Reason");
+        bulletone = tr("First check that Tor is Running.");
+        bullettwo = tr("Check that Privoxy/Polipo is running.");
+        bulletthree = tr("In Edit->Preferences->Proxy, ensure you have Privoxy/Polipo configured correctly.");
+        img = QLatin1String(":tor-off.png");
+        break;
+    }
+    QString html = QString(QLatin1String(file.readAll()))
+                        .arg(title)
+                        .arg(QString())
+                        .arg(headline)
+                        .arg(bulletone)
+                        .arg(bullettwo)
+                        .arg(bulletthree);
+
+    QBuffer imageBuffer;
+    imageBuffer.open(QBuffer::ReadWrite);
+    QIcon icon = QIcon(img);
+    QPixmap pixmap = icon.pixmap(QSize(32, 32));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
+}
+
+void BrowserApplication::torCheckForErrors(int id, bool error)
+{
+  if (id !=2)
+    return;
+
+  if (error){
+    //loadErrorPage();
+  }
+}
+
+void BrowserApplication::checkTorInstallation()
+{
+    reportTorCheckResults(TOR_CHECK);
+    mainWindow()->toolbarSearch()->setEnabled(false);
+    mainWindow()->tabWidget()->setLocationBarEnabled(false);
+    mainWindow()->enableBookmarksToolbar(false);
+    http = new QHttp(this);
+    QNetworkProxy proxy = networkAccessManager()->currentProxy();
+    http->setProxy(proxy);
+    http->setHost(QLatin1String("check.torproject.org"));
+    http->get(QLatin1String("/?TorButton=True"));
+
+    connect(http, SIGNAL(requestFinished(int, bool)),
+            this, SLOT(torCheckForErrors(int, bool)));
+    connect(http, SIGNAL(readyRead(const QHttpResponseHeader&)),
+            this, SLOT(torCheckComplete(const QHttpResponseHeader&)));
+}
+#endif
+
 /*!
     Any actions that can be delayed until the window is visible
  */
@@ -216,9 +327,11 @@ void BrowserApplication::postLaunch()
     loadSettings();
 
 #if defined(TORORA)
+    // We don't enable the location bar until we've proven that we're going
+    // through Tor.
     setTor(true);
-#endif
-
+    checkTorInstallation();
+#else
     // newMainWindow() needs to be called in main() for this to happen
     if (m_mainWindows.count() > 0) {
         QSettings settings;
@@ -250,6 +363,7 @@ void BrowserApplication::postLaunch()
             }
         }
     }
+#endif
     BrowserApplication::historyManager();
 }
 
@@ -574,9 +688,11 @@ void BrowserApplication::setTor(bool isTor)
     QSettings settings;
     settings.beginGroup(QLatin1String("Torora"));
     settings.setValue(QLatin1String("torBrowsing"),isTor);
+    settings.endGroup();
+
     emit instance()->torChanged(isTor);
     BrowserApplication::instance()->loadSettings();
-//     BrowserApplication::networkAccessManager()->loadSettings();
+    BrowserApplication::networkAccessManager()->loadSettings();
     BrowserApplication::cookieJar()->loadSettings(isTor);
-//     BrowserApplication::historyManager()->loadSettings(isTor);
+    BrowserApplication::historyManager()->loadSettings();
 }
