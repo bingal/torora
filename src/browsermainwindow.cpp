@@ -1014,7 +1014,7 @@ void BrowserMainWindow::slotPrivateBrowsing()
             "<li> Items are automatically removed from the Downloads window.</li>"
             "<li> New cookies are not stored, current cookies can't be accessed.</li>"
             "<li> Site icons won't be stored, session won't be saved.</li>"
-            "<li> Searches are not addded to the pop-up menu in the search box.</li></ul>"
+            "<li> Searches are not added to the pop-up menu in the search box.</li></ul>"
             "Until you close the window, you can still click the Back and Forward buttons"
             " to return to the webpages you have opened.").arg(title);
 
@@ -1079,6 +1079,11 @@ void BrowserMainWindow::slotTorChanged(bool isTor)
 
 void BrowserMainWindow::closeEvent(QCloseEvent *event)
 {
+    if (!BrowserApplication::instance()->downloadManager()->allowQuit()) {
+        event->ignore();
+        return;
+    }
+
     if (m_tabWidget->count() > 1) {
         QSettings settings;
         settings.beginGroup(QLatin1String("tabs"));
@@ -1095,6 +1100,7 @@ void BrowserMainWindow::closeEvent(QCloseEvent *event)
             }
         }
     }
+
     event->accept();
     deleteLater();
 }

@@ -189,6 +189,9 @@ void BrowserApplication::quitBrowser()
         tabCount += m_mainWindows.at(i)->tabWidget()->count();
     }
 
+    if (!downloadManager()->allowQuit())
+        return;
+
     if (tabCount > 1) {
         int ret = QMessageBox::warning(mainWindow(), QString(),
                            tr("There are %1 windows and %2 tabs open\n"
@@ -317,7 +320,13 @@ void BrowserApplication::checkTorInstallation()
  */
 void BrowserApplication::postLaunch()
 {
-    QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QDesktopServices::StandardLocation location;
+#if QT_VERSION >= 0x040500
+    location = QDesktopServices::CacheLocation;
+#else
+    location = QDesktopServices::DataLocation;
+#endif
+    QString directory = QDesktopServices::storageLocation(location);
     if (directory.isEmpty())
         directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
     QWebSettings::setIconDatabasePath(directory);
