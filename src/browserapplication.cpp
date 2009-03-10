@@ -404,6 +404,9 @@ void BrowserApplication::loadSettings()
     QUrl url = settings.value(QLatin1String("userStyleSheet")).toUrl();
     defaultSettings->setUserStyleSheetUrl(url);
 
+//     defaultSettings->setAttribute(QWebSettings::JSPrivateWindowProperties, true);
+//     defaultSettings->setAttribute(QWebSettings::ConcealVisitedLinks, true);
+
     settings.endGroup();
 }
 
