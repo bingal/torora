@@ -1,46 +1,323 @@
 Index: JavaScriptCore/runtime/DatePrototype.cpp
 ===================================================================
---- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41537)
+--- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41596)
 +++ JavaScriptCore/runtime/DatePrototype.cpp	(working copy)
-@@ -776,6 +776,7 @@
+@@ -369,11 +369,16 @@
  
- JSValuePtr dateProtoFuncGetTimezoneOffset(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
+ // Functions
+ 
+-JSValuePtr dateProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
++JSValuePtr dateProtoFuncToString(ExecState* exec, JSObject* result, JSValuePtr thisValue, const ArgList& args)
  {
-+  /*TORORA: need to intercept gettimezoneoffset here */
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
++    // If we are preventing user profiling, then always return UTC time.
++    if (exec->dynamicGlobalObject()->shouldPreventUserProfiling()) {
++        return dateProtoFuncToUTCString(exec, result, thisValue, args);
++    }
++
+     const bool utc = false;
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+@@ -408,7 +413,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -425,7 +431,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -437,11 +444,16 @@
+     return jsNontrivialString(exec, formatTime(t, utc));
+ }
+ 
+-JSValuePtr dateProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
++JSValuePtr dateProtoFuncToLocaleString(ExecState* exec, JSObject* result, JSValuePtr thisValue, const ArgList& args)
+ {
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
++    // If we are preventing user profiling, then always return UTC time.
++    if (exec->dynamicGlobalObject()->shouldPreventUserProfiling()) {
++        return dateProtoFuncToUTCString(exec, result, thisValue, args);
++    }
++
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+     if (isnan(milli))
+@@ -450,11 +462,16 @@
+     return formatLocaleDate(exec, thisDateObj, milli, LocaleDateAndTime, args);
+ }
+ 
+-JSValuePtr dateProtoFuncToLocaleDateString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
++JSValuePtr dateProtoFuncToLocaleDateString(ExecState* exec, JSObject* result, JSValuePtr thisValue, const ArgList& args)
+ {
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
++    // If we are preventing user profiling, then always return UTC time.
++    if (exec->dynamicGlobalObject()->shouldPreventUserProfiling()) {
++        return dateProtoFuncToDateString(exec, result, thisValue, args);
++    }
++
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+     if (isnan(milli))
+@@ -463,11 +480,16 @@
+     return formatLocaleDate(exec, thisDateObj, milli, LocaleDate, args);
+ }
+ 
+-JSValuePtr dateProtoFuncToLocaleTimeString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
++JSValuePtr dateProtoFuncToLocaleTimeString(ExecState* exec, JSObject* result, JSValuePtr thisValue, const ArgList& args)
+ {
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
++    // If we are preventing user profiling, then always return UTC time.
++    if (exec->dynamicGlobalObject()->shouldPreventUserProfiling()) {
++        return dateProtoFuncToTimeString(exec, result, thisValue, args);
++    }
++
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+     if (isnan(milli))
+@@ -494,7 +516,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -545,7 +568,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -579,7 +603,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -613,7 +638,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -647,7 +673,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -681,9 +708,10 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+-    DateInstance* thisDateObj = asDateInstance(thisValue); 
++    DateInstance* thisDateObj = asDateInstance(thisValue);
+     double milli = thisDateObj->internalNumber();
+     if (isnan(milli))
+         return jsNaN(exec);
+@@ -715,7 +743,8 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
+-    const bool utc = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool utc = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+@@ -744,11 +773,16 @@
+     return jsNumber(exec, t.second);
+ }
+ 
+-JSValuePtr dateProtoFuncGetMilliSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
++JSValuePtr dateProtoFuncGetMilliSeconds(ExecState* exec, JSObject* result, JSValuePtr thisValue, const ArgList& argList)
+ {
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
++    // If we are preventing user profiling, then always return UTC time.
++    if (exec->dynamicGlobalObject()->shouldPreventUserProfiling()) {
++        return dateProtoFuncGetUTCMilliseconds(exec, result, thisValue, argList);
++    }
++
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+     if (isnan(milli))
+@@ -764,6 +798,7 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
++
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+     double milli = thisDateObj->internalNumber();
+     if (isnan(milli))
+@@ -779,6 +814,10 @@
+     if (!thisValue.isObject(&DateInstance::info))
+         return throwError(exec, TypeError);
+ 
++    // See https://www.torproject.org/torbutton/design/#id3016866
++    if (exec->dynamicGlobalObject()->shouldPreventUserProfiling())
++        return jsNumber(exec,0);
++
+     const bool utc = false;
+ 
+     DateInstance* thisDateObj = asDateInstance(thisValue); 
+@@ -874,7 +913,8 @@
+ 
+ JSValuePtr dateProtoFuncSetMilliSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromTimeArgs(exec, thisValue, args, 1, inputIsUTC);
+ }
+ 
+@@ -886,7 +926,8 @@
+ 
+ JSValuePtr dateProtoFuncSetSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromTimeArgs(exec, thisValue, args, 2, inputIsUTC);
+ }
+ 
+@@ -898,7 +939,8 @@
+ 
+ JSValuePtr dateProtoFuncSetMinutes(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromTimeArgs(exec, thisValue, args, 3, inputIsUTC);
+ }
+ 
+@@ -910,7 +952,8 @@
+ 
+ JSValuePtr dateProtoFuncSetHours(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromTimeArgs(exec, thisValue, args, 4, inputIsUTC);
+ }
+ 
+@@ -922,7 +965,8 @@
+ 
+ JSValuePtr dateProtoFuncSetDate(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromDateArgs(exec, thisValue, args, 1, inputIsUTC);
+ }
+ 
+@@ -934,7 +978,8 @@
+ 
+ JSValuePtr dateProtoFuncSetMonth(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromDateArgs(exec, thisValue, args, 2, inputIsUTC);
+ }
+ 
+@@ -946,7 +991,8 @@
+ 
+ JSValuePtr dateProtoFuncSetFullYear(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
+ {
+-    const bool inputIsUTC = false;
++    // If we are preventing user profiling, then always return UTC time.
++    const bool inputIsUTC = exec->dynamicGlobalObject()->shouldPreventUserProfiling();
+     return setNewValueFromDateArgs(exec, thisValue, args, 3, inputIsUTC);
+ }
+ 
+Index: JavaScriptCore/runtime/JSGlobalObject.h
+===================================================================
+--- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41596)
++++ JavaScriptCore/runtime/JSGlobalObject.h	(working copy)
+@@ -231,6 +231,8 @@
+ 
+         virtual bool shouldInterruptScript() const { return true; }
+ 
++        virtual bool shouldPreventUserProfiling() const { return true; }
++        
+         virtual bool allowsAccessFrom(const JSGlobalObject*) const { return true; }
+ 
+         virtual bool isDynamicScope() const;
 Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
 ===================================================================
---- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41537)
+--- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41596)
 +++ WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(working copy)
 @@ -167,6 +167,7 @@
      WebPreferences *preferences = [[WebPreferences alloc] init];
      [preferences setAutosaves:NO];
      [preferences setPrivateBrowsingEnabled:YES];
-+    [preferences setConcealVisitedLinks:NO];
++    [preferences setPreventUserProfiling:NO];
      [preferences setLoadsImagesAutomatically:YES];
      [preferences setAuthorAndUserStylesEnabled:YES];
      [preferences setJavaScriptEnabled:YES];
 Index: WebKit/mac/WebView/WebPreferences.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.h	(revision 41537)
+--- WebKit/mac/WebView/WebPreferences.h	(revision 41596)
 +++ WebKit/mac/WebView/WebPreferences.h	(working copy)
 @@ -366,6 +366,19 @@
  - (BOOL)privateBrowsingEnabled;
  
  /*!
-+    @method setConcealVisitedLinks:
++    @method setPreventUserProfiling:
 +    @param flag 
 +    @abstract Prevents websites from using the 'visited' property
 +        in CSS stylesheets to gather information on your browsing history..
 + */
-+- (void)setConcealVisitedLinks:(BOOL)flag;
++- (void)setPreventUserProfiling:(BOOL)flag;
 +
 +/*!
 +    @method privateBrowsingEnabled
 + */
-+- (BOOL)concealVisitedLinks;
++- (BOOL)preventUserProfiling;
 +
 +/*!
      @method setTabsToLinks:
@@ -48,37 +325,37 @@ Index: WebKit/mac/WebView/WebPreferences.h
      @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
 Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41537)
+--- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41596)
 +++ WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(working copy)
 @@ -60,6 +60,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
  #define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
  #define WebKitPrivateBrowsingEnabledPreferenceKey @"WebKitPrivateBrowsingEnabled"
-+#define WebKitConcealVisitedLinksPreferenceKey @"WebKitConcealVisitedLinks"
++#define WebKitPreventUserProfilingPreferenceKey @"WebKitPreventUserProfiling"
  #define WebContinuousSpellCheckingEnabled @"WebContinuousSpellCheckingEnabled"
  #define WebGrammarCheckingEnabled @"WebGrammarCheckingEnabled"
  #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 Index: WebKit/mac/WebView/WebView.mm
 ===================================================================
---- WebKit/mac/WebView/WebView.mm	(revision 41537)
+--- WebKit/mac/WebView/WebView.mm	(revision 41596)
 +++ WebKit/mac/WebView/WebView.mm	(working copy)
 @@ -1325,6 +1325,7 @@
      settings->setDatabasesEnabled([preferences databasesEnabled]);
      settings->setLocalStorageEnabled([preferences localStorageEnabled]);
      settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
-+    settings->setConcealVisitedLinks([preferences concealVisitedLinks]);
++    settings->setPreventUserProfiling([preferences preventUserProfiling]);
      settings->setSansSerifFontFamily([preferences sansSerifFontFamily]);
      settings->setSerifFontFamily([preferences serifFontFamily]);
      settings->setStandardFontFamily([preferences standardFontFamily]);
 Index: WebKit/mac/WebView/WebPreferences.mm
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.mm	(revision 41537)
+--- WebKit/mac/WebView/WebPreferences.mm	(revision 41596)
 +++ WebKit/mac/WebView/WebPreferences.mm	(working copy)
 @@ -325,6 +325,7 @@
          @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
          [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
          [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
-+        [NSNumber numberWithBool:NO],   WebKitConcealVisitedLinksPreferenceKey,
++        [NSNumber numberWithBool:NO],   WebKitPreventUserProfilingPreferenceKey,
          [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
          [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
          @"1",                           WebKitPDFDisplayModePreferenceKey,
@@ -86,14 +363,14 @@ Index: WebKit/mac/WebView/WebPreferences.mm
      return [self _boolValueForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
  }
  
-+- (void)setConcealVisitedLinks:(BOOL)flag
++- (void)setPreventUserProfiling:(BOOL)flag
 +{
-+    [self _setBoolValue:flag forKey:WebKitConcealVisitedLinksPreferenceKey];
++    [self _setBoolValue:flag forKey:WebKitPreventUserProfilingPreferenceKey];
 +}
 +
-+- (BOOL)concealVisitedLinks
++- (BOOL)preventUserProfiling
 +{
-+    return [self _boolValueForKey:WebKitConcealVisitedLinksPreferenceKey];
++    return [self _boolValueForKey:WebKitPreventUserProfilingPreferenceKey];
 +}
 +
  - (void)setUsesPageCache:(BOOL)usesPageCache
@@ -101,63 +378,56 @@ Index: WebKit/mac/WebView/WebPreferences.mm
      [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
 Index: WebKit/qt/Api/qwebsettings.cpp
 ===================================================================
---- WebKit/qt/Api/qwebsettings.cpp	(revision 41537)
+--- WebKit/qt/Api/qwebsettings.cpp	(revision 41596)
 +++ WebKit/qt/Api/qwebsettings.cpp	(working copy)
-@@ -150,6 +150,14 @@
+@@ -150,6 +150,11 @@
                                        global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
          settings->setPrivateBrowsingEnabled(value);
  
-+        value = attributes.value(QWebSettings::ConcealVisitedLinks,
-+                                      global->attributes.value(QWebSettings::ConcealVisitedLinks));
-+        settings->setConcealVisitedLinks(value);
 +
-+        value = attributes.value(QWebSettings::JSPrivateWindowProperties,
-+                                 global->attributes.value(QWebSettings::JSPrivateWindowProperties));
-+        settings->setJSPrivateWindowProperties(value);
++        value = attributes.value(QWebSettings::PreventUserProfiling,
++                                 global->attributes.value(QWebSettings::PreventUserProfiling));
++        settings->setPreventUserProfiling(value);
 +
          value = attributes.value(QWebSettings::JavascriptCanAccessClipboard,
                                        global->attributes.value(QWebSettings::JavascriptCanAccessClipboard));
          settings->setDOMPasteAllowed(value);
-@@ -314,8 +322,12 @@
-         web application cache feature is enabled or not.
-     \value LocalStorageDatabaseEnabled Specifies whether support for the HTML 5
+@@ -316,6 +321,9 @@
          local storage feature is enabled or not.
-+    \value ConcealVisitedLinks Prevents websites from using the 'visited' property
-+        in CSS stylesheets to gather information on your browsing history.
      \value AllowUniversalAccessFromFileUrls Specifies whether documents from file
          Urls should be granted universal access (e.g., to HTTP and HTTPS documents).
-+    \value JSPrivateWindowProperties Prevents websites from identifying anonymous
-+        visitors based on their browser window properties.
++    \value PreventUserProfiling Prevents websites from profiling and identifying
++        visitors based on their browser window properties, visited websites, date
++        and time locale information.
  */
  
  /*!
 Index: WebKit/qt/Api/qwebsettings.h
 ===================================================================
---- WebKit/qt/Api/qwebsettings.h	(revision 41537)
+--- WebKit/qt/Api/qwebsettings.h	(revision 41596)
 +++ WebKit/qt/Api/qwebsettings.h	(working copy)
-@@ -64,7 +64,9 @@
+@@ -64,7 +64,8 @@
          OfflineStorageDatabaseEnabled,
          OfflineWebApplicationCacheEnabled,
          LocalStorageDatabaseEnabled,
 -        AllowUniversalAccessFromFileUrls
 +        AllowUniversalAccessFromFileUrls,
-+        ConcealVisitedLinks,
-+        JSPrivateWindowProperties
++        PreventUserProfiling
      };
      enum WebGraphic {
          MissingImageGraphic,
 Index: WebKit/win/WebPreferences.h
 ===================================================================
---- WebKit/win/WebPreferences.h	(revision 41537)
+--- WebKit/win/WebPreferences.h	(revision 41596)
 +++ WebKit/win/WebPreferences.h	(working copy)
 @@ -193,6 +193,12 @@
      virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
          /* [retval][out] */ BOOL* enabled);
      
-+    virtual HRESULT STDMETHODCALLTYPE setConcealVisitedLinks( 
++    virtual HRESULT STDMETHODCALLTYPE setPreventUserProfiling(
 +        /* [in] */ BOOL enabled);
 +    
-+    virtual HRESULT STDMETHODCALLTYPE concealVisitedLinks( 
++    virtual HRESULT STDMETHODCALLTYPE preventUserProfiling(
 +        /* [retval][out] */ BOOL* enabled);
 +    
      virtual HRESULT STDMETHODCALLTYPE setTabsToLinks( 
@@ -165,41 +435,41 @@ Index: WebKit/win/WebPreferences.h
      
 Index: WebKit/win/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41537)
+--- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41596)
 +++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
 @@ -59,6 +59,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
  #define WebKitTabToLinksPreferenceKey "WebKitTabToLinksPreferenceKey"
  #define WebKitPrivateBrowsingEnabledPreferenceKey "WebKitPrivateBrowsingEnabled"
-+#define WebKitConcealVisitedLinksKey "WebKitConcealVisitedLinks"
++#define WebKitPreventUserProfilingKey "WebKitPreventUserProfiling"
  #define WebKitIconDatabaseLocationKey "WebKitIconDatabaseLocation"
  #define WebKitIconDatabaseEnabledPreferenceKey "WebKitIconDatabaseEnabled"
  #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebView.cpp
 ===================================================================
---- WebKit/win/WebView.cpp	(revision 41537)
+--- WebKit/win/WebView.cpp	(revision 41596)
 +++ WebKit/win/WebView.cpp	(working copy)
 @@ -4055,6 +4055,11 @@
          return hr;
      settings->setPrivateBrowsingEnabled(!!enabled);
  
-+    hr = preferences->concealVisitedLinks(&enabled);
++    hr = preferences->preventUserProfiling(&enabled);
 +    if (FAILED(hr))
 +        return hr;
-+    settings->setConcealVisitedLinks(!!enabled);
++    settings->setPreventUserProfiling(!!enabled);
 +
      hr = preferences->sansSerifFontFamily(&str);
      if (FAILED(hr))
          return hr;
 Index: WebKit/win/WebPreferences.cpp
 ===================================================================
---- WebKit/win/WebPreferences.cpp	(revision 41537)
+--- WebKit/win/WebPreferences.cpp	(revision 41596)
 +++ WebKit/win/WebPreferences.cpp	(working copy)
 @@ -215,6 +215,7 @@
      CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
      CFDictionaryAddValue(defaults, CFSTR(WebKitTabToLinksPreferenceKey), kCFBooleanFalse);
      CFDictionaryAddValue(defaults, CFSTR(WebKitPrivateBrowsingEnabledPreferenceKey), kCFBooleanFalse);
-+    CFDictionaryAddValue(defaults, CFSTR(WebKitConcealVisitedLinksPreferenceKey), kCFBooleanFalse);
++    CFDictionaryAddValue(defaults, CFSTR(WebKitPreventUserProfilingPreferenceKey), kCFBooleanFalse);
      CFDictionaryAddValue(defaults, CFSTR(WebKitRespectStandardStyleKeyEquivalentsPreferenceKey), kCFBooleanFalse);
      CFDictionaryAddValue(defaults, CFSTR(WebKitShowsURLsInToolTipsPreferenceKey), kCFBooleanFalse);
      CFDictionaryAddValue(defaults, CFSTR(WebKitPDFDisplayModePreferenceKey), CFSTR("1"));
@@ -207,17 +477,17 @@ Index: WebKit/win/WebPreferences.cpp
      return S_OK;
  }
  
-+HRESULT STDMETHODCALLTYPE WebPreferences::setConcealVisitedLinks( 
++HRESULT STDMETHODCALLTYPE WebPreferences::setPreventUserProfiling(
 +    /* [in] */ BOOL enabled)
 +{
-+    setBoolValue(CFSTR(WebKitConcealVisitedLinksPreferenceKey), enabled);
++    setBoolValue(CFSTR(WebKitPreventUserProfilingPreferenceKey), enabled);
 +    return S_OK;
 +}
 +
-+HRESULT STDMETHODCALLTYPE WebPreferences::concealVisitedLinks( 
++HRESULT STDMETHODCALLTYPE WebPreferences::preventUserProfiling(
 +    /* [retval][out] */ BOOL* enabled)
 +{
-+    *enabled = boolValueForKey(CFSTR(WebKitConcealVisitedLinksPreferenceKey));
++    *enabled = boolValueForKey(CFSTR(WebKitPreventUserProfilingPreferenceKey));
 +    return S_OK;
 +}
 +
@@ -226,62 +496,58 @@ Index: WebKit/win/WebPreferences.cpp
  {
 Index: WebKit/win/Interfaces/IWebPreferences.idl
 ===================================================================
---- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41537)
+--- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41596)
 +++ WebKit/win/Interfaces/IWebPreferences.idl	(working copy)
 @@ -141,6 +141,9 @@
      HRESULT setPrivateBrowsingEnabled([in] BOOL enabled);
      HRESULT privateBrowsingEnabled([out, retval] BOOL* enabled);
  
-+    HRESULT setConcealVisitedLinks([in] BOOL enabled);
-+    HRESULT concealVisitedLinks([out, retval] BOOL* enabled);
++    HRESULT setPreventUserProfiling([in] BOOL enabled);
++    HRESULT preventUserProfiling([out, retval] BOOL* enabled);
 +    
      HRESULT setTabsToLinks([in] BOOL enabled);
      HRESULT tabsToLinks([out, retval] BOOL* enabled);
  
 Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
 ===================================================================
---- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41537)
+--- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41596)
 +++ WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(working copy)
 @@ -145,6 +145,8 @@
          return 0;
      if (FAILED(preferences->setPrivateBrowsingEnabled(TRUE)))
          return 0;
-+    if (FAILED(preferences->setConcealVisitedLinks(FALSE)))
++    if (FAILED(preferences->setPreventUserProfiling(FALSE)))
 +        return 0;
      if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
          return 0;
      if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
 Index: WebCore/page/Settings.h
 ===================================================================
---- WebCore/page/Settings.h	(revision 41537)
+--- WebCore/page/Settings.h	(revision 41596)
 +++ WebCore/page/Settings.h	(working copy)
-@@ -112,7 +112,13 @@
+@@ -112,7 +112,10 @@
  
          void setPrivateBrowsingEnabled(bool);
          bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
 -        
 +
-+        void setConcealVisitedLinks(bool);
-+        bool concealVisitedLinks() const { return m_concealVisitedLinks; }
-+
-+        void setJSPrivateWindowProperties(bool);
-+        bool jSPrivateWindowProperties() const { return m_jSPrivateWindowProperties; }
++        void setPreventUserProfiling(bool);
++        bool preventUserProfiling() const { return m_preventUserProfiling; }
 +
          void setDefaultTextEncodingName(const String&);
          const String& defaultTextEncodingName() const { return m_defaultTextEncodingName; }
  
-@@ -230,6 +236,8 @@
+@@ -230,6 +233,7 @@
          bool m_isJavaEnabled : 1;
          bool m_loadsImagesAutomatically : 1;
          bool m_privateBrowsingEnabled : 1;
-+        bool m_concealVisitedLinks : 1;
-+        bool m_jSPrivateWindowProperties : 1;
++        bool m_preventUserProfiling : 1;
          bool m_arePluginsEnabled : 1;
          bool m_databasesEnabled : 1;
          bool m_localStorageEnabled : 1;
 Index: WebCore/page/DOMWindow.cpp
 ===================================================================
---- WebCore/page/DOMWindow.cpp	(revision 41537)
+--- WebCore/page/DOMWindow.cpp	(revision 41596)
 +++ WebCore/page/DOMWindow.cpp	(working copy)
 @@ -561,6 +561,12 @@
      if (!page)
@@ -289,7 +555,7 @@ Index: WebCore/page/DOMWindow.cpp
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<int>(page->chrome()->windowRect().height() -
 +                                (static_cast<int>(page->chrome()->windowRect().height()) % 50));
 +
@@ -302,7 +568,7 @@ Index: WebCore/page/DOMWindow.cpp
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<int>(page->chrome()->windowRect().width() -
 +                                (static_cast<int>(page->chrome()->windowRect().width()) % 50));
 +
@@ -317,7 +583,7 @@ Index: WebCore/page/DOMWindow.cpp
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<int>((view->height() - (view->height() % 50))
 +                                / m_frame->pageZoomFactor());
 +
@@ -336,7 +602,7 @@ Index: WebCore/page/DOMWindow.cpp
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<int>((view->width() - (view->width() % 50))
 +                                / m_frame->pageZoomFactor());
 +
@@ -355,7 +621,7 @@ Index: WebCore/page/DOMWindow.cpp
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<int>(page->chrome()->windowRect().x() -
 +                                (static_cast<int>(page->chrome()->windowRect().x()) % 50));
 +
@@ -368,16 +634,62 @@ Index: WebCore/page/DOMWindow.cpp
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<int>(page->chrome()->windowRect().y() -
 +                                (static_cast<int>(page->chrome()->windowRect().y()) % 50));
 +
      return static_cast<int>(page->chrome()->windowRect().y());
  }
  
+@@ -633,6 +671,12 @@
+     if (!view)
+         return 0;
+ 
++    // See https://www.torproject.org/torbutton/design/#id3016866
++    Settings* settings = m_frame->settings();
++    if (!settings || settings->preventUserProfiling())
++        return static_cast<int>(view->scrollX() -
++                                (static_cast<int>(view->scrollX()) % 50));
++
+     m_frame->document()->updateLayoutIgnorePendingStylesheets();
+ 
+     return static_cast<int>(view->scrollX() / m_frame->pageZoomFactor());
+@@ -640,13 +684,19 @@
+ 
+ int DOMWindow::scrollY() const
+ {
+-    if (!m_frame)
++      if (!m_frame)
+         return 0;
+ 
+     FrameView* view = m_frame->view();
+     if (!view)
+         return 0;
+ 
++    // See https://www.torproject.org/torbutton/design/#id3016866
++    Settings* settings = m_frame->settings();
++    if (!settings || settings->preventUserProfiling())
++        return static_cast<int>(view->scrollY() -
++                                (static_cast<int>(view->scrollY()) % 50));
++
+     m_frame->document()->updateLayoutIgnorePendingStylesheets();
+ 
+     return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
+Index: WebCore/page/NavigatorBase.cpp
+===================================================================
+--- WebCore/page/NavigatorBase.cpp	(revision 41596)
++++ WebCore/page/NavigatorBase.cpp	(working copy)
+@@ -79,6 +79,7 @@
+ 
+ String NavigatorBase::platform() const
+ {
++    /*Torora: handle platform stuff here */
+     return WEBCORE_NAVIGATOR_PLATFORM;
+ }
+ 
 Index: WebCore/page/Screen.cpp
 ===================================================================
---- WebCore/page/Screen.cpp	(revision 41537)
+--- WebCore/page/Screen.cpp	(revision 41596)
 +++ WebCore/page/Screen.cpp	(working copy)
 @@ -34,6 +34,7 @@
  #include "Frame.h"
@@ -394,7 +706,7 @@ Index: WebCore/page/Screen.cpp
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<unsigned>(screenRect(m_frame->view()).height() -
 +                                    (static_cast<unsigned>(screenRect(m_frame->view()).height()) % 50));
 +
@@ -408,7 +720,7 @@ Index: WebCore/page/Screen.cpp
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<unsigned>(screenRect(m_frame->view()).width() -
 +                                    (static_cast<unsigned>(screenRect(m_frame->view()).width()) % 50));
 +
@@ -422,7 +734,7 @@ Index: WebCore/page/Screen.cpp
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return 24;
 +
      return static_cast<unsigned>(screenDepth(m_frame->view()));
@@ -435,7 +747,7 @@ Index: WebCore/page/Screen.cpp
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return 24;
 +
      return static_cast<unsigned>(screenDepth(m_frame->view()));
@@ -448,88 +760,109 @@ Index: WebCore/page/Screen.cpp
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x() -
 +                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).x()) % 50));
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x());
  }
  
-@@ -87,6 +121,13 @@
+@@ -87,6 +121,14 @@
  {
      if (!m_frame)
          return 0;
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
++    // and https://tor-svn.freehaven.net/svn/torbutton/trunk/src/chrome/content/jshooks.js
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y() -
 +                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).y()) % 50));
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y());
  }
  
-@@ -94,6 +135,13 @@
+@@ -94,6 +136,14 @@
  {
      if (!m_frame)
          return 0;
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
++    // and https://tor-svn.freehaven.net/svn/torbutton/trunk/src/chrome/content/jshooks.js
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height() - 
 +                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).height()) % 50));
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height());
  }
  
-@@ -101,6 +149,13 @@
+@@ -101,6 +151,13 @@
  {
      if (!m_frame)
          return 0;
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->jSPrivateWindowProperties())
++    if (!settings || settings->preventUserProfiling())
 +        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).width() - 
 +                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).width()) % 50));
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).width());
  }
  
+Index: WebCore/page/Navigator.cpp
+===================================================================
+--- WebCore/page/Navigator.cpp	(revision 41596)
++++ WebCore/page/Navigator.cpp	(working copy)
+@@ -95,6 +95,7 @@
+ 
+ String Navigator::language() const
+ {
++    /*Torora: standardize navigator.language here */
+     return defaultLanguage();
+ }
+ 
 Index: WebCore/page/Settings.cpp
 ===================================================================
---- WebCore/page/Settings.cpp	(revision 41537)
+--- WebCore/page/Settings.cpp	(revision 41596)
 +++ WebCore/page/Settings.cpp	(working copy)
-@@ -56,6 +56,8 @@
+@@ -56,6 +56,7 @@
      , m_isJavaEnabled(false)
      , m_loadsImagesAutomatically(false)
      , m_privateBrowsingEnabled(false)
-+    , m_concealVisitedLinks(false)
-+    , m_jSPrivateWindowProperties(false)
++    , m_preventUserProfiling(false)
      , m_arePluginsEnabled(false)
      , m_databasesEnabled(false)
      , m_localStorageEnabled(false)
-@@ -229,6 +231,16 @@
+@@ -229,6 +230,11 @@
      m_privateBrowsingEnabled = privateBrowsingEnabled;
  }
  
-+void Settings::setConcealVisitedLinks(bool concealVisitedLinks)
++void Settings::setPreventUserProfiling(bool preventUserProfiling)
 +{
-+    m_concealVisitedLinks = concealVisitedLinks;
-+}
-+
-+void Settings::setJSPrivateWindowProperties(bool jSPrivateWindowProperties)
-+{
-+    m_jSPrivateWindowProperties = jSPrivateWindowProperties;
++    m_preventUserProfiling = preventUserProfiling;
 +}
 +
  void Settings::setJavaScriptCanOpenWindowsAutomatically(bool javaScriptCanOpenWindowsAutomatically)
  {
      m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
+Index: WebCore/bindings/js/JSDOMWindowBase.h
+===================================================================
+--- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41596)
++++ WebCore/bindings/js/JSDOMWindowBase.h	(working copy)
+@@ -81,6 +81,8 @@
+ 
+         virtual bool shouldInterruptScript() const;
+ 
++        virtual bool shouldPreventUserProfiling() const;
++
+         bool allowsAccessFrom(JSC::ExecState*) const;
+         bool allowsAccessFromNoErrorMessage(JSC::ExecState*) const;
+         bool allowsAccessFrom(JSC::ExecState*, String& message) const;
 Index: WebCore/bindings/js/JSDOMWindowBase.cpp
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41537)
+--- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41596)
 +++ WebCore/bindings/js/JSDOMWindowBase.cpp	(working copy)
 @@ -683,7 +683,7 @@
      Settings* settings = frame->settings();
@@ -540,40 +873,56 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
      if (settings->privateBrowsingEnabled())
          return;
  
+@@ -730,6 +730,15 @@
+     return page->chrome()->shouldInterruptJavaScript();
+ }
+ 
++bool JSDOMWindowBase::shouldPreventUserProfiling() const
++{
++    ASSERT(impl()->frame());
++    Settings* settings = impl()->frame()->settings();
++    if (!settings || settings->preventUserProfiling())
++      return true;
++    return false;
++}
++
+ void JSDOMWindowBase::clearHelperObjectProperties()
+ {
+     setCurrentEvent(0);
 Index: WebCore/css/CSSStyleSelector.cpp
 ===================================================================
---- WebCore/css/CSSStyleSelector.cpp	(revision 41537)
+--- WebCore/css/CSSStyleSelector.cpp	(revision 41596)
 +++ WebCore/css/CSSStyleSelector.cpp	(working copy)
 @@ -875,6 +875,10 @@
      if (!page)
          return PseudoLink;
  
 +    Settings* settings = m_document->settings();
-+    if (!settings || settings->concealVisitedLinks())
++    if (!settings || settings->preventUserProfiling())
 +        return PseudoLink;
 +
      m_linksCheckedForVisitedState.add(hash);
      return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
  }
-@@ -5837,6 +5841,11 @@
+@@ -5840,6 +5844,11 @@
  
  void CSSStyleSelector::SelectorChecker::allVisitedStateChanged()
  {
 +
 +    Settings* settings = m_document->settings();
-+    if (!settings || settings->concealVisitedLinks())
++    if (!settings || settings->preventUserProfiling())
 +        return;
 +
      if (m_linksCheckedForVisitedState.isEmpty())
          return;
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
-@@ -5847,6 +5856,11 @@
+@@ -5850,6 +5859,11 @@
  
  void CSSStyleSelector::SelectorChecker::visitedStateChanged(LinkHash visitedHash)
  {
 +
 +    Settings* settings = m_document->settings();
-+    if (!settings || settings->concealVisitedLinks())
++    if (!settings || settings->preventUserProfiling())
 +        return;
 +
      if (!m_linksCheckedForVisitedState.contains(visitedHash))
@@ -581,7 +930,7 @@ Index: WebCore/css/CSSStyleSelector.cpp
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
 Index: WebKitTools/Scripts/webkitdirs.pm
 ===================================================================
---- WebKitTools/Scripts/webkitdirs.pm	(revision 41537)
+--- WebKitTools/Scripts/webkitdirs.pm	(revision 41596)
 +++ WebKitTools/Scripts/webkitdirs.pm	(working copy)
 @@ -951,7 +951,7 @@
          return "nmake";
