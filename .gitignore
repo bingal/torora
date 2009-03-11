@@ -1,4 +1,5 @@
 arora
+torora
 Arora.app
 Makefile
 .DS_Store
@@ -8,5 +9,8 @@ Makefile
 .rcc
 .qm
 .gdb_history
+.kdevelop
+.pcs
+.kdevses
 *.swp
 *~
