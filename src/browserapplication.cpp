@@ -401,7 +401,11 @@ void BrowserApplication::loadSettings()
 
     defaultSettings->setAttribute(QWebSettings::JavascriptCanOpenWindows, !(settings.value(QLatin1String("blockPopupWindows"), true).toBool()));
     if (isTor()) {
+#if defined(TORORA_WEBKIT_BUILD)
+      defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
+#else
       defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, false);
+#endif
       defaultSettings->setAttribute(QWebSettings::PluginsEnabled, false);
     } else {
       defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
@@ -413,8 +417,9 @@ void BrowserApplication::loadSettings()
     QUrl url = settings.value(QLatin1String("userStyleSheet")).toUrl();
     defaultSettings->setUserStyleSheetUrl(url);
 
-//     defaultSettings->setAttribute(QWebSettings::JSPrivateWindowProperties, true);
-//     defaultSettings->setAttribute(QWebSettings::ConcealVisitedLinks, true);
+#if defined(TORORA_WEBKIT_BUILD)
+    defaultSettings->setAttribute(QWebSettings::PreventUserProfiling, true);
+#endif
 
     settings.endGroup();
 }
