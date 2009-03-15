@@ -98,10 +98,10 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     QCoreApplication::setOrganizationDomain(QLatin1String("arora-browser.org"));
     QCoreApplication::setApplicationName(QLatin1String("Torora"));
     QString version = QLatin1String("0.5");
-    if (QLatin1String(GITCHANGENUMBER) != QLatin1String("0"))
-        version += QString(tr(" (Change: %1 %2)"))
-                    .arg(QLatin1String(GITCHANGENUMBER))
-                    .arg(QLatin1String(GITVERSION));
+//     if (QLatin1String(GITCHANGENUMBER) != QLatin1String("0"))
+//         version += QString(tr(" (Change: %1 %2)"))
+//                     .arg(QLatin1String(GITCHANGENUMBER))
+//                     .arg(QLatin1String(GITVERSION));
 
     QCoreApplication::setApplicationVersion(version);
 #ifndef AUTOTESTS
@@ -245,9 +245,9 @@ void BrowserApplication::reportTorCheckResults(int page)
         title = tr("Checking Tor..");
         headline = tr("Checking Tor..");
         bulletone = tr("Torora is checking https://check.torproject.org.");
-        bullettwo = tr("");
-        bulletthree = tr("");
-        img = QLatin1String(":tor-off.png");
+        bullettwo = tr("Once Torora is sure you can browse anonymously, browsing will be enabled.");
+        bulletthree = tr("This check may take a few seconds, so please be patient.");
+        img = QLatin1String(":tor-checking.png");
         break;
       case TOR_SUCCESS:
         title = tr("Torora Ready For Use..");
@@ -291,9 +291,8 @@ void BrowserApplication::torCheckForErrors(int id, bool error)
   if (id !=2)
     return;
 
-  if (error){
-    //loadErrorPage();
-  }
+  if (error)
+    reportTorCheckResults(TOR_FAIL);
 }
 
 void BrowserApplication::checkTorInstallation()
