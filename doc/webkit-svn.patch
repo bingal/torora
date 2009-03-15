@@ -1,8 +1,88 @@
+Index: JavaScriptCore/runtime/DateConstructor.cpp
+===================================================================
+--- JavaScriptCore/runtime/DateConstructor.cpp	(revision 41658)
++++ JavaScriptCore/runtime/DateConstructor.cpp	(working copy)
+@@ -78,7 +78,10 @@
+         else {
+             JSValuePtr primitive = args.at(exec, 0).toPrimitive(exec);
+             if (primitive.isString())
+-                value = parseDate(primitive.getString());
++                // If we are preventing user profiling, then we need to ensure that if
++                // a timezone is not specified we don't use local time. This would allow
++                // later calls to getTimeZoneOffset() to reveal the user's actual timezone.
++                value = parseDate(primitive.getString(), exec->dynamicGlobalObject()->shouldPreventUserProfiling());
+             else
+                 value = primitive.toNumber(exec);
+         }
+@@ -102,7 +105,10 @@
+           t.second = args.at(exec, 5).toInt32(exec);
+           t.isDST = -1;
+           double ms = (numArgs >= 7) ? args.at(exec, 6).toNumber(exec) : 0;
+-          value = gregorianDateTimeToMS(t, ms, false);
++          // If we are preventing user profiling, then we need to ensure that if
++          // a timezone is not specified we don't use local time. This would allow
++          // later calls to getTimeZoneOffset() to reveal the user's actual timezone.
++          value = gregorianDateTimeToMS(t, ms, exec->dynamicGlobalObject()->shouldPreventUserProfiling());
+         }
+     }
+ 
+Index: JavaScriptCore/runtime/DateMath.h
+===================================================================
+--- JavaScriptCore/runtime/DateMath.h	(revision 41658)
++++ JavaScriptCore/runtime/DateMath.h	(working copy)
+@@ -60,7 +60,7 @@
+ void getLocalTime(const time_t*, tm*);
+ 
+ // Not really math related, but this is currently the only shared place to put these.  
+-double parseDate(const UString&);
++double parseDate(const UString&, bool treatLocalAsUTC = false);
+ double timeClip(double);
+ UString formatDate(const GregorianDateTime&);
+ UString formatDateUTCVariant(const GregorianDateTime&);
+@@ -80,7 +80,7 @@
+ const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
+ 
+ // Intentionally overridding the default tm of the system
+-// Tee members of tm differ on various operating systems.
++// The members of tm differ on various operating systems.
+ struct GregorianDateTime : Noncopyable {
+     GregorianDateTime()
+         : second(0)
+Index: JavaScriptCore/runtime/DateMath.cpp
+===================================================================
+--- JavaScriptCore/runtime/DateMath.cpp	(revision 41658)
++++ JavaScriptCore/runtime/DateMath.cpp	(working copy)
+@@ -596,7 +596,7 @@
+     return true;
+ }
+ 
+-double parseDate(const UString &date)
++double parseDate(const UString &date, bool treatLocalAsUTC)
+ {
+     // This parses a date in the form:
+     //     Tuesday, 09-Nov-99 23:12:40 GMT
+@@ -879,7 +879,7 @@
+         t.hour = hour;
+ 
+         // Use our gregorianDateTimeToMS() rather than mktime() as the latter can't handle the full year range.
+-        return gregorianDateTimeToMS(t, 0, false);
++        return gregorianDateTimeToMS(t, 0, treatLocalAsUTC);
+     }
+ 
+     return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
 Index: JavaScriptCore/runtime/DatePrototype.cpp
 ===================================================================
---- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41596)
+--- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41658)
 +++ JavaScriptCore/runtime/DatePrototype.cpp	(working copy)
-@@ -369,11 +369,16 @@
+@@ -359,7 +359,6 @@
+     : DateInstance(structure)
+ {
+     setInternalValue(jsNaN(exec));
+-    // The constructor will be added later, after DateConstructor has been built.
+ }
+ 
+ bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+@@ -369,11 +368,16 @@
  
  // Functions
  
@@ -20,7 +100,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      const bool utc = false;
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
-@@ -408,7 +413,8 @@
+@@ -408,7 +412,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -30,7 +110,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -425,7 +431,8 @@
+@@ -425,7 +430,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -40,7 +120,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -437,11 +444,16 @@
+@@ -437,11 +443,16 @@
      return jsNontrivialString(exec, formatTime(t, utc));
  }
  
@@ -58,7 +138,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -450,11 +462,16 @@
+@@ -450,11 +461,16 @@
      return formatLocaleDate(exec, thisDateObj, milli, LocaleDateAndTime, args);
  }
  
@@ -76,7 +156,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -463,11 +480,16 @@
+@@ -463,11 +479,16 @@
      return formatLocaleDate(exec, thisDateObj, milli, LocaleDate, args);
  }
  
@@ -94,7 +174,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -494,7 +516,8 @@
+@@ -494,7 +515,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -104,7 +184,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -545,7 +568,8 @@
+@@ -545,7 +567,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -114,7 +194,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -579,7 +603,8 @@
+@@ -579,7 +602,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -124,7 +204,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -613,7 +638,8 @@
+@@ -613,7 +637,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -134,7 +214,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -647,7 +673,8 @@
+@@ -647,7 +672,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -144,7 +224,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -681,9 +708,10 @@
+@@ -681,9 +707,10 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -157,7 +237,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
          return jsNaN(exec);
-@@ -715,7 +743,8 @@
+@@ -715,7 +742,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -167,7 +247,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -744,11 +773,16 @@
+@@ -744,11 +772,16 @@
      return jsNumber(exec, t.second);
  }
  
@@ -185,7 +265,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -764,6 +798,7 @@
+@@ -764,6 +797,7 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -193,7 +273,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -779,6 +814,10 @@
+@@ -779,6 +813,10 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -204,7 +284,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      const bool utc = false;
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
-@@ -874,7 +913,8 @@
+@@ -874,7 +912,8 @@
  
  JSValuePtr dateProtoFuncSetMilliSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -214,7 +294,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 1, inputIsUTC);
  }
  
-@@ -886,7 +926,8 @@
+@@ -886,7 +925,8 @@
  
  JSValuePtr dateProtoFuncSetSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -224,7 +304,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 2, inputIsUTC);
  }
  
-@@ -898,7 +939,8 @@
+@@ -898,7 +938,8 @@
  
  JSValuePtr dateProtoFuncSetMinutes(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -234,7 +314,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 3, inputIsUTC);
  }
  
-@@ -910,7 +952,8 @@
+@@ -910,7 +951,8 @@
  
  JSValuePtr dateProtoFuncSetHours(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -244,7 +324,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 4, inputIsUTC);
  }
  
-@@ -922,7 +965,8 @@
+@@ -922,7 +964,8 @@
  
  JSValuePtr dateProtoFuncSetDate(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -254,7 +334,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromDateArgs(exec, thisValue, args, 1, inputIsUTC);
  }
  
-@@ -934,7 +978,8 @@
+@@ -934,7 +977,8 @@
  
  JSValuePtr dateProtoFuncSetMonth(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -264,7 +344,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromDateArgs(exec, thisValue, args, 2, inputIsUTC);
  }
  
-@@ -946,7 +991,8 @@
+@@ -946,7 +990,8 @@
  
  JSValuePtr dateProtoFuncSetFullYear(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -276,7 +356,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
 Index: JavaScriptCore/runtime/JSGlobalObject.h
 ===================================================================
---- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41596)
+--- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41658)
 +++ JavaScriptCore/runtime/JSGlobalObject.h	(working copy)
 @@ -231,6 +231,8 @@
  
@@ -289,7 +369,7 @@ Index: JavaScriptCore/runtime/JSGlobalObject.h
          virtual bool isDynamicScope() const;
 Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
 ===================================================================
---- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41596)
+--- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41658)
 +++ WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(working copy)
 @@ -167,6 +167,7 @@
      WebPreferences *preferences = [[WebPreferences alloc] init];
@@ -301,7 +381,7 @@ Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
      [preferences setJavaScriptEnabled:YES];
 Index: WebKit/mac/WebView/WebPreferences.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.h	(revision 41596)
+--- WebKit/mac/WebView/WebPreferences.h	(revision 41658)
 +++ WebKit/mac/WebView/WebPreferences.h	(working copy)
 @@ -366,6 +366,19 @@
  - (BOOL)privateBrowsingEnabled;
@@ -325,7 +405,7 @@ Index: WebKit/mac/WebView/WebPreferences.h
      @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
 Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41596)
+--- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41658)
 +++ WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(working copy)
 @@ -60,6 +60,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
@@ -337,9 +417,9 @@ Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
  #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 Index: WebKit/mac/WebView/WebView.mm
 ===================================================================
---- WebKit/mac/WebView/WebView.mm	(revision 41596)
+--- WebKit/mac/WebView/WebView.mm	(revision 41658)
 +++ WebKit/mac/WebView/WebView.mm	(working copy)
-@@ -1325,6 +1325,7 @@
+@@ -1324,6 +1324,7 @@
      settings->setDatabasesEnabled([preferences databasesEnabled]);
      settings->setLocalStorageEnabled([preferences localStorageEnabled]);
      settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
@@ -349,7 +429,7 @@ Index: WebKit/mac/WebView/WebView.mm
      settings->setStandardFontFamily([preferences standardFontFamily]);
 Index: WebKit/mac/WebView/WebPreferences.mm
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.mm	(revision 41596)
+--- WebKit/mac/WebView/WebPreferences.mm	(revision 41658)
 +++ WebKit/mac/WebView/WebPreferences.mm	(working copy)
 @@ -325,6 +325,7 @@
          @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
@@ -378,7 +458,7 @@ Index: WebKit/mac/WebView/WebPreferences.mm
      [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
 Index: WebKit/qt/Api/qwebsettings.cpp
 ===================================================================
---- WebKit/qt/Api/qwebsettings.cpp	(revision 41596)
+--- WebKit/qt/Api/qwebsettings.cpp	(revision 41658)
 +++ WebKit/qt/Api/qwebsettings.cpp	(working copy)
 @@ -150,6 +150,11 @@
                                        global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
@@ -404,7 +484,7 @@ Index: WebKit/qt/Api/qwebsettings.cpp
  /*!
 Index: WebKit/qt/Api/qwebsettings.h
 ===================================================================
---- WebKit/qt/Api/qwebsettings.h	(revision 41596)
+--- WebKit/qt/Api/qwebsettings.h	(revision 41658)
 +++ WebKit/qt/Api/qwebsettings.h	(working copy)
 @@ -64,7 +64,8 @@
          OfflineStorageDatabaseEnabled,
@@ -416,9 +496,26 @@ Index: WebKit/qt/Api/qwebsettings.h
      };
      enum WebGraphic {
          MissingImageGraphic,
+Index: WebKit/qt/Api/qwebpage.cpp
+===================================================================
+--- WebKit/qt/Api/qwebpage.cpp	(revision 41658)
++++ WebKit/qt/Api/qwebpage.cpp	(working copy)
+@@ -2420,7 +2420,12 @@
+ */
+ QString QWebPage::userAgentForUrl(const QUrl& url) const
+ {
++ /*torora user agent header */
+     Q_UNUSED(url)
++
++    if (!QWebPage::settings() || QWebPage::settings()->PreventUserProfiling)
++      return "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6";
++    
+     QString ua = QLatin1String("Mozilla/5.0 ("
+ 
+     // Plastform
 Index: WebKit/win/WebPreferences.h
 ===================================================================
---- WebKit/win/WebPreferences.h	(revision 41596)
+--- WebKit/win/WebPreferences.h	(revision 41658)
 +++ WebKit/win/WebPreferences.h	(working copy)
 @@ -193,6 +193,12 @@
      virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
@@ -433,21 +530,9 @@ Index: WebKit/win/WebPreferences.h
      virtual HRESULT STDMETHODCALLTYPE setTabsToLinks( 
          /* [in] */ BOOL enabled);
      
-Index: WebKit/win/WebPreferenceKeysPrivate.h
-===================================================================
---- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41596)
-+++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
-@@ -59,6 +59,7 @@
- #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
- #define WebKitTabToLinksPreferenceKey "WebKitTabToLinksPreferenceKey"
- #define WebKitPrivateBrowsingEnabledPreferenceKey "WebKitPrivateBrowsingEnabled"
-+#define WebKitPreventUserProfilingKey "WebKitPreventUserProfiling"
- #define WebKitIconDatabaseLocationKey "WebKitIconDatabaseLocation"
- #define WebKitIconDatabaseEnabledPreferenceKey "WebKitIconDatabaseEnabled"
- #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebView.cpp
 ===================================================================
---- WebKit/win/WebView.cpp	(revision 41596)
+--- WebKit/win/WebView.cpp	(revision 41658)
 +++ WebKit/win/WebView.cpp	(working copy)
 @@ -4055,6 +4055,11 @@
          return hr;
@@ -461,9 +546,21 @@ Index: WebKit/win/WebView.cpp
      hr = preferences->sansSerifFontFamily(&str);
      if (FAILED(hr))
          return hr;
+Index: WebKit/win/WebPreferenceKeysPrivate.h
+===================================================================
+--- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41658)
++++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
+@@ -59,6 +59,7 @@
+ #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
+ #define WebKitTabToLinksPreferenceKey "WebKitTabToLinksPreferenceKey"
+ #define WebKitPrivateBrowsingEnabledPreferenceKey "WebKitPrivateBrowsingEnabled"
++#define WebKitPreventUserProfilingKey "WebKitPreventUserProfiling"
+ #define WebKitIconDatabaseLocationKey "WebKitIconDatabaseLocation"
+ #define WebKitIconDatabaseEnabledPreferenceKey "WebKitIconDatabaseEnabled"
+ #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebPreferences.cpp
 ===================================================================
---- WebKit/win/WebPreferences.cpp	(revision 41596)
+--- WebKit/win/WebPreferences.cpp	(revision 41658)
 +++ WebKit/win/WebPreferences.cpp	(working copy)
 @@ -215,6 +215,7 @@
      CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
@@ -496,7 +593,7 @@ Index: WebKit/win/WebPreferences.cpp
  {
 Index: WebKit/win/Interfaces/IWebPreferences.idl
 ===================================================================
---- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41596)
+--- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41658)
 +++ WebKit/win/Interfaces/IWebPreferences.idl	(working copy)
 @@ -141,6 +141,9 @@
      HRESULT setPrivateBrowsingEnabled([in] BOOL enabled);
@@ -510,7 +607,7 @@ Index: WebKit/win/Interfaces/IWebPreferences.idl
  
 Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
 ===================================================================
---- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41596)
+--- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41658)
 +++ WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(working copy)
 @@ -145,6 +145,8 @@
          return 0;
@@ -521,9 +618,52 @@ Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
      if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
          return 0;
      if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
+Index: WebCore/page/Navigator.h
+===================================================================
+--- WebCore/page/Navigator.h	(revision 41658)
++++ WebCore/page/Navigator.h	(working copy)
+@@ -48,6 +48,8 @@
+         MimeTypeArray* mimeTypes() const;
+         bool cookieEnabled() const;
+         bool javaEnabled() const;
++        String platform() const;
++        String vendor() const;
+ 
+         virtual String userAgent() const;
+ 
+Index: WebCore/page/History.cpp
+===================================================================
+--- WebCore/page/History.cpp	(revision 41658)
++++ WebCore/page/History.cpp	(working copy)
+@@ -1,4 +1,4 @@
+-/*
++  /*
+  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -25,6 +25,7 @@
+ 
+ #include "config.h"
+ #include "History.h"
++#include "Settings.h"
+ 
+ #include "Frame.h"
+ #include "FrameLoader.h"
+@@ -50,6 +51,11 @@
+ {
+     if (!m_frame)
+         return 0;
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return 0;
++
+     return m_frame->loader()->getHistoryLength();
+ }
+ 
 Index: WebCore/page/Settings.h
 ===================================================================
---- WebCore/page/Settings.h	(revision 41596)
+--- WebCore/page/Settings.h	(revision 41658)
 +++ WebCore/page/Settings.h	(working copy)
 @@ -112,7 +112,10 @@
  
@@ -547,35 +687,33 @@ Index: WebCore/page/Settings.h
          bool m_localStorageEnabled : 1;
 Index: WebCore/page/DOMWindow.cpp
 ===================================================================
---- WebCore/page/DOMWindow.cpp	(revision 41596)
+--- WebCore/page/DOMWindow.cpp	(revision 41658)
 +++ WebCore/page/DOMWindow.cpp	(working copy)
-@@ -561,6 +561,12 @@
+@@ -561,6 +561,11 @@
      if (!page)
          return 0;
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(page->chrome()->windowRect().height() -
-+                                (static_cast<int>(page->chrome()->windowRect().height()) % 50));
++        return static_cast<int>(static_cast<int>(page->chrome()->windowRect().height() / 50) * 50);
 +
      return static_cast<int>(page->chrome()->windowRect().height());
  }
  
-@@ -573,6 +579,12 @@
+@@ -573,6 +578,11 @@
      if (!page)
          return 0;
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(page->chrome()->windowRect().width() -
-+                                (static_cast<int>(page->chrome()->windowRect().width()) % 50));
++        return static_cast<int>(static_cast<int>(page->chrome()->windowRect().width() / 50) * 50);
 +
      return static_cast<int>(page->chrome()->windowRect().width());
  }
  
-@@ -584,12 +596,19 @@
+@@ -584,12 +594,18 @@
      FrameView* view = m_frame->view();
      if (!view)
          return 0;
@@ -584,8 +722,7 @@ Index: WebCore/page/DOMWindow.cpp
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>((view->height() - (view->height() % 50))
-+                                / m_frame->pageZoomFactor());
++        return static_cast<int>((static_cast<int>(view->height() / m_frame->pageZoomFactor()) / 50) * 50);
 +
      return static_cast<int>(view->height() / m_frame->pageZoomFactor());
  }
@@ -596,14 +733,14 @@ Index: WebCore/page/DOMWindow.cpp
      if (!m_frame)
          return 0;
  
-@@ -597,11 +616,18 @@
+@@ -597,11 +613,18 @@
      if (!view)
          return 0;
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>((view->width() - (view->width() % 50))
++        return static_cast<int>((static_cast<int>(view->width() / 50) * 50)
 +                                / m_frame->pageZoomFactor());
 +
      return static_cast<int>(view->width() / m_frame->pageZoomFactor());
@@ -615,46 +752,43 @@ Index: WebCore/page/DOMWindow.cpp
      if (!m_frame)
          return 0;
  
-@@ -609,6 +635,12 @@
+@@ -609,6 +632,11 @@
      if (!page)
          return 0;
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(page->chrome()->windowRect().x() -
-+                                (static_cast<int>(page->chrome()->windowRect().x()) % 50));
++        return static_cast<int>(static_cast<int>(page->chrome()->windowRect().x() / 50) * 50);
 +
      return static_cast<int>(page->chrome()->windowRect().x());
  }
  
-@@ -621,6 +653,12 @@
+@@ -621,6 +649,11 @@
      if (!page)
          return 0;
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(page->chrome()->windowRect().y() -
-+                                (static_cast<int>(page->chrome()->windowRect().y()) % 50));
++        return static_cast<int>(static_cast<int>(page->chrome()->windowRect().y() / 50) * 50);
 +
      return static_cast<int>(page->chrome()->windowRect().y());
  }
  
-@@ -633,6 +671,12 @@
+@@ -633,6 +666,11 @@
      if (!view)
          return 0;
  
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(view->scrollX() -
-+                                (static_cast<int>(view->scrollX()) % 50));
++        return static_cast<int>(static_cast<int>(view->scrollX() / 50) * 50);
 +
      m_frame->document()->updateLayoutIgnorePendingStylesheets();
  
      return static_cast<int>(view->scrollX() / m_frame->pageZoomFactor());
-@@ -640,13 +684,19 @@
+@@ -640,13 +678,18 @@
  
  int DOMWindow::scrollY() const
  {
@@ -669,27 +803,68 @@ Index: WebCore/page/DOMWindow.cpp
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(view->scrollY() -
-+                                (static_cast<int>(view->scrollY()) % 50));
++        return static_cast<int>(static_cast<int>(view->scrollX() / 50) * 50);
 +
      m_frame->document()->updateLayoutIgnorePendingStylesheets();
  
      return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
 Index: WebCore/page/NavigatorBase.cpp
 ===================================================================
---- WebCore/page/NavigatorBase.cpp	(revision 41596)
+--- WebCore/page/NavigatorBase.cpp	(revision 41658)
 +++ WebCore/page/NavigatorBase.cpp	(working copy)
-@@ -79,6 +79,7 @@
+@@ -29,6 +29,7 @@
  
- String NavigatorBase::platform() const
+ #include "NetworkStateNotifier.h"
+ #include "PlatformString.h"
++#include "Settings.h"
+ 
+ #ifndef WEBCORE_NAVIGATOR_PLATFORM
+ #if PLATFORM(MAC) && (PLATFORM(PPC) || PLATFORM(PPC64))
+@@ -89,21 +90,41 @@
+ 
+ String NavigatorBase::product() const
  {
-+    /*Torora: handle platform stuff here */
-     return WEBCORE_NAVIGATOR_PLATFORM;
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "Gecko";
++
+     return WEBCORE_NAVIGATOR_PRODUCT;
+ }
+ 
+ String NavigatorBase::productSub() const
+ {
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "2009011913";
++
+     return WEBCORE_NAVIGATOR_PRODUCT_SUB;
+ }
+ 
+ String NavigatorBase::vendor() const
+ {
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "";
++
+     return WEBCORE_NAVIGATOR_VENDOR;
+ }
+ 
+ String NavigatorBase::vendorSub() const
+ {
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "";
++
+     return WEBCORE_NAVIGATOR_VENDOR_SUB;
  }
  
 Index: WebCore/page/Screen.cpp
 ===================================================================
---- WebCore/page/Screen.cpp	(revision 41596)
+--- WebCore/page/Screen.cpp	(revision 41658)
 +++ WebCore/page/Screen.cpp	(working copy)
 @@ -34,6 +34,7 @@
  #include "Frame.h"
@@ -699,7 +874,7 @@ Index: WebCore/page/Screen.cpp
  #include "Widget.h"
  
  namespace WebCore {
-@@ -52,6 +53,13 @@
+@@ -52,6 +53,12 @@
  {
      if (!m_frame)
          return 0;
@@ -707,13 +882,12 @@ Index: WebCore/page/Screen.cpp
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(screenRect(m_frame->view()).height() -
-+                                    (static_cast<unsigned>(screenRect(m_frame->view()).height()) % 50));
++        return static_cast<unsigned>(static_cast<int>(screenRect(m_frame->view()).height() / 50) * 50);
 +
      return static_cast<unsigned>(screenRect(m_frame->view()).height());
  }
  
-@@ -59,6 +67,13 @@
+@@ -59,6 +66,12 @@
  {
      if (!m_frame)
          return 0;
@@ -721,13 +895,12 @@ Index: WebCore/page/Screen.cpp
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(screenRect(m_frame->view()).width() -
-+                                    (static_cast<unsigned>(screenRect(m_frame->view()).width()) % 50));
++        return static_cast<unsigned>(static_cast<int>(screenRect(m_frame->view()).width() / 50) * 50);
 +
      return static_cast<unsigned>(screenRect(m_frame->view()).width());
  }
  
-@@ -66,6 +81,12 @@
+@@ -66,6 +79,12 @@
  {
      if (!m_frame)
          return 0;
@@ -740,7 +913,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenDepth(m_frame->view()));
  }
  
-@@ -73,6 +94,12 @@
+@@ -73,6 +92,12 @@
  {
      if (!m_frame)
          return 0;
@@ -753,7 +926,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenDepth(m_frame->view()));
  }
  
-@@ -80,6 +107,13 @@
+@@ -80,6 +105,12 @@
  {
      if (!m_frame)
          return 0;
@@ -761,13 +934,12 @@ Index: WebCore/page/Screen.cpp
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x() -
-+                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).x()) % 50));
++        return 0;
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x());
  }
  
-@@ -87,6 +121,14 @@
+@@ -87,6 +118,13 @@
  {
      if (!m_frame)
          return 0;
@@ -776,13 +948,12 @@ Index: WebCore/page/Screen.cpp
 +    // and https://tor-svn.freehaven.net/svn/torbutton/trunk/src/chrome/content/jshooks.js
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y() -
-+                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).y()) % 50));
++        return 0;
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y());
  }
  
-@@ -94,6 +136,14 @@
+@@ -94,6 +132,13 @@
  {
      if (!m_frame)
          return 0;
@@ -791,13 +962,12 @@ Index: WebCore/page/Screen.cpp
 +    // and https://tor-svn.freehaven.net/svn/torbutton/trunk/src/chrome/content/jshooks.js
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height() - 
-+                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).height()) % 50));
++        return static_cast<int>((static_cast<int>(m_frame->view()->height() / m_frame->pageZoomFactor()) / 50) * 50);
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height());
  }
  
-@@ -101,6 +151,13 @@
+@@ -101,6 +146,12 @@
  {
      if (!m_frame)
          return 0;
@@ -805,27 +975,119 @@ Index: WebCore/page/Screen.cpp
 +    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(screenAvailableRect(m_frame->view()).width() - 
-+                                    (static_cast<unsigned>(screenAvailableRect(m_frame->view()).width()) % 50));
++        return static_cast<int>((static_cast<int>(m_frame->view()->width() / m_frame->pageZoomFactor()) / 50) * 50);
 +
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).width());
  }
  
 Index: WebCore/page/Navigator.cpp
 ===================================================================
---- WebCore/page/Navigator.cpp	(revision 41596)
+--- WebCore/page/Navigator.cpp	(revision 41658)
 +++ WebCore/page/Navigator.cpp	(working copy)
-@@ -95,6 +95,7 @@
+@@ -87,6 +87,11 @@
+ {
+     if (!m_frame)
+         return String();
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "5.0 (Windows; LANG)";
++
+     String appVersion = NavigatorBase::appVersion();
+     if (shouldHideFourDot(m_frame))
+         appVersion.replace("4.", "4_");
+@@ -95,6 +100,11 @@
  
  String Navigator::language() const
  {
-+    /*Torora: standardize navigator.language here */
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "en-us, en";
++
      return defaultLanguage();
  }
  
+@@ -102,7 +112,12 @@
+ {
+     if (!m_frame)
+         return String();
+-        
++
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6";
++
+     // If the frame is already detached, FrameLoader::userAgent may malfunction, because it calls a client method
+     // that uses frame's WebView (at least, in Mac WebKit).
+     if (!m_frame->page())
+@@ -144,6 +159,62 @@
+     return m_frame->settings()->isJavaEnabled();
+ }
+ 
++String Navigator::platform() const
++{
++//     if (!m_frame || !m_frame->settings())
++//         return String();
++
++    if (m_frame->settings()->preventUserProfiling())
++      return "Win32";
++
++    return NavigatorBase::platform();
++}
++
++// String Navigator::appCodeName() const
++// {
++//     return "Mozilla";
++// }
++// 
++// String Navigator::product() const
++// {
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "Gecko";
++// 
++//     return WEBCORE_NAVIGATOR_PRODUCT;
++// }
++// 
++// String Navigator::productSub() const
++// {
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "2009011913";
++// 
++//     return WEBCORE_NAVIGATOR_PRODUCT_SUB;
++// }
++// 
++String Navigator::vendor() const
++{
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "";
++
++    return NavigatorBase::vendor();
++}
++
++// String Navigator::vendorSub() const
++// {
++//     Settings* settings = m_frame->settings();
++// 
++//     if (!settings || settings->preventUserProfiling())
++//       return "";
++// 
++//     return WEBCORE_NAVIGATOR_VENDOR_SUB;
++// }
++
+ Geolocation* Navigator::geolocation() const
+ {
+     if (!m_geolocation)
 Index: WebCore/page/Settings.cpp
 ===================================================================
---- WebCore/page/Settings.cpp	(revision 41596)
+--- WebCore/page/Settings.cpp	(revision 41658)
 +++ WebCore/page/Settings.cpp	(working copy)
 @@ -56,6 +56,7 @@
      , m_isJavaEnabled(false)
@@ -849,7 +1111,7 @@ Index: WebCore/page/Settings.cpp
      m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
 Index: WebCore/bindings/js/JSDOMWindowBase.h
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41596)
+--- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41658)
 +++ WebCore/bindings/js/JSDOMWindowBase.h	(working copy)
 @@ -81,6 +81,8 @@
  
@@ -862,7 +1124,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.h
          bool allowsAccessFrom(JSC::ExecState*, String& message) const;
 Index: WebCore/bindings/js/JSDOMWindowBase.cpp
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41596)
+--- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41658)
 +++ WebCore/bindings/js/JSDOMWindowBase.cpp	(working copy)
 @@ -683,7 +683,7 @@
      Settings* settings = frame->settings();
@@ -891,7 +1153,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
      setCurrentEvent(0);
 Index: WebCore/css/CSSStyleSelector.cpp
 ===================================================================
---- WebCore/css/CSSStyleSelector.cpp	(revision 41596)
+--- WebCore/css/CSSStyleSelector.cpp	(revision 41658)
 +++ WebCore/css/CSSStyleSelector.cpp	(working copy)
 @@ -875,6 +875,10 @@
      if (!page)
@@ -930,7 +1192,7 @@ Index: WebCore/css/CSSStyleSelector.cpp
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
 Index: WebKitTools/Scripts/webkitdirs.pm
 ===================================================================
---- WebKitTools/Scripts/webkitdirs.pm	(revision 41596)
+--- WebKitTools/Scripts/webkitdirs.pm	(revision 41658)
 +++ WebKitTools/Scripts/webkitdirs.pm	(working copy)
 @@ -951,7 +951,7 @@
          return "nmake";

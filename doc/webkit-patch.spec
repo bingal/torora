@@ -38,10 +38,10 @@ Strategy: Same approach as Torbutton. Window size and Screen size are rounded by
           width()       = width()  rounded to the nearest 50 px
           colorDepth()  = 24
           pixelDepth()  = 24
-          availLeft()   = availLeft() rounded to the nearest 50 px
-          availTop()    = availTop() rounded to the nearest 50 px
-          availHeight() = availHeight() rounded to the nearest 50 px
-          availWidth()  = availWidth() rounded to the nearest 50 px
+          availLeft()   = 0
+          availTop()    = 0
+          availHeight() = window innerHeight()
+          availWidth()  = window innerWidth()
 
 Result: QWebSettings::PreventUserProfiling defeats the attack.
 
