@@ -164,6 +164,7 @@ private slots:
     void updateToolbarActionText(bool visible);
     void updateBookmarksToolbarActionText(bool visible);
     void showNetworkMonitor();
+    void slotCheckTor();
 
 private:
     void retranslate();
@@ -229,6 +230,7 @@ private:
     QAction *m_toolsClearPrivateDataAction;
     QAction *m_toolsShowNetworkMonitor;
     QAction *m_toolsEnableInspector;
+    QAction *m_toolsCheckTor;
 
     QMenu *m_helpMenu;
     QAction *m_helpChangeLanguageAction;

@@ -679,6 +679,11 @@ void BrowserMainWindow::setupMenu()
     m_toolsEnableInspector->setChecked(settings.value(QLatin1String("enableInspector"), false).toBool());
     m_toolsMenu->addAction(m_toolsEnableInspector);
 
+    m_toolsCheckTor = new QAction(m_toolsMenu);
+    connect(m_toolsCheckTor, SIGNAL(triggered()),
+            this, SLOT(slotCheckTor()));
+    m_toolsMenu->addAction(m_toolsCheckTor);
+
     // Help
     m_helpMenu = new QMenu(menuBar());
     menuBar()->addMenu(m_helpMenu);
@@ -764,6 +769,8 @@ void BrowserMainWindow::retranslate()
     m_toolsClearPrivateDataAction->setShortcut(QKeySequence(tr("Ctrl+Shift+Delete", "Clear Private Data")));
     m_toolsShowNetworkMonitor->setText(tr("Show &Network Monitor"));
     m_toolsEnableInspector->setText(tr("Enable Web &Inspector"));
+    m_toolsCheckTor->setText(tr("Check &Tor"));
+    m_toolsCheckTor->setShortcut(QKeySequence(tr("F12", "Check Tor")));
 
     m_helpMenu->setTitle(tr("&Help"));
     m_helpChangeLanguageAction->setText(tr("Switch application language "));
@@ -1368,4 +1375,9 @@ void BrowserMainWindow::enableBookmarksToolbar(bool enabled)
     m_historyMenu->setEnabled(enabled);
     m_bookmarksMenu->setEnabled(enabled);
     m_windowMenu->setEnabled(enabled);
+}
+
+void BrowserMainWindow::slotCheckTor()
+{
+    BrowserApplication::instance()->checkTorExplicitly();
 }
