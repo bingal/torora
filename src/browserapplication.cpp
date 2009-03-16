@@ -217,7 +217,6 @@ void BrowserApplication::torCheckComplete(const QHttpResponseHeader &)
   int success = TOR_FAIL;
   QByteArray data;
   data = http->readAll();
-  qDebug() << data << endl;
   QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
                   "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
                   "></a></body></html>");
@@ -226,7 +225,6 @@ void BrowserApplication::torCheckComplete(const QHttpResponseHeader &)
     mainWindow()->toolbarSearch()->setEnabled(true);
     mainWindow()->enableBookmarksToolbar(true);
     success = TOR_SUCCESS;
-    qDebug() << "success" << endl;
   }
   reportTorCheckResults(success);
 
@@ -340,7 +338,7 @@ void BrowserApplication::postLaunch()
         directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
     QWebSettings::setIconDatabasePath(directory);
 
-    setWindowIcon(QIcon(QLatin1String(":128x128/arora.png")));
+    setWindowIcon(QIcon(QLatin1String(":128x128/torora.png")));
 
     loadSettings();
 
