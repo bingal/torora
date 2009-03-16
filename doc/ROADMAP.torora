@@ -44,7 +44,8 @@ A - Torora Security Requirements
         b. query the user's timezone;
         c. query the browser's properties;
    (iii) Plugins bypassing network settings.
-   (iv) Use cache to create arbitrary cached content.
+   (iv) Use cache to create arbitrary cached content. Remote attackers can track requests
+        for cached content and establish an anonymous users visiting history.
    (v) Cookies can track users across browsing sessions.
    (vi) Cookies can track users within the same browsing session.
 
@@ -60,9 +61,10 @@ A - Torora Security Requirements
 10. Transparency
     The user should receive some assurance that they are indeed using tor.
 
+
+
 B - Torora Functionality Requirements
 -------------------------------------
-
 
 Specification Roadmap
 ---------------------
@@ -85,7 +87,7 @@ Torora Version: 0.1X   Released:XX-XX-XX
         Reqs: (+7.1)
     - Force 'Keep Cookies: Until I Exit the Application' and disable control.
         Reqs: (=7.5)
-    - Disable caching completely.
+    - Disable use of cache.
         Reqs: (=7.4)
     - Use tor status-check as homepage.
        Reqs: (+10)

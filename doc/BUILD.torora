@@ -1,6 +1,6 @@
 Simple steps to build Torora:
 
-    $ git clone git://github.com/Torora/torora.git
+    $ git clone git://github.com/mwenge/torora.git
     $ cd torora
     $ qmake "CONFIG-=debug DEFINES+=TORORA" -r
     $ make
@@ -16,20 +16,20 @@ To build Torora against a patched webkit (see webkit-patch.spec):
     $ ./WebKitTools/Scripts/build-webkit --qt --release
 
   Build Torora:
-    $ git clone git://github.com/Torora/torora.git
+    $ git clone git://github.com/mwenge/torora.git
     $ cd /path/to/torora/source
     $ cd torora
     $ export QT_WEBKIT=webkit_trunk
     # WEBKITDIR should be set to the parent directory of WebKitBuild
     $ export WEBKITDIR=$HOME/webkit
-    $ qmake "CONFIG-=debug DEFINES+=TORORA DEFINES+=TORORA_WEBKIT_BUILD" -r
+    $ qmake "CONFIG-=debug" "DEFINES+=TORORA" "DEFINES+=TORORA_WEBKIT_BUILD" -r
     $ make clean
     $ make
 
 --
 To build arora with a 'Tor Browsing' toggle option:
 
-    $ git clone git://github.com/Torora/torora.git
+    $ git clone git://github.com/mwenge/torora.git
     $ cd torora
     $ qmake "CONFIG-=debug" -r
     $ make
