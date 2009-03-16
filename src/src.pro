@@ -28,23 +28,23 @@ unix {
     desktop.files += torora.desktop
 
     iconxpm.path = $$DATADIR/pixmaps
-    iconxpm.files += data/arora.xpm
+    iconxpm.files += data/torora.xpm
 
     iconsvg.path = $$DATADIR/icons/hicolor/scalable/apps
-    iconsvg.files += data/arora.svg
+    iconsvg.files += data/torora.svg
 
     icon16.path = $$DATADIR/icons/hicolor/16x16/apps
-    icon16.files += data/16x16/arora.png
+    icon16.files += data/16x16/torora.png
 
     icon32.path = $$DATADIR/icons/hicolor/32x32/apps
-    icon32.files += data/32x32/arora.png
+    icon32.files += data/32x32/torora.png
 
     icon128.path = $$DATADIR/icons/hicolor/128x128/apps
-    icon128.files += data/128x128/arora.png
+    icon128.files += data/128x128/torora.png
 
     man.path = $$DATADIR/man/man1
-    man.files += data/arora.1
+    man.files += data/torora.1
 
     man-compress.path = $$DATADIR/man/man1
-    man-compress.extra = "" "gzip -9 -f \$(INSTALL_ROOT)/$$DATADIR/man/man1/arora.1" ""
+    man-compress.extra = "" "gzip -9 -f \$(INSTALL_ROOT)/$$DATADIR/man/man1/torora.1" ""
 }
