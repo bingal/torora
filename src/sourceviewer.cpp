@@ -81,8 +81,14 @@ SourceViewer::SourceViewer(const QString &source,
     setLayout(layout);
 
     m_request = new QNetworkRequest(url);
-    m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
-            QNetworkRequest::PreferCache);
+
+    if (BrowserApplication::instance()->isTor())
+      m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+              QNetworkRequest::AlwaysNetwork);
+    else
+      m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+              QNetworkRequest::PreferCache);
+
     m_reply = BrowserApplication::networkAccessManager()->get(*m_request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(loadingFinished()));
     m_reply->setParent(this);
