@@ -1202,7 +1202,7 @@ void BrowserMainWindow::slotHome()
 {
     QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
-    QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.arora-browser.org")).toString();
+    QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.torora.net")).toString();
     tabWidget()->loadString(home);
 }
 

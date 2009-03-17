@@ -43,7 +43,7 @@ static HistoryEntry formatEntry(QByteArray url, QByteArray title, qlonglong prda
 int main(int argc, char **argv)
 {
     SingleApplication application(argc, argv);
-    QCoreApplication::setOrganizationDomain(QLatin1String("arora-browser.org"));
+    QCoreApplication::setOrganizationDomain(QLatin1String("torora-browser.org"));
     QCoreApplication::setApplicationName(QLatin1String("Torora"));
 
     if (application.startSingleServer()) {

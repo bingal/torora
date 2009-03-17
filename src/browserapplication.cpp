@@ -97,7 +97,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     , quiting(false)
     , m_checkTorSilently(false)
 {
-    QCoreApplication::setOrganizationDomain(QLatin1String("arora-browser.org"));
+    QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
     QCoreApplication::setApplicationName(QLatin1String("Torora"));
     QString version = QLatin1String("0.5");
 //     if (QLatin1String(GITCHANGENUMBER) != QLatin1String("0"))
@@ -214,28 +214,30 @@ void BrowserApplication::quitBrowser()
 
 void BrowserApplication::torCheckComplete(const QHttpResponseHeader &)
 {
-  int success = TOR_FAIL;
-  QByteArray data;
-  data = http->readAll();
-  QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
-                  "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
-                  "></a></body></html>");
-  if (pass == data) {
-    mainWindow()->tabWidget()->setLocationBarEnabled(true);
-    mainWindow()->toolbarSearch()->setEnabled(true);
-    mainWindow()->enableBookmarksToolbar(true);
-    success = TOR_SUCCESS;
-  }
-  reportTorCheckResults(success);
-
+    int success = TOR_FAIL;
+    QByteArray data;
+    data = http->readAll();
+    if (data.isNull())
+        return;
+    QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
+                    "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
+                    "></a></body></html>");
+    qDebug() << data << endl;
+    if (pass == data) {
+        mainWindow()->tabWidget()->setLocationBarEnabled(true);
+        mainWindow()->toolbarSearch()->setEnabled(true);
+        mainWindow()->enableBookmarksToolbar(true);
+        success = TOR_SUCCESS;
+    }
+    reportTorCheckResults(success);
 }
 
 void BrowserApplication::reportTorCheckResults(int page)
 {
 
-    QFile file(QLatin1String(":/notfound.html"));
+    QFile file(QLatin1String(":/torcheck.html"));
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open notfound.html";
+        qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open torcheck.html";
         return;
     }
     QString title, headline, bulletone, bullettwo, bulletthree, bulletfour, img;
@@ -500,7 +502,7 @@ bool BrowserApplication::restoreLastSession()
         settings.beginGroup(QLatin1String("MainWindow"));
         if (settings.value(QLatin1String("restoring"), false).toBool()) {
             QMessageBox::information(0, tr("Restore failed"),
-                tr("The saved session will not be restored because Arora crashed while trying to restore this session."));
+                tr("The saved session will not be restored because Torora crashed while trying to restore this session."));
             return false;
         }
         // saveSession will be called by an AutoSaver timer from the set tabs

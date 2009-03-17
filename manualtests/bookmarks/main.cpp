@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QCoreApplication::setApplicationName(QLatin1String("arora"));
+    QCoreApplication::setApplicationName(QLatin1String("torora"));
     QCoreApplication::setApplicationVersion(QLatin1String("0.1"));
 
     new ModelTest(BrowserApplication::bookmarksManager()->bookmarksModel());

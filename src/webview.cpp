@@ -211,7 +211,7 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
                         .arg(title)
                         .arg(reply->errorString())
                         .arg(tr("When connecting to: %1.").arg(reply->url().toString()))
-                        .arg(tr("Check the address for errors such as <b>ww</b>.arora-browser.org instead of <b>www</b>.arora-browser.org"))
+                        .arg(tr("Check the address for errors such as <b>ww</b>.torora.net instead of <b>www</b>.torora.net"))
                         .arg(tr("If the address is correct, try checking the network connection."))
                         .arg(tr("If your computer or network is protected by a firewall or proxy, make sure that the browser is permitted to access the network."));
 
