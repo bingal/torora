@@ -1,6 +1,6 @@
 Index: JavaScriptCore/runtime/DateConstructor.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateConstructor.cpp	(revision 41658)
+--- JavaScriptCore/runtime/DateConstructor.cpp	(revision 41760)
 +++ JavaScriptCore/runtime/DateConstructor.cpp	(working copy)
 @@ -78,7 +78,10 @@
          else {
@@ -28,7 +28,7 @@ Index: JavaScriptCore/runtime/DateConstructor.cpp
  
 Index: JavaScriptCore/runtime/DateMath.h
 ===================================================================
---- JavaScriptCore/runtime/DateMath.h	(revision 41658)
+--- JavaScriptCore/runtime/DateMath.h	(revision 41760)
 +++ JavaScriptCore/runtime/DateMath.h	(working copy)
 @@ -60,7 +60,7 @@
  void getLocalTime(const time_t*, tm*);
@@ -50,7 +50,7 @@ Index: JavaScriptCore/runtime/DateMath.h
          : second(0)
 Index: JavaScriptCore/runtime/DateMath.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateMath.cpp	(revision 41658)
+--- JavaScriptCore/runtime/DateMath.cpp	(revision 41760)
 +++ JavaScriptCore/runtime/DateMath.cpp	(working copy)
 @@ -596,7 +596,7 @@
      return true;
@@ -72,7 +72,7 @@ Index: JavaScriptCore/runtime/DateMath.cpp
      return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
 Index: JavaScriptCore/runtime/DatePrototype.cpp
 ===================================================================
---- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41658)
+--- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41760)
 +++ JavaScriptCore/runtime/DatePrototype.cpp	(working copy)
 @@ -359,7 +359,6 @@
      : DateInstance(structure)
@@ -356,7 +356,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
 Index: JavaScriptCore/runtime/JSGlobalObject.h
 ===================================================================
---- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41658)
+--- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41760)
 +++ JavaScriptCore/runtime/JSGlobalObject.h	(working copy)
 @@ -231,6 +231,8 @@
  
@@ -369,7 +369,7 @@ Index: JavaScriptCore/runtime/JSGlobalObject.h
          virtual bool isDynamicScope() const;
 Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
 ===================================================================
---- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41658)
+--- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41760)
 +++ WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(working copy)
 @@ -167,6 +167,7 @@
      WebPreferences *preferences = [[WebPreferences alloc] init];
@@ -381,7 +381,7 @@ Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
      [preferences setJavaScriptEnabled:YES];
 Index: WebKit/mac/WebView/WebPreferences.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.h	(revision 41658)
+--- WebKit/mac/WebView/WebPreferences.h	(revision 41760)
 +++ WebKit/mac/WebView/WebPreferences.h	(working copy)
 @@ -366,6 +366,19 @@
  - (BOOL)privateBrowsingEnabled;
@@ -405,7 +405,7 @@ Index: WebKit/mac/WebView/WebPreferences.h
      @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
 Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41658)
+--- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41760)
 +++ WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(working copy)
 @@ -60,6 +60,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
@@ -417,7 +417,7 @@ Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
  #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 Index: WebKit/mac/WebView/WebView.mm
 ===================================================================
---- WebKit/mac/WebView/WebView.mm	(revision 41658)
+--- WebKit/mac/WebView/WebView.mm	(revision 41760)
 +++ WebKit/mac/WebView/WebView.mm	(working copy)
 @@ -1324,6 +1324,7 @@
      settings->setDatabasesEnabled([preferences databasesEnabled]);
@@ -429,7 +429,7 @@ Index: WebKit/mac/WebView/WebView.mm
      settings->setStandardFontFamily([preferences standardFontFamily]);
 Index: WebKit/mac/WebView/WebPreferences.mm
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.mm	(revision 41658)
+--- WebKit/mac/WebView/WebPreferences.mm	(revision 41760)
 +++ WebKit/mac/WebView/WebPreferences.mm	(working copy)
 @@ -325,6 +325,7 @@
          @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
@@ -458,7 +458,7 @@ Index: WebKit/mac/WebView/WebPreferences.mm
      [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
 Index: WebKit/qt/Api/qwebsettings.cpp
 ===================================================================
---- WebKit/qt/Api/qwebsettings.cpp	(revision 41658)
+--- WebKit/qt/Api/qwebsettings.cpp	(revision 41760)
 +++ WebKit/qt/Api/qwebsettings.cpp	(working copy)
 @@ -150,6 +150,11 @@
                                        global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
@@ -484,7 +484,7 @@ Index: WebKit/qt/Api/qwebsettings.cpp
  /*!
 Index: WebKit/qt/Api/qwebsettings.h
 ===================================================================
---- WebKit/qt/Api/qwebsettings.h	(revision 41658)
+--- WebKit/qt/Api/qwebsettings.h	(revision 41760)
 +++ WebKit/qt/Api/qwebsettings.h	(working copy)
 @@ -64,7 +64,8 @@
          OfflineStorageDatabaseEnabled,
@@ -498,7 +498,7 @@ Index: WebKit/qt/Api/qwebsettings.h
          MissingImageGraphic,
 Index: WebKit/qt/Api/qwebpage.cpp
 ===================================================================
---- WebKit/qt/Api/qwebpage.cpp	(revision 41658)
+--- WebKit/qt/Api/qwebpage.cpp	(revision 41760)
 +++ WebKit/qt/Api/qwebpage.cpp	(working copy)
 @@ -2420,7 +2420,12 @@
  */
@@ -515,7 +515,7 @@ Index: WebKit/qt/Api/qwebpage.cpp
      // Plastform
 Index: WebKit/win/WebPreferences.h
 ===================================================================
---- WebKit/win/WebPreferences.h	(revision 41658)
+--- WebKit/win/WebPreferences.h	(revision 41760)
 +++ WebKit/win/WebPreferences.h	(working copy)
 @@ -193,6 +193,12 @@
      virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
@@ -532,7 +532,7 @@ Index: WebKit/win/WebPreferences.h
      
 Index: WebKit/win/WebView.cpp
 ===================================================================
---- WebKit/win/WebView.cpp	(revision 41658)
+--- WebKit/win/WebView.cpp	(revision 41760)
 +++ WebKit/win/WebView.cpp	(working copy)
 @@ -4055,6 +4055,11 @@
          return hr;
@@ -548,7 +548,7 @@ Index: WebKit/win/WebView.cpp
          return hr;
 Index: WebKit/win/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41658)
+--- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41760)
 +++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
 @@ -59,6 +59,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
@@ -560,7 +560,7 @@ Index: WebKit/win/WebPreferenceKeysPrivate.h
  #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebPreferences.cpp
 ===================================================================
---- WebKit/win/WebPreferences.cpp	(revision 41658)
+--- WebKit/win/WebPreferences.cpp	(revision 41760)
 +++ WebKit/win/WebPreferences.cpp	(working copy)
 @@ -215,6 +215,7 @@
      CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
@@ -593,7 +593,7 @@ Index: WebKit/win/WebPreferences.cpp
  {
 Index: WebKit/win/Interfaces/IWebPreferences.idl
 ===================================================================
---- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41658)
+--- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41760)
 +++ WebKit/win/Interfaces/IWebPreferences.idl	(working copy)
 @@ -141,6 +141,9 @@
      HRESULT setPrivateBrowsingEnabled([in] BOOL enabled);
@@ -607,7 +607,7 @@ Index: WebKit/win/Interfaces/IWebPreferences.idl
  
 Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
 ===================================================================
---- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41658)
+--- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41760)
 +++ WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(working copy)
 @@ -145,6 +145,8 @@
          return 0;
@@ -620,7 +620,7 @@ Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
      if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
 Index: WebCore/page/Navigator.h
 ===================================================================
---- WebCore/page/Navigator.h	(revision 41658)
+--- WebCore/page/Navigator.h	(revision 41760)
 +++ WebCore/page/Navigator.h	(working copy)
 @@ -48,6 +48,8 @@
          MimeTypeArray* mimeTypes() const;
@@ -633,7 +633,7 @@ Index: WebCore/page/Navigator.h
  
 Index: WebCore/page/History.cpp
 ===================================================================
---- WebCore/page/History.cpp	(revision 41658)
+--- WebCore/page/History.cpp	(revision 41760)
 +++ WebCore/page/History.cpp	(working copy)
 @@ -1,4 +1,4 @@
 -/*
@@ -663,7 +663,7 @@ Index: WebCore/page/History.cpp
  
 Index: WebCore/page/Settings.h
 ===================================================================
---- WebCore/page/Settings.h	(revision 41658)
+--- WebCore/page/Settings.h	(revision 41760)
 +++ WebCore/page/Settings.h	(working copy)
 @@ -112,7 +112,10 @@
  
@@ -687,7 +687,7 @@ Index: WebCore/page/Settings.h
          bool m_localStorageEnabled : 1;
 Index: WebCore/page/DOMWindow.cpp
 ===================================================================
---- WebCore/page/DOMWindow.cpp	(revision 41658)
+--- WebCore/page/DOMWindow.cpp	(revision 41760)
 +++ WebCore/page/DOMWindow.cpp	(working copy)
 @@ -561,6 +561,11 @@
      if (!page)
@@ -810,7 +810,7 @@ Index: WebCore/page/DOMWindow.cpp
      return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
 Index: WebCore/page/NavigatorBase.cpp
 ===================================================================
---- WebCore/page/NavigatorBase.cpp	(revision 41658)
+--- WebCore/page/NavigatorBase.cpp	(revision 41760)
 +++ WebCore/page/NavigatorBase.cpp	(working copy)
 @@ -29,6 +29,7 @@
  
@@ -864,7 +864,7 @@ Index: WebCore/page/NavigatorBase.cpp
  
 Index: WebCore/page/Screen.cpp
 ===================================================================
---- WebCore/page/Screen.cpp	(revision 41658)
+--- WebCore/page/Screen.cpp	(revision 41760)
 +++ WebCore/page/Screen.cpp	(working copy)
 @@ -34,6 +34,7 @@
  #include "Frame.h"
@@ -982,7 +982,7 @@ Index: WebCore/page/Screen.cpp
  
 Index: WebCore/page/Navigator.cpp
 ===================================================================
---- WebCore/page/Navigator.cpp	(revision 41658)
+--- WebCore/page/Navigator.cpp	(revision 41760)
 +++ WebCore/page/Navigator.cpp	(working copy)
 @@ -87,6 +87,11 @@
  {
@@ -1087,7 +1087,7 @@ Index: WebCore/page/Navigator.cpp
      if (!m_geolocation)
 Index: WebCore/page/Settings.cpp
 ===================================================================
---- WebCore/page/Settings.cpp	(revision 41658)
+--- WebCore/page/Settings.cpp	(revision 41760)
 +++ WebCore/page/Settings.cpp	(working copy)
 @@ -56,6 +56,7 @@
      , m_isJavaEnabled(false)
@@ -1109,9 +1109,53 @@ Index: WebCore/page/Settings.cpp
  void Settings::setJavaScriptCanOpenWindowsAutomatically(bool javaScriptCanOpenWindowsAutomatically)
  {
      m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
+Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
+===================================================================
+--- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 41760)
++++ WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(working copy)
+@@ -473,6 +473,7 @@
+         p->restore();
+     }
+ 
++#if QT_VERSION >= 0x040500
+     int patWidth = 0;
+     switch (style) {
+         case NoStroke:
+@@ -488,7 +489,6 @@
+ 
+     if (patWidth) {
+         p->save();
+-
+         // Do a rect fill of our endpoints.  This ensures we always have the
+         // appearance of being a border.  We then draw the actual dotted/dashed line.
+         if (isVerticalLine) {
+@@ -498,7 +498,6 @@
+             p->fillRect(FloatRect(p1.x() - width, p1.y() - width / 2, width, width), color);
+             p->fillRect(FloatRect(p2.x(), p2.y() - width / 2, width, width), color);
+         }
+-
+         // Example: 80 pixels with a width of 30 pixels.
+         // Remainder is 20.  The maximum pixels of line we could paint
+         // will be 50 pixels.
+@@ -537,12 +536,14 @@
+         pen.setDashOffset(patternOffset / width);
+         p->setPen(pen);
+     }
++#endif
+ 
+     p->drawLine(p1, p2);
+ 
++#if QT_VERSION >= 0x040500
+     if (patWidth)
+         p->restore();
+-
++#endif
+     p->setRenderHint(QPainter::Antialiasing, antiAlias);
+ }
+ 
 Index: WebCore/bindings/js/JSDOMWindowBase.h
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41658)
+--- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41760)
 +++ WebCore/bindings/js/JSDOMWindowBase.h	(working copy)
 @@ -81,6 +81,8 @@
  
@@ -1124,7 +1168,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.h
          bool allowsAccessFrom(JSC::ExecState*, String& message) const;
 Index: WebCore/bindings/js/JSDOMWindowBase.cpp
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41658)
+--- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41760)
 +++ WebCore/bindings/js/JSDOMWindowBase.cpp	(working copy)
 @@ -683,7 +683,7 @@
      Settings* settings = frame->settings();
@@ -1153,7 +1197,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
      setCurrentEvent(0);
 Index: WebCore/css/CSSStyleSelector.cpp
 ===================================================================
---- WebCore/css/CSSStyleSelector.cpp	(revision 41658)
+--- WebCore/css/CSSStyleSelector.cpp	(revision 41760)
 +++ WebCore/css/CSSStyleSelector.cpp	(working copy)
 @@ -875,6 +875,10 @@
      if (!page)
@@ -1192,9 +1236,9 @@ Index: WebCore/css/CSSStyleSelector.cpp
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
 Index: WebKitTools/Scripts/webkitdirs.pm
 ===================================================================
---- WebKitTools/Scripts/webkitdirs.pm	(revision 41658)
+--- WebKitTools/Scripts/webkitdirs.pm	(revision 41760)
 +++ WebKitTools/Scripts/webkitdirs.pm	(working copy)
-@@ -951,7 +951,7 @@
+@@ -1026,7 +1026,7 @@
          return "nmake";
      }
  
