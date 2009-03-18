@@ -1,0 +1,17 @@
+    <h2>Known Issues With This Version of Torora</h2>
+    <ul>
+      <li><a href='http://www.torproject.org/torbutton/design/#setpreservation'>Your User Agent will not be spoofed.</a></li>
+      <li><a href='http://github.com/mwenge/torora/tree/23d764a4967ce93716a65b7b4a0656616ba3bfe4/doc'>Research and Specifications are not complete.</a></li>
+    </ul>
+    <h2>Information on This Version of Torora</h2>
+      <li><a href='https://www.torproject.org/torbutton/design/#plugins'>Plugins are disabled completely.</a></li>
+      <li><a href='https://www.torproject.org/torbutton/design/#jshooks'>Javascript is disabled completely.</a></li>
+      <li><a href='http://browserspy.dk/plugins.php'>The browser's cache is not used.</a></li>
+      <li><a href='http://browserspy.dk/css-exploit.php'>Items are not added to your history.</a></li>
+      <li><a href='https://www.torproject.org/torbutton/design/#id3042129'>All cookies are removed on exit.</a></li>
+      <li>Torora will periodically check <a href='http://check.torproject.org'>http://check.torproject.org</a> to ensure you are using Tor.</li>
+    <h2>More Information</h2>
+    <ul>
+      <li><a href='http://github.com/mwenge/torora/tree/23d764a4967ce93716a65b7b4a0656616ba3bfe4/doc'>Further reading on the Torora design is available here.</a></li>
+      <li><a href='http://www.torproject.org/torbutton/design/'>Mike Perry's Torbutton Design document is a comprehensive guide to the anonymity risks while using Tor.</a></li>
+    </ul>

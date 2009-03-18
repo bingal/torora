@@ -212,22 +212,24 @@ void BrowserApplication::quitBrowser()
 #define TOR_SUCCESS 2
 #define TOR_FAIL 3
 
-void BrowserApplication::torCheckComplete(const QHttpResponseHeader &)
+void BrowserApplication::torCheckComplete(bool error)
 {
     int success = TOR_FAIL;
-    QByteArray data;
-    data = http->readAll();
-    if (data.isNull())
-        return;
-    QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
-                    "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
-                    "></a></body></html>");
-    qDebug() << data << endl;
-    if (pass == data) {
-        mainWindow()->tabWidget()->setLocationBarEnabled(true);
-        mainWindow()->toolbarSearch()->setEnabled(true);
-        mainWindow()->enableBookmarksToolbar(true);
-        success = TOR_SUCCESS;
+    if (!error) {
+      QByteArray data;
+      data = http->readAll();
+      if (data.isNull())
+          return;
+      QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
+                      "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
+                      "></a></body></html>");
+      qDebug() << data << endl;
+      if (pass == data) {
+          mainWindow()->tabWidget()->setLocationBarEnabled(true);
+          mainWindow()->toolbarSearch()->setEnabled(true);
+          mainWindow()->enableBookmarksToolbar(true);
+          success = TOR_SUCCESS;
+      }
     }
     reportTorCheckResults(success);
 }
@@ -240,6 +242,18 @@ void BrowserApplication::reportTorCheckResults(int page)
         qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open torcheck.html";
         return;
     }
+    QString tororaIssues;
+    QString issuesfile;
+#if defined(TORORA)
+#if defined(TORORA_WEBKIT_BUILD)
+    issuesfile = QLatin1String(":/TORORA_WEBKIT_BUILD_ISSUES");
+#else
+    issuesfile = QLatin1String(":/TORORA_ISSUES");
+#endif
+#else
+    issuesfile = QLatin1String(":/ARORA_ISSUES");
+#endif
+    QFile issues(issuesfile);
     QString title, headline, bulletone, bullettwo, bulletthree, bulletfour, img;
     switch (page) {
       case TOR_CHECK:
@@ -255,14 +269,16 @@ void BrowserApplication::reportTorCheckResults(int page)
       case TOR_SUCCESS:
         if (m_checkTorSilently)
             return;
+        if (!issues.open(QIODevice::ReadOnly)) {
+            qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open " << issuesfile;
+            return;
+        }
+        tororaIssues = QString(QLatin1String(issues.readAll()));
         title = tr("Torora Ready For Use..");
         headline = tr("Tor is Working Properly. You Can Browse Anonymously.");
-        bulletone = tr("You can confirm this yourself by visiting https://check.torproject.org.");
+        bulletone = tr("You can confirm this yourself by visiting <a href='http://check.torproject.org'>http://check.torproject.org</a>");
         bullettwo = tr("The bookmark toolbar contains some well known hidden services you can check out.");
-        bulletthree = tr("Some options in Edit->Preferences have been disabled to protect your anonymity.");
-#if defined(TORORA_WEBKIT_BUILD)
-        bulletfour = tr("<li>This installation of Torora allows you to use Javascript relatively safely, so Javascript is enabled by default.</li>");
-#endif
+        bulletthree = tr("You can check Tor at any time by pressing F12 or clicking <b>Tools->Check Tor.</b>");
         img = QLatin1String(":tor-on.png");
         break;
       default:
@@ -281,7 +297,8 @@ void BrowserApplication::reportTorCheckResults(int page)
                         .arg(bulletone)
                         .arg(bullettwo)
                         .arg(bulletthree)
-                        .arg(bulletfour);
+                        .arg(bulletfour)
+                        .arg(tororaIssues);
 
     QBuffer imageBuffer;
     imageBuffer.open(QBuffer::ReadWrite);
@@ -292,16 +309,32 @@ void BrowserApplication::reportTorCheckResults(int page)
                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
     }
 
+    if (page == TOR_SUCCESS) {
+        imageBuffer.open(QBuffer::ReadWrite);
+        icon = QIcon(QLatin1String(":info.png"));
+        pixmap = icon.pixmap(QSize(32, 32));
+        if (pixmap.save(&imageBuffer, "PNG")) {
+            html.replace(QLatin1String("INFO_IMAGE_HERE"),
+                        QString(QLatin1String(imageBuffer.buffer().toBase64())));
+        }
+
+        imageBuffer.open(QBuffer::ReadWrite);
+        icon = QIcon(QLatin1String(":important.png"));
+        pixmap = icon.pixmap(QSize(32, 32));
+        if (pixmap.save(&imageBuffer, "PNG")) {
+            html.replace(QLatin1String("WARNING_IMAGE_HERE"),
+                        QString(QLatin1String(imageBuffer.buffer().toBase64())));
+        }
+
+        imageBuffer.open(QBuffer::ReadWrite);
+        icon = QIcon(QLatin1String(":help.png"));
+        pixmap = icon.pixmap(QSize(32, 32));
+        if (pixmap.save(&imageBuffer, "PNG")) {
+            html.replace(QLatin1String("QUESTION_IMAGE_HERE"),
+                        QString(QLatin1String(imageBuffer.buffer().toBase64())));
+        }
+    }
     mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
-}
-
-void BrowserApplication::torCheckForErrors(int id, bool error)
-{
-  if (id !=2)
-    return;
-
-  if (error)
-    reportTorCheckResults(TOR_FAIL);
 }
 
 void BrowserApplication::checkTorInstallation()
@@ -318,10 +351,8 @@ void BrowserApplication::checkTorInstallation()
     http->setHost(QLatin1String("check.torproject.org"));
     http->get(QLatin1String("/?TorButton=True"));
 
-    connect(http, SIGNAL(requestFinished(int, bool)),
-            this, SLOT(torCheckForErrors(int, bool)));
-    connect(http, SIGNAL(readyRead(const QHttpResponseHeader&)),
-            this, SLOT(torCheckComplete(const QHttpResponseHeader&)));
+    connect(http, SIGNAL(done(bool)),
+            this, SLOT(torCheckComplete(bool)));
 }
 
 /*!
@@ -349,7 +380,7 @@ void BrowserApplication::postLaunch()
     // through Tor.
     setTor(true);
     checkTorInstallation();
-#define TOR_CHECK_PERIOD 60 * 1000 * 1
+#define TOR_CHECK_PERIOD 60 * 1000 * 10
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
     timer->start(TOR_CHECK_PERIOD);

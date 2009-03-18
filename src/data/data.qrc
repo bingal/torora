@@ -12,6 +12,9 @@
     <file>tor-on.png</file>
     <file>tor-checking.png</file>
     <file>tor-off.png</file>
+    <file>info.png</file>
+    <file>help.png</file>
+    <file>important.png</file>
     <file>../../AUTHORS</file>
     <file>../../LICENSE.GPL2</file>
 </qresource>

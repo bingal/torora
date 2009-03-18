@@ -140,8 +140,7 @@ private slots:
     void messageRecieved(const QString &message);
     void postLaunch();
     void openUrl(const QUrl &url);
-    void torCheckComplete(const QHttpResponseHeader &header);
-    void torCheckForErrors(int id, bool error);
+    void torCheckComplete(bool error);
     void checkTorSilently();
 signals:
 #if QT_VERSION >= 0x040500

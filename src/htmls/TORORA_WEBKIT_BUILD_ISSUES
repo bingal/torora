@@ -1,0 +1,31 @@
+    <h2></h2>
+    <img src="data:image/png;base64,WARNING_IMAGE_HERE" width="32" height="32"/>
+   <h2>Known Issues With This Version of Torora</h2>
+    <ul>
+      <li><a href='http://github.com/mwenge/torora/tree/23d764a4967ce93716a65b7b4a0656616ba3bfe4/doc'>Research and Specifications are not complete.</a></li>
+    </ul>
+    <h2></h2>
+    <img src="data:image/png;base64,INFO_IMAGE_HERE" width="32" height="32"/>
+    <h2>Information on This Version of Torora</h2>
+    <ul>
+      <li><a href='https://www.torproject.org/torbutton/design/#plugins'>Plugins are disabled completely.</a></li>
+      <li>Javascript is enabled by default. This should permit a familiar browsing experience.</li>
+      <li>Javascript can be used to reveal certain details about your browser and your location. Torora will frustrate such attempts by lying about specific details. These are:</li>
+      <ul>
+        <li><a href='http://browserspy.dk/date.php'>Your timezone details.</a></li>
+        <li><a href='http://browserspy.dk/window.php'>Your browser window size.</a></li>
+        <li><a href='http://browserspy.dk/screen.php'>Your screen size.</a></li>
+        <li><a href='http://browserspy.dk/os.php'>Your Operating System information.</a></li>
+        <li><a href='http://browserspy.dk/language.php'>Your language locale.</a></li>
+      </ul>
+      <li><a href='http://browserspy.dk/css-exploit.php'>Torora will also resist attempts to leak information about sites you've recently visited.</a></li>
+      <li><a href='https://www.torproject.org/torbutton/design/#id3042129'>All cookies are removed on exit.</a></li>
+      <li>Torora will periodically check <a href='http://check.torproject.org'>http://check.torproject.org</a> to ensure you are using Tor.</li>
+    </ul>
+    <h2></h2>
+    <img src="data:image/png;base64,QUESTION_IMAGE_HERE" width="32" height="32"/>
+    <h2>More Information</h2>
+    <ul>
+      <li><a href='http://github.com/mwenge/torora/tree/23d764a4967ce93716a65b7b4a0656616ba3bfe4/doc'>Further reading on the Torora design is available here.</a></li>
+      <li><a href='http://www.torproject.org/torbutton/design/'>Mike Perry's Torbutton Design document is a comprehensive guide to the anonymity risks while using Tor.</a></li>
+    </ul>
