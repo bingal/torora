@@ -127,6 +127,8 @@ void SettingsDialog::loadDefaults()
     blockPopupWindows->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
     if (BrowserApplication::isTor()) {
 #if defined(TORORA_WEBKIT_BUILD)
+      enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
+#else
       enableJavascript->setChecked(false);
 #endif
       enablePlugins->setChecked(false);
