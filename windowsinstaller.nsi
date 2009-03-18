@@ -100,4 +100,4 @@ Section Uninstall
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 SectionEnd
 
-BrandingText "torora-browser.org"
+BrandingText "torora.net"
