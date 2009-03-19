@@ -1,7 +1,7 @@
     <h2>Known Issues With This Version of Torora</h2>
     <ul>
-      <li><a href='http://www.torproject.org/torbutton/design/#setpreservation'>Your User Agent will not be spoofed.</a></li>
-      <li><a href='http://github.com/mwenge/torora/tree/23d764a4967ce93716a65b7b4a0656616ba3bfe4/doc'>Research and Specifications are not complete.</a></li>
+     <li><a href='http://www.torproject.org/torbutton/design/#setpreservation'>Your User Agent will not be spoofed.</a></li>
+     <li><b>Torora may leak information about you!</b> <a href='http://github.com/mwenge/torora/tree/23d764a4967ce93716a65b7b4a0656616ba3bfe4/doc'>Research and Specifications are not complete.</a></li>
     </ul>
     <h2>Information on This Version of Torora</h2>
       <li><a href='https://www.torproject.org/torbutton/design/#plugins'>Plugins are disabled completely.</a></li>
