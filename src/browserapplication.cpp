@@ -228,6 +228,7 @@ void BrowserApplication::torCheckComplete(bool error)
           mainWindow()->tabWidget()->setLocationBarEnabled(true);
           mainWindow()->toolbarSearch()->setEnabled(true);
           mainWindow()->enableBookmarksToolbar(true);
+          mainWindow()->tabWidget()->setEnabled(true);
           success = TOR_SUCCESS;
       }
     }
@@ -287,6 +288,7 @@ void BrowserApplication::reportTorCheckResults(int page)
         bulletone = tr("First check that Tor and Privoxy/Polipo are Running.");
         bullettwo = tr("In Edit->Preferences->Proxy, ensure you have Privoxy/Polipo configured correctly.");
         bulletthree = tr("Press F12 or Tools->Check Tor to test Tor again.");
+        bulletfour = tr("Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.");
         img = QLatin1String(":tor-off.png");
         break;
     }
@@ -344,6 +346,7 @@ void BrowserApplication::checkTorInstallation()
       mainWindow()->toolbarSearch()->setEnabled(false);
       mainWindow()->tabWidget()->setLocationBarEnabled(false);
       mainWindow()->enableBookmarksToolbar(false);
+      mainWindow()->tabWidget()->setEnabled(false);
     }
     http = new QHttp(this);
     QNetworkProxy proxy = networkAccessManager()->currentProxy();
