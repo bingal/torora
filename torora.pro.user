@@ -1,0 +1,545 @@
+<!DOCTYPE QtCreatorProject>
+<qtcreator>
+ <data>
+  <variable>RunConfiguration0-CommandLineArguments</variable>
+  <valuelist type="QVariantList" />
+ </data>
+ <data>
+  <variable>RunConfiguration0-ProFile</variable>
+  <value type="QString" >C:/Users/robert/Documents/Development/torora/src/src.pro</value>
+ </data>
+ <data>
+  <variable>RunConfiguration0-RunConfiguration.name</variable>
+  <value type="QString" >src</value>
+ </data>
+ <data>
+  <variable>RunConfiguration0-UserSetName</variable>
+  <value type="bool" >false</value>
+ </data>
+ <data>
+  <variable>RunConfiguration0-type</variable>
+  <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
+ </data>
+ <data>
+  <variable>RunConfiguration1-CommandLineArguments</variable>
+  <valuelist type="QVariantList" />
+ </data>
+ <data>
+  <variable>RunConfiguration1-ProFile</variable>
+  <value type="QString" >C:/Users/robert/Documents/Development/torora/tools/cacheinfo/cacheinfo.pro</value>
+ </data>
+ <data>
+  <variable>RunConfiguration1-RunConfiguration.name</variable>
+  <value type="QString" >cacheinfo</value>
+ </data>
+ <data>
+  <variable>RunConfiguration1-UserSetName</variable>
+  <value type="bool" >false</value>
+ </data>
+ <data>
+  <variable>RunConfiguration1-type</variable>
+  <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
+ </data>
+ <data>
+  <variable>RunConfiguration2-CommandLineArguments</variable>
+  <valuelist type="QVariantList" />
+ </data>
+ <data>
+  <variable>RunConfiguration2-ProFile</variable>
+  <value type="QString" >C:/Users/robert/Documents/Development/torora/tools/htmlToXBel/htmlToXBel.pro</value>
+ </data>
+ <data>
+  <variable>RunConfiguration2-RunConfiguration.name</variable>
+  <value type="QString" >htmlToXBel</value>
+ </data>
+ <data>
+  <variable>RunConfiguration2-UserSetName</variable>
+  <value type="bool" >false</value>
+ </data>
+ <data>
+  <variable>RunConfiguration2-type</variable>
+  <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
+ </data>
+ <data>
+  <variable>RunConfiguration3-CommandLineArguments</variable>
+  <valuelist type="QVariantList" />
+ </data>
+ <data>
+  <variable>RunConfiguration3-ProFile</variable>
+  <value type="QString" >C:/Users/robert/Documents/Development/torora/tools/placesimport/placesimport.pro</value>
+ </data>
+ <data>
+  <variable>RunConfiguration3-RunConfiguration.name</variable>
+  <value type="QString" >placesimport</value>
+ </data>
+ <data>
+  <variable>RunConfiguration3-UserSetName</variable>
+  <value type="bool" >false</value>
+ </data>
+ <data>
+  <variable>RunConfiguration3-type</variable>
+  <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
+ </data>
+ <data>
+  <variable>activeRunConfiguration</variable>
+  <value type="int" >0</value>
+ </data>
+ <data>
+  <variable>activebuildconfiguration</variable>
+  <value type="QString" >Release</value>
+ </data>
+ <data>
+  <variable>buildConfiguration-Debug</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <value key="QtVersionId" type="int" >4</value>
+   <value key="addQDumper" type="" ></value>
+   <value key="buildDirectory" type="QString" >C:\Users\robert\Documents\Development\torora</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildConfiguration-Release</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <value key="QtVersionId" type="int" >4</value>
+   <value key="addQDumper" type="" ></value>
+   <value key="buildDirectory" type="QString" >C:\Users\robert\Documents\Development\torora</value>
+   <valuelist key="userEnvironmentChanges" type="QVariantList" >
+    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >QT_WEBKIT=webkit_trunk</value>
+    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
+   </valuelist>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-buildstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-buildstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString" >COMPUTERNAME=MWENGE</value>
+    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString" >DFSTRACINGON=FALSE</value>
+    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOME=C:\Users\robert</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Users\robert</value>
+    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
+    <value type="QString" >LOGONSERVER=\\MWENGE</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
+    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
+    <value type="QString" >PUBLIC=C:\Users\Public</value>
+    <value type="QString" >QTDIR=c:/Qt/2009.01/qt</value>
+    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\Windows</value>
+    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
+    <value type="QString" >USERDOMAIN=mwenge</value>
+    <value type="QString" >USERNAME=robert</value>
+    <value type="QString" >USERPROFILE=C:\Users\robert</value>
+    <value type="QString" >VS90COMNTOOLS=C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\</value>
+    <value type="QString" >WINDIR=C:\Windows</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >C:/Users/robert/Documents/Development/torora/torora.pro</value>
+    <value type="QString" >-spec</value>
+    <value type="QString" >win32-g++</value>
+    <value type="QString" >-r</value>
+    <value type="QString" >CONFIG+=debug_and_release</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/qt/bin/qmake.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >false</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <value key="buildConfiguration" type="int" >10</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-buildstep2</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString" >COMPUTERNAME=MWENGE</value>
+    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString" >DFSTRACINGON=FALSE</value>
+    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOME=C:\Users\robert</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Users\robert</value>
+    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
+    <value type="QString" >LOGONSERVER=\\MWENGE</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
+    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
+    <value type="QString" >PUBLIC=C:\Users\Public</value>
+    <value type="QString" >QTDIR=c:/Qt/2009.01/qt</value>
+    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\Windows</value>
+    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
+    <value type="QString" >USERDOMAIN=mwenge</value>
+    <value type="QString" >USERNAME=robert</value>
+    <value type="QString" >USERPROFILE=C:\Users\robert</value>
+    <value type="QString" >VS90COMNTOOLS=C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\</value>
+    <value type="QString" >WINDIR=C:\Windows</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >debug</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <valuelist key="makeargs" type="QVariantList" >
+    <value type="QString" >debug</value>
+   </valuelist>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-cleanstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-cleanstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString" >COMPUTERNAME=MWENGE</value>
+    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString" >DFSTRACINGON=FALSE</value>
+    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOME=C:\Users\robert</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Users\robert</value>
+    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
+    <value type="QString" >LOGONSERVER=\\MWENGE</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
+    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
+    <value type="QString" >PUBLIC=C:\Users\Public</value>
+    <value type="QString" >QTDIR=c:/Qt/2009.01/qt</value>
+    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\Windows</value>
+    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
+    <value type="QString" >USERDOMAIN=mwenge</value>
+    <value type="QString" >USERNAME=robert</value>
+    <value type="QString" >USERPROFILE=C:\Users\robert</value>
+    <value type="QString" >VS90COMNTOOLS=C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\</value>
+    <value type="QString" >WINDIR=C:\Windows</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >clean</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-buildstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-buildstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString" >COMPUTERNAME=MWENGE</value>
+    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString" >DFSTRACINGON=FALSE</value>
+    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOME=C:\Users\robert</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Users\robert</value>
+    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
+    <value type="QString" >LOGONSERVER=\\MWENGE</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
+    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
+    <value type="QString" >PUBLIC=C:\Users\Public</value>
+    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >QT_WEBKIT=webkit_trunk</value>
+    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\Windows</value>
+    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
+    <value type="QString" >USERDOMAIN=mwenge</value>
+    <value type="QString" >USERNAME=robert</value>
+    <value type="QString" >USERPROFILE=C:\Users\robert</value>
+    <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
+    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
+    <value type="QString" >WINDIR=C:\Windows</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >C:/Users/robert/Documents/Development/torora/torora.pro</value>
+    <value type="QString" >-spec</value>
+    <value type="QString" >win32-g++</value>
+    <value type="QString" >-r</value>
+    <value type="QString" >CONFIG+=debug_and_release</value>
+    <value type="QString" >CONFIG+=release</value>
+    <value type="QString" >DEFINES+=TORORA_WEBKIT_BUILD</value>
+    <value type="QString" >DEFINES-=TORORA</value>
+    <value type="QString" >CONFIG-=DEBUG</value>
+    <value type="QString" >CONFIG+=RELEASE</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/qt/bin/qmake.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >false</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <value key="buildConfiguration" type="int" >8</value>
+   <valuelist key="qmakeArgs" type="QVariantList" >
+    <value type="QString" >DEFINES+=TORORA_WEBKIT_BUILD</value>
+    <value type="QString" >DEFINES+=TORORA</value>
+    <value type="QString" >CONFIG-=DEBUG</value>
+    <value type="QString" >CONFIG+=RELEASE</value>
+   </valuelist>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-buildstep2</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString" >COMPUTERNAME=MWENGE</value>
+    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString" >DFSTRACINGON=FALSE</value>
+    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOME=C:\Users\robert</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Users\robert</value>
+    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
+    <value type="QString" >LOGONSERVER=\\MWENGE</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
+    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
+    <value type="QString" >PUBLIC=C:\Users\Public</value>
+    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >QT_WEBKIT=webkit_trunk</value>
+    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\Windows</value>
+    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
+    <value type="QString" >USERDOMAIN=mwenge</value>
+    <value type="QString" >USERNAME=robert</value>
+    <value type="QString" >USERPROFILE=C:\Users\robert</value>
+    <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
+    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
+    <value type="QString" >WINDIR=C:\Windows</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >release</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <valuelist key="makeargs" type="QVariantList" >
+    <value type="QString" >release</value>
+   </valuelist>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-cleanstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-cleanstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString" >COMPUTERNAME=MWENGE</value>
+    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString" >DFSTRACINGON=FALSE</value>
+    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOME=C:\Users\robert</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Users\robert</value>
+    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
+    <value type="QString" >LOGONSERVER=\\MWENGE</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
+    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
+    <value type="QString" >PUBLIC=C:\Users\Public</value>
+    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >QT_WEBKIT=webkit_trunk</value>
+    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\Windows</value>
+    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
+    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
+    <value type="QString" >USERDOMAIN=mwenge</value>
+    <value type="QString" >USERNAME=robert</value>
+    <value type="QString" >USERPROFILE=C:\Users\robert</value>
+    <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
+    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
+    <value type="QString" >WINDIR=C:\Windows</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >clean</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfigurations</variable>
+  <valuelist type="QVariantList" >
+   <value type="QString" >Debug</value>
+   <value type="QString" >Release</value>
+  </valuelist>
+ </data>
+ <data>
+  <variable>buildstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+   <value key="mkspec" type="QString" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildstep2</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildsteps</variable>
+  <valuelist type="QVariantList" >
+   <value type="QString" >trolltech.qt4projectmanager.gdbmaros</value>
+   <value type="QString" >trolltech.qt4projectmanager.qmake</value>
+   <value type="QString" >trolltech.qt4projectmanager.make</value>
+  </valuelist>
+ </data>
+ <data>
+  <variable>cleanstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+   <value key="clean" type="bool" >true</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>cleanstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+   <value key="clean" type="bool" >true</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>cleansteps</variable>
+  <valuelist type="QVariantList" >
+   <value type="QString" >trolltech.qt4projectmanager.gdbmaros</value>
+   <value type="QString" >trolltech.qt4projectmanager.make</value>
+  </valuelist>
+ </data>
+ <data>
+  <variable>defaultFileEncoding</variable>
+  <value type="QByteArray" >System</value>
+ </data>
+ <data>
+  <variable>project</variable>
+  <valuemap type="QVariantMap" />
+ </data>
+</qtcreator>
