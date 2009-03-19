@@ -10,8 +10,8 @@ To build Torora against a patched webkit (see webkit-patch.spec):
 
   Patch webkit:
     $ cd ~
-    $ svn checkout http://svn.webkit.org/repository/webkit/trunk WebKit
-    $ cd WebKit
+    $ svn checkout http://svn.webkit.org/repository/webkit/trunk $HOME/WebKit
+    $ cd $HOME/WebKit
     $ patch -p0 < /location/of/torora/doc/webkit-svn.patch
     $ ./WebKitTools/Scripts/build-webkit --qt --release
 
@@ -21,13 +21,13 @@ To build Torora against a patched webkit (see webkit-patch.spec):
     $ cd torora
     $ export QT_WEBKIT=webkit_trunk
     # WEBKITDIR should be set to the parent directory of WebKitBuild
-    $ export WEBKITDIR=$HOME/webkit
+    $ export WEBKITDIR=$HOME/WebKit
     $ qmake "CONFIG-=debug" "DEFINES+=TORORA" "DEFINES+=TORORA_WEBKIT_BUILD" -r
     $ make clean
     $ make
 
 --
-To build arora with a 'Tor Browsing' toggle option:
+To build an arora-like with a 'Tor Browsing' toggle option:
 
     $ git clone git://github.com/mwenge/torora.git
     $ cd torora

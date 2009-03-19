@@ -30,3 +30,7 @@ Torora Version: 0.1X   Released:XX-XX-XX
     - Offers privoxy/polipo defaults in a drop-down selection
        Reqs: Usability
 
+    ISSUES:
+    - Leaks useragent without TORORA_WEBKIT_BUILD
+    - DOM elements support should be spoofed?
+

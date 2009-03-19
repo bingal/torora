@@ -73,6 +73,14 @@ o = Done
 (=1) = Fully satisfies requirement 1
 (+2) = Partially satisfies requirement 2
 
+
+Arora Enhancements Required
+---------------------------
+
+setUserAgent
+better caching control
+
+
 Torora Version: 0.1X   Released:XX-XX-XX
 ----------------------------------------
   MUST:
@@ -91,6 +99,8 @@ Torora Version: 0.1X   Released:XX-XX-XX
         Reqs: (=7.4)
     - Use tor status-check as homepage.
        Reqs: (+10)
+    - Autokill google cookies?
+    - Spoof user agent header.
 
   SHOULD:
     - Offer privoxy/polipo defaults in a drop-down selection
@@ -100,7 +110,7 @@ Torora Version: 0.1X   Released:XX-XX-XX
        Reqs: (+10)
     - Create option 'Remove History Items: Immediately' and disable control.
         Reqs: (=7.1)
-
+    - 
   Requirements not fully met:
     * 8 and 9 are out of scope.
 
@@ -109,6 +119,7 @@ Torora Version: 0.2X   Released:XX-XX-XX
 ----------------------------------------
   MUST:
     - Integrate
+    - Put a time-limit (e.g 5 mins) on cache storage rather than completely disabling it.
 
 
 Undecided Specifications:
