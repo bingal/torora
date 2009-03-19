@@ -172,7 +172,6 @@ void NetworkAccessManager::loadSettings()
 
     if (BrowserApplication::instance()->isTor()) {
         proxy = QNetworkProxy::HttpProxy;
-        proxy.setType(QNetworkProxy::HttpCachingProxy);
         proxy.setHostName(QLatin1String("127.0.0.1"));
         proxy.setPort(settings.value(QLatin1String("port"), 8118).toInt());
         proxy.setUser(settings.value(QLatin1String("userName")).toString());
