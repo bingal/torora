@@ -94,7 +94,7 @@ LanguageManager *BrowserApplication::s_languageManager = 0;
 
 BrowserApplication::BrowserApplication(int &argc, char **argv)
     : SingleApplication(argc, argv)
-    , quiting(false)
+    , quitting(false)
     , m_checkTorSilently(false)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
@@ -114,8 +114,8 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     // not sure what else to do...
     if (!startSingleServer())
         return;
-    connect(this, SIGNAL(messageRecieved(const QString &)),
-            this, SLOT(messageRecieved(const QString &)));
+    connect(this, SIGNAL(messageReceived(const QString &)),
+            this, SLOT(messageReceived(const QString &)));
 #endif
 
 #if defined(Q_WS_MAC)
@@ -148,7 +148,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 
 BrowserApplication::~BrowserApplication()
 {
-    quiting = true;
+    quitting = true;
     delete s_downloadManager;
     qDeleteAll(m_mainWindows);
     delete s_networkAccessManager;
@@ -170,7 +170,7 @@ BrowserApplication *BrowserApplication::instance()
     return (static_cast<BrowserApplication *>(QCoreApplication::instance()));
 }
 
-void BrowserApplication::messageRecieved(const QString &message)
+void BrowserApplication::messageReceived(const QString &message)
 {
     if (!message.isEmpty()) {
         QSettings settings;
@@ -492,7 +492,7 @@ static const qint32 BrowserApplicationMagic = 0xec;
 
 void BrowserApplication::saveSession()
 {
-    if (quiting)
+    if (quitting)
         return;
     QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));

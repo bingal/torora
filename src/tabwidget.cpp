@@ -62,6 +62,7 @@
 
 #include "tabwidget.h"
 
+#include "bookmarks.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "history.h"
@@ -71,6 +72,7 @@
 #include "webactionmapper.h"
 #include "webview.h"
 #include "webviewsearch.h"
+#include "xbel.h"
 
 #include <qcompleter.h>
 #include <qdir.h>
@@ -93,6 +95,7 @@ TabWidget::TabWidget(QWidget *parent)
     , m_recentlyClosedTabsAction(0)
     , m_newTabAction(0)
     , m_closeTabAction(0)
+    , m_bookmarkTabsAction(0)
     , m_nextTabAction(0)
     , m_previousTabAction(0)
     , m_recentlyClosedTabsMenu(0)
@@ -131,6 +134,9 @@ TabWidget::TabWidget(QWidget *parent)
     m_closeTabAction = new QAction(this);
     m_closeTabAction->setShortcuts(QKeySequence::Close);
     connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
+
+    m_bookmarkTabsAction = new QAction(this);
+    connect(m_bookmarkTabsAction, SIGNAL(triggered()), this, SLOT(bookmarkTabs()));
 
     m_newTabAction->setIcon(QIcon(QLatin1String(":addtab.png")));
     m_newTabAction->setIconVisibleInMenu(false);
@@ -317,6 +323,11 @@ QAction *TabWidget::closeTabAction() const
     return m_closeTabAction;
 }
 
+QAction *TabWidget::bookmarkTabsAction() const
+{
+    return m_bookmarkTabsAction;
+}
+
 QAction *TabWidget::recentlyClosedTabsAction() const
 {
     return m_recentlyClosedTabsAction;
@@ -475,8 +486,10 @@ WebView *TabWidget::makeNewTab(bool makeCurrent)
     locationBar->setWebView(webView);
     connect(webView, SIGNAL(loadStarted()),
             this, SLOT(webViewLoadStarted()));
+    connect(webView, SIGNAL(loadProgress(int)),
+                this, SLOT(webViewLoadProgress(int)));
     connect(webView, SIGNAL(loadFinished(bool)),
-            this, SLOT(webViewLoadFinished()));
+            this, SLOT(webViewLoadFinished(bool)));
     connect(webView, SIGNAL(iconChanged()),
             this, SLOT(webViewIconChanged()));
     connect(webView, SIGNAL(titleChanged(const QString &)),
@@ -542,6 +555,39 @@ void TabWidget::reloadAllTabs()
     for (int i = 0; i < count(); ++i) {
         if (WebView *tab = webView(i)) {
             tab->reload();
+        }
+    }
+}
+
+void TabWidget::bookmarkTabs()
+{
+    AddBookmarkDialog dialog(parentWidget());
+    dialog.address->hide();
+    dialog.setTitle(tr("Saved Tabs"));
+    dialog.resize(dialog.sizeHint());
+    dialog.exec();
+    if (dialog.result() == QDialog::Accepted) {
+        QModelIndex index = dialog.currentIndex();
+        if (!index.isValid())
+            return;
+        BookmarksManager *m_bookmarksManager = BrowserApplication::bookmarksManager();
+        BookmarkNode *parentFolder = m_bookmarksManager->bookmarksModel()->node(index);
+        if (parentFolder->type() != BookmarkNode::Folder)
+            return;
+
+        BookmarkNode *folder = new BookmarkNode(BookmarkNode::Folder);
+        folder->title = dialog.name->text();
+        m_bookmarksManager->addBookmark(parentFolder, folder, -1);
+
+        for (int i = 0; i < count(); ++i) {
+            if (WebView *tab = webView(i)) {
+                QString title = tab->title();
+                QString url = QString::fromUtf8(tab->url().toEncoded());
+                BookmarkNode *bookmark = new BookmarkNode(BookmarkNode::Bookmark);
+                bookmark->url = url;
+                bookmark->title = title;
+                m_bookmarksManager->addBookmark(folder, bookmark);
+            }
         }
     }
 }
@@ -676,13 +722,33 @@ void TabWidget::webViewLoadStarted()
         setTabIcon(index, icon);
 #endif
     }
+
+    if (index != currentIndex())
+        return;
+
+    emit showStatusBarMessage(tr("Loading..."));
 }
 
-void TabWidget::webViewLoadFinished()
+void TabWidget::webViewLoadProgress(int progress)
 {
-#if QT_VERSION >= 0x040500
     WebView *webView = qobject_cast<WebView*>(sender());
     int index = webViewIndex(webView);
+
+    if (index != currentIndex())
+        return;
+
+    double totalBytes = (double) webView->webPage()->totalBytes() / 1024;
+
+    QString message = tr("Loading %1% (%2 %3)...").arg(progress).arg(totalBytes, 0, 'f', 2).arg(QLatin1String("kB"));
+    emit showStatusBarMessage(message);
+}
+
+void TabWidget::webViewLoadFinished(bool ok)
+{
+    WebView *webView = qobject_cast<WebView*>(sender());
+    int index = webViewIndex(webView);
+
+#if QT_VERSION >= 0x040500
     if (-1 != index) {
         QLabel *label = animationLabel(index, true);
         if (label->movie())
@@ -695,6 +761,14 @@ void TabWidget::webViewLoadFinished()
     }
 #endif
     webViewIconChanged();
+
+    if (index != currentIndex())
+        return;
+
+    if (ok)
+        emit showStatusBarMessage(tr("Finished loading"));
+    else
+        emit showStatusBarMessage(tr("Failed to load"));
 }
 
 void TabWidget::webViewIconChanged()
@@ -835,6 +909,7 @@ void TabWidget::retranslate() {
     m_recentlyClosedTabsAction->setText(tr("Recently Closed Tabs"));
     m_newTabAction->setText(tr("New &Tab"));
     m_closeTabAction->setText(tr("&Close Tab"));
+    m_bookmarkTabsAction->setText(tr("Bookmark All Tabs"));
 }
 
 void TabWidget::changeEvent(QEvent *event)

@@ -125,6 +125,7 @@ public:
 
     QAction *newTabAction() const;
     QAction *closeTabAction() const;
+    QAction *bookmarkTabsAction() const;
     QAction *recentlyClosedTabsAction() const;
     QAction *nextTabAction() const;
     QAction *previousTabAction() const;
@@ -168,6 +169,7 @@ public slots:
     void reloadAllTabs();
     void nextTab();
     void previousTab();
+    void bookmarkTabs();
 
 private slots:
     void currentChanged(int index);
@@ -175,7 +177,8 @@ private slots:
     void aboutToShowRecentTabsMenu();
     void aboutToShowRecentTriggeredAction(QAction *action);
     void webViewLoadStarted();
-    void webViewLoadFinished();
+    void webViewLoadProgress(int progress);
+    void webViewLoadFinished(bool ok);
     void webViewIconChanged();
     void webViewTitleChanged(const QString &title);
     void webViewUrlChanged(const QUrl &url);
@@ -196,6 +199,7 @@ private:
     QAction *m_recentlyClosedTabsAction;
     QAction *m_newTabAction;
     QAction *m_closeTabAction;
+    QAction *m_bookmarkTabsAction;
     QAction *m_nextTabAction;
     QAction *m_previousTabAction;
 
