@@ -173,6 +173,11 @@ void NetworkAccessManager::loadSettings()
 
     if (BrowserApplication::instance()->isTor()) {
         proxy = QNetworkProxy::HttpProxy;
+#if QT_VERSION < 0x040500
+        // Allows http browsing but not https browsing. Qt 4.5 is the only one
+        // that works for both.
+        proxy.setType(QNetworkProxy::HttpCachingProxy);
+#endif
         proxy.setHostName(QLatin1String("127.0.0.1"));
         proxy.setPort(settings.value(QLatin1String("port"), 8118).toInt());
         proxy.setUser(settings.value(QLatin1String("userName")).toString());

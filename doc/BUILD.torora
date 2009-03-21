@@ -1,3 +1,9 @@
+NOTE:
+Qt 4.5 or later is a strict requirement for building Torora. This is because
+only Qt 4.5 and greater support HTTP/HTTPS proxying properly.  If you build
+Torora with versions of Qt prior to 4.5 you will find that HTTP browsing over
+Tor works fine, but HTTPS doesn't work at all.
+
 Simple steps to build Torora:
 
     $ git clone git://github.com/mwenge/torora.git
@@ -33,3 +39,155 @@ To build an arora-like with a 'Tor Browsing' toggle option:
     $ cd torora
     $ qmake "CONFIG-=debug" -r
     $ make
+
+--
+
+Building a Torora Installer on Windows
+--------------------------
+
+Install the following prerequisites first:
+
+1. Visual C++ Express 2005
+    http://go.microsoft.com/fwlink/?LinkId=51410
+2. Microsoft Visual C++ Express 2005 Service Pack 1
+    http://download.microsoft.com/download/7/7/3/7737290f-98e8-45bf-9075-85cc6ae34bf1/VS80sp1-KB926748-X86-INTL.exe
+3. If you are building from Vista, install Service Pack 1 Update for Windows Vista.
+    http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&displaylang=en
+4. Install the Windows Server 2003 R2 Platform SDK
+    http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&displaylang=en
+5. Follow steps 2 and 3 of “How to: Use Visual C++ Express Edition with the Microsoft Platform SDK.
+    http://msdn.microsoft.com/en-us/library/ms235626(VS.80).aspx
+6. ActivePerl
+    http://www.activestate.com/store/download.aspx?prdGUID=81fbce82-6bd5-49bc-a915-08d58c2648ca
+7. OpenSSl
+    http://www.openssl.org/source/
+8. The following external GNU tools are needed from the GnuWin32 Project:
+    Bison
+      http://gnuwin32.sourceforge.net/downlinks/bison.php
+    Gperf
+      http://gnuwin32.sourceforge.net/downlinks/gperf.php
+    Flex
+      http://gnuwin32.sourceforge.net/downlinks/flex.php
+    LibIconv (needed for bison)
+      http://gnuwin32.sourceforge.net/downlinks/libiconv.php
+9. QT SDK (and QT Creator)
+    http://www.qtsoftware.com/downloads/sdk-windows-cpp
+10. Git for Windows
+    XXXXXXXXXXXX
+11. SVN for Windows
+12. Download NSIS
+      http://nsis.sourceforge.net/Download
+13. Download the KillProcDLL_plug-in
+    http://nsis.sourceforge.net/KillProcDLL_plug-in
+
+
+Step 1: Build OpenSSl
+
+1. Start Visual C++ Express 2005
+2. Click Tools->Visual C++ Command Prompt
+3. cd c:\location\of\extracted\openssl
+4. Build from the Visual C++ command prompt:
+    openssl_source_directory> perl Configure VC-WIN32
+    openssl_source_directory> ms\do_ms
+
+Note: You can also try ms\do_masm. Only ms\do_ms worked for me.
+
+    openssl_source_directory> nmake -f ms\ntdll.mak
+
+Step 2: Fetch Torora Sources, Fetch and Patch Webkit
+
+    $ git clone git://github.com/mwenge/torora.git
+    $ cd ~
+    $ svn checkout http://svn.webkit.org/repository/webkit/trunk $HOME/WebKit
+    $ cd $HOME/WebKit
+    $ patch -p0 < /location/of/torora/doc/webkit-svn.patch
+
+Step 3: Build Patched Webkit
+
+1. Make sure the GnuWin32 packages are in your PATH as well as Perl.
+   You also need to have %QTDIR% set and have %QTDIR%\bin in your PATH.
+
+2. Open for example a Qt Command Prompt from the Start Menu.
+    Click Start->Program Files->Qt->QT Command Prompt
+
+3. Change into the WebKit source tree
+
+    $cd c:\location\of\webkit
+
+4. Build the patched webkit:
+    $perl WebKitTools\Scripts\build-webkit
+
+
+Step 4: Build Torora in Qt Creator
+
+1. Open up Qt Creator
+2. Find the torora.pro file in your clone of the torora git repository and open it.
+3. The git repo contains a torora.pro.user which QT will use to set build environment
+   variables. In order for the Torora build to pick up the patched webkit you built
+   earlier and in order to build Torora with the proper configuration you will need
+   to ensure that at least the following are set correctly in the 'Projects' section
+   of QT Creator.
+
+4.  PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll
+
+    In the above 'C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib' is
+    the location of the patched Webkit build. It needs to come at the start of the PATH
+    variable so that the patched webkit is picked up rather than the one that ships with
+    your QT SDK.
+    Also note the presence of the location of the OpenSSL libraries you built in Step 1:
+    'C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll'
+
+5.  QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt
+
+    Again, the location of your patched webkit build needs to preced the location of the
+    QT SDK.
+
+6.  QT_WEBKIT=webkit_trunk
+    WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit
+
+    This is needed for building against the patched webkit build. 'C:\Users\robert\WebKit-SVN-source\webkit'
+    is the location of the webkit svn repo you downloaded.
+
+7. In the projects section, click on the QMake item in the list. Add the following arguments
+   for qmake to the existing list:
+
+    DEFINES+=TORORA_WEBKIT_BUILD DEFINES+=TORORA
+
+8. Click Build->Run Qmake
+
+9. Click Build->Build All
+
+10. Click Ctrl->r to run and test the torora executable.
+
+
+Step 5: Creating the NSIS Installer
+
+1. Download and install NSIS. 
+2. Download the KillProcDLL plugin and move the appropriate DLL into the NSIS plugins directory. 
+3. Edit the hard-coded directory paths in arora_source_directory\windowsinstaller.nsi to reflect
+   the appropriate location of the libraries installed above. Also edit the location and file for the
+   Visual C++ redistributable package to reflect the version of Visual C++ you used to compile.
+
+4. In the following ones just change 'C:\Qt\2009.01\' to point to the location of the QT SDK you
+   downloaded.
+
+  File "C:\Qt\2009.01\mingw\bin\mingwm10.dll"
+  File "C:\Qt\2009.01\qt\bin\QtCore4.dll"
+  File "C:\Qt\2009.01\qt\bin\QtGui4.dll"
+  File "C:\Qt\2009.01\qt\bin\QtNetwork4.dll"
+  File "C:\Qt\2009.01\bin\phonon4.dll"
+
+5. Change '"C:\Users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib\' to reflect the location
+   of the webkit svn repo you downloaded and built.
+
+  File "C:\Users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib\QtWebKit4.dll"
+
+6. Change 'C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll' to reflect the location
+   of the openssl source you downloaded and built.
+
+  File "C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll\ssleay32.dll"
+  File "C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll\libeay32.dll"
+
+4. Compile torora_source_directory\windowsinstaller.nsi with the NSIS compiler by right clicking on the file and choosing "Compile NSIS Script" or by using the NSIS compiler interface directly.
+5. Run the output installer file titled "Torora Snapshot (Date) Installer.exe".
+
