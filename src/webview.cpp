@@ -62,14 +62,15 @@
 **
 ****************************************************************************/
 
+#include "webview.h"
+
+#include "bookmarks.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "cookiejar.h"
 #include "downloadmanager.h"
 #include "networkaccessmanager.h"
 #include "tabwidget.h"
-#include "webview.h"
-#include "bookmarks.h"
 
 #include <qbuffer.h>
 #include <qclipboard.h>
@@ -164,6 +165,7 @@ QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
     settings.beginGroup(QLatin1String("tabs"));
     TabWidget::OpenUrlIn openIn = TabWidget::NewWindow;
     openIn = TabWidget::OpenUrlIn(settings.value(QLatin1String("openTargetBlankLinksIn"), openIn).toInt());
+    openIn = TabWidget::modifyWithUserBehavior(openIn);
 
     if (m_forceInNewTab) {
         openIn = TabWidget::NewTab;
@@ -283,7 +285,7 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
         menu->addAction(tr("Open in New &Tab"), this, SLOT(openLinkInNewTab()));
         menu->addSeparator();
         menu->addAction(tr("Save Lin&k"), this, SLOT(downloadLinkToDisk()));
-        menu->addAction(tr("&Bookmark This Link"), this, SLOT(bookmarkLink()))->setData(r.linkUrl().toString());
+        menu->addAction(tr("&Bookmark This Link"), this, SLOT(bookmarkLink()))->setData(r.linkUrl());
         menu->addSeparator();
         if (!page()->selectedText().isEmpty())
             menu->addAction(pageAction(QWebPage::Copy));
@@ -400,7 +402,8 @@ void WebView::copyImageLocationToClipboard()
 void WebView::bookmarkLink()
 {
     if (QAction *action = qobject_cast<QAction*>(sender())) {
-        AddBookmarkDialog dialog(action->data().toString(), QString());
+        AddBookmarkDialog dialog;
+        dialog.setUrl(QString::fromUtf8(action->data().toUrl().toEncoded()));
         dialog.exec();
     }
 }
@@ -418,7 +421,7 @@ int WebView::levelForZoom(int zoom)
     if (i >= 0)
         return i;
 
-    for (i = 0 ; i < m_zoomLevels.count(); i++)
+    for (i = 0 ; i < m_zoomLevels.count(); ++i)
         if (zoom <= m_zoomLevels[i])
             break;
 
@@ -469,7 +472,7 @@ void WebView::resetZoom()
 void WebView::loadFinished()
 {
     if (100 != m_progress) {
-        qWarning() << "Recieved finished signal while progress is still:" << progress()
+        qWarning() << "Received finished signal while progress is still:" << progress()
                    << "Url:" << url();
     }
     m_progress = 0;

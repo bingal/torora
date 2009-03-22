@@ -137,7 +137,7 @@ public slots:
 #endif
 
 private slots:
-    void messageRecieved(const QString &message);
+    void messageReceived(const QString &message);
     void postLaunch();
     void openUrl(const QUrl &url);
     void torCheckComplete(bool error);
@@ -161,9 +161,10 @@ private:
 
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QByteArray m_lastSession;
-    bool quiting;
+    bool quitting;
     bool m_checkTorSilently;
     QHttp *http;
+
     Qt::MouseButtons m_eventMouseButtons;
     Qt::KeyboardModifiers m_eventKeyboardModifiers;
 };
