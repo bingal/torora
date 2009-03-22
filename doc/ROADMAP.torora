@@ -4,26 +4,70 @@ Torora Requirements
 A - Torora Security Requirements
 ----------------------------
 
-1. Proxy Obedience
-  The browser MUST NOT bypass Tor proxy settings for any content.
-  
-2. Network Isolation
-  Pages MUST NOT perform any network activity in a Tor state different from
-  the state they were originally loaded in.
-  
-3. State Separation
-  Browser state (cookies, cache, history, 'DOM storage'), accumulated in one
-  Tor state MUST NOT be accessible via the network in another Tor state.
-  
-4. Tor Undiscoverability
-  With the advent of bridge support in Tor 0.2.0.x, there are now a class of
-  Tor users whose network fingerprint does not obviously betray the fact that
-  they are using Tor. This should extend to the browser as well - Torbutton
-  MUST NOT reveal its presence while Tor is disabled.
-  
-5. Disk Avoidance
-  The browser SHOULD NOT write any Tor-related state to disk, or store it in
-  memory beyond the duration of one Tor toggle.
+Torora's requirements are modelled on Torbutton's. Torbutton's requirements
+fall under the following headings:
+
+    1. Proxy Obedience
+    2. Network Isolation
+    3. State Separation
+    4. Tor Undiscoverability
+    5. Disk Avoidance
+    6. Location Neutrality
+    7. Anonymity Set Preservation
+    8. Update Safety
+    9. Interoperability
+
+Because Torora runs in a single state, with Tor enabled, some of these
+requirements can be eliminated from the Torora specification. Others can be
+eliminated due to limitations/ inherent functionality of Torora.
+
+    2. Network Isolation
+       Pages loaded in Torora are only permitted to operate in one state.
+    3. State Separation
+       Torora does not need to worry about settings or activity from a non-Tor
+       state. This is because Torora does not run in a non-Tor state.
+    4. Tor Undiscoverability
+       Torora does not need to worry about revealing its presence when Tor is
+       disabled. The user is not permitted to browse with Torora when Tor is
+       disabled.
+    8. Update Safety
+       Torora does not support updates/upgrades from within Torora.
+    9. Interoperability
+       Torora does not support add-ons or extensions so does not need to worry
+       about interoperating with them.
+
+These considerations leave us with the following requirements for Torora:
+
+    1. Single-State Assurance
+       Torora must enforce it's single-state requirement as rigidly as possible.
+       It must even take account of the possibility that it can be fooled into
+       thinking that it is passing through Tor when in fact it is not. Torora
+       must implement as many measures as possible to ensure that pages are
+       being requested through Tor. These could include:
+
+         - Querying the default ports of Tor and privoxy/polipo to ensure they
+           are running.
+         - Inspect the list of running processes to ensure Tor/Privoxy/Polipo
+           are running.
+         - Regular checks at https://check.torproject.org
+         - Inspection of http headers to ensure privoxy is being used.
+         - Can Torora query privoxy/polipo's configuration to ensure it is
+           using Tor?
+
+       Torora must also take appropriate recovery steps when it detects that
+       Tor is no longer being used.
+
+    2. Proxy Obedience
+      Torora must ensure QNetwork and QProxySettings do not by bypass proxies
+      for content.
+
+    3. Disk Avoidance
+      Torora needs to consider treatement of cookies, cache objects and configuration
+      information carefully. 'Private Browsing' (where cookies and web pages are not
+      stored to disk) is not necessarily a requirement for anonymous browsing. The
+      main consideration here is that any information stored to disk should not be
+      retrievable in a non-Tor state should one ever arise. Torora meets this
+      requirement by disabling browsing when a non-Tor state is detected.
   
 6. Location Neutrality
   The browser SHOULD NOT leak location-specific information, such as timezone
@@ -101,6 +145,7 @@ Torora Version: 0.1X   Released:XX-XX-XX
        Reqs: (+10)
     - Autokill google cookies?
     - Spoof user agent header.
+    - Block referrals/urls/javascript using localhost:9050 or localhost:8118.
 
   SHOULD:
     - Offer privoxy/polipo defaults in a drop-down selection
@@ -129,4 +174,65 @@ Undecided Specifications:
             foreach(const QByteArray &header, req.rawHeaderList()) {
             request.setRawHeader(header, "");
             }
-   
+
+Notes:
+------
+
+Original TorButton Requirements:
+
+1. Proxy Obedience
+  The browser MUST NOT bypass Tor proxy settings for any content.
+
+2. Network Isolation
+  Pages MUST NOT perform any network activity in a Tor state different from
+  the state they were originally loaded in.
+
+3. State Separation
+  Browser state (cookies, cache, history, 'DOM storage'), accumulated in one
+  Tor state MUST NOT be accessible via the network in another Tor state.
+
+4. Tor Undiscoverability
+  With the advent of bridge support in Tor 0.2.0.x, there are now a class of
+  Tor users whose network fingerprint does not obviously betray the fact that
+  they are using Tor. This should extend to the browser as well - Torbutton
+  MUST NOT reveal its presence while Tor is disabled.
+
+5. Disk Avoidance
+  The browser SHOULD NOT write any Tor-related state to disk, or store it in
+  memory beyond the duration of one Tor toggle.
+
+6. Location Neutrality
+  The browser SHOULD NOT leak location-specific information, such as timezone
+  or locale via Tor.
+
+7. Anonymity Set Preservation
+  The browser SHOULD NOT leak any other anonymity set reducing information
+  (such as user agent, extension presence, and resolution information)
+  automatically via Tor. The assessment of the attacks above should make
+  it clear that anonymity set reduction is a very powerful method of
+  tracking and eventually identifying anonymous users.
+
+  Specific attacks to defend against:
+   (i) Use of 'a:visited' CSS tag to determine the sites the user has
+       visited. (ref: http://ha.ckers.org/weird/CSS-history.cgi)
+   (ii) Inserting Javascript:
+        a. to execute history disclosure attacks (http://gemal.dk/browserspy/css.html);
+        b. query the user's timezone;
+        c. query the browser's properties;
+   (iii) Plugins bypassing network settings.
+   (iv) Use cache to create arbitrary cached content. Remote attackers can track requests
+        for cached content and establish an anonymous users visiting history.
+   (v) Cookies can track users across browsing sessions.
+   (vi) Cookies can track users within the same browsing session.
+
+8. Update Safety
+  The browser SHOULD NOT perform unauthenticated updates or upgrades via Tor.
+
+9. Interoperability
+   Torbutton SHOULD interoperate with third-party proxy switchers that enable
+   the user to switch between a number of different proxies. It MUST provide
+   full Tor protection in the event a third-party proxy switcher has enabled
+   the Tor proxy settings.
+
+10. Transparency
+    The user should receive some assurance that they are indeed using tor.
