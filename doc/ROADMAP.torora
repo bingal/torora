@@ -43,8 +43,12 @@ These considerations leave us with the following requirements for Torora:
        It must even take account of the possibility that it can be fooled into
        thinking that it is passing through Tor when in fact it is not. Torora
        must implement as many measures as possible to ensure that pages are
-       being requested through Tor. These could include:
+       being requested through Tor.
 
+       Torora must also take appropriate recovery steps when it detects that
+       Tor is no longer being used.
+
+      Implementation Requirements Arising:
          - Querying the default ports of Tor and privoxy/polipo to ensure they
            are running.
          - Inspect the list of running processes to ensure Tor/Privoxy/Polipo
@@ -53,58 +57,110 @@ These considerations leave us with the following requirements for Torora:
          - Inspection of http headers to ensure privoxy is being used.
          - Can Torora query privoxy/polipo's configuration to ensure it is
            using Tor?
+         - Offer to delete browsing history/cookies when an interruption to use
+           of Tor has been detected.
 
-       Torora must also take appropriate recovery steps when it detects that
-       Tor is no longer being used.
 
     2. Proxy Obedience
       Torora must ensure QNetwork and QProxySettings do not by bypass proxies
-      for content.
+      for content. The implementation of both QNetwork and QProxySettings is likely
+      to change over time and may change in ways that are not backward compatible or
+      harmful to a user's anonymity. For example, versions of Qt prior to 4.5 are
+      not suitable for Tor use and misconfiguration can even result in bypassing
+      proxy settings.
 
-    3. Disk Avoidance
-      Torora needs to consider treatement of cookies, cache objects and configuration
+      Implementation Requirements Arising:
+        - 'Lock' Torora to Qt builds that are known to be safe.
+
+
+    3. Disk Avoidance/User Tracking
+      Torora needs to consider treatment of cookies, cache objects and configuration
       information carefully. 'Private Browsing' (where cookies and web pages are not
       stored to disk) is not necessarily a requirement for anonymous browsing. The
-      main consideration here is that any information stored to disk should not be
-      retrievable in a non-Tor state should one ever arise. Torora meets this
-      requirement by disabling browsing when a non-Tor state is detected.
-  
-6. Location Neutrality
-  The browser SHOULD NOT leak location-specific information, such as timezone
-  or locale via Tor.
+      main considerations here are:
 
-7. Anonymity Set Preservation
-  The browser SHOULD NOT leak any other anonymity set reducing information
-  (such as user agent, extension presence, and resolution information)
-  automatically via Tor. The assessment of the attacks above should make
-  it clear that anonymity set reduction is a very powerful method of
-  tracking and eventually identifying anonymous users.
+      (i) any information stored to disk should not be retrievable in a non-Tor
+          state should one ever arise. Torora meets this requirement by disabling
+          browsing when a non-Tor state is detected.
+      (ii) to what extent do users need to retain cookies and cache information during
+           and across browsing sessions? Given that such information is 'Tor-only', how
+           useful can it be to eavesdroppers?
 
-  Specific attacks to defend against:
-   (i) Use of 'a:visited' CSS tag to determine the sites the user has
-       visited. (ref: http://ha.ckers.org/weird/CSS-history.cgi)
-   (ii) Inserting Javascript:
-        a. to execute history disclosure attacks (http://gemal.dk/browserspy/css.html);
-        b. query the user's timezone;
-        c. query the browser's properties;
-   (iii) Plugins bypassing network settings.
-   (iv) Use cache to create arbitrary cached content. Remote attackers can track requests
-        for cached content and establish an anonymous users visiting history.
-   (v) Cookies can track users across browsing sessions.
-   (vi) Cookies can track users within the same browsing session.
+      Cookies
+        Cookies will allow remote sites to track a single user across browsing sessions and
+        even circuits. These cookies are unlikely to be useful to a remote eavesdropper
+        unless they contain information from non-Tor browsing sessions. Cookies are only
+        useful to remove eavesdroppers if they can be correlated with a real IP address to
+        reveal the user's actual location/identity.
 
-8. Update Safety
-  The browser SHOULD NOT perform unauthenticated updates or upgrades via Tor.
+      Cache Objects
+        Ditto.
+      Configuration Information
+        Ditto.
 
-9. Interoperability
-   Torbutton SHOULD interoperate with third-party proxy switchers that enable
-   the user to switch between a number of different proxies. It MUST provide
-   full Tor protection in the event a third-party proxy switcher has enabled
-   the Tor proxy settings.
+      Implementation Requirements Arising:
+        - Never store cache/cookie/configuration information in locations shared by other
+          browsers.
 
-10. Transparency
-    The user should receive some assurance that they are indeed using tor.
 
+    4. Location Neutrality
+      The browser SHOULD NOT leak location-specific information, such as timezone
+      or locale. This information is available through Javascript's Date
+      and Language objects.
+
+        Timezone Information
+        This is accessible through the Javascript 'Date' object.
+
+        Locale Information
+        This is accessible through the language, locale and charset properties of the
+        DOM.
+
+      Implementation Requirements Arising:
+        - Patch WebKit to modify the values returned by the Date object.
+        - Patch WebKit to modify the values returned by the language, locale and
+          charset properties of the DOM.
+        - If built without a patched WebKit, disable Javascript completely.
+
+
+    5. Anonymity Set Preservation
+      The browser SHOULD NOT leak any other anonymity set reducing information
+      (such as user agent, extension presence, and resolution information)
+      automatically via Tor.
+
+        CSS History Exploit
+        It is possible to use the 'a:visited' tag to execute a fetch from a url() call
+        in CSS to determine if a user has visited specific sites. This exploit must be
+        neutralized by Torora.
+        (ref: http://ha.ckers.org/weird/CSS-history.cgi)
+
+        Javascript Navigator object
+        This object can be queried to return a range of information that identifies the
+        browser installation of the user. Torora should decide upon a fixed set of data
+        for this object and avoid altering it throughout the project lifecycle.
+
+        Javascript Window/Screen objects
+        These objects can be queried to return a range of information that identifies the
+        size of the browser window, the user's screen and even the size and location of their
+        desktop environment's taskbar. Torora should mirror the TorButton approach to these
+        Javascript objects, which is to round out the values by 50px.
+
+      Implementation Requirements Arising:
+       1. Never return links to 'a:visited' CSS tag. This can be used to determine
+           the sites the user has visited.
+       2. Mask the useragent in the browser's request headers;
+       3. Mask the properties of the Javascript Window and Screen objects. The WebKit
+         patch should allow the browser to specify the values/treatment of each of these
+         properties so that they are under the full control of the Torora browser.
+       4. Mask the appname, appversion, platform, oscpu, useragent, productsub, buildid,
+         vendor, and vendorsub properties of the Javascript Navigator object. The WebKit
+         patch should allow the browser to specify the values for each of these properties
+         so that they are under the full control of the Torora browser.
+
+    6. Transparency
+        The user should receive some assurance that they are indeed using tor.
+
+    7. Miscellaneous
+       - Should protect localhost ports from browser pages.
 
 
 B - Torora Functionality Requirements
