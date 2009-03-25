@@ -128,6 +128,7 @@ void SettingsDialog::loadDefaults()
     if (BrowserApplication::isTor()) {
 #if defined(TORORA_WEBKIT_BUILD)
       enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
+      defaultSettings->setAttribute(QWebSettings::PreventUserProfiling, true);
 #else
       enableJavascript->setChecked(false);
 #endif
