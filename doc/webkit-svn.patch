@@ -1,6 +1,6 @@
 Index: JavaScriptCore/runtime/DateConstructor.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateConstructor.cpp	(revision 41760)
+--- JavaScriptCore/runtime/DateConstructor.cpp	(revision 41917)
 +++ JavaScriptCore/runtime/DateConstructor.cpp	(working copy)
 @@ -78,7 +78,10 @@
          else {
@@ -28,7 +28,7 @@ Index: JavaScriptCore/runtime/DateConstructor.cpp
  
 Index: JavaScriptCore/runtime/DateMath.h
 ===================================================================
---- JavaScriptCore/runtime/DateMath.h	(revision 41760)
+--- JavaScriptCore/runtime/DateMath.h	(revision 41917)
 +++ JavaScriptCore/runtime/DateMath.h	(working copy)
 @@ -60,7 +60,7 @@
  void getLocalTime(const time_t*, tm*);
@@ -50,7 +50,7 @@ Index: JavaScriptCore/runtime/DateMath.h
          : second(0)
 Index: JavaScriptCore/runtime/DateMath.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateMath.cpp	(revision 41760)
+--- JavaScriptCore/runtime/DateMath.cpp	(revision 41917)
 +++ JavaScriptCore/runtime/DateMath.cpp	(working copy)
 @@ -596,7 +596,7 @@
      return true;
@@ -72,9 +72,9 @@ Index: JavaScriptCore/runtime/DateMath.cpp
      return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
 Index: JavaScriptCore/runtime/DatePrototype.cpp
 ===================================================================
---- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41760)
+--- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41917)
 +++ JavaScriptCore/runtime/DatePrototype.cpp	(working copy)
-@@ -359,7 +359,6 @@
+@@ -384,7 +384,6 @@
      : DateInstance(structure)
  {
      setInternalValue(jsNaN(exec));
@@ -82,7 +82,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  }
  
  bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-@@ -369,11 +368,16 @@
+@@ -394,11 +393,16 @@
  
  // Functions
  
@@ -100,7 +100,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      const bool utc = false;
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
-@@ -408,7 +412,8 @@
+@@ -433,7 +437,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -110,7 +110,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -425,7 +430,8 @@
+@@ -450,7 +455,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -120,7 +120,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -437,11 +443,16 @@
+@@ -462,11 +468,16 @@
      return jsNontrivialString(exec, formatTime(t, utc));
  }
  
@@ -138,7 +138,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -450,11 +461,16 @@
+@@ -475,11 +486,16 @@
      return formatLocaleDate(exec, thisDateObj, milli, LocaleDateAndTime, args);
  }
  
@@ -156,7 +156,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -463,11 +479,16 @@
+@@ -488,11 +504,16 @@
      return formatLocaleDate(exec, thisDateObj, milli, LocaleDate, args);
  }
  
@@ -174,7 +174,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -494,7 +515,8 @@
+@@ -519,7 +540,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -184,7 +184,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -545,7 +567,8 @@
+@@ -570,7 +592,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -194,7 +194,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -579,7 +602,8 @@
+@@ -604,7 +627,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -204,7 +204,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -613,7 +637,8 @@
+@@ -638,7 +662,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -214,7 +214,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -647,7 +672,8 @@
+@@ -672,7 +697,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -224,7 +224,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -681,9 +707,10 @@
+@@ -706,9 +732,10 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -237,7 +237,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
          return jsNaN(exec);
-@@ -715,7 +742,8 @@
+@@ -740,7 +767,8 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -247,7 +247,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
-@@ -744,11 +772,16 @@
+@@ -769,11 +797,16 @@
      return jsNumber(exec, t.second);
  }
  
@@ -265,7 +265,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -764,6 +797,7 @@
+@@ -789,6 +822,7 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -273,7 +273,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      DateInstance* thisDateObj = asDateInstance(thisValue); 
      double milli = thisDateObj->internalNumber();
      if (isnan(milli))
-@@ -779,6 +813,10 @@
+@@ -804,6 +838,10 @@
      if (!thisValue.isObject(&DateInstance::info))
          return throwError(exec, TypeError);
  
@@ -284,7 +284,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      const bool utc = false;
  
      DateInstance* thisDateObj = asDateInstance(thisValue); 
-@@ -874,7 +912,8 @@
+@@ -899,7 +937,8 @@
  
  JSValuePtr dateProtoFuncSetMilliSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -294,7 +294,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 1, inputIsUTC);
  }
  
-@@ -886,7 +925,8 @@
+@@ -911,7 +950,8 @@
  
  JSValuePtr dateProtoFuncSetSeconds(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -304,7 +304,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 2, inputIsUTC);
  }
  
-@@ -898,7 +938,8 @@
+@@ -923,7 +963,8 @@
  
  JSValuePtr dateProtoFuncSetMinutes(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -314,7 +314,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 3, inputIsUTC);
  }
  
-@@ -910,7 +951,8 @@
+@@ -935,7 +976,8 @@
  
  JSValuePtr dateProtoFuncSetHours(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -324,7 +324,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromTimeArgs(exec, thisValue, args, 4, inputIsUTC);
  }
  
-@@ -922,7 +964,8 @@
+@@ -947,7 +989,8 @@
  
  JSValuePtr dateProtoFuncSetDate(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -334,7 +334,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromDateArgs(exec, thisValue, args, 1, inputIsUTC);
  }
  
-@@ -934,7 +977,8 @@
+@@ -959,7 +1002,8 @@
  
  JSValuePtr dateProtoFuncSetMonth(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -344,7 +344,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
      return setNewValueFromDateArgs(exec, thisValue, args, 2, inputIsUTC);
  }
  
-@@ -946,7 +990,8 @@
+@@ -971,7 +1015,8 @@
  
  JSValuePtr dateProtoFuncSetFullYear(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
  {
@@ -356,7 +356,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
 Index: JavaScriptCore/runtime/JSGlobalObject.h
 ===================================================================
---- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41760)
+--- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41917)
 +++ JavaScriptCore/runtime/JSGlobalObject.h	(working copy)
 @@ -231,6 +231,8 @@
  
@@ -369,7 +369,7 @@ Index: JavaScriptCore/runtime/JSGlobalObject.h
          virtual bool isDynamicScope() const;
 Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
 ===================================================================
---- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41760)
+--- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41917)
 +++ WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(working copy)
 @@ -167,6 +167,7 @@
      WebPreferences *preferences = [[WebPreferences alloc] init];
@@ -381,7 +381,7 @@ Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
      [preferences setJavaScriptEnabled:YES];
 Index: WebKit/mac/WebView/WebPreferences.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.h	(revision 41760)
+--- WebKit/mac/WebView/WebPreferences.h	(revision 41917)
 +++ WebKit/mac/WebView/WebPreferences.h	(working copy)
 @@ -366,6 +366,19 @@
  - (BOOL)privateBrowsingEnabled;
@@ -405,7 +405,7 @@ Index: WebKit/mac/WebView/WebPreferences.h
      @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
 Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41760)
+--- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41917)
 +++ WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(working copy)
 @@ -60,6 +60,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
@@ -417,9 +417,9 @@ Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
  #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 Index: WebKit/mac/WebView/WebView.mm
 ===================================================================
---- WebKit/mac/WebView/WebView.mm	(revision 41760)
+--- WebKit/mac/WebView/WebView.mm	(revision 41917)
 +++ WebKit/mac/WebView/WebView.mm	(working copy)
-@@ -1324,6 +1324,7 @@
+@@ -1332,6 +1332,7 @@
      settings->setDatabasesEnabled([preferences databasesEnabled]);
      settings->setLocalStorageEnabled([preferences localStorageEnabled]);
      settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
@@ -429,7 +429,7 @@ Index: WebKit/mac/WebView/WebView.mm
      settings->setStandardFontFamily([preferences standardFontFamily]);
 Index: WebKit/mac/WebView/WebPreferences.mm
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.mm	(revision 41760)
+--- WebKit/mac/WebView/WebPreferences.mm	(revision 41917)
 +++ WebKit/mac/WebView/WebPreferences.mm	(working copy)
 @@ -325,6 +325,7 @@
          @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
@@ -458,7 +458,7 @@ Index: WebKit/mac/WebView/WebPreferences.mm
      [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
 Index: WebKit/qt/Api/qwebsettings.cpp
 ===================================================================
---- WebKit/qt/Api/qwebsettings.cpp	(revision 41760)
+--- WebKit/qt/Api/qwebsettings.cpp	(revision 41917)
 +++ WebKit/qt/Api/qwebsettings.cpp	(working copy)
 @@ -150,6 +150,11 @@
                                        global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
@@ -484,7 +484,7 @@ Index: WebKit/qt/Api/qwebsettings.cpp
  /*!
 Index: WebKit/qt/Api/qwebsettings.h
 ===================================================================
---- WebKit/qt/Api/qwebsettings.h	(revision 41760)
+--- WebKit/qt/Api/qwebsettings.h	(revision 41917)
 +++ WebKit/qt/Api/qwebsettings.h	(working copy)
 @@ -64,7 +64,8 @@
          OfflineStorageDatabaseEnabled,
@@ -498,9 +498,9 @@ Index: WebKit/qt/Api/qwebsettings.h
          MissingImageGraphic,
 Index: WebKit/qt/Api/qwebpage.cpp
 ===================================================================
---- WebKit/qt/Api/qwebpage.cpp	(revision 41760)
+--- WebKit/qt/Api/qwebpage.cpp	(revision 41917)
 +++ WebKit/qt/Api/qwebpage.cpp	(working copy)
-@@ -2420,7 +2420,12 @@
+@@ -2398,7 +2398,12 @@
  */
  QString QWebPage::userAgentForUrl(const QUrl& url) const
  {
@@ -515,7 +515,7 @@ Index: WebKit/qt/Api/qwebpage.cpp
      // Plastform
 Index: WebKit/win/WebPreferences.h
 ===================================================================
---- WebKit/win/WebPreferences.h	(revision 41760)
+--- WebKit/win/WebPreferences.h	(revision 41917)
 +++ WebKit/win/WebPreferences.h	(working copy)
 @@ -193,6 +193,12 @@
      virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
@@ -532,9 +532,9 @@ Index: WebKit/win/WebPreferences.h
      
 Index: WebKit/win/WebView.cpp
 ===================================================================
---- WebKit/win/WebView.cpp	(revision 41760)
+--- WebKit/win/WebView.cpp	(revision 41917)
 +++ WebKit/win/WebView.cpp	(working copy)
-@@ -4055,6 +4055,11 @@
+@@ -4061,6 +4061,11 @@
          return hr;
      settings->setPrivateBrowsingEnabled(!!enabled);
  
@@ -548,7 +548,7 @@ Index: WebKit/win/WebView.cpp
          return hr;
 Index: WebKit/win/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41760)
+--- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41917)
 +++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
 @@ -59,6 +59,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
@@ -560,7 +560,7 @@ Index: WebKit/win/WebPreferenceKeysPrivate.h
  #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebPreferences.cpp
 ===================================================================
---- WebKit/win/WebPreferences.cpp	(revision 41760)
+--- WebKit/win/WebPreferences.cpp	(revision 41917)
 +++ WebKit/win/WebPreferences.cpp	(working copy)
 @@ -215,6 +215,7 @@
      CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
@@ -593,7 +593,7 @@ Index: WebKit/win/WebPreferences.cpp
  {
 Index: WebKit/win/Interfaces/IWebPreferences.idl
 ===================================================================
---- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41760)
+--- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41917)
 +++ WebKit/win/Interfaces/IWebPreferences.idl	(working copy)
 @@ -141,6 +141,9 @@
      HRESULT setPrivateBrowsingEnabled([in] BOOL enabled);
@@ -607,7 +607,7 @@ Index: WebKit/win/Interfaces/IWebPreferences.idl
  
 Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
 ===================================================================
---- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41760)
+--- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41917)
 +++ WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(working copy)
 @@ -145,6 +145,8 @@
          return 0;
@@ -618,9 +618,55 @@ Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
      if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
          return 0;
      if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
+Index: WebCore/plugins/win/PluginViewWin.cpp
+===================================================================
+--- WebCore/plugins/win/PluginViewWin.cpp	(revision 41917)
++++ WebCore/plugins/win/PluginViewWin.cpp	(working copy)
+@@ -121,11 +121,20 @@
+         return pluginView->m_wmPrintHDC;
+     }
+ 
++#if COMPILER(MSVC)
+     // Call through to the original BeginPaint.
+     __asm   mov     eax, beginPaintSysCall
+     __asm   push    lpPaint
+     __asm   push    hWnd
+     __asm   call    beginPaint
++#elif COMPILER(GCC)
++    asm ( "movl %0, %eax;"
++          "pushl %1;"
++          "pushl %2;"
++          "call  %3;"
++         : "=r"(beginPaintSysCall), "=m"(lpPaint), "=n"(hWnd), "=m"(beginPaint)
++        );
++#endif
+ }
+ 
+ BOOL WINAPI PluginView::hookedEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint)
+@@ -137,11 +146,20 @@
+         return TRUE;
+     }
+ 
++#if COMPILER(MSVC)
+     // Call through to the original EndPaint.
+     __asm   mov     eax, endPaintSysCall
+     __asm   push    lpPaint
+     __asm   push    hWnd
+     __asm   call    endPaint
++#elif COMPILER(GCC)
++    asm ( "movl %0, %eax;"
++          "pushl %1;"
++          "pushl %2;"
++          "call  %3;"
++         : "=r"(endPaintSysCall), "=m"(lpPaint), "=n"(hWnd), "=m"(endPaint)
++        );
++#endif
+ }
+ 
+ static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE*& pProc, const void* pNewProc)
 Index: WebCore/page/Navigator.h
 ===================================================================
---- WebCore/page/Navigator.h	(revision 41760)
+--- WebCore/page/Navigator.h	(revision 41917)
 +++ WebCore/page/Navigator.h	(working copy)
 @@ -48,6 +48,8 @@
          MimeTypeArray* mimeTypes() const;
@@ -633,7 +679,7 @@ Index: WebCore/page/Navigator.h
  
 Index: WebCore/page/History.cpp
 ===================================================================
---- WebCore/page/History.cpp	(revision 41760)
+--- WebCore/page/History.cpp	(revision 41917)
 +++ WebCore/page/History.cpp	(working copy)
 @@ -1,4 +1,4 @@
 -/*
@@ -663,7 +709,7 @@ Index: WebCore/page/History.cpp
  
 Index: WebCore/page/Settings.h
 ===================================================================
---- WebCore/page/Settings.h	(revision 41760)
+--- WebCore/page/Settings.h	(revision 41917)
 +++ WebCore/page/Settings.h	(working copy)
 @@ -112,7 +112,10 @@
  
@@ -687,21 +733,27 @@ Index: WebCore/page/Settings.h
          bool m_localStorageEnabled : 1;
 Index: WebCore/page/DOMWindow.cpp
 ===================================================================
---- WebCore/page/DOMWindow.cpp	(revision 41760)
+--- WebCore/page/DOMWindow.cpp	(revision 41917)
 +++ WebCore/page/DOMWindow.cpp	(working copy)
-@@ -561,6 +561,11 @@
-     if (!page)
+@@ -557,6 +557,17 @@
+     if (!m_frame)
          return 0;
  
-+    // See https://www.torproject.org/torbutton/design/#id3016866
++    // We are deliberately returning the same value as outerHeight() here. This
++    // is to prevent remote websites from profiling users based on the size/presence of
++    // their taskbar.
 +    Settings* settings = m_frame->settings();
-+    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>(static_cast<int>(page->chrome()->windowRect().height() / 50) * 50);
++    if (!settings || settings->preventUserProfiling()) {
++        FrameView* view = m_frame->view();
++        if (!view)
++            return 0;
++        return static_cast<int>((static_cast<int>(view->height()/ m_frame->pageZoomFactor()) / 50) * 50);
++    }
 +
-     return static_cast<int>(page->chrome()->windowRect().height());
- }
- 
-@@ -573,6 +578,11 @@
+     Page* page = m_frame->page();
+     if (!page)
+         return 0;
+@@ -573,6 +584,11 @@
      if (!page)
          return 0;
  
@@ -713,16 +765,15 @@ Index: WebCore/page/DOMWindow.cpp
      return static_cast<int>(page->chrome()->windowRect().width());
  }
  
-@@ -584,12 +594,18 @@
+@@ -584,12 +600,17 @@
      FrameView* view = m_frame->view();
      if (!view)
          return 0;
 -    
 +
-+    // See https://www.torproject.org/torbutton/design/#id3016866
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<int>((static_cast<int>(view->height() / m_frame->pageZoomFactor()) / 50) * 50);
++        return static_cast<int>((static_cast<int>(view->height()/ m_frame->pageZoomFactor()) / 50) * 50);
 +
      return static_cast<int>(view->height() / m_frame->pageZoomFactor());
  }
@@ -733,7 +784,7 @@ Index: WebCore/page/DOMWindow.cpp
      if (!m_frame)
          return 0;
  
-@@ -597,11 +613,18 @@
+@@ -597,11 +618,18 @@
      if (!view)
          return 0;
  
@@ -752,7 +803,7 @@ Index: WebCore/page/DOMWindow.cpp
      if (!m_frame)
          return 0;
  
-@@ -609,6 +632,11 @@
+@@ -609,6 +637,11 @@
      if (!page)
          return 0;
  
@@ -764,7 +815,7 @@ Index: WebCore/page/DOMWindow.cpp
      return static_cast<int>(page->chrome()->windowRect().x());
  }
  
-@@ -621,6 +649,11 @@
+@@ -621,6 +654,11 @@
      if (!page)
          return 0;
  
@@ -776,7 +827,7 @@ Index: WebCore/page/DOMWindow.cpp
      return static_cast<int>(page->chrome()->windowRect().y());
  }
  
-@@ -633,6 +666,11 @@
+@@ -633,6 +671,11 @@
      if (!view)
          return 0;
  
@@ -788,7 +839,7 @@ Index: WebCore/page/DOMWindow.cpp
      m_frame->document()->updateLayoutIgnorePendingStylesheets();
  
      return static_cast<int>(view->scrollX() / m_frame->pageZoomFactor());
-@@ -640,13 +678,18 @@
+@@ -640,13 +683,18 @@
  
  int DOMWindow::scrollY() const
  {
@@ -810,7 +861,7 @@ Index: WebCore/page/DOMWindow.cpp
      return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
 Index: WebCore/page/NavigatorBase.cpp
 ===================================================================
---- WebCore/page/NavigatorBase.cpp	(revision 41760)
+--- WebCore/page/NavigatorBase.cpp	(revision 41917)
 +++ WebCore/page/NavigatorBase.cpp	(working copy)
 @@ -29,6 +29,7 @@
  
@@ -864,7 +915,7 @@ Index: WebCore/page/NavigatorBase.cpp
  
 Index: WebCore/page/Screen.cpp
 ===================================================================
---- WebCore/page/Screen.cpp	(revision 41760)
+--- WebCore/page/Screen.cpp	(revision 41917)
 +++ WebCore/page/Screen.cpp	(working copy)
 @@ -34,6 +34,7 @@
  #include "Frame.h"
@@ -874,20 +925,21 @@ Index: WebCore/page/Screen.cpp
  #include "Widget.h"
  
  namespace WebCore {
-@@ -52,6 +53,12 @@
+@@ -52,6 +53,13 @@
  {
      if (!m_frame)
          return 0;
 +
 +    // See https://www.torproject.org/torbutton/design/#id3016866
++    // and https://tor-svn.freehaven.net/svn/torbutton/trunk/src/chrome/content/jshooks.js
 +    Settings* settings = m_frame->settings();
 +    if (!settings || settings->preventUserProfiling())
-+        return static_cast<unsigned>(static_cast<int>(screenRect(m_frame->view()).height() / 50) * 50);
++        return static_cast<int>((static_cast<int>(m_frame->view()->height() / m_frame->pageZoomFactor()) / 50) * 50);
 +
      return static_cast<unsigned>(screenRect(m_frame->view()).height());
  }
  
-@@ -59,6 +66,12 @@
+@@ -59,6 +67,12 @@
  {
      if (!m_frame)
          return 0;
@@ -900,7 +952,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenRect(m_frame->view()).width());
  }
  
-@@ -66,6 +79,12 @@
+@@ -66,6 +80,12 @@
  {
      if (!m_frame)
          return 0;
@@ -913,7 +965,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenDepth(m_frame->view()));
  }
  
-@@ -73,6 +92,12 @@
+@@ -73,6 +93,12 @@
  {
      if (!m_frame)
          return 0;
@@ -926,7 +978,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenDepth(m_frame->view()));
  }
  
-@@ -80,6 +105,12 @@
+@@ -80,6 +106,12 @@
  {
      if (!m_frame)
          return 0;
@@ -939,7 +991,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x());
  }
  
-@@ -87,6 +118,13 @@
+@@ -87,6 +119,13 @@
  {
      if (!m_frame)
          return 0;
@@ -953,7 +1005,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y());
  }
  
-@@ -94,6 +132,13 @@
+@@ -94,6 +133,13 @@
  {
      if (!m_frame)
          return 0;
@@ -967,7 +1019,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height());
  }
  
-@@ -101,6 +146,12 @@
+@@ -101,6 +147,12 @@
  {
      if (!m_frame)
          return 0;
@@ -982,7 +1034,7 @@ Index: WebCore/page/Screen.cpp
  
 Index: WebCore/page/Navigator.cpp
 ===================================================================
---- WebCore/page/Navigator.cpp	(revision 41760)
+--- WebCore/page/Navigator.cpp	(revision 41917)
 +++ WebCore/page/Navigator.cpp	(working copy)
 @@ -87,6 +87,11 @@
  {
@@ -1087,7 +1139,7 @@ Index: WebCore/page/Navigator.cpp
      if (!m_geolocation)
 Index: WebCore/page/Settings.cpp
 ===================================================================
---- WebCore/page/Settings.cpp	(revision 41760)
+--- WebCore/page/Settings.cpp	(revision 41917)
 +++ WebCore/page/Settings.cpp	(working copy)
 @@ -56,6 +56,7 @@
      , m_isJavaEnabled(false)
@@ -1111,17 +1163,9 @@ Index: WebCore/page/Settings.cpp
      m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
 Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
 ===================================================================
---- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 41760)
+--- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 41917)
 +++ WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(working copy)
-@@ -473,6 +473,7 @@
-         p->restore();
-     }
- 
-+#if QT_VERSION >= 0x040500
-     int patWidth = 0;
-     switch (style) {
-         case NoStroke:
-@@ -488,7 +489,6 @@
+@@ -489,7 +489,6 @@
  
      if (patWidth) {
          p->save();
@@ -1129,33 +1173,17 @@ Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
          // Do a rect fill of our endpoints.  This ensures we always have the
          // appearance of being a border.  We then draw the actual dotted/dashed line.
          if (isVerticalLine) {
-@@ -498,7 +498,6 @@
-             p->fillRect(FloatRect(p1.x() - width, p1.y() - width / 2, width, width), color);
-             p->fillRect(FloatRect(p2.x(), p2.y() - width / 2, width, width), color);
+@@ -499,7 +498,6 @@
+             p->fillRect(FloatRect(p1.x() - width, p1.y() - width / 2, width, width), QColor(color));
+             p->fillRect(FloatRect(p2.x(), p2.y() - width / 2, width, width), QColor(color));
          }
 -
          // Example: 80 pixels with a width of 30 pixels.
          // Remainder is 20.  The maximum pixels of line we could paint
          // will be 50 pixels.
-@@ -537,12 +536,14 @@
-         pen.setDashOffset(patternOffset / width);
-         p->setPen(pen);
-     }
-+#endif
- 
-     p->drawLine(p1, p2);
- 
-+#if QT_VERSION >= 0x040500
-     if (patWidth)
-         p->restore();
--
-+#endif
-     p->setRenderHint(QPainter::Antialiasing, antiAlias);
- }
- 
 Index: WebCore/bindings/js/JSDOMWindowBase.h
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41760)
+--- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41917)
 +++ WebCore/bindings/js/JSDOMWindowBase.h	(working copy)
 @@ -81,6 +81,8 @@
  
@@ -1166,11 +1194,39 @@ Index: WebCore/bindings/js/JSDOMWindowBase.h
          bool allowsAccessFrom(JSC::ExecState*) const;
          bool allowsAccessFromNoErrorMessage(JSC::ExecState*) const;
          bool allowsAccessFrom(JSC::ExecState*, String& message) const;
+Index: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
+===================================================================
+--- WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(revision 41917)
++++ WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(working copy)
+@@ -31,6 +31,7 @@
+ #include "HTMLFormElement.h"
+ #include "JSDOMWindowCustom.h"
+ #include "JSNamedNodesCollection.h"
++#include "Settings.h"
+ 
+ using namespace JSC;
+ 
+@@ -59,9 +60,15 @@
+ 
+ JSValuePtr JSHTMLFormElement::submit(ExecState* exec, const ArgList&)
+ {
++    /*Torora: intercept javascript submit() here*/
+     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+     if (!activeFrame)
+         return jsUndefined();
++
++    Settings* settings = activeFrame->settings();
++    if (!settings || settings->preventUserProfiling())
++       return jsUndefined();
++
+     static_cast<HTMLFormElement*>(impl())->submit(0, false, !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
+     return jsUndefined();
+ }
 Index: WebCore/bindings/js/JSDOMWindowBase.cpp
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41760)
+--- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41917)
 +++ WebCore/bindings/js/JSDOMWindowBase.cpp	(working copy)
-@@ -683,7 +683,7 @@
+@@ -674,7 +674,7 @@
      Settings* settings = frame->settings();
      if (!settings)
          return;
@@ -1179,7 +1235,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
      if (settings->privateBrowsingEnabled())
          return;
  
-@@ -730,6 +730,15 @@
+@@ -721,6 +721,15 @@
      return page->chrome()->shouldInterruptJavaScript();
  }
  
@@ -1195,9 +1251,41 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
  void JSDOMWindowBase::clearHelperObjectProperties()
  {
      setCurrentEvent(0);
+Index: WebCore/html/HTMLFormElement.cpp
+===================================================================
+--- WebCore/html/HTMLFormElement.cpp	(revision 41917)
++++ WebCore/html/HTMLFormElement.cpp	(working copy)
+@@ -44,6 +44,7 @@
+ #include "MIMETypeRegistry.h"
+ #include "Page.h"
+ #include "RenderTextControl.h"
++#include "Settings.h"
+ #include <wtf/RandomNumber.h>
+ 
+ #include <limits>
+@@ -257,6 +258,7 @@
+     m_insubmit = true;
+     m_doingsubmit = false;
+ 
++    /*torora: possible way to inform user of dangerous html forms ?*/
+     if (dispatchEventForType(eventNames().submitEvent, true, true) && !m_doingsubmit)
+         m_doingsubmit = true;
+ 
+@@ -292,7 +294,10 @@
+         if (control->hasLocalName(inputTag)) {
+             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
+             if (input->isTextField()) {
+-                frame->loader()->recordFormValue(input->name(), input->value());
++                Settings* settings = frame->settings();
++                /*Torora: do not save form elements */
++                if (!settings || !settings->preventUserProfiling())
++                    frame->loader()->recordFormValue(input->name(), input->value());
+                 if (input->isSearchField())
+                     input->addSearchResult();
+             }
 Index: WebCore/css/CSSStyleSelector.cpp
 ===================================================================
---- WebCore/css/CSSStyleSelector.cpp	(revision 41760)
+--- WebCore/css/CSSStyleSelector.cpp	(revision 41917)
 +++ WebCore/css/CSSStyleSelector.cpp	(working copy)
 @@ -875,6 +875,10 @@
      if (!page)
@@ -1210,7 +1298,7 @@ Index: WebCore/css/CSSStyleSelector.cpp
      m_linksCheckedForVisitedState.add(hash);
      return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
  }
-@@ -5840,6 +5844,11 @@
+@@ -5845,6 +5849,11 @@
  
  void CSSStyleSelector::SelectorChecker::allVisitedStateChanged()
  {
@@ -1222,7 +1310,7 @@ Index: WebCore/css/CSSStyleSelector.cpp
      if (m_linksCheckedForVisitedState.isEmpty())
          return;
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
-@@ -5850,6 +5859,11 @@
+@@ -5855,6 +5864,11 @@
  
  void CSSStyleSelector::SelectorChecker::visitedStateChanged(LinkHash visitedHash)
  {
@@ -1234,11 +1322,33 @@ Index: WebCore/css/CSSStyleSelector.cpp
      if (!m_linksCheckedForVisitedState.contains(visitedHash))
          return;
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
+Index: WebCore/loader/FrameLoader.cpp
+===================================================================
+--- WebCore/loader/FrameLoader.cpp	(revision 41917)
++++ WebCore/loader/FrameLoader.cpp	(working copy)
+@@ -529,6 +529,8 @@
+ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<FormData> formData,
+     const String& target, const String& contentType, const String& boundary, Event* event, bool lockHistory, bool lockBackForwardList)
+ {
++
++    /* Torora: form submiission candidate here */
+     ASSERT(formData);
+     
+     if (!m_frame->page())
+@@ -2161,6 +2163,8 @@
+ void FrameLoader::loadFrameRequestWithFormAndValues(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList, Event* event,
+     HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
+ {
++
++    /*Torora: is this where html forms are submitted from? */
+     RefPtr<FormState> formState;
+     if (submitForm)
+         formState = FormState::create(submitForm, formValues, m_frame);
 Index: WebKitTools/Scripts/webkitdirs.pm
 ===================================================================
---- WebKitTools/Scripts/webkitdirs.pm	(revision 41760)
+--- WebKitTools/Scripts/webkitdirs.pm	(revision 41917)
 +++ WebKitTools/Scripts/webkitdirs.pm	(working copy)
-@@ -1026,7 +1026,7 @@
+@@ -1028,7 +1028,7 @@
          return "nmake";
      }
  

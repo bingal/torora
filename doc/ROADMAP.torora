@@ -1,7 +1,7 @@
 Torora Requirements
 -------------------
 
-A - Torora Security Requirements
+A - Torora Requirements
 ----------------------------
 
 Torora's requirements are modelled on Torbutton's. Torbutton's requirements
@@ -49,15 +49,15 @@ These considerations leave us with the following requirements for Torora:
        Tor is no longer being used.
 
       Implementation Requirements Arising:
-         - Querying the default ports of Tor and privoxy/polipo to ensure they
+         1 Querying the default ports of Tor and privoxy/polipo to ensure they
            are running.
-         - Inspect the list of running processes to ensure Tor/Privoxy/Polipo
+         2 Inspect the list of running processes to ensure Tor/Privoxy/Polipo
            are running.
-         - Regular checks at https://check.torproject.org
-         - Inspection of http headers to ensure privoxy is being used.
-         - Can Torora query privoxy/polipo's configuration to ensure it is
+         3 Regular checks at https://check.torproject.org
+         4 Inspection of http headers to ensure privoxy is being used.
+         5 Can Torora query privoxy/polipo's configuration to ensure it is
            using Tor?
-         - Offer to delete browsing history/cookies when an interruption to use
+         6 Offer to delete browsing history/cookies when an interruption to use
            of Tor has been detected.
 
 
@@ -70,7 +70,7 @@ These considerations leave us with the following requirements for Torora:
       proxy settings.
 
       Implementation Requirements Arising:
-        - 'Lock' Torora to Qt builds that are known to be safe.
+        1 'Lock' Torora to Qt builds that are known to be safe.
 
 
     3. Disk Avoidance/User Tracking
@@ -79,10 +79,10 @@ These considerations leave us with the following requirements for Torora:
       stored to disk) is not necessarily a requirement for anonymous browsing. The
       main considerations here are:
 
-      (i) any information stored to disk should not be retrievable in a non-Tor
+        1 any information stored to disk should not be retrievable in a non-Tor
           state should one ever arise. Torora meets this requirement by disabling
           browsing when a non-Tor state is detected.
-      (ii) to what extent do users need to retain cookies and cache information during
+        2 to what extent do users need to retain cookies and cache information during
            and across browsing sessions? Given that such information is 'Tor-only', how
            useful can it be to eavesdroppers?
 
@@ -93,15 +93,36 @@ These considerations leave us with the following requirements for Torora:
         useful to remove eavesdroppers if they can be correlated with a real IP address to
         reveal the user's actual location/identity.
 
+        That said, a certain amount of information can be built up from cookies over time
+        so the safest policy is to delete them on exit or after 23 hours.
+
       Cache Objects
-        Ditto.
+        As a rule we need to avoid using a browser cache. This is because cache hits and
+        misses could be used by remote sites to develop a picture of the user's browsing
+        history at that particular remote site. At worst, we could disable caching. At
+        best, we could implement an aggressive cache expiration policy.
+
       Configuration Information
         Ditto.
 
-      Implementation Requirements Arising:
-        - Never store cache/cookie/configuration information in locations shared by other
-          browsers.
+      Browsing History
+        Browsing history will be retained by Torora. This is convenient for users and possible
+        exploits of browsing history will be prevented by QWebSettings::PreventUserProfiling.
 
+      Referrer Headers
+        These need to be blocked or spoofed.
+
+      Implementation Requirements Arising:
+        1. Never store cache/cookie/configuration information in locations shared by other
+           browsers.
+        2. Only store cookies for a single session or for 24 hours, whichever comes first.
+           Torora should expire cookies when they reach their 23 hour anniversary (allows
+           for simpler logic).
+        3. Google analytics cookies are a special case. They will never be stored.
+        4. Allow browsing history but prevent it being exploited.
+        5. For now, do not write to cache.
+        6.  Later, expire the cache at regular intervals.
+        7. Spoof the referrer header as the root of the url's target site.
 
     4. Location Neutrality
       The browser SHOULD NOT leak location-specific information, such as timezone
@@ -116,10 +137,13 @@ These considerations leave us with the following requirements for Torora:
         DOM.
 
       Implementation Requirements Arising:
-        - Patch WebKit to modify the values returned by the Date object.
-        - Patch WebKit to modify the values returned by the language, locale and
-          charset properties of the DOM.
-        - If built without a patched WebKit, disable Javascript completely.
+        1. Patch WebKit to modify the values returned by the Date object.
+        2. The time returned by javascript should build in a random margin of error
+           of up to a couple of minutes. This will prevent sites from attempting
+           to time packets from browser to website.(?)
+        3. Patch WebKit to modify the values returned by the language, locale and
+           charset properties of the DOM.
+        4. If built without a patched WebKit, disable Javascript completely.
 
 
     5. Anonymity Set Preservation
@@ -142,7 +166,8 @@ These considerations leave us with the following requirements for Torora:
         These objects can be queried to return a range of information that identifies the
         size of the browser window, the user's screen and even the size and location of their
         desktop environment's taskbar. Torora should mirror the TorButton approach to these
-        Javascript objects, which is to round out the values by 50px.
+        Javascript objects, which is to round out the values by 50px. Torora should also
+        actually resize to multiples of 50px.
 
       Implementation Requirements Arising:
        1. Never return links to 'a:visited' CSS tag. This can be used to determine
@@ -154,14 +179,38 @@ These considerations leave us with the following requirements for Torora:
        4. Mask the appname, appversion, platform, oscpu, useragent, productsub, buildid,
          vendor, and vendorsub properties of the Javascript Navigator object. The WebKit
          patch should allow the browser to specify the values for each of these properties
-         so that they are under the full control of the Torora browser.
+         so that they are under the full control of the Torora browser. Though it might be
+         better to settle on a set of values now and stick to them.
 
     6. Transparency
         The user should receive some assurance that they are indeed using tor.
 
-    7. Miscellaneous
-       - Should protect localhost ports from browser pages.
+    7. Miscellaneous Security Requirements
+       1 The Javascript submit() method should be disabled, or should at least require
+         user interaction.
+         Ref: http://www.remote.org/jochen/sec/hfpa/hfpa.pdf
+       2 Forms with 'action' elements containing 'localhost' or '127.0.0.1' should be
+         disabled. An alternative is to ban access to ports 8123, 8118, 9050 and 9051,
+         or to ban access to localhost/127.0.0.1 completely.
+         Ref: http://www.remote.org/jochen/sec/hfpa/hfpa.pdf
+       3 Same origin policy for file:// urls.
+          "Firefox 2's implementation of same origin policy allows file urls to read
+          and submit arbitrary files from the local filesystem to arbitrary websites."
+          (Torbutton Design Doc). Need to ensure that webkit does not have this problem.
+          Disabling Javascript submit() can help mitigate against this attack. We could
+          also add a preference to disable access to the network by javascript running
+          with a local context.
+       4 Password and Form Saving
+         "Since form fields can be read at any time by Javascript, this setting is a
+         lot more important than it seems." (Torbutton Design Doc)
+       5 Need to prevent random external applications from launching without at least
+         warning the user. 
+       6 Javascript should not have access to the clipboard.
+       7 Google analytics cookies should be rejected/killed. This is because they
+         allow Google to gain a complete view of a user's activity. This may help
+         identify the user.
 
+-- everything below this line is out of date.
 
 B - Torora Functionality Requirements
 -------------------------------------
@@ -231,8 +280,8 @@ Undecided Specifications:
             request.setRawHeader(header, "");
             }
 
-Notes:
-------
+Appendix A
+----------
 
 Original TorButton Requirements:
 
