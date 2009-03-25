@@ -288,7 +288,7 @@ void BrowserApplication::reportTorCheckResults(int page)
         bulletone = tr("First check that Tor and Privoxy/Polipo are Running.");
         bullettwo = tr("In Edit->Preferences->Proxy, ensure you have Privoxy/Polipo configured correctly.");
         bulletthree = tr("Press F12 or Tools->Check Tor to test Tor again.");
-        bulletfour = tr("Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.");
+        bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
         img = QLatin1String(":tor-off.png");
         break;
     }
@@ -348,10 +348,10 @@ void BrowserApplication::checkTorInstallation()
       mainWindow()->enableBookmarksToolbar(false);
       mainWindow()->tabWidget()->setEnabled(false);
     }
-    http = new QHttp(this);
+    http = new QHttp(QLatin1String("check.torproject.org"),
+                     QHttp::ConnectionModeHttps, 443, this);
     QNetworkProxy proxy = networkAccessManager()->currentProxy();
     http->setProxy(proxy);
-    http->setHost(QLatin1String("check.torproject.org"));
     http->get(QLatin1String("/?TorButton=True"));
 
     connect(http, SIGNAL(done(bool)),
@@ -466,6 +466,8 @@ void BrowserApplication::loadSettings()
 
 #if defined(TORORA_WEBKIT_BUILD)
     defaultSettings->setAttribute(QWebSettings::PreventUserProfiling, true);
+    defaultSettings->setAttribute(QWebSettings::AllowUniversalAccessFromFileUrls, false);
+    defaultSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
 #endif
 
     settings.endGroup();
