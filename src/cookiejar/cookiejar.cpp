@@ -161,6 +161,7 @@ void CookieJar::load()
 
 void CookieJar::loadSettings(bool isTor)
 {
+    m_isTor = isTor;
     if (isTor) {
       m_keepCookies = KeepUntilExit;
       m_acceptCookies = AcceptOnlyFromSitesNavigatedTo;
@@ -260,6 +261,7 @@ QList<QNetworkCookie> CookieJar::cookiesForUrl(const QUrl &url) const
 
 bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const QUrl &url)
 {
+
     if (!m_loaded)
         load();
 
@@ -279,12 +281,20 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
         || (!acceptInitially && (eAllow || eAllowSession))) {
         // pass url domain == cookie domain
         QDateTime soon = QDateTime::currentDateTime();
-        soon = soon.addDays(90);
+        /*Torora Requirement: 3.2*/
+        if (m_isTor)
+          soon = soon.addSecs(23 * 60 * 60);
+        else
+          soon = soon.addDays(90);
         foreach (QNetworkCookie cookie, cookieList) {
             QList<QNetworkCookie> lst;
-            if (m_keepCookies == KeepUntilTimeLimit
+            /*Torora Requirement: 3.3 : Reject google analytics cookies, these
+              always start with '_utm' - at least at the moment.*/
+            if (m_isTor && cookie.name().startsWith("_utm"))
+                continue;
+            if ((m_keepCookies == KeepUntilTimeLimit
                 && !cookie.isSessionCookie()
-                && cookie.expirationDate() > soon) {
+                && cookie.expirationDate() > soon) || (m_isTor)) {
                 cookie.setExpirationDate(soon);
             }
             lst += cookie;
@@ -317,6 +327,13 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
 #endif
             }
         }
+    }
+
+    /*Torora Requirement: 3.2*/
+    /* Use this opportunity to expire any cookies that have been sitting around
+       for 23 hours */
+    if (m_isTor) {
+        endSession();
     }
 
     if (addedCookies) {

@@ -127,6 +127,7 @@ private:
     void purgeOldCookies();
     void load();
     bool m_loaded;
+    bool m_isTor;
     AutoSaver *m_saveTimer;
 
     AcceptPolicy m_acceptCookies;
