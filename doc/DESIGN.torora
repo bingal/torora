@@ -1,0 +1,448 @@
+
+Torora Requirements and Specification
+-------------------------------------
+
+Torora's requirements are modelled on Torbutton's. Torbutton's requirements
+fall under the following headings:
+
+    1. Proxy Obedience
+    2. Network Isolation
+    3. State Separation
+    4. Tor Undiscoverability
+    5. Disk Avoidance
+    6. Location Neutrality
+    7. Anonymity Set Preservation
+    8. Update Safety
+    9. Interoperability
+
+Because Torora runs in a single state, with Tor enabled, some of these
+requirements can be eliminated from the Torora specification. Others can be
+eliminated due to limitations/ inherent functionality of Torora.
+
+    2. Network Isolation
+       Pages loaded in Torora are only permitted to operate in one state.
+    3. State Separation
+       Torora does not need to worry about settings or activity from a non-Tor
+       state. This is because Torora does not run in a non-Tor state.
+    4. Tor Undiscoverability
+       Torora does not need to worry about revealing its presence when Tor is
+       disabled. The user is not permitted to browse with Torora when Tor is
+       disabled.
+    8. Update Safety
+       Torora does not support updates/upgrades from within Torora.
+    9. Interoperability
+       Torora does not support add-ons or extensions so does not need to worry
+       about interoperating with them.
+
+These considerations leave us with the following requirements for Torora:
+
+    1. Single-State Assurance
+       Torora must enforce it's single-state requirement as rigidly as possible.
+       It must even take account of the possibility that it can be fooled into
+       thinking that it is passing through Tor when in fact it is not. Torora
+       must implement as many measures as possible to ensure that pages are
+       being requested through Tor.
+
+       Torora must also take appropriate recovery steps when it detects that
+       Tor is no longer being used.
+
+      Implementation Requirements Arising:
+        1. Querying the default ports of Tor and privoxy/polipo to ensure they
+           are running.
+           Files Altered: TODO
+
+        2. Inspect the list of running processes to ensure Tor/Privoxy/Polipo
+           are running.
+           Files Altered: TODO
+
+        3. Regular checks at https://check.torproject.org
+           Files Altered: torora/src/browserapplication.cpp
+
+        4. Inspection of http headers to ensure privoxy is being used.
+           Files Altered: TODO
+
+        5. Can Torora query privoxy/polipo's configuration to ensure it is
+           using Tor?
+           Files Altered: TODO
+
+        6. Offer to delete browsing history/cookies when an interruption to use
+           of Tor has been detected.
+           Files Altered: TODO
+
+
+    2. Proxy Obedience
+      Torora must ensure QNetwork and QProxySettings do not by bypass proxies
+      for content. The implementation of both QNetwork and QProxySettings is likely
+      to change over time and may change in ways that are not backward compatible or
+      harmful to a user's anonymity. For example, versions of Qt prior to 4.5 are
+      not suitable for Tor use and misconfiguration can even result in bypassing
+      proxy settings.
+
+      Implementation Requirements Arising:
+        1. 'Lock' Torora to Qt builds that are known to be safe.
+           Files Altered: TODO
+
+        2. Enforce use of privoxy/tor - do no permit user to change proxy configuration
+           Files Altered: torora/src/settings.cpp, torora/src/networkaccessmanager.cpp
+
+
+    3. Disk Avoidance/User Tracking
+      Torora needs to consider treatment of cookies, cache objects and configuration
+      information carefully. 'Private Browsing' (where cookies and web pages are not
+      stored to disk) is not necessarily a requirement for anonymous browsing. The
+      main considerations here are:
+
+        1. Any information stored to disk should not be retrievable in a non-Tor
+           state should one ever arise. Torora meets this requirement by disabling
+           browsing when a non-Tor state is detected.
+        2. To what extent do users need to retain cookies and cache information during
+           and across browsing sessions? Given that such information is 'Tor-only', how
+           useful can it be to eavesdroppers?
+
+      Cookies
+        Cookies will allow remote sites to track a single user across browsing sessions and
+        even circuits. These cookies are unlikely to be useful to a remote eavesdropper
+        unless they contain information from non-Tor browsing sessions. Cookies are only
+        useful to remove eavesdroppers if they can be correlated with a real IP address to
+        reveal the user's actual location/identity.
+
+        That said, a certain amount of information can be built up from cookies over time
+        so the safest policy is to delete them on exit or after 23 hours.
+
+      Cache Objects
+        As a rule we need to avoid using a browser cache. This is because cache hits and
+        misses could be used by remote sites to develop a picture of the user's browsing
+        history at that particular remote site. At worst, we could disable caching. At
+        best, we could implement an aggressive cache expiration policy.
+
+      Configuration Information
+        Ditto.
+
+      Browsing History
+        Browsing history will be retained by Torora. This is convenient for users and possible
+        exploits of browsing history will be prevented by QWebSettings::PreventUserProfiling.
+
+      Referrer and Origin Headers
+        These need to be blocked or spoofed.
+
+      Implementation Requirements Arising:
+        1. Never store cache/cookie/configuration information in locations shared by other
+           browsers.
+           Files Altered: None required. Qt stores settings and data in directories named
+                          after the application.
+
+        2. Only store cookies for a single session or for 24 hours, whichever comes first.
+           Torora should expire cookies when they reach their 23 hour anniversary (allows
+           for simpler logic).
+           Files altered: torora/src/cookiejar/cookiejar.cpp
+
+        3. Google analytics cookies are a special case. They will never be stored.
+           Files altered: torora/src/cookiejar/cookiejar.cpp
+
+        4. Allow browsing history but prevent it being exploited.
+           See requirement 5.1
+
+        5. For now, do not write to cache and do not use cache.
+           Files altered: torora/src/sourceviewer.cpp
+
+        6. Later, expire the cache at regular intervals.
+           Files Altered: TODO
+
+        7. Spoof the referrer and origin header as the root of the url's target site.
+           Files altered: torora/src/networkaccessmanager.cpp
+
+    4. Location Neutrality
+      The browser SHOULD NOT leak location-specific information, such as timezone
+      or locale. This information is available through Javascript's Date
+      and Language objects.
+
+        Timezone Information
+        This is accessible through the Javascript 'Date' object. See http://browserspy.dk/date.php
+
+        Locale Information
+        This is accessible through the language, locale and charset properties of the
+        DOM. POC: http://browserspy.dk/language.php
+
+      Implementation Requirements Arising:
+        1. Patch WebKit to modify the values returned by the Date object.
+           Setting: QWebSettings::MaskTimeZone
+           Files altered: JavaScriptCore/runtime/DatePrototype.cpp
+                         JavaScriptCore/runtime/DateConstructor.cpp
+                         JavaScriptCore/runtime/DateMath.cpp
+
+           Strategy: Same approach as Torbutton. Once PreventUserProfiling is enabled the default
+                     Date object is created as UTC. Attempts to set the Date object using localtime
+                     (e.g. new Date('10:10:10')) also use UTC rather than actual localtime. Calls
+                     to getTimeZoneOffset() returns 0 explicitly.
+
+                     The following Date javascript methods always return UTC time:
+
+                     getTime          getHours                  getUTCSeconds
+                     getFullYear      getMinutes                getUTCMilliseconds
+                     getYear          getSeconds                toUTCString
+                     getMonth         getMilliseconds           toGMTString
+                     getDate          getUTCFullYear            toString
+                     getDay           getUTCMonth               toLocaleString
+                                     getUTCDate                toLocaleTimeString
+                                     getUTCDay                 toLocaleDateString
+                                     getUTCHours               toDateString
+                                     getUTCMinutes             toTimeString
+
+                     The following Date javascript methods always return 0:
+
+                     getTimezoneOffset
+
+                     The following Date javascript methods always set UTC time:
+
+                     setTime                setMilliseconds
+                     setFullYear            setUTCFullYear
+                     setYear                setUTCMonth
+                     setMonth               setUTCDate
+                     setDate                setUTCDay
+                     setDay                 setUTCHours
+                     setHours               setUTCMinutes
+                     setMinutes             setUTCSeconds
+                     setSeconds             setUTCMilliseconds
+
+        2. The time returned by javascript should build in a random margin of error
+           of up to a couple of minutes. This will prevent sites from attempting
+           to time packets from browser to website.(?)
+           Files Altered: TODO
+
+        3. Patch WebKit to modify the values returned by the language, locale and
+           charset properties of the DOM.
+           Setting: QWebSettings::MaskPlatform
+           Files altered: WebCore/page/Navigator.cpp
+                         WebCore/page/NavigatorBase.cpp
+                         JavaScriptCore/runtime/DateMath.cpp
+
+           Strategy: Same approach as Torbutton.
+                     Language Object
+                       charset = 'iso-8859-1,*,utf-8'
+                       language = 'en-us, en'
+                       locale = 'en-US'
+
+        4. If built without a patched WebKit, disable Javascript completely.
+           Files altered: torora/src/settings.cpp, torora/src/browserapplication.cpp
+
+
+    5. Anonymity Set Preservation
+      The browser SHOULD NOT leak any other anonymity set reducing information
+      (such as user agent, extension presence, and resolution information)
+      automatically via Tor.
+
+        CSS History Exploit
+        It is possible to use the 'a:visited' tag to execute a fetch from a url() call
+        in CSS to determine if a user has visited specific sites. This exploit must be
+        neutralized by Torora.
+        (ref: http://ha.ckers.org/weird/CSS-history.cgi)
+
+        Javascript Navigator object
+        This object can be queried to return a range of information that identifies the
+        browser installation of the user. Torora should decide upon a fixed set of data
+        for this object and avoid altering it throughout the project lifecycle.
+        POC: Theoretical, http://browserspy.dk/os.php
+
+        Javascript Window/Screen objects
+        These objects can be queried to return a range of information that identifies the
+        size of the browser window, the user's screen and even the size and location of their
+        desktop environment's taskbar. Torora should mirror the TorButton approach to these
+        Javascript objects, which is to round out the values by 50px. Torora should also
+        actually resize to multiples of 50px.
+        POC: Theoretical, http://browserspy.dk/screen.php, http://browserspy.dk/window.php
+
+      Implementation Requirements Arising:
+       1. Never return links to 'a:visited' CSS tag. This can be used to determine
+          the sites the user has visited.
+          POC: http://ha.ckers.org/weird/CSS-history.cgi
+          Setting: QWebSettings::ResistCSSVisitedExploit
+          Files altered: WebCore/css/CSSStyleSelector.cpp
+
+          Strategy: WebKit returns PseudoVisited if a link in a CSS stylesheet has been visited.
+                    If PreventUserProfiling is enabled, WebKit will return PseudoLink instead.
+
+          Result: QWebSettings::ResistCSSVisitedExploit defeats the attack.
+
+       2. Mask the useragent in the browser's request headers;
+          Files altered: WebCore/page/Navigator.cpp
+                        WebCore/page/NavigatorBase.cpp
+                        JavaScriptCore/runtime/DateMath.cpp
+
+          Strategy: Same approach as Torbutton.
+                    Navigator Object
+                    useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6"
+
+       3. Mask the properties of the Javascript Window and Screen objects. The WebKit
+          patch should allow the browser to specify the values/treatment of each of these
+          properties so that they are under the full control of the Torora browser.
+
+          Setting: QWebSettings::MaskDOMWindowInformation
+                  QWebSettings::MaskScreenInformation
+          Files altered: WebCore/page/DOMWindow.cpp
+                        WebCore/page/Screen.cpp
+
+          Strategy: Same approach as Torbutton. Window size and Screen size are rounded by 50
+                    pixels to reduce the potential uniqueness of the user's configuration.
+                    The various javascript properties always return as follows:
+
+                    WebCore/page/DOMWindow.cpp:
+                    outerHeight() = outerHeight() rounded to the nearest 50 px
+                    outerWidth()  = outerWidth() rounded to the nearest 50 px
+                    innerHeight() = innerHeight() rounded to the nearest 50 px
+                    innerWidth()  = innerWidth() rounded to the nearest 50 px
+                    screenX()     = screenX() rounded to the nearest 50 px
+                    screenY()     = screenY() rounded to the nearest 50 px
+                    scrollX()     = scrollX() rounded to the nearest 50 px
+                    scrollY()     = scrollY() rounded to the nearest 50 px
+
+                    WebCore/page/Screen.cpp
+                    height()      = window innerHeight()
+                    width()       = width()  rounded to the nearest 50 px
+                    colorDepth()  = 24
+                    pixelDepth()  = 24
+                    availLeft()   = 0
+                    availTop()    = 0
+                    availHeight() = window innerHeight()
+                    availWidth()  = window innerWidth()
+
+          Notes:  The client browser should resize it's window to 50px as well.
+
+       4. Mask the appname, appversion, platform, oscpu, useragent, productsub, buildid,
+          vendor, and vendorsub properties of the Javascript Navigator object. The WebKit
+          patch should allow the browser to specify the values for each of these properties
+          so that they are under the full control of the Torora browser. Though it might be
+          better to settle on a set of values now and stick to them.
+          Setting: QWebSettings::MaskPlatform
+          Files altered: WebCore/page/Navigator.cpp
+                        WebCore/page/NavigatorBase.cpp
+                        JavaScriptCore/runtime/DateMath.cpp
+
+          Strategy: Same approach as Torbutton.
+
+
+                    Navigator Object
+                      appname = Netscape
+                      appversion = 5.0 (Windows; LANG)
+                      platform = Win32
+                      oscpu = Windows NT 5.1
+                      useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6"
+                      productsub = 2009011913
+                      buildID = 0
+                      useragent_vendor = ""
+                      useragent_vendorSub = ""
+       5. Disable plugins.
+          Files Altered: torora/src/settings.cpp
+
+       6. Disable java.
+           Files Altered: TODO. Java not currently supported in arora!
+
+
+    6. Transparency
+        The user should receive some assurance that they are indeed using tor.
+
+       Implementation Requirements Arising:
+
+    7. Miscellaneous Security Requirements
+       1. The Javascript submit() method should be disabled, or should at least require
+          user interaction.
+          Ref: http://www.remote.org/jochen/sec/hfpa/hfpa.pdf
+          Setting: QWebSettings::DisableJavascriptSubmit
+          Files altered: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
+          Strategy: Disable the Javascript submit() method.
+
+       2. Forms with 'action' elements containing 'localhost' or '127.0.0.1' should be
+          disabled. An alternative is to ban access to ports 8123, 8118, 9050 and 9051,
+          or to ban access to localhost/127.0.0.1 completely.
+          Ref: http://www.remote.org/jochen/sec/hfpa/hfpa.pdf
+          Files altered: torora/src/networkaccessmanager.cpp
+
+       3. Same origin policy for file:// urls.
+          "Firefox 2's implementation of same origin policy allows file urls to read
+          and submit arbitrary files from the local filesystem to arbitrary websites."
+          (Torbutton Design Doc). Need to ensure that webkit does not have this problem.
+          Disabling Javascript submit() can help mitigate against this attack. We could
+          also add a preference to disable access to the network by javascript running
+          with a local context.
+          Already implemented by QWebSettings::AllowUniversalAccessFromFileURLs.
+          Files altered: torora/src/browserapplication.cpp
+
+       4. Password and Form Saving
+          "Since form fields can be read at any time by Javascript, this setting is a
+          lot more important than it seems." (Torbutton Design Doc)
+          Setting: QWebSettings::DisableJavascriptSubmit
+          Files altered: WebCore/html/HTMLFormElement.cpp
+          Strategy: Do not save or record values typed into HTML forms.
+
+       5. Need to prevent random external applications from launching without at least
+          warning the user.
+
+       6. Javascript should not have access to the clipboard.
+          Already implemented by QWebSettings::JavascriptCanAccessClipboard
+          Files altered: torora/src/browserapplication.cpp
+
+       7. Google analytics cookies should be rejected/killed. This is because they
+          allow Google to gain a complete view of a user's activity. This may help
+          identify the user.
+
+
+Appendix A
+----------
+
+Original TorButton Requirements:
+
+1. Proxy Obedience
+  The browser MUST NOT bypass Tor proxy settings for any content.
+
+2. Network Isolation
+  Pages MUST NOT perform any network activity in a Tor state different from
+  the state they were originally loaded in.
+
+3. State Separation
+  Browser state (cookies, cache, history, 'DOM storage'), accumulated in one
+  Tor state MUST NOT be accessible via the network in another Tor state.
+
+4. Tor Undiscoverability
+  With the advent of bridge support in Tor 0.2.0.x, there are now a class of
+  Tor users whose network fingerprint does not obviously betray the fact that
+  they are using Tor. This should extend to the browser as well - Torbutton
+  MUST NOT reveal its presence while Tor is disabled.
+
+5. Disk Avoidance
+  The browser SHOULD NOT write any Tor-related state to disk, or store it in
+  memory beyond the duration of one Tor toggle.
+
+6. Location Neutrality
+  The browser SHOULD NOT leak location-specific information, such as timezone
+  or locale via Tor.
+
+7. Anonymity Set Preservation
+  The browser SHOULD NOT leak any other anonymity set reducing information
+  (such as user agent, extension presence, and resolution information)
+  automatically via Tor. The assessment of the attacks above should make
+  it clear that anonymity set reduction is a very powerful method of
+  tracking and eventually identifying anonymous users.
+
+  Specific attacks to defend against:
+   (i) Use of 'a:visited' CSS tag to determine the sites the user has
+       visited. (ref: http://ha.ckers.org/weird/CSS-history.cgi)
+   (ii) Inserting Javascript:
+        a. to execute history disclosure attacks (http://gemal.dk/browserspy/css.html);
+        b. query the user's timezone;
+        c. query the browser's properties;
+   (iii) Plugins bypassing network settings.
+   (iv) Use cache to create arbitrary cached content. Remote attackers can track requests
+        for cached content and establish an anonymous users visiting history.
+   (v) Cookies can track users across browsing sessions.
+   (vi) Cookies can track users within the same browsing session.
+
+8. Update Safety
+  The browser SHOULD NOT perform unauthenticated updates or upgrades via Tor.
+
+9. Interoperability
+   Torbutton SHOULD interoperate with third-party proxy switchers that enable
+   the user to switch between a number of different proxies. It MUST provide
+   full Tor protection in the event a third-party proxy switcher has enabled
+   the Tor proxy settings.
+
+10. Transparency
+    The user should receive some assurance that they are indeed using tor.
