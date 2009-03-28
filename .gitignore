@@ -1,7 +1,8 @@
 arora
 torora
 Arora.app
-Makefile
+arora.exe
+Makefile*
 .DS_Store
 .ui
 .moc
@@ -14,3 +15,4 @@ Makefile
 .kdevses
 *.swp
 *~
+*.pdb

@@ -107,7 +107,7 @@ QList<QNetworkProxy> NetworkProxyFactory::queryProxy(const QNetworkProxyQuery &q
     QList<QNetworkProxy> ret;
 
     if (query.protocolTag() == QLatin1String("http") && m_httpProxy.type() != QNetworkProxy::DefaultProxy)
-      ret << m_httpProxy;
+        ret << m_httpProxy;
     ret << m_globalProxy;
 
     return ret;

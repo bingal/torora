@@ -37,6 +37,7 @@ Section "Main Components"
 
   SetOutPath "$INSTDIR"
   File "torora.exe"
+  File "tools\htmlToXBel\release\htmlToXBel.exe"
   File "C:\Qt\2009.01\mingw\bin\mingwm10.dll"
   File "C:\Qt\2009.01\qt\bin\QtCore4.dll"
   File "C:\Qt\2009.01\qt\bin\QtGui4.dll"

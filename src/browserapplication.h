@@ -137,6 +137,7 @@ public slots:
 #endif
 
 private slots:
+    void retranslate();
     void messageReceived(const QString &message);
     void postLaunch();
     void openUrl(const QUrl &url);
