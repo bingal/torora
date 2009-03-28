@@ -447,6 +447,7 @@ void BrowserApplication::loadSettings()
     defaultSettings->setFontSize(QWebSettings::DefaultFixedFontSize, fixedFont.pointSize());
 
     defaultSettings->setAttribute(QWebSettings::JavascriptCanOpenWindows, !(settings.value(QLatin1String("blockPopupWindows"), true).toBool()));
+    /*Torora: Req 5.1 to 5.5*/
     if (isTor()) {
 #if defined(TORORA_WEBKIT_BUILD)
       defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());

@@ -100,6 +100,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
 #endif
 
+    /*Torora: Req 2.2*/
     if (!BrowserApplication::isTor()) {
       proxyName->setVisible(false); 
       proxyLabel->setVisible(false);
@@ -125,6 +126,7 @@ void SettingsDialog::loadDefaults()
     downloadsLocation->setText(QDesktopServices::storageLocation(QDesktopServices::DesktopLocation));
 
     blockPopupWindows->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
+    /*Torora: Req 5.1 to 5.5*/
     if (BrowserApplication::isTor()) {
 #if defined(TORORA_WEBKIT_BUILD)
       enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
@@ -152,6 +154,7 @@ void SettingsDialog::loadFromSettings()
     settings.beginGroup(QLatin1String("history"));
     int historyExpire = settings.value(QLatin1String("historyLimit")).toInt();
     int idx = 0;
+    /*Torora: Req 3.4. Dumping history on application exit is probably overkill for Torora.*/
     if (BrowserApplication::isTor()) {
         idx = 6;
         expireHistory->setCurrentIndex(idx);
@@ -189,6 +192,7 @@ void SettingsDialog::loadFromSettings()
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
 
     blockPopupWindows->setChecked(settings.value(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked()).toBool());
+    /*Torora: Req 5.1 to 5.5*/
     if (BrowserApplication::isTor()) {
 #if defined(TORORA_WEBKIT_BUILD)
       enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
@@ -212,10 +216,10 @@ void SettingsDialog::loadFromSettings()
     CookieJar *jar = BrowserApplication::cookieJar();
     QByteArray value = settings.value(QLatin1String("acceptCookies"), QLatin1String("AcceptOnlyFromSitesNavigatedTo")).toByteArray();
     QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
+    /*Torora: Req 3.2*/
     if (BrowserApplication::isTor()) {
         acceptCombo->setCurrentIndex(2);
         acceptCombo->setEnabled(false);
-        exceptionsButton->setEnabled(false);
     } else {
       CookieJar::AcceptPolicy acceptCookies = acceptPolicyEnum.keyToValue(value) == -1 ?
                           CookieJar::AcceptOnlyFromSitesNavigatedTo :
@@ -234,6 +238,7 @@ void SettingsDialog::loadFromSettings()
     }
     value = settings.value(QLatin1String("keepCookiesUntil"), QLatin1String("Expire")).toByteArray();
     QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
+    /*Torora: Req 3.2*/
     if (BrowserApplication::isTor()) {
         keepUntilCombo->setCurrentIndex(1);
         keepUntilCombo->setEnabled(false);
@@ -258,6 +263,7 @@ void SettingsDialog::loadFromSettings()
 
     // Proxy
     settings.beginGroup(QLatin1String("proxy"));
+    /*Torora: Req 2.2*/
     if (BrowserApplication::isTor()) {
       proxySupport->setChecked(true);
       proxyType->setCurrentIndex(2);
@@ -301,6 +307,7 @@ void SettingsDialog::saveToSettings()
 
     /* For 'Tor Browsing' we do not alter the user's normal settings. Tor settings
        are enforced when we load settings for each component. */
+    /*Torora: Req 3.4*/
     if (!BrowserApplication::isTor()) {
       settings.beginGroup(QLatin1String("history"));
       int historyExpire = expireHistory->currentIndex();
@@ -324,6 +331,7 @@ void SettingsDialog::saveToSettings()
 
     settings.setValue(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked());
 
+    /*Torora: Req 5.1 to 5.5*/
     if (!BrowserApplication::isTor()) {
       settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
       settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
@@ -338,6 +346,7 @@ void SettingsDialog::saveToSettings()
     settings.endGroup();
 
     //Privacy
+    /*Torora: Req 3.2*/
     if (!BrowserApplication::isTor()) {
       settings.beginGroup(QLatin1String("cookies"));
       CookieJar::AcceptPolicy acceptCookies;
@@ -378,6 +387,7 @@ void SettingsDialog::saveToSettings()
 
     // proxy
     settings.beginGroup(QLatin1String("proxy"));
+    /*Torora: Req 2.2*/
     if (BrowserApplication::isTor()) {
       settings.setValue(QLatin1String("enabled"), true);
       settings.setValue(QLatin1String("proxyName"), proxyName->currentIndex());
@@ -403,6 +413,7 @@ void SettingsDialog::saveToSettings()
 
     BrowserApplication::instance()->loadSettings();
     BrowserApplication::networkAccessManager()->loadSettings();
+    /*Torora: Req 3.2*/
     BrowserApplication::cookieJar()->loadSettings(BrowserApplication::isTor());
     BrowserApplication::historyManager()->loadSettings();
 }

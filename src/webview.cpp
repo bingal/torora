@@ -112,8 +112,10 @@ TabWidget *WebPage::tabWidget() const
     return tabWidget;
 }
 
-bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type)
+bool WebPage::acceptNavigationRequest(QWebFrame *frame, QNetworkRequest &request, NavigationType type)
 {
+    request.setRawHeader("Referer", "/");
+
     QString scheme = request.url().scheme();
     if (scheme == QLatin1String("mailto") || scheme == QLatin1String("ftp")) {
         QDesktopServices::openUrl(request.url());

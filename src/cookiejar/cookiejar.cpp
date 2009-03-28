@@ -162,6 +162,7 @@ void CookieJar::load()
 void CookieJar::loadSettings(bool isTor)
 {
     m_isTor = isTor;
+    /*Torora: Req 3.2*/
     if (isTor) {
       m_keepCookies = KeepUntilExit;
       m_acceptCookies = AcceptOnlyFromSitesNavigatedTo;
@@ -288,7 +289,7 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
           soon = soon.addDays(90);
         foreach (QNetworkCookie cookie, cookieList) {
             QList<QNetworkCookie> lst;
-            /*Torora Requirement: 3.3 : Reject google analytics cookies, these
+            /*Torora: Req 3.3 : Reject google analytics cookies, these
               always start with '_utm' - at least at the moment.*/
             if (m_isTor && cookie.name().startsWith("_utm"))
                 continue;

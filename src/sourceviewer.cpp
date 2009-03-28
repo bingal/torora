@@ -82,6 +82,7 @@ SourceViewer::SourceViewer(const QString &source,
 
     m_request = new QNetworkRequest(url);
 
+    /*Torora: Req 3.5*/
     if (BrowserApplication::instance()->isTor())
       m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
               QNetworkRequest::AlwaysNetwork);

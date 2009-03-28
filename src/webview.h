@@ -88,7 +88,7 @@ public:
     BrowserMainWindow *mainWindow();
 
 protected:
-    bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
+    bool acceptNavigationRequest(QWebFrame *frame, QNetworkRequest &request, NavigationType type);
 
     QWebPage *createWindow(QWebPage::WebWindowType type);
 #if !defined(QT_NO_UITOOLS)
