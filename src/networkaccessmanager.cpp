@@ -171,6 +171,7 @@ void NetworkAccessManager::loadSettings()
     settings.beginGroup(QLatin1String("proxy"));
     QNetworkProxy proxy;
 
+    /*Torora: Req 2.2*/
     if (BrowserApplication::instance()->isTor()) {
         proxy = QNetworkProxy::HttpProxy;
 #if QT_VERSION < 0x040500
@@ -371,17 +372,61 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
 }
 #endif
 
+bool NetworkAccessManager::requestViolatesTorRules(QNetworkRequest &req)
+{
+    /*Torora: Req 3.7*/
+    if (req.hasRawHeader("Referer"))
+        req.setRawHeader("Referer", "/");
+    if (req.hasRawHeader("Origin"))
+        req.setRawHeader("Origin", "/");
+
+    /*Torora: Req 7.2*/
+    if ((req.url().port() == 8118) ||
+       (req.url().port() == 9050) ||
+       (req.url().port() == 9051) ||
+       (req.url().port() == 8180)) {
+       QMessageBox::information(0, tr("Access to Port %1 blocked").arg(req.url().port()),
+            tr("<p>Either you or a form in the web page you are viewing has attempted to "
+               "access port %1. Torora blocks access to this port in order to prevent "
+               "HTML form attacks on Tor. <br> See http://www.remote.org/jochen/sec/hfpa/hfpa.pdf "
+               "for more information.</a></p>").arg(req.url().port()));
+       return true;
+    }
+
+    /*Torora: Req 7.2*/
+    if ((req.url().host() == QLatin1String("localhost")) ||
+       (req.url().host() == QLatin1String("127.0.0.1"))) {
+       QMessageBox::information(0, tr("Access to hostname %1 blocked").arg(req.url().host()),
+            tr("Either you or a form in the web page you are viewing has attempted to "
+               "access localhost. Torora blocks access to locahost in order to prevent "
+               "HTML form attacks on Tor. <br> See http://www.remote.org/jochen/sec/hfpa/hfpa.pdf "
+               "for more information.</a></p>").arg(req.url().host()));
+       return true;
+    }
+    return false;
+}
+
 QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData)
 {
     QNetworkReply *reply;
+    QNetworkRequest req = request;
+
+    if (BrowserApplication::instance()->isTor()) {
+        if (requestViolatesTorRules(req)) {
+            /*FIXME: subclass qnetworkreply and abort?*/
+            reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
+            reply->abort();
+            return reply;
+        }
+    }
+
     if (!acceptLanguage.isEmpty()) {
-        QNetworkRequest req = request;
         req.setRawHeader("Accept-Language", acceptLanguage);
         reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
         emit requestCreated(op, req, reply);
     } else {
-        reply = QNetworkAccessManager::createRequest(op, request, outgoingData);
-        emit requestCreated(op, request, reply);
+        reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
+        emit requestCreated(op, req, reply);
     }
     return reply;
 }
