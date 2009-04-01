@@ -1,6 +1,6 @@
 Index: JavaScriptCore/runtime/DateConstructor.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateConstructor.cpp	(revision 41917)
+--- JavaScriptCore/runtime/DateConstructor.cpp	(revision 42152)
 +++ JavaScriptCore/runtime/DateConstructor.cpp	(working copy)
 @@ -78,7 +78,10 @@
          else {
@@ -28,7 +28,7 @@ Index: JavaScriptCore/runtime/DateConstructor.cpp
  
 Index: JavaScriptCore/runtime/DateMath.h
 ===================================================================
---- JavaScriptCore/runtime/DateMath.h	(revision 41917)
+--- JavaScriptCore/runtime/DateMath.h	(revision 42152)
 +++ JavaScriptCore/runtime/DateMath.h	(working copy)
 @@ -60,7 +60,7 @@
  void getLocalTime(const time_t*, tm*);
@@ -50,9 +50,9 @@ Index: JavaScriptCore/runtime/DateMath.h
          : second(0)
 Index: JavaScriptCore/runtime/DateMath.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateMath.cpp	(revision 41917)
+--- JavaScriptCore/runtime/DateMath.cpp	(revision 42152)
 +++ JavaScriptCore/runtime/DateMath.cpp	(working copy)
-@@ -596,7 +596,7 @@
+@@ -592,7 +592,7 @@
      return true;
  }
  
@@ -61,7 +61,7 @@ Index: JavaScriptCore/runtime/DateMath.cpp
  {
      // This parses a date in the form:
      //     Tuesday, 09-Nov-99 23:12:40 GMT
-@@ -879,7 +879,7 @@
+@@ -875,7 +875,7 @@
          t.hour = hour;
  
          // Use our gregorianDateTimeToMS() rather than mktime() as the latter can't handle the full year range.
@@ -72,7 +72,7 @@ Index: JavaScriptCore/runtime/DateMath.cpp
      return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
 Index: JavaScriptCore/runtime/DatePrototype.cpp
 ===================================================================
---- JavaScriptCore/runtime/DatePrototype.cpp	(revision 41917)
+--- JavaScriptCore/runtime/DatePrototype.cpp	(revision 42152)
 +++ JavaScriptCore/runtime/DatePrototype.cpp	(working copy)
 @@ -384,7 +384,6 @@
      : DateInstance(structure)
@@ -356,9 +356,9 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
 Index: JavaScriptCore/runtime/JSGlobalObject.h
 ===================================================================
---- JavaScriptCore/runtime/JSGlobalObject.h	(revision 41917)
+--- JavaScriptCore/runtime/JSGlobalObject.h	(revision 42152)
 +++ JavaScriptCore/runtime/JSGlobalObject.h	(working copy)
-@@ -231,6 +231,8 @@
+@@ -233,6 +233,8 @@
  
          virtual bool shouldInterruptScript() const { return true; }
  
@@ -369,7 +369,7 @@ Index: JavaScriptCore/runtime/JSGlobalObject.h
          virtual bool isDynamicScope() const;
 Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
 ===================================================================
---- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 41917)
+--- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 42152)
 +++ WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(working copy)
 @@ -167,6 +167,7 @@
      WebPreferences *preferences = [[WebPreferences alloc] init];
@@ -381,7 +381,7 @@ Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
      [preferences setJavaScriptEnabled:YES];
 Index: WebKit/mac/WebView/WebPreferences.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.h	(revision 41917)
+--- WebKit/mac/WebView/WebPreferences.h	(revision 42152)
 +++ WebKit/mac/WebView/WebPreferences.h	(working copy)
 @@ -366,6 +366,19 @@
  - (BOOL)privateBrowsingEnabled;
@@ -405,9 +405,9 @@ Index: WebKit/mac/WebView/WebPreferences.h
      @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
 Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 41917)
+--- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 42152)
 +++ WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(working copy)
-@@ -60,6 +60,7 @@
+@@ -61,6 +61,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
  #define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
  #define WebKitPrivateBrowsingEnabledPreferenceKey @"WebKitPrivateBrowsingEnabled"
@@ -417,9 +417,9 @@ Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
  #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 Index: WebKit/mac/WebView/WebView.mm
 ===================================================================
---- WebKit/mac/WebView/WebView.mm	(revision 41917)
+--- WebKit/mac/WebView/WebView.mm	(revision 42152)
 +++ WebKit/mac/WebView/WebView.mm	(working copy)
-@@ -1332,6 +1332,7 @@
+@@ -1354,6 +1354,7 @@
      settings->setDatabasesEnabled([preferences databasesEnabled]);
      settings->setLocalStorageEnabled([preferences localStorageEnabled]);
      settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
@@ -429,9 +429,9 @@ Index: WebKit/mac/WebView/WebView.mm
      settings->setStandardFontFamily([preferences standardFontFamily]);
 Index: WebKit/mac/WebView/WebPreferences.mm
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.mm	(revision 41917)
+--- WebKit/mac/WebView/WebPreferences.mm	(revision 42152)
 +++ WebKit/mac/WebView/WebPreferences.mm	(working copy)
-@@ -325,6 +325,7 @@
+@@ -326,6 +326,7 @@
          @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
          [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
          [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
@@ -439,7 +439,7 @@ Index: WebKit/mac/WebView/WebPreferences.mm
          [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
          [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
          @"1",                           WebKitPDFDisplayModePreferenceKey,
-@@ -720,6 +721,16 @@
+@@ -721,6 +722,16 @@
      return [self _boolValueForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
  }
  
@@ -458,7 +458,7 @@ Index: WebKit/mac/WebView/WebPreferences.mm
      [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
 Index: WebKit/qt/Api/qwebsettings.cpp
 ===================================================================
---- WebKit/qt/Api/qwebsettings.cpp	(revision 41917)
+--- WebKit/qt/Api/qwebsettings.cpp	(revision 42152)
 +++ WebKit/qt/Api/qwebsettings.cpp	(working copy)
 @@ -150,6 +150,11 @@
                                        global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
@@ -484,7 +484,7 @@ Index: WebKit/qt/Api/qwebsettings.cpp
  /*!
 Index: WebKit/qt/Api/qwebsettings.h
 ===================================================================
---- WebKit/qt/Api/qwebsettings.h	(revision 41917)
+--- WebKit/qt/Api/qwebsettings.h	(revision 42152)
 +++ WebKit/qt/Api/qwebsettings.h	(working copy)
 @@ -64,7 +64,8 @@
          OfflineStorageDatabaseEnabled,
@@ -498,9 +498,9 @@ Index: WebKit/qt/Api/qwebsettings.h
          MissingImageGraphic,
 Index: WebKit/qt/Api/qwebpage.cpp
 ===================================================================
---- WebKit/qt/Api/qwebpage.cpp	(revision 41917)
+--- WebKit/qt/Api/qwebpage.cpp	(revision 42152)
 +++ WebKit/qt/Api/qwebpage.cpp	(working copy)
-@@ -2398,7 +2398,12 @@
+@@ -2497,7 +2497,12 @@
  */
  QString QWebPage::userAgentForUrl(const QUrl& url) const
  {
@@ -515,7 +515,7 @@ Index: WebKit/qt/Api/qwebpage.cpp
      // Plastform
 Index: WebKit/win/WebPreferences.h
 ===================================================================
---- WebKit/win/WebPreferences.h	(revision 41917)
+--- WebKit/win/WebPreferences.h	(revision 42152)
 +++ WebKit/win/WebPreferences.h	(working copy)
 @@ -193,6 +193,12 @@
      virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
@@ -532,9 +532,9 @@ Index: WebKit/win/WebPreferences.h
      
 Index: WebKit/win/WebView.cpp
 ===================================================================
---- WebKit/win/WebView.cpp	(revision 41917)
+--- WebKit/win/WebView.cpp	(revision 42152)
 +++ WebKit/win/WebView.cpp	(working copy)
-@@ -4061,6 +4061,11 @@
+@@ -4074,6 +4074,11 @@
          return hr;
      settings->setPrivateBrowsingEnabled(!!enabled);
  
@@ -548,7 +548,7 @@ Index: WebKit/win/WebView.cpp
          return hr;
 Index: WebKit/win/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/win/WebPreferenceKeysPrivate.h	(revision 41917)
+--- WebKit/win/WebPreferenceKeysPrivate.h	(revision 42152)
 +++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
 @@ -59,6 +59,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
@@ -560,7 +560,7 @@ Index: WebKit/win/WebPreferenceKeysPrivate.h
  #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebPreferences.cpp
 ===================================================================
---- WebKit/win/WebPreferences.cpp	(revision 41917)
+--- WebKit/win/WebPreferences.cpp	(revision 42152)
 +++ WebKit/win/WebPreferences.cpp	(working copy)
 @@ -215,6 +215,7 @@
      CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
@@ -593,7 +593,7 @@ Index: WebKit/win/WebPreferences.cpp
  {
 Index: WebKit/win/Interfaces/IWebPreferences.idl
 ===================================================================
---- WebKit/win/Interfaces/IWebPreferences.idl	(revision 41917)
+--- WebKit/win/Interfaces/IWebPreferences.idl	(revision 42152)
 +++ WebKit/win/Interfaces/IWebPreferences.idl	(working copy)
 @@ -141,6 +141,9 @@
      HRESULT setPrivateBrowsingEnabled([in] BOOL enabled);
@@ -607,7 +607,7 @@ Index: WebKit/win/Interfaces/IWebPreferences.idl
  
 Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
 ===================================================================
---- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 41917)
+--- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 42152)
 +++ WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(working copy)
 @@ -145,6 +145,8 @@
          return 0;
@@ -620,7 +620,7 @@ Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
      if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
 Index: WebCore/plugins/win/PluginViewWin.cpp
 ===================================================================
---- WebCore/plugins/win/PluginViewWin.cpp	(revision 41917)
+--- WebCore/plugins/win/PluginViewWin.cpp	(revision 42152)
 +++ WebCore/plugins/win/PluginViewWin.cpp	(working copy)
 @@ -121,11 +121,20 @@
          return pluginView->m_wmPrintHDC;
@@ -666,20 +666,25 @@ Index: WebCore/plugins/win/PluginViewWin.cpp
  static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE*& pProc, const void* pNewProc)
 Index: WebCore/page/Navigator.h
 ===================================================================
---- WebCore/page/Navigator.h	(revision 41917)
+--- WebCore/page/Navigator.h	(revision 42152)
 +++ WebCore/page/Navigator.h	(working copy)
-@@ -48,6 +48,8 @@
+@@ -48,6 +48,13 @@
          MimeTypeArray* mimeTypes() const;
          bool cookieEnabled() const;
          bool javaEnabled() const;
 +        String platform() const;
 +        String vendor() const;
++        String vendorSub() const;
++        String product() const;
++        String productSub() const;
++        String appName() const;
++        String appCodeName() const;
  
          virtual String userAgent() const;
  
 Index: WebCore/page/History.cpp
 ===================================================================
---- WebCore/page/History.cpp	(revision 41917)
+--- WebCore/page/History.cpp	(revision 42152)
 +++ WebCore/page/History.cpp	(working copy)
 @@ -1,4 +1,4 @@
 -/*
@@ -709,7 +714,7 @@ Index: WebCore/page/History.cpp
  
 Index: WebCore/page/Settings.h
 ===================================================================
---- WebCore/page/Settings.h	(revision 41917)
+--- WebCore/page/Settings.h	(revision 42152)
 +++ WebCore/page/Settings.h	(working copy)
 @@ -112,7 +112,10 @@
  
@@ -722,8 +727,8 @@ Index: WebCore/page/Settings.h
 +
          void setDefaultTextEncodingName(const String&);
          const String& defaultTextEncodingName() const { return m_defaultTextEncodingName; }
- 
-@@ -230,6 +233,7 @@
+         
+@@ -236,6 +239,7 @@
          bool m_isJavaEnabled : 1;
          bool m_loadsImagesAutomatically : 1;
          bool m_privateBrowsingEnabled : 1;
@@ -733,7 +738,7 @@ Index: WebCore/page/Settings.h
          bool m_localStorageEnabled : 1;
 Index: WebCore/page/DOMWindow.cpp
 ===================================================================
---- WebCore/page/DOMWindow.cpp	(revision 41917)
+--- WebCore/page/DOMWindow.cpp	(revision 42152)
 +++ WebCore/page/DOMWindow.cpp	(working copy)
 @@ -557,6 +557,17 @@
      if (!m_frame)
@@ -859,9 +864,50 @@ Index: WebCore/page/DOMWindow.cpp
      m_frame->document()->updateLayoutIgnorePendingStylesheets();
  
      return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
+Index: WebCore/page/FrameView.cpp
+===================================================================
+--- WebCore/page/FrameView.cpp	(revision 42152)
++++ WebCore/page/FrameView.cpp	(working copy)
+@@ -468,6 +468,8 @@
+         return;
+ 
+     Document* document = m_frame->document();
++    if (!document)
++        return;
+ 
+     m_layoutSchedulingEnabled = false;
+ 
+@@ -960,7 +962,7 @@
+     return layoutPending()
+         || (root && root->needsLayout())
+         || m_layoutRoot
+-        || document->hasChangedChild() // can occur when using WebKit ObjC interface
++        || (document && document->hasChangedChild()) // can occur when using WebKit ObjC interface
+         || m_frame->needsReapplyStyles();
+ }
+ 
+@@ -1243,7 +1245,7 @@
+ void FrameView::updateDashboardRegions()
+ {
+     Document* document = m_frame->document();
+-    if (!document->hasDashboardRegions())
++    if (!document || !document->hasDashboardRegions())
+         return;
+     Vector<DashboardRegionValue> newRegions;
+     document->renderBox()->collectDashboardRegions(newRegions);
+@@ -1300,6 +1302,9 @@
+     
+     Document* document = frame()->document();
+ 
++    if (!document)
++      return;
++
+ #ifndef NDEBUG
+     bool fillWithRed;
+     if (document->printing())
 Index: WebCore/page/NavigatorBase.cpp
 ===================================================================
---- WebCore/page/NavigatorBase.cpp	(revision 41917)
+--- WebCore/page/NavigatorBase.cpp	(revision 42152)
 +++ WebCore/page/NavigatorBase.cpp	(working copy)
 @@ -29,6 +29,7 @@
  
@@ -871,51 +917,9 @@ Index: WebCore/page/NavigatorBase.cpp
  
  #ifndef WEBCORE_NAVIGATOR_PLATFORM
  #if PLATFORM(MAC) && (PLATFORM(PPC) || PLATFORM(PPC64))
-@@ -89,21 +90,41 @@
- 
- String NavigatorBase::product() const
- {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "Gecko";
-+
-     return WEBCORE_NAVIGATOR_PRODUCT;
- }
- 
- String NavigatorBase::productSub() const
- {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "2009011913";
-+
-     return WEBCORE_NAVIGATOR_PRODUCT_SUB;
- }
- 
- String NavigatorBase::vendor() const
- {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "";
-+
-     return WEBCORE_NAVIGATOR_VENDOR;
- }
- 
- String NavigatorBase::vendorSub() const
- {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "";
-+
-     return WEBCORE_NAVIGATOR_VENDOR_SUB;
- }
- 
 Index: WebCore/page/Screen.cpp
 ===================================================================
---- WebCore/page/Screen.cpp	(revision 41917)
+--- WebCore/page/Screen.cpp	(revision 42152)
 +++ WebCore/page/Screen.cpp	(working copy)
 @@ -34,6 +34,7 @@
  #include "Frame.h"
@@ -925,7 +929,7 @@ Index: WebCore/page/Screen.cpp
  #include "Widget.h"
  
  namespace WebCore {
-@@ -52,6 +53,13 @@
+@@ -57,6 +58,13 @@
  {
      if (!m_frame)
          return 0;
@@ -939,7 +943,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenRect(m_frame->view()).height());
  }
  
-@@ -59,6 +67,12 @@
+@@ -64,6 +72,12 @@
  {
      if (!m_frame)
          return 0;
@@ -952,7 +956,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenRect(m_frame->view()).width());
  }
  
-@@ -66,6 +80,12 @@
+@@ -71,6 +85,12 @@
  {
      if (!m_frame)
          return 0;
@@ -965,7 +969,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenDepth(m_frame->view()));
  }
  
-@@ -73,6 +93,12 @@
+@@ -78,6 +98,12 @@
  {
      if (!m_frame)
          return 0;
@@ -978,7 +982,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenDepth(m_frame->view()));
  }
  
-@@ -80,6 +106,12 @@
+@@ -85,6 +111,12 @@
  {
      if (!m_frame)
          return 0;
@@ -991,7 +995,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x());
  }
  
-@@ -87,6 +119,13 @@
+@@ -92,6 +124,13 @@
  {
      if (!m_frame)
          return 0;
@@ -1005,7 +1009,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y());
  }
  
-@@ -94,6 +133,13 @@
+@@ -99,6 +138,13 @@
  {
      if (!m_frame)
          return 0;
@@ -1019,7 +1023,7 @@ Index: WebCore/page/Screen.cpp
      return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height());
  }
  
-@@ -101,6 +147,12 @@
+@@ -106,6 +152,12 @@
  {
      if (!m_frame)
          return 0;
@@ -1034,7 +1038,7 @@ Index: WebCore/page/Screen.cpp
  
 Index: WebCore/page/Navigator.cpp
 ===================================================================
---- WebCore/page/Navigator.cpp	(revision 41917)
+--- WebCore/page/Navigator.cpp	(revision 42152)
 +++ WebCore/page/Navigator.cpp	(working copy)
 @@ -87,6 +87,11 @@
  {
@@ -1069,51 +1073,43 @@ Index: WebCore/page/Navigator.cpp
 +    Settings* settings = m_frame->settings();
 +
 +    if (!settings || settings->preventUserProfiling())
-+      return "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6";
++      return "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/528.16 (KHTML, like Gecko) Version/4.0 Safari/528.16";
 +
      // If the frame is already detached, FrameLoader::userAgent may malfunction, because it calls a client method
      // that uses frame's WebView (at least, in Mac WebKit).
      if (!m_frame->page())
-@@ -144,6 +159,62 @@
+@@ -144,11 +159,85 @@
      return m_frame->settings()->isJavaEnabled();
  }
  
 +String Navigator::platform() const
 +{
-+//     if (!m_frame || !m_frame->settings())
-+//         return String();
-+
 +    if (m_frame->settings()->preventUserProfiling())
 +      return "Win32";
 +
 +    return NavigatorBase::platform();
 +}
 +
-+// String Navigator::appCodeName() const
-+// {
-+//     return "Mozilla";
-+// }
-+// 
-+// String Navigator::product() const
-+// {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "Gecko";
-+// 
-+//     return WEBCORE_NAVIGATOR_PRODUCT;
-+// }
-+// 
-+// String Navigator::productSub() const
-+// {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "2009011913";
-+// 
-+//     return WEBCORE_NAVIGATOR_PRODUCT_SUB;
-+// }
-+// 
++String Navigator::product() const
++{
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "Gecko";
++
++    return NavigatorBase::product();
++}
++
++String Navigator::productSub() const
++{
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "20030107";
++
++    return NavigatorBase::productSub();
++}
++
 +String Navigator::vendor() const
 +{
 +    Settings* settings = m_frame->settings();
@@ -1124,22 +1120,54 @@ Index: WebCore/page/Navigator.cpp
 +    return NavigatorBase::vendor();
 +}
 +
-+// String Navigator::vendorSub() const
-+// {
-+//     Settings* settings = m_frame->settings();
-+// 
-+//     if (!settings || settings->preventUserProfiling())
-+//       return "";
-+// 
-+//     return WEBCORE_NAVIGATOR_VENDOR_SUB;
-+// }
++String Navigator::vendorSub() const
++{
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "";
++
++    return NavigatorBase::vendorSub();
++}
 +
  Geolocation* Navigator::geolocation() const
  {
      if (!m_geolocation)
+         m_geolocation = Geolocation::create(m_frame);
+     return m_geolocation.get();
+ }
+-    
++
++/* "Netscape" is already hardcoded in NavigatorBase.cpp so it may seem daft to
++   implement it again here. However, if the hardcoded value ever changes we
++   want to retain the appName tied to our hard-coded useragent */
++String Navigator::appName() const
++{
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "Netscape";
++
++    return NavigatorBase::appName();
++}
++
++/* "Mozilla" is already hardcoded in NavigatorBase.cpp so it may seem daft to
++   implement it again here. However, if the hardcoded value ever changes we
++   want to retain the appCodeName tied to our hard-coded useragent */
++String Navigator::appCodeName() const
++{
++    Settings* settings = m_frame->settings();
++
++    if (!settings || settings->preventUserProfiling())
++      return "Mozilla";
++
++    return NavigatorBase::appCodeName();
++}
++ 
+ } // namespace WebCore
 Index: WebCore/page/Settings.cpp
 ===================================================================
---- WebCore/page/Settings.cpp	(revision 41917)
+--- WebCore/page/Settings.cpp	(revision 42152)
 +++ WebCore/page/Settings.cpp	(working copy)
 @@ -56,6 +56,7 @@
      , m_isJavaEnabled(false)
@@ -1149,7 +1177,7 @@ Index: WebCore/page/Settings.cpp
      , m_arePluginsEnabled(false)
      , m_databasesEnabled(false)
      , m_localStorageEnabled(false)
-@@ -229,6 +230,11 @@
+@@ -231,6 +232,11 @@
      m_privateBrowsingEnabled = privateBrowsingEnabled;
  }
  
@@ -1163,9 +1191,9 @@ Index: WebCore/page/Settings.cpp
      m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
 Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
 ===================================================================
---- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 41917)
+--- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 42152)
 +++ WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(working copy)
-@@ -489,7 +489,6 @@
+@@ -501,7 +501,6 @@
  
      if (patWidth) {
          p->save();
@@ -1173,7 +1201,7 @@ Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
          // Do a rect fill of our endpoints.  This ensures we always have the
          // appearance of being a border.  We then draw the actual dotted/dashed line.
          if (isVerticalLine) {
-@@ -499,7 +498,6 @@
+@@ -511,7 +510,6 @@
              p->fillRect(FloatRect(p1.x() - width, p1.y() - width / 2, width, width), QColor(color));
              p->fillRect(FloatRect(p2.x(), p2.y() - width / 2, width, width), QColor(color));
          }
@@ -1181,9 +1209,22 @@ Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
          // Example: 80 pixels with a width of 30 pixels.
          // Remainder is 20.  The maximum pixels of line we could paint
          // will be 50 pixels.
+Index: WebCore/platform/network/ResourceHandle.cpp
+===================================================================
+--- WebCore/platform/network/ResourceHandle.cpp	(revision 42152)
++++ WebCore/platform/network/ResourceHandle.cpp	(working copy)
+@@ -113,6 +113,8 @@
+ 
+ static bool portAllowed(const ResourceRequest& request)
+ {
++
++    /*Torora: look at optionalizing this list for blocking port access */
+     unsigned short port = request.url().port();
+ 
+     // Since most URLs don't have a port, return early for the "no port" case.
 Index: WebCore/bindings/js/JSDOMWindowBase.h
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.h	(revision 41917)
+--- WebCore/bindings/js/JSDOMWindowBase.h	(revision 42152)
 +++ WebCore/bindings/js/JSDOMWindowBase.h	(working copy)
 @@ -81,6 +81,8 @@
  
@@ -1196,7 +1237,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.h
          bool allowsAccessFrom(JSC::ExecState*, String& message) const;
 Index: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
 ===================================================================
---- WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(revision 41917)
+--- WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(revision 42152)
 +++ WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(working copy)
 @@ -31,6 +31,7 @@
  #include "HTMLFormElement.h"
@@ -1224,7 +1265,7 @@ Index: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
  }
 Index: WebCore/bindings/js/JSDOMWindowBase.cpp
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 41917)
+--- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 42152)
 +++ WebCore/bindings/js/JSDOMWindowBase.cpp	(working copy)
 @@ -674,7 +674,7 @@
      Settings* settings = frame->settings();
@@ -1253,17 +1294,17 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
      setCurrentEvent(0);
 Index: WebCore/html/HTMLFormElement.cpp
 ===================================================================
---- WebCore/html/HTMLFormElement.cpp	(revision 41917)
+--- WebCore/html/HTMLFormElement.cpp	(revision 42152)
 +++ WebCore/html/HTMLFormElement.cpp	(working copy)
 @@ -44,6 +44,7 @@
  #include "MIMETypeRegistry.h"
  #include "Page.h"
  #include "RenderTextControl.h"
 +#include "Settings.h"
+ #include <wtf/CurrentTime.h>
  #include <wtf/RandomNumber.h>
  
- #include <limits>
-@@ -257,6 +258,7 @@
+@@ -269,6 +270,7 @@
      m_insubmit = true;
      m_doingsubmit = false;
  
@@ -1271,7 +1312,7 @@ Index: WebCore/html/HTMLFormElement.cpp
      if (dispatchEventForType(eventNames().submitEvent, true, true) && !m_doingsubmit)
          m_doingsubmit = true;
  
-@@ -292,7 +294,10 @@
+@@ -326,7 +328,10 @@
          if (control->hasLocalName(inputTag)) {
              HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
              if (input->isTextField()) {
@@ -1285,7 +1326,7 @@ Index: WebCore/html/HTMLFormElement.cpp
              }
 Index: WebCore/css/CSSStyleSelector.cpp
 ===================================================================
---- WebCore/css/CSSStyleSelector.cpp	(revision 41917)
+--- WebCore/css/CSSStyleSelector.cpp	(revision 42152)
 +++ WebCore/css/CSSStyleSelector.cpp	(working copy)
 @@ -875,6 +875,10 @@
      if (!page)
@@ -1298,7 +1339,7 @@ Index: WebCore/css/CSSStyleSelector.cpp
      m_linksCheckedForVisitedState.add(hash);
      return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
  }
-@@ -5845,6 +5849,11 @@
+@@ -5851,6 +5855,11 @@
  
  void CSSStyleSelector::SelectorChecker::allVisitedStateChanged()
  {
@@ -1310,7 +1351,7 @@ Index: WebCore/css/CSSStyleSelector.cpp
      if (m_linksCheckedForVisitedState.isEmpty())
          return;
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
-@@ -5855,6 +5864,11 @@
+@@ -5861,6 +5870,11 @@
  
  void CSSStyleSelector::SelectorChecker::visitedStateChanged(LinkHash visitedHash)
  {
@@ -1324,19 +1365,19 @@ Index: WebCore/css/CSSStyleSelector.cpp
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
 Index: WebCore/loader/FrameLoader.cpp
 ===================================================================
---- WebCore/loader/FrameLoader.cpp	(revision 41917)
+--- WebCore/loader/FrameLoader.cpp	(revision 42152)
 +++ WebCore/loader/FrameLoader.cpp	(working copy)
-@@ -529,6 +529,8 @@
+@@ -523,6 +523,8 @@
  void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<FormData> formData,
-     const String& target, const String& contentType, const String& boundary, Event* event, bool lockHistory, bool lockBackForwardList)
+     const String& target, const String& contentType, const String& boundary, PassRefPtr<Event> event, bool lockHistory, bool lockBackForwardList)
  {
 +
 +    /* Torora: form submiission candidate here */
      ASSERT(formData);
      
      if (!m_frame->page())
-@@ -2161,6 +2163,8 @@
- void FrameLoader::loadFrameRequestWithFormAndValues(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList, Event* event,
+@@ -2147,6 +2149,8 @@
+ void FrameLoader::loadFrameRequestWithFormAndValues(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList, PassRefPtr<Event> event,
      HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
  {
 +
@@ -1344,16 +1385,30 @@ Index: WebCore/loader/FrameLoader.cpp
      RefPtr<FormState> formState;
      if (submitForm)
          formState = FormState::create(submitForm, formValues, m_frame);
+Index: WebCore/loader/loader.cpp
+===================================================================
+--- WebCore/loader/loader.cpp	(revision 42152)
++++ WebCore/loader/loader.cpp	(working copy)
+@@ -234,7 +234,8 @@
+         
+         if (!request->cachedResource()->accept().isEmpty())
+             resourceRequest.setHTTPAccept(request->cachedResource()->accept());
+-        
++
++        /*Torora: hide referrer here?*/
+         KURL referrer = docLoader->doc()->url();
+         if ((referrer.protocolIs("http") || referrer.protocolIs("https")) && referrer.path().isEmpty())
+             referrer.setPath("/");
 Index: WebKitTools/Scripts/webkitdirs.pm
 ===================================================================
---- WebKitTools/Scripts/webkitdirs.pm	(revision 41917)
+--- WebKitTools/Scripts/webkitdirs.pm	(revision 42152)
 +++ WebKitTools/Scripts/webkitdirs.pm	(working copy)
 @@ -1028,7 +1028,7 @@
          return "nmake";
      }
  
 -    return "make";
-+    return "make -j4";
++    return "make -j4 -k";
  }
  
  sub autotoolsFlag($$)

@@ -264,17 +264,11 @@ These considerations leave us with the following requirements for Torora:
           Result: QWebSettings::ResistCSSVisitedExploit defeats the attack.
 
        2. Mask the useragent in the browser's request headers;
-          Files altered: WebCore/page/Navigator.cpp
-                        WebCore/page/NavigatorBase.cpp
-                        JavaScriptCore/runtime/DateMath.cpp
-
-          Strategy: Same approach as Torbutton.
-                    Navigator Object
-                    useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6"
 
        3. Mask the properties of the Javascript Window and Screen objects. The WebKit
           patch should allow the browser to specify the values/treatment of each of these
           properties so that they are under the full control of the Torora browser.
+          Maybe the client browser should resize it's window by 50px as well.
 
           Setting: QWebSettings::MaskDOMWindowInformation
                   QWebSettings::MaskScreenInformation
@@ -305,7 +299,6 @@ These considerations leave us with the following requirements for Torora:
                     availHeight() = window innerHeight()
                     availWidth()  = window innerWidth()
 
-          Notes:  The client browser should resize it's window to 50px as well.
 
        4. Mask the appname, appversion, platform, oscpu, useragent, productsub, buildid,
           vendor, and vendorsub properties of the Javascript Navigator object. The WebKit
@@ -315,21 +308,34 @@ These considerations leave us with the following requirements for Torora:
           Setting: QWebSettings::MaskPlatform
           Files altered: WebCore/page/Navigator.cpp
                         WebCore/page/NavigatorBase.cpp
-                        JavaScriptCore/runtime/DateMath.cpp
 
-          Strategy: Same approach as Torbutton.
+          Strategy: Same approach as Torbutton. Not much point in pretending to be firefox, so we just
+                    pretend to be a version of Safari on Windows.
 
-
-                    Navigator Object
+                    Navigator Object for Safari
+                      oscpu = Windows NT 5.1
+                      buildID = 0
+                      useragent_vendorSub = ""
+                      useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/528.16 (KHTML, like Gecko) Version/4.0 Safari/528.16"
+                      navigator.appCodeName = "Mozilla"
+                      navigator.appName = "Netscape"
+                      navigator.appVersion = "5.0 (Windows; LANG)"
+                      navigator.platform = "Win32"
+                      navigator.product = "Gecko"
+                      navigator.productSub = "20030107"
+                      navigator.vendor = "Apple Computer, Inc."
+  
+          Notes:      Navigator Object for Torbutton/Firefox
                       appname = Netscape
                       appversion = 5.0 (Windows; LANG)
                       platform = Win32
                       oscpu = Windows NT 5.1
-                      useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6"
                       productsub = 2009011913
                       buildID = 0
                       useragent_vendor = ""
                       useragent_vendorSub = ""
+                      useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6"
+
        5. Disable plugins.
           Files Altered: torora/src/settings.cpp
 
