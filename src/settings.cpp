@@ -85,7 +85,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     /* Privoxy */
     proxies << 8118;
     /* Polipo */
-    proxies << 1808;
+    proxies << 8123;
 
     setupUi(this);
     connect(exceptionsButton, SIGNAL(clicked()), this, SLOT(showExceptions()));
