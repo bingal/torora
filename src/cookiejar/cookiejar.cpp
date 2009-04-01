@@ -271,9 +271,9 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
         return false;
 
     QString host = url.host();
-    bool eBlock = qBinaryFind(m_exceptions_block.begin(), m_exceptions_block.end(), host) != m_exceptions_block.end();
-    bool eAllow = qBinaryFind(m_exceptions_allow.begin(), m_exceptions_allow.end(), host) != m_exceptions_allow.end();
-    bool eAllowSession = qBinaryFind(m_exceptions_allowForSession.begin(), m_exceptions_allowForSession.end(), host) != m_exceptions_allowForSession.end();
+    bool eBlock = isOnDomainList(m_exceptions_block, host);
+    bool eAllow = !eBlock && isOnDomainList(m_exceptions_allow, host);
+    bool eAllowSession = !eBlock && !eAllow && isOnDomainList(m_exceptions_allowForSession, host);
 
     bool addedCookies = false;
     // pass exceptions
@@ -342,6 +342,32 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
         emit cookiesChanged();
     }
     return addedCookies;
+}
+
+bool CookieJar::isOnDomainList(const QStringList &rules, const QString &domain)
+{
+    // Either the rule matches the domain exactly
+    // or the domain ends with ".rule"
+    foreach (const QString &rule, rules) {
+        if (rule.startsWith(QLatin1String("."))) {
+            if (domain.endsWith(rule))
+                return true;
+
+            QStringRef withoutDot = rule.rightRef(rule.size() - 1);
+            if (domain == withoutDot)
+                return true;
+        } else {
+            QStringRef domainEnding = domain.rightRef(rule.size() + 1);
+            if (domainEnding.at(0) == QLatin1Char('.')
+                && domain.endsWith(rule)) {
+                return true;
+            }
+
+            if (rule == domain)
+                return true;
+        }
+    }
+    return false;
 }
 
 CookieJar::AcceptPolicy CookieJar::acceptPolicy() const
@@ -425,3 +451,4 @@ void CookieJar::setAllowForSessionCookies(const QStringList &list)
     qSort(m_exceptions_allowForSession.begin(), m_exceptions_allowForSession.end());
     m_saveTimer->changeOccurred();
 }
+

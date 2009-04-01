@@ -179,13 +179,13 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     setCentralWidget(centralWidget);
 
     connect(m_tabWidget, SIGNAL(setCurrentTitle(const QString &)),
-            this, SLOT(slotUpdateWindowTitle(const QString &)));
+            this, SLOT(updateWindowTitle(const QString &)));
     connect(m_tabWidget, SIGNAL(showStatusBarMessage(const QString&)),
             statusBar(), SLOT(showMessage(const QString&)));
     connect(m_tabWidget, SIGNAL(linkHovered(const QString&)),
             statusBar(), SLOT(showMessage(const QString&)));
     connect(m_tabWidget, SIGNAL(loadProgress(int)),
-            this, SLOT(slotLoadProgress(int)));
+            this, SLOT(loadProgress(int)));
     connect(m_tabWidget, SIGNAL(tabsChanged()),
             m_autoSaver, SLOT(changeOccurred()));
     connect(m_tabWidget, SIGNAL(geometryChangeRequested(const QRect &)),
@@ -203,7 +203,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(m_tabWidget, SIGNAL(lastTabClosed()),
             this, SLOT(close()));
 
-    slotUpdateWindowTitle();
+    updateWindowTitle();
     loadDefaultState();
     m_tabWidget->newTab();
     m_tabWidget->currentLineEdit()->setFocus();
@@ -358,15 +358,18 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
         m_menuBarVisible = true;
         m_statusBarVisible = showStatusbar;
     }
-    resize(size);
-    /*Torora: Req 5.3*/
-    if (((size.height() / 50) != 0) &&
-       ((size.width() / 50) != 0)) {
-      size.setHeight((int)(size.height() / 50) * 50);
-      size.setWidth((int)(size.width() / 50) * 50);
-      resize(size);
+
+    if (size.isValid()) {
+        resize(size);
+        /*Torora: Req 5.3*/
+        if (((size.height() / 50) != 0) &&
+          ((size.width() / 50) != 0)) {
+          size.setHeight((int)(size.height() / 50) * 50);
+          size.setWidth((int)(size.width() / 50) * 50);
+          resize(size);
+        }
+        setSizeIncrement(50,50);
     }
-    setSizeIncrement(50,50);
 
     m_navigationBar->setVisible(showToolbar);
     updateToolbarActionText(showToolbar);
@@ -415,7 +418,7 @@ void BrowserMainWindow::setupMenu()
 {
     m_menuBarVisible = true;
 
-    new QShortcut(QKeySequence(Qt::Key_F6), this, SLOT(slotSwapFocus()));
+    new QShortcut(QKeySequence(Qt::Key_F6), this, SLOT(swapFocus()));
 
     // File
     m_fileMenu = new QMenu(menuBar());
@@ -424,14 +427,14 @@ void BrowserMainWindow::setupMenu()
     m_fileNewWindowAction = new QAction(m_fileMenu);
     m_fileNewWindowAction->setShortcut(QKeySequence::New);
     connect(m_fileNewWindowAction, SIGNAL(triggered()),
-            this, SLOT(slotFileNew()));
+            this, SLOT(fileNew()));
     m_fileMenu->addAction(m_fileNewWindowAction);
     m_fileMenu->addAction(m_tabWidget->newTabAction());
 
     m_fileOpenFileAction = new QAction(m_fileMenu);
     m_fileOpenFileAction->setShortcut(QKeySequence::Open);
     connect(m_fileOpenFileAction, SIGNAL(triggered()),
-            this, SLOT(slotFileOpen()));
+            this, SLOT(fileOpen()));
     m_fileMenu->addAction(m_fileOpenFileAction);
 
     m_fileOpenLocationAction = new QAction(m_fileMenu);
@@ -442,7 +445,7 @@ void BrowserMainWindow::setupMenu()
     openLocationShortcuts.append(QKeySequence(Qt::AltModifier + Qt::Key_D));
     m_fileOpenLocationAction->setShortcuts(openLocationShortcuts);
     connect(m_fileOpenLocationAction, SIGNAL(triggered()),
-            this, SLOT(slotSelectLineEdit()));
+            this, SLOT(selectLineEdit()));
     m_fileMenu->addAction(m_fileOpenLocationAction);
 
     m_fileMenu->addSeparator();
@@ -452,7 +455,7 @@ void BrowserMainWindow::setupMenu()
     m_fileSaveAsAction = new QAction(m_fileMenu);
     m_fileSaveAsAction->setShortcut(QKeySequence::Save);
     connect(m_fileSaveAsAction, SIGNAL(triggered()),
-            this, SLOT(slotFileSaveAs()));
+            this, SLOT(fileSaveAs()));
     m_fileMenu->addAction(m_fileSaveAsAction);
     m_fileMenu->addSeparator();
 
@@ -469,19 +472,19 @@ void BrowserMainWindow::setupMenu()
 
     m_filePrintPreviewAction= new QAction(m_fileMenu);
     connect(m_filePrintPreviewAction, SIGNAL(triggered()),
-            this, SLOT(slotFilePrintPreview()));
+            this, SLOT(filePrintPreview()));
     m_fileMenu->addAction(m_filePrintPreviewAction);
 
     m_filePrintAction = new QAction(m_fileMenu);
     m_filePrintAction->setShortcut(QKeySequence::Print);
     connect(m_filePrintAction, SIGNAL(triggered()),
-            this, SLOT(slotFilePrint()));
+            this, SLOT(filePrint()));
     m_fileMenu->addAction(m_filePrintAction);
     m_fileMenu->addSeparator();
 
     m_filePrivateBrowsingAction = new QAction(m_fileMenu);
     connect(m_filePrivateBrowsingAction, SIGNAL(triggered()),
-            this, SLOT(slotPrivateBrowsing()));
+            this, SLOT(privateBrowsing()));
     m_filePrivateBrowsingAction->setCheckable(true);
     m_fileMenu->addAction(m_filePrivateBrowsingAction);
     m_fileMenu->addSeparator();
@@ -531,24 +534,24 @@ void BrowserMainWindow::setupMenu()
 
     m_editFindAction = new QAction(m_editMenu);
     m_editFindAction->setShortcuts(QKeySequence::Find);
-    connect(m_editFindAction, SIGNAL(triggered()), this, SLOT(slotEditFind()));
+    connect(m_editFindAction, SIGNAL(triggered()), this, SLOT(editFind()));
     m_editMenu->addAction(m_editFindAction);
-    new QShortcut(QKeySequence(Qt::Key_Slash), this, SLOT(slotEditFind()));
+    new QShortcut(QKeySequence(Qt::Key_Slash), this, SLOT(editFind()));
 
     m_editFindNextAction = new QAction(m_editMenu);
     m_editFindNextAction->setShortcuts(QKeySequence::FindNext);
-    connect(m_editFindNextAction, SIGNAL(triggered()), this, SLOT(slotEditFindNext()));
+    connect(m_editFindNextAction, SIGNAL(triggered()), this, SLOT(editFindNext()));
     m_editMenu->addAction(m_editFindNextAction);
 
     m_editFindPreviousAction = new QAction(m_editMenu);
     m_editFindPreviousAction->setShortcuts(QKeySequence::FindPrevious);
-    connect(m_editFindPreviousAction, SIGNAL(triggered()), this, SLOT(slotEditFindPrevious()));
+    connect(m_editFindPreviousAction, SIGNAL(triggered()), this, SLOT(editFindPrevious()));
     m_editMenu->addAction(m_editFindPreviousAction);
 
     m_editMenu->addSeparator();
     m_editPreferencesAction = new QAction(m_editMenu);
     connect(m_editPreferencesAction, SIGNAL(triggered()),
-            this, SLOT(slotPreferences()));
+            this, SLOT(preferences()));
     m_editMenu->addAction(m_editPreferencesAction);
 
     // View
@@ -556,17 +559,17 @@ void BrowserMainWindow::setupMenu()
     menuBar()->addMenu(m_viewMenu);
     m_viewShowMenuBarAction = new QAction(m_viewMenu);
     m_viewShowMenuBarAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
-    connect(m_viewShowMenuBarAction, SIGNAL(triggered()), this, SLOT(slotViewMenuBar()));
+    connect(m_viewShowMenuBarAction, SIGNAL(triggered()), this, SLOT(viewMenuBar()));
     addAction(m_viewShowMenuBarAction);
 
     m_viewToolbarAction = new QAction(this);
     updateToolbarActionText(true);
-    connect(m_viewToolbarAction, SIGNAL(triggered()), this, SLOT(slotViewToolbar()));
+    connect(m_viewToolbarAction, SIGNAL(triggered()), this, SLOT(viewToolbar()));
     m_viewMenu->addAction(m_viewToolbarAction);
 
     m_viewBookmarkBarAction = new QAction(m_viewMenu);
     updateBookmarksToolbarActionText(true);
-    connect(m_viewBookmarkBarAction, SIGNAL(triggered()), this, SLOT(slotViewBookmarksBar()));
+    connect(m_viewBookmarkBarAction, SIGNAL(triggered()), this, SLOT(viewBookmarksBar()));
     m_viewMenu->addAction(m_viewBookmarkBarAction);
 
     QAction *viewTabBarAction = m_tabWidget->tabBar()->viewTabBarAction();
@@ -576,7 +579,7 @@ void BrowserMainWindow::setupMenu()
 
     m_viewStatusbarAction = new QAction(m_viewMenu);
     updateStatusbarActionText(true);
-    connect(m_viewStatusbarAction, SIGNAL(triggered()), this, SLOT(slotViewStatusbar()));
+    connect(m_viewStatusbarAction, SIGNAL(triggered()), this, SLOT(viewStatusbar()));
     m_viewMenu->addAction(m_viewStatusbarAction);
 
     m_viewMenu->addSeparator();
@@ -590,7 +593,10 @@ void BrowserMainWindow::setupMenu()
     m_viewMenu->addAction(m_viewStopAction);
 
     m_viewReloadAction = new QAction(m_viewMenu);
-    m_viewReloadAction->setShortcuts(QKeySequence::Refresh);
+    shortcuts.clear();
+    shortcuts.append(QKeySequence(Qt::CTRL | Qt::Key_R));
+    shortcuts.append(QKeySequence(Qt::Key_F5));
+    m_viewReloadAction->setShortcuts(shortcuts);
     m_tabWidget->addWebAction(m_viewReloadAction, QWebPage::Reload);
     m_viewMenu->addAction(m_viewReloadAction);
 
@@ -600,13 +606,13 @@ void BrowserMainWindow::setupMenu()
     shortcuts.append(QKeySequence(Qt::CTRL | Qt::Key_Equal));
     m_viewZoomInAction->setShortcuts(shortcuts);
     connect(m_viewZoomInAction, SIGNAL(triggered()),
-            this, SLOT(slotZoomIn()));
+            this, SLOT(zoomIn()));
     m_viewMenu->addAction(m_viewZoomInAction);
 
     m_viewZoomNormalAction = new QAction(m_viewMenu);
     m_viewZoomNormalAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
     connect(m_viewZoomNormalAction, SIGNAL(triggered()),
-            this, SLOT(slotZoomNormal()));
+            this, SLOT(zoomNormal()));
     m_viewMenu->addAction(m_viewZoomNormalAction);
 
     m_viewZoomOutAction = new QAction(m_viewMenu);
@@ -615,7 +621,7 @@ void BrowserMainWindow::setupMenu()
     shortcuts.append(QKeySequence(Qt::CTRL | Qt::Key_Underscore));
     m_viewZoomOutAction->setShortcuts(shortcuts);
     connect(m_viewZoomOutAction, SIGNAL(triggered()),
-            this, SLOT(slotZoomOut()));
+            this, SLOT(zoomOut()));
     m_viewMenu->addAction(m_viewZoomOutAction);
 
     m_viewZoomTextOnlyAction = new QAction(m_viewMenu);
@@ -624,7 +630,7 @@ void BrowserMainWindow::setupMenu()
     connect(m_viewZoomTextOnlyAction, SIGNAL(toggled(bool)),
             BrowserApplication::instance(), SLOT(setZoomTextOnly(bool)));
     connect(BrowserApplication::instance(), SIGNAL(zoomTextOnlyChanged(bool)),
-            this, SLOT(slotZoomTextOnlyChanged(bool)));
+            this, SLOT(zoomTextOnlyChanged(bool)));
     m_viewMenu->addAction(m_viewZoomTextOnlyAction);
 #endif
 
@@ -632,13 +638,13 @@ void BrowserMainWindow::setupMenu()
 
     m_viewSourceAction = new QAction(m_viewMenu);
     connect(m_viewSourceAction, SIGNAL(triggered()),
-            this, SLOT(slotViewPageSource()));
+            this, SLOT(viewPageSource()));
     m_viewMenu->addAction(m_viewSourceAction);
 
     m_viewFullScreenAction = new QAction(m_viewMenu);
     m_viewFullScreenAction->setShortcut(Qt::Key_F11);
     connect(m_viewFullScreenAction, SIGNAL(triggered(bool)),
-            this, SLOT(slotViewFullScreen(bool)));
+            this, SLOT(viewFullScreen(bool)));
     m_viewFullScreenAction->setCheckable(true);
     m_viewMenu->addAction(m_viewFullScreenAction);
 
@@ -660,7 +666,7 @@ void BrowserMainWindow::setupMenu()
     m_historyForwardAction->setIconVisibleInMenu(false);
 
     m_historyHomeAction = new QAction(this);
-    connect(m_historyHomeAction, SIGNAL(triggered()), this, SLOT(slotHome()));
+    connect(m_historyHomeAction, SIGNAL(triggered()), this, SLOT(goHome()));
     m_historyHomeAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_H));
 
     m_historyRestoreLastSessionAction = new QAction(this);
@@ -686,18 +692,18 @@ void BrowserMainWindow::setupMenu()
     m_bookmarksShowAllAction = new QAction(this);
     m_bookmarksShowAllAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_B));
     connect(m_bookmarksShowAllAction, SIGNAL(triggered()),
-            this, SLOT(slotShowBookmarksDialog()));
+            this, SLOT(showBookmarksDialog()));
 
     m_bookmarksAddAction = new QAction(this);
     m_bookmarksAddAction->setIcon(QIcon(QLatin1String(":addbookmark.png")));
     m_bookmarksAddAction->setIconVisibleInMenu(false);
     connect(m_bookmarksAddAction, SIGNAL(triggered()),
-            this, SLOT(slotAddBookmark()));
+            this, SLOT(addBookmark()));
     m_bookmarksAddAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
 
     m_bookmarksAddFolderAction = new QAction(this);
     connect(m_bookmarksAddFolderAction, SIGNAL(triggered()),
-            this, SLOT(slotAddBookmarkFolder()));
+            this, SLOT(addBookmarkFolder()));
 
     QList<QAction*> bookmarksActions;
     bookmarksActions.append(m_bookmarksShowAllAction);
@@ -710,8 +716,8 @@ void BrowserMainWindow::setupMenu()
     m_windowMenu = new QMenu(menuBar());
     menuBar()->addMenu(m_windowMenu);
     connect(m_windowMenu, SIGNAL(aboutToShow()),
-            this, SLOT(slotAboutToShowWindowMenu()));
-    slotAboutToShowWindowMenu();
+            this, SLOT(aboutToShowWindowMenu()));
+    aboutToShowWindowMenu();
 
     // Tools
     m_toolsMenu = new QMenu(menuBar());
@@ -719,12 +725,12 @@ void BrowserMainWindow::setupMenu()
 
     m_toolsWebSearchAction = new QAction(m_toolsMenu);
     connect(m_toolsWebSearchAction, SIGNAL(triggered()),
-            this, SLOT(slotWebSearch()));
+            this, SLOT(webSearch()));
     m_toolsMenu->addAction(m_toolsWebSearchAction);
 
     m_toolsClearPrivateDataAction = new QAction(m_toolsMenu);
     connect(m_toolsClearPrivateDataAction, SIGNAL(triggered()),
-            this, SLOT(slotClearPrivateData()));
+            this, SLOT(clearPrivateData()));
     m_toolsMenu->addAction(m_toolsClearPrivateDataAction);
 
     m_toolsShowNetworkMonitor = new QAction(m_toolsMenu);
@@ -734,7 +740,7 @@ void BrowserMainWindow::setupMenu()
 
     m_toolsEnableInspector = new QAction(m_toolsMenu);
     connect(m_toolsEnableInspector, SIGNAL(triggered(bool)),
-            this, SLOT(slotToggleInspector(bool)));
+            this, SLOT(toggleInspector(bool)));
     m_toolsEnableInspector->setCheckable(true);
     QSettings settings;
     settings.beginGroup(QLatin1String("websettings"));
@@ -763,7 +769,7 @@ void BrowserMainWindow::setupMenu()
 
     m_helpAboutApplicationAction = new QAction(m_helpMenu);
     connect(m_helpAboutApplicationAction, SIGNAL(triggered()),
-            this, SLOT(slotAboutApplication()));
+            this, SLOT(aboutApplication()));
     m_helpMenu->addAction(m_helpAboutApplicationAction);
 }
 
@@ -857,17 +863,17 @@ void BrowserMainWindow::setupToolBar()
     m_historyBackMenu = new QMenu(this);
     m_historyBackAction->setMenu(m_historyBackMenu);
     connect(m_historyBackMenu, SIGNAL(aboutToShow()),
-            this, SLOT(slotAboutToShowBackMenu()));
+            this, SLOT(aboutToShowBackMenu()));
     connect(m_historyBackMenu, SIGNAL(triggered(QAction *)),
-            this, SLOT(slotOpenActionUrl(QAction *)));
+            this, SLOT(openActionUrl(QAction *)));
     m_navigationBar->addAction(m_historyBackAction);
 
     m_historyForwardAction->setIcon(style()->standardIcon(QStyle::SP_ArrowForward, 0, this));
     m_historyForwardMenu = new QMenu(this);
     connect(m_historyForwardMenu, SIGNAL(aboutToShow()),
-            this, SLOT(slotAboutToShowForwardMenu()));
+            this, SLOT(aboutToShowForwardMenu()));
     connect(m_historyForwardMenu, SIGNAL(triggered(QAction *)),
-            this, SLOT(slotOpenActionUrl(QAction *)));
+            this, SLOT(openActionUrl(QAction *)));
     m_historyForwardAction->setMenu(m_historyForwardMenu);
     m_navigationBar->addAction(m_historyForwardAction);
 
@@ -893,7 +899,7 @@ void BrowserMainWindow::setupToolBar()
     m_navigationSplitter->setSizes(sizes);
 }
 
-void BrowserMainWindow::slotShowBookmarksDialog()
+void BrowserMainWindow::showBookmarksDialog()
 {
     BookmarksDialog *dialog = new BookmarksDialog(this);
     connect(dialog, SIGNAL(openUrl(const QUrl&, TabWidget::OpenUrlIn, const QString &)),
@@ -901,7 +907,7 @@ void BrowserMainWindow::slotShowBookmarksDialog()
     dialog->show();
 }
 
-void BrowserMainWindow::slotAddBookmark()
+void BrowserMainWindow::addBookmark()
 {
     WebView *webView = currentTab();
     QString url = QLatin1String(webView->url().toEncoded());
@@ -916,7 +922,7 @@ void BrowserMainWindow::slotAddBookmark()
     dialog.exec();
 }
 
-void BrowserMainWindow::slotAddBookmarkFolder()
+void BrowserMainWindow::addBookmarkFolder()
 {
     AddBookmarkDialog dialog(this);
     BookmarksManager *bookmarksManager = BrowserApplication::bookmarksManager();
@@ -927,14 +933,14 @@ void BrowserMainWindow::slotAddBookmarkFolder()
     dialog.exec();
 }
 
-void BrowserMainWindow::slotViewMenuBar()
+void BrowserMainWindow::viewMenuBar()
 {
     menuBar()->setVisible(!menuBar()->isVisible());
 
     m_menuBarVisible = menuBar()->isVisible();
 }
 
-void BrowserMainWindow::slotViewToolbar()
+void BrowserMainWindow::viewToolbar()
 {
     if (m_navigationBar->isVisible()) {
         updateToolbarActionText(false);
@@ -946,7 +952,7 @@ void BrowserMainWindow::slotViewToolbar()
     m_autoSaver->changeOccurred();
 }
 
-void BrowserMainWindow::slotViewBookmarksBar()
+void BrowserMainWindow::viewBookmarksBar()
 {
     if (m_bookmarksToolbar->isVisible()) {
         updateBookmarksToolbarActionText(false);
@@ -979,7 +985,7 @@ void BrowserMainWindow::updateBookmarksToolbarActionText(bool visible)
     m_viewBookmarkBarAction->setText(!visible ? tr("Show Bookmarks Bar") : tr("Hide Bookmarks Bar"));
 }
 
-void BrowserMainWindow::slotViewStatusbar()
+void BrowserMainWindow::viewStatusbar()
 {
     if (statusBar()->isVisible()) {
         updateStatusbarActionText(false);
@@ -994,34 +1000,34 @@ void BrowserMainWindow::slotViewStatusbar()
     m_autoSaver->changeOccurred();
 }
 
-void BrowserMainWindow::slotDownloadManager()
+void BrowserMainWindow::downloadManager()
 {
     BrowserApplication::downloadManager()->show();
 }
 
-void BrowserMainWindow::slotSelectLineEdit()
+void BrowserMainWindow::selectLineEdit()
 {
     m_tabWidget->currentLineEdit()->selectAll();
     m_tabWidget->currentLineEdit()->setFocus();
 }
 
-void BrowserMainWindow::slotFileSaveAs()
+void BrowserMainWindow::fileSaveAs()
 {
     BrowserApplication::downloadManager()->download(currentTab()->url(), true);
 }
 
-void BrowserMainWindow::slotPreferences()
+void BrowserMainWindow::preferences()
 {
     SettingsDialog settingsDialog(this);
     settingsDialog.exec();
 }
 
-void BrowserMainWindow::slotUpdateStatusbar(const QString &string)
+void BrowserMainWindow::updateStatusbar(const QString &string)
 {
     statusBar()->showMessage(string, 2000);
 }
 
-void BrowserMainWindow::slotUpdateWindowTitle(const QString &title)
+void BrowserMainWindow::updateWindowTitle(const QString &title)
 {
     if (title.isEmpty()) {
         setWindowTitle(QApplication::applicationName());
@@ -1034,20 +1040,20 @@ void BrowserMainWindow::slotUpdateWindowTitle(const QString &title)
     }
 }
 
-void BrowserMainWindow::slotAboutApplication()
+void BrowserMainWindow::aboutApplication()
 {
     AboutDialog *aboutDialog = new AboutDialog(this);
     aboutDialog->show();
 }
 
-void BrowserMainWindow::slotFileNew()
+void BrowserMainWindow::fileNew()
 {
     BrowserApplication::instance()->newMainWindow();
     BrowserMainWindow *mw = BrowserApplication::instance()->mainWindow();
-    mw->slotHome();
+    mw->goHome();
 }
 
-void BrowserMainWindow::slotFileOpen()
+void BrowserMainWindow::fileOpen()
 {
     QString file = QFileDialog::getOpenFileName(this, tr("Open Web Resource"), QString(),
                    tr("Web Resources (*.html *.htm *.svg *.png *.gif *.svgz);;All files (*.*)"));
@@ -1058,7 +1064,7 @@ void BrowserMainWindow::slotFileOpen()
     tabWidget()->loadString(file);
 }
 
-void BrowserMainWindow::slotFilePrintPreview()
+void BrowserMainWindow::filePrintPreview()
 {
     if (!currentTab())
         return;
@@ -1068,7 +1074,7 @@ void BrowserMainWindow::slotFilePrintPreview()
     dialog->exec();
 }
 
-void BrowserMainWindow::slotFilePrint()
+void BrowserMainWindow::filePrint()
 {
     if (!currentTab())
         return;
@@ -1085,7 +1091,7 @@ void BrowserMainWindow::printRequested(QWebFrame *frame)
     frame->print(&printer);
 }
 
-void BrowserMainWindow::slotPrivateBrowsing()
+void BrowserMainWindow::privateBrowsing()
 {
     if (!BrowserApplication::isPrivate()) {
         QString title = tr("Are you sure you want to turn on private browsing?");
@@ -1112,6 +1118,7 @@ void BrowserMainWindow::slotPrivateBrowsing()
     }
 }
 
+<<<<<<< HEAD:src/browsermainwindow.cpp
 void BrowserMainWindow::slotTorBrowsing()
 {
     if (!BrowserApplication::isTor()) {
@@ -1140,11 +1147,14 @@ void BrowserMainWindow::slotTorBrowsing()
 }
 
 void BrowserMainWindow::slotZoomTextOnlyChanged(bool textOnly)
+=======
+void BrowserMainWindow::zoomTextOnlyChanged(bool textOnly)
+>>>>>>> 847ebc47e9c5517a5a0e28f2e963a7f55b2b4ad6:src/browsermainwindow.cpp
 {
     m_viewZoomTextOnlyAction->setChecked(textOnly);
 }
 
-void BrowserMainWindow::slotPrivacyChanged(bool isPrivate)
+void BrowserMainWindow::privacyChanged(bool isPrivate)
 {
     m_filePrivateBrowsingAction->setChecked(isPrivate);
     if (!isPrivate)
@@ -1188,7 +1198,7 @@ void BrowserMainWindow::closeEvent(QCloseEvent *event)
 
 void BrowserMainWindow::mousePressEvent(QMouseEvent *event)
 {
-    switch(event->button()) {
+    switch (event->button()) {
     case Qt::XButton1:
         m_historyBackAction->activate(QAction::Trigger);
         break;
@@ -1208,43 +1218,43 @@ void BrowserMainWindow::changeEvent(QEvent *event)
     QMainWindow::changeEvent(event);
 }
 
-void BrowserMainWindow::slotEditFind()
+void BrowserMainWindow::editFind()
 {
     tabWidget()->webViewSearch(m_tabWidget->currentIndex())->showFind();
 }
 
-void BrowserMainWindow::slotEditFindNext()
+void BrowserMainWindow::editFindNext()
 {
     tabWidget()->webViewSearch(m_tabWidget->currentIndex())->findNext();
 }
 
-void BrowserMainWindow::slotEditFindPrevious()
+void BrowserMainWindow::editFindPrevious()
 {
     tabWidget()->webViewSearch(m_tabWidget->currentIndex())->findPrevious();
 }
 
-void BrowserMainWindow::slotZoomIn()
+void BrowserMainWindow::zoomIn()
 {
     if (!currentTab())
         return;
     currentTab()->zoomIn();
 }
 
-void BrowserMainWindow::slotZoomNormal()
+void BrowserMainWindow::zoomNormal()
 {
     if (!currentTab())
         return;
     currentTab()->resetZoom();
 }
 
-void BrowserMainWindow::slotZoomOut()
+void BrowserMainWindow::zoomOut()
 {
     if (!currentTab())
         return;
     currentTab()->zoomOut();
 }
 
-void BrowserMainWindow::slotViewFullScreen(bool makeFullScreen)
+void BrowserMainWindow::viewFullScreen(bool makeFullScreen)
 {
     if (makeFullScreen) {
         setWindowState(windowState() | Qt::WindowFullScreen);
@@ -1263,7 +1273,7 @@ void BrowserMainWindow::slotViewFullScreen(bool makeFullScreen)
     }
 }
 
-void BrowserMainWindow::slotViewPageSource()
+void BrowserMainWindow::viewPageSource()
 {
     if (!currentTab())
         return;
@@ -1276,7 +1286,7 @@ void BrowserMainWindow::slotViewPageSource()
     viewer->show();
 }
 
-void BrowserMainWindow::slotHome()
+void BrowserMainWindow::goHome()
 {
     QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
@@ -1284,19 +1294,19 @@ void BrowserMainWindow::slotHome()
     tabWidget()->loadString(home);
 }
 
-void BrowserMainWindow::slotWebSearch()
+void BrowserMainWindow::webSearch()
 {
     m_toolbarSearch->selectAll();
     m_toolbarSearch->setFocus();
 }
 
-void BrowserMainWindow::slotClearPrivateData()
+void BrowserMainWindow::clearPrivateData()
 {
     ClearPrivateData dialog;
     dialog.exec();
 }
 
-void BrowserMainWindow::slotToggleInspector(bool enable)
+void BrowserMainWindow::toggleInspector(bool enable)
 {
     QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enable);
     if (enable) {
@@ -1313,7 +1323,7 @@ void BrowserMainWindow::slotToggleInspector(bool enable)
     settings.setValue(QLatin1String("enableInspector"), enable);
 }
 
-void BrowserMainWindow::slotSwapFocus()
+void BrowserMainWindow::swapFocus()
 {
     if (currentTab()->hasFocus()) {
         m_tabWidget->currentLineEdit()->setFocus();
@@ -1338,7 +1348,7 @@ ToolbarSearch *BrowserMainWindow::toolbarSearch() const
     return m_toolbarSearch;
 }
 
-void BrowserMainWindow::slotLoadProgress(int progress)
+void BrowserMainWindow::loadProgress(int progress)
 {
     if (progress < 100 && progress > 0) {
         disconnect(m_stopReloadAction, SIGNAL(triggered()), m_viewReloadAction, SLOT(trigger()));
@@ -1355,7 +1365,7 @@ void BrowserMainWindow::slotLoadProgress(int progress)
     }
 }
 
-void BrowserMainWindow::slotAboutToShowBackMenu()
+void BrowserMainWindow::aboutToShowBackMenu()
 {
     m_historyBackMenu->clear();
     if (!currentTab())
@@ -1373,7 +1383,7 @@ void BrowserMainWindow::slotAboutToShowBackMenu()
     }
 }
 
-void BrowserMainWindow::slotAboutToShowForwardMenu()
+void BrowserMainWindow::aboutToShowForwardMenu()
 {
     m_historyForwardMenu->clear();
     if (!currentTab())
@@ -1391,19 +1401,19 @@ void BrowserMainWindow::slotAboutToShowForwardMenu()
     }
 }
 
-void BrowserMainWindow::slotAboutToShowWindowMenu()
+void BrowserMainWindow::aboutToShowWindowMenu()
 {
     m_windowMenu->clear();
     m_windowMenu->addAction(m_tabWidget->nextTabAction());
     m_windowMenu->addAction(m_tabWidget->previousTabAction());
     m_windowMenu->addSeparator();
-    m_windowMenu->addAction(tr("Downloads"), this, SLOT(slotDownloadManager()), QKeySequence(tr("Ctrl+Y", "Download Manager")));
+    m_windowMenu->addAction(tr("Downloads"), this, SLOT(downloadManager()), QKeySequence(tr("Ctrl+Y", "Download Manager")));
 
     m_windowMenu->addSeparator();
     QList<BrowserMainWindow*> windows = BrowserApplication::instance()->mainWindows();
     for (int i = 0; i < windows.count(); ++i) {
         BrowserMainWindow *window = windows.at(i);
-        QAction *action = m_windowMenu->addAction(window->windowTitle(), this, SLOT(slotShowWindow()));
+        QAction *action = m_windowMenu->addAction(window->windowTitle(), this, SLOT(showWindow()));
         action->setData(i);
         action->setCheckable(true);
         if (window == this)
@@ -1411,7 +1421,7 @@ void BrowserMainWindow::slotAboutToShowWindowMenu()
     }
 }
 
-void BrowserMainWindow::slotShowWindow()
+void BrowserMainWindow::showWindow()
 {
     if (QAction *action = qobject_cast<QAction*>(sender())) {
         QVariant v = action->data();
@@ -1425,7 +1435,7 @@ void BrowserMainWindow::slotShowWindow()
     }
 }
 
-void BrowserMainWindow::slotOpenActionUrl(QAction *action)
+void BrowserMainWindow::openActionUrl(QAction *action)
 {
     int offset = action->data().toInt();
     QWebHistory *history = currentTab()->history();

@@ -60,58 +60,97 @@
 **
 ****************************************************************************/
 
-#ifndef TOOLBARSEARCH_H
-#define TOOLBARSEARCH_H
+#ifndef HISTORYMANAGER_H
+#define HISTORYMANAGER_H
 
-#include "searchlineedit.h"
+#include <qdatetime.h>
+#include <qtimer.h>
+#include <qurl.h>
+#include <qwebhistoryinterface.h>
+
+class HistoryEntry
+{
+public:
+    HistoryEntry() {}
+    HistoryEntry(const QString &u,
+                const QDateTime &d = QDateTime(), const QString &t = QString())
+            : url(u), title(t), dateTime(d) {}
+
+    inline bool operator==(const HistoryEntry &other) const {
+        return other.title == title
+               && other.url == url && other.dateTime == dateTime;
+    }
+
+    // history is sorted in reverse
+    inline bool operator <(const HistoryEntry &other) const
+        { return dateTime > other.dateTime; }
+
+    QString userTitle() const;
+
+    QString url;
+    QString title;
+    QDateTime dateTime;
+};
 
 class AutoSaver;
-class GoogleSuggest;
-class QModelIndex;
-class QStandardItem;
-class QStandardItemModel;
-class QUrl;
-class ToolbarSearch : public SearchLineEdit
+class HistoryModel;
+class HistoryFilterModel;
+class HistoryTreeModel;
+class HistoryManager : public QWebHistoryInterface
 {
     Q_OBJECT
+    Q_PROPERTY(int daysToExpire READ daysToExpire WRITE setDaysToExpire)
 
 signals:
-    void search(const QUrl &url);
+    void historyCleared();
+    void historyReset();
+    void entryAdded(const HistoryEntry &item);
+    void entryRemoved(const HistoryEntry &item);
+    void entryUpdated(int offset);
 
 public:
-    ToolbarSearch(QWidget *parent = 0);
-    ~ToolbarSearch();
+    HistoryManager(QObject *parent = 0);
+    ~HistoryManager();
+
+    bool historyContains(const QString &url) const;
+    void addHistoryEntry(const QString &url);
+    void updateHistoryEntry(const QUrl &url, const QString &title);
+
+    int daysToExpire() const;
+    void setDaysToExpire(int limit);
+
+    QList<HistoryEntry> history() const;
+    void setHistory(const QList<HistoryEntry> &history, bool loadedAndSorted = false);
+
+    // History manager keeps around these models for use by the completer and other classes
+    HistoryModel *historyModel() const;
+    HistoryFilterModel *historyFilterModel() const;
+    HistoryTreeModel *historyTreeModel() const;
 
 public slots:
     void clear();
-    void searchNow();
+    void loadSettings();
 
 private slots:
     void save();
-    void textEdited(const QString &);
-    void newSuggestions(const QStringList &suggestions);
-    void activated(const QModelIndex &index);
-    bool highlighted(const QModelIndex &index);
+    void checkForExpired();
 
 protected:
-    void changeEvent(QEvent *event);
-    void focusInEvent(QFocusEvent *event);
+    void addHistoryEntry(const HistoryEntry &item);
 
 private:
     void load();
-    void setupMenu();
-    void retranslate();
 
-    AutoSaver *m_autosaver;
-    int m_maxSavedSearches;
-    QStringList m_recentSearches;
-    QStringList m_suggestions;
-    GoogleSuggest *m_googleSuggest;
-    QStandardItemModel *m_model;
+    AutoSaver *m_saveTimer;
+    int m_daysToExpire;
+    QTimer m_expiredTimer;
+    QList<HistoryEntry> m_history;
+    QString m_lastSavedUrl;
 
-    QStandardItem *m_suggestionsItem;
-    QStandardItem *m_recentSearchesItem;
+    HistoryModel *m_historyModel;
+    HistoryFilterModel *m_historyFilterModel;
+    HistoryTreeModel *m_historyTreeModel;
 };
 
-#endif // TOOLBARSEARCH_H
+#endif // HISTORYMANAGER_H
 

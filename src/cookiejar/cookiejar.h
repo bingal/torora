@@ -123,6 +123,9 @@ public slots:
 private slots:
     void save();
 
+protected:
+    static bool isOnDomainList(const QStringList &rules, const QString &domain);
+
 private:
     void purgeOldCookies();
     void load();

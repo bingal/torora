@@ -8,11 +8,11 @@ webkit_trunk {
     WEBKITDIR = $$(WEBKITDIR)
     WEBKITBRANCH = $$(WEBKITBRANCH)
     isEmpty(WEBKITBRANCH) {
-        CONFIG(debug):WEBKITBUILD = $$WEBKITDIR/WebKitBuild/Debug/lib
         CONFIG(release):WEBKITBUILD = $$WEBKITDIR/WebKitBuild/Release/lib
+        CONFIG(debug):WEBKITBUILD = $$WEBKITDIR/WebKitBuild/Debug/lib
     } else {
-        CONFIG(debug):WEBKITBUILD = $$WEBKITDIR/WebKitBuild/$$WEBKITBRANCH/Debug/lib
         CONFIG(release):WEBKITBUILD = $$WEBKITDIR/WebKitBuild/$$WEBKITBRANCH/Release/lib
+        CONFIG(debug):WEBKITBUILD = $$WEBKITDIR/WebKitBuild/$$WEBKITBRANCH/Debug/lib
     }
     message(Using WebKit Trunk at $$WEBKITDIR)
     message(Using WebKit Build at $$WEBKITBUILD)

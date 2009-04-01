@@ -7,6 +7,7 @@ SetCompressor /SOLID /FINAL lzma
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\torora.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
+!define QTDIR "C:\Qt\qt-all-opensource-src-4.5.0"
 
 !include "MUI.nsh"
 !define MUI_ABORTWARNING
@@ -69,6 +70,7 @@ Section "Main Components"
 
   ;SetOutPath "$INSTDIR\phonon_backend"
   ;File "C:\Qt\2009.01\qt\plugins\phonon_backend\phonon_ds94.dll"
+
 SectionEnd
 
 Section Icons

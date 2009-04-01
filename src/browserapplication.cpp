@@ -66,7 +66,7 @@
 #include "browsermainwindow.h"
 #include "cookiejar.h"
 #include "downloadmanager.h"
-#include "history.h"
+#include "historymanager.h"
 #include "languagemanager.h"
 #include "networkaccessmanager.h"
 #include "tabwidget.h"
@@ -164,7 +164,7 @@ void BrowserApplication::lastWindowClosed()
 {
     clean();
     BrowserMainWindow *mw = new BrowserMainWindow;
-    mw->slotHome();
+    mw->goHome();
     m_mainWindows.prepend(mw);
 }
 #endif
@@ -418,7 +418,7 @@ void BrowserApplication::postLaunch()
         } else {
             switch (startup) {
             case 0:
-                mainWindow()->slotHome();
+                mainWindow()->goHome();
                 break;
             case 1:
                 break;
@@ -626,7 +626,7 @@ BrowserMainWindow *BrowserApplication::newMainWindow()
     BrowserMainWindow *browser = new BrowserMainWindow();
     m_mainWindows.prepend(browser);
     connect(this, SIGNAL(privacyChanged(bool)),
-            browser, SLOT(slotPrivacyChanged(bool)));
+            browser, SLOT(privacyChanged(bool)));
     connect(this, SIGNAL(torChanged(bool)),
             browser, SLOT(slotTorChanged(bool)));
     browser->show();
