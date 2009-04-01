@@ -226,6 +226,17 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     setWindowRole(QLatin1String("browser"));
 #endif
     retranslate();
+
+    /*Torora: Req 5.3*/
+    /*FIXME: This won't work in Windows apparently.*/
+    QSize size = this->size();
+    if (((size.height() / 50) != 0) &&
+       ((size.width() / 50) != 0)) {
+      size.setHeight((int)(size.height() / 50) * 50);
+      size.setWidth((int)(size.width() / 50) * 50);
+      resize(size);
+    }
+    setSizeIncrement(50,50);
 }
 
 BrowserMainWindow::~BrowserMainWindow()
@@ -347,8 +358,15 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
         m_menuBarVisible = true;
         m_statusBarVisible = showStatusbar;
     }
-
     resize(size);
+    /*Torora: Req 5.3*/
+    if (((size.height() / 50) != 0) &&
+       ((size.width() / 50) != 0)) {
+      size.setHeight((int)(size.height() / 50) * 50);
+      size.setWidth((int)(size.width() / 50) * 50);
+      resize(size);
+    }
+    setSizeIncrement(50,50);
 
     m_navigationBar->setVisible(showToolbar);
     updateToolbarActionText(showToolbar);
