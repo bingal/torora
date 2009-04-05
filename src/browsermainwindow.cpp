@@ -1118,7 +1118,6 @@ void BrowserMainWindow::privateBrowsing()
     }
 }
 
-<<<<<<< HEAD:src/browsermainwindow.cpp
 void BrowserMainWindow::slotTorBrowsing()
 {
     if (!BrowserApplication::isTor()) {
@@ -1146,10 +1145,7 @@ void BrowserMainWindow::slotTorBrowsing()
     }
 }
 
-void BrowserMainWindow::slotZoomTextOnlyChanged(bool textOnly)
-=======
 void BrowserMainWindow::zoomTextOnlyChanged(bool textOnly)
->>>>>>> 847ebc47e9c5517a5a0e28f2e963a7f55b2b4ad6:src/browsermainwindow.cpp
 {
     m_viewZoomTextOnlyAction->setChecked(textOnly);
 }
