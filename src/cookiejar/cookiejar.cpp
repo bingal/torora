@@ -198,6 +198,7 @@ void CookieJar::save()
 {
     if (!m_loaded)
         return;
+    qRegisterMetaTypeStreamOperators<QList<QNetworkCookie> >("QList<QNetworkCookie>");
     purgeOldCookies();
     QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
     if (directory.isEmpty())
@@ -282,7 +283,7 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
         || (!acceptInitially && (eAllow || eAllowSession))) {
         // pass url domain == cookie domain
         QDateTime soon = QDateTime::currentDateTime();
-        /*Torora Requirement: 3.2*/
+        /*Torora: Req 3.2*/
         if (m_isTor)
           soon = soon.addSecs(23 * 60 * 60);
         else
@@ -330,7 +331,7 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
         }
     }
 
-    /*Torora Requirement: 3.2*/
+    /*Torora: Req 3.2*/
     /* Use this opportunity to expire any cookies that have been sitting around
        for 23 hours */
     if (m_isTor) {
