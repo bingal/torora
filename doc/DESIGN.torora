@@ -128,6 +128,11 @@ These considerations leave us with the following requirements for Torora:
       Referrer and Origin Headers
         These need to be blocked or spoofed.
 
+      Use of '.exit' URLs
+        Websites can utilise '.exit' URLs (e.g. 'http://www.torproject.org.namedexit.exit') to
+        control where users exit the Tor network. Torora needs to ensure that users know when
+        the point from which they exit the Tor network is being chosen by a third party.
+
       Implementation Requirements Arising:
         1. Never store cache/cookie/configuration information in locations shared by other
            browsers.
@@ -153,6 +158,8 @@ These considerations leave us with the following requirements for Torora:
 
         7. Spoof the referrer and origin header as the root of the url's target site.
            Files altered: torora/src/networkaccessmanager.cpp
+
+        8. Warn users about the use of '.exit' URLs, allow them to cancel such requests.
 
     4. Location Neutrality
       The browser SHOULD NOT leak location-specific information, such as timezone
@@ -388,10 +395,6 @@ These considerations leave us with the following requirements for Torora:
        6. Javascript should not have access to the clipboard.
           Already implemented by QWebSettings::JavascriptCanAccessClipboard
           Files altered: torora/src/browserapplication.cpp
-
-       7. Google analytics cookies should be rejected/killed. This is because they
-          allow Google to gain a complete view of a user's activity. This may help
-          identify the user.
 
 
 Appendix A

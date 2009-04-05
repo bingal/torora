@@ -398,10 +398,21 @@ bool NetworkAccessManager::requestViolatesTorRules(QNetworkRequest &req)
        (req.url().host() == QLatin1String("127.0.0.1"))) {
        QMessageBox::information(0, tr("Access to hostname %1 blocked").arg(req.url().host()),
             tr("Either you or a form in the web page you are viewing has attempted to "
-               "access localhost. Torora blocks access to locahost in order to prevent "
+               "access %1. Torora blocks access to %1 in order to prevent "
                "HTML form attacks on Tor. <br> See http://www.remote.org/jochen/sec/hfpa/hfpa.pdf "
                "for more information.</a></p>").arg(req.url().host()));
        return true;
+    }
+    
+    /*Torora: Req 3.8*/
+    if ((req.url().host().contains(QLatin1String(".exit")))) {
+        int choice = QMessageBox::warning(0, tr("You are following a '.exit' URL: %1").arg(req.url().host()),
+                                        tr("If you did not type this URL yourself, a remote website may be attempting to track you. \n"
+                                           "Do you want to continue anyway?"),
+                                        QMessageBox::Yes | QMessageBox::No,
+                                        QMessageBox::No);
+        if (choice == QMessageBox::No)
+            return true;
     }
     return false;
 }
