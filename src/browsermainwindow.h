@@ -102,6 +102,7 @@ public:
     bool restoreState(const QByteArray &state);
     QAction *showMenuBarAction() const;
     void enableBookmarksToolbar(bool enabled);
+    void setStatusBarMessagesEnabled(bool enabled);
 
 public slots:
     void goHome();
