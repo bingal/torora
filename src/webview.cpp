@@ -256,6 +256,11 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     }
 }
 
+QString WebPage::userAgentForUrl(const QUrl& url) const
+{
+    Q_UNUSED(url)
+    return QLatin1String("Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/528.16 (KHTML, like Gecko) Version/4.0 Safari/528.16");
+}
 
 WebView::WebView(QWidget *parent)
     : QWebView(parent)
