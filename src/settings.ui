@@ -23,10 +23,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>1</number>
+   <item row="1" column="0" >
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -229,17 +229,17 @@
          <property name="frameShape" >
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="text">
-          <string notr="true">Times 16</string>
+         <property name="text" >
+          <string>Times 16</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="standardFontButton">
-         <property name="text">
+       <item row="0" column="3" >
+        <widget class="QPushButton" name="standardFontButton" >
+         <property name="text" >
           <string>Select...</string>
          </property>
         </widget>
@@ -259,38 +259,38 @@
          <property name="frameShape" >
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="text">
-          <string notr="true">Courier 13</string>
+         <property name="text" >
+          <string>Courier 13</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item row="1" column="3">
-        <widget class="QPushButton" name="fixedFontButton">
-         <property name="text">
+       <item row="1" column="3" >
+        <widget class="QPushButton" name="fixedFontButton" >
+         <property name="text" >
           <string>Select...</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
+       <item row="2" column="0" colspan="3" >
+        <widget class="QLabel" name="label_8" >
+         <property name="text" >
           <string>Preferred languages for viewing webpages in:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="3">
-        <widget class="QPushButton" name="languageButton">
-         <property name="text">
+       <item row="2" column="3" >
+        <widget class="QPushButton" name="languageButton" >
+         <property name="text" >
           <string>Select...</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
+       <item row="3" column="2" >
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0" >
@@ -313,10 +313,10 @@
          <property name="title" >
           <string>Web Content</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="blockPopupWindows">
-            <property name="text">
+         <layout class="QGridLayout" name="gridLayout_5" >
+          <item row="0" column="0" colspan="2" >
+           <widget class="QCheckBox" name="blockPopupWindows" >
+            <property name="text" >
              <string>Block Popup Windows</string>
             </property>
             <property name="checked" >
@@ -324,9 +324,9 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="enablePlugins">
-            <property name="text">
+          <item row="1" column="0" colspan="2" >
+           <widget class="QCheckBox" name="enablePlugins" >
+            <property name="text" >
              <string>Enable Plugins</string>
             </property>
             <property name="checked" >
@@ -334,15 +334,15 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
+          <item row="2" column="0" >
+           <spacer name="horizontalSpacer_3" >
+            <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeType">
+            <property name="sizeType" >
              <enum>QSizePolicy::Fixed</enum>
             </property>
-            <property name="sizeHint" stdset="0">
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>20</width>
               <height>20</height>
@@ -350,25 +350,28 @@
             </property>
            </spacer>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="clickToFlash">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <item row="2" column="1" >
+           <widget class="QCheckBox" name="clickToFlash" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
+            <property name="text" >
              <string>Use ClickToFlash on flash plugins</string>
             </property>
-            <property name="checked">
+            <property name="checked" >
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QCheckBox" name="enableJavascript">
-            <property name="text">
+          <item row="3" column="0" colspan="2" >
+           <widget class="QCheckBox" name="enableJavascript" >
+            <property name="text" >
              <string>Enable Javascript</string>
             </property>
             <property name="checked" >
@@ -376,9 +379,9 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QCheckBox" name="enableImages">
-            <property name="text">
+          <item row="4" column="0" colspan="2" >
+           <widget class="QCheckBox" name="enableImages" >
+            <property name="text" >
              <string>View Images</string>
             </property>
             <property name="checked" >
@@ -859,7 +862,7 @@
    <receiver>Settings</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>260</x>
      <y>395</y>
     </hint>
@@ -875,7 +878,7 @@
    <receiver>Settings</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>328</x>
      <y>395</y>
     </hint>
@@ -891,7 +894,7 @@
    <receiver>downloadsLocation</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>50</x>
      <y>223</y>
     </hint>
@@ -907,11 +910,11 @@
    <receiver>clickToFlash</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>129</x>
      <y>98</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>149</x>
      <y>122</y>
     </hint>
