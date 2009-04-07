@@ -23,6 +23,7 @@
 #include "lineedit.h"
 
 #include <qpointer.h>
+#include <qlabel.h>
 #include <qurl.h>
 
 class WebView;
@@ -35,14 +36,10 @@ class LocationBar : public LineEdit
 public:
     LocationBar(QWidget *parent = 0);
     void setWebView(WebView *webView);
-<<<<<<< HEAD:src/locationbar.h
+    WebView *webView() const;
 
 public slots:
-    void setPrivate(bool isPrivate);
     void setTor(bool isTor);
-=======
-    WebView *webView() const;
->>>>>>> 6b1f3bd88908b220ae620c0131ed97bad5c315c8:src/locationbar/locationbar.h
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -55,14 +52,9 @@ private slots:
 private:
     QPointer<WebView> m_webView;
     QColor m_defaultBaseColor;
-<<<<<<< HEAD:src/locationbar.h
-    QLabel *m_privacyIndicator;
     QLabel *m_torIndicator;
-=======
-
     LocationBarSiteIcon *m_siteIcon;
     PrivacyIndicator *m_privacyIndicator;
->>>>>>> 6b1f3bd88908b220ae620c0131ed97bad5c315c8:src/locationbar/locationbar.h
 };
 
 #endif // LOCATIONBAR_H
