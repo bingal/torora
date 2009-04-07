@@ -294,6 +294,9 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
               always start with '_utm' - at least at the moment.*/
             if (m_isTor && cookie.name().startsWith("_utm"))
                 continue;
+            if (eAllowSession) {
+                cookie.setExpirationDate(QDateTime());
+            }
             if ((m_keepCookies == KeepUntilTimeLimit
                 && !cookie.isSessionCookie()
                 && cookie.expirationDate() > soon) || (m_isTor)) {
@@ -359,7 +362,8 @@ bool CookieJar::isOnDomainList(const QStringList &rules, const QString &domain)
                 return true;
         } else {
             QStringRef domainEnding = domain.rightRef(rule.size() + 1);
-            if (domainEnding.at(0) == QLatin1Char('.')
+            if (!domainEnding.isEmpty()
+                && domainEnding.at(0) == QLatin1Char('.')
                 && domain.endsWith(rule)) {
                 return true;
             }
@@ -432,6 +436,7 @@ void CookieJar::setBlockedCookies(const QStringList &list)
         load();
     m_exceptions_block = list;
     qSort(m_exceptions_block.begin(), m_exceptions_block.end());
+    applyRules();
     m_saveTimer->changeOccurred();
 }
 
@@ -441,6 +446,7 @@ void CookieJar::setAllowedCookies(const QStringList &list)
         load();
     m_exceptions_allow = list;
     qSort(m_exceptions_allow.begin(), m_exceptions_allow.end());
+    applyRules();
     m_saveTimer->changeOccurred();
 }
 
@@ -450,6 +456,29 @@ void CookieJar::setAllowForSessionCookies(const QStringList &list)
         load();
     m_exceptions_allowForSession = list;
     qSort(m_exceptions_allowForSession.begin(), m_exceptions_allowForSession.end());
+    applyRules();
     m_saveTimer->changeOccurred();
 }
+
+void CookieJar::applyRules()
+{
+    QList<QNetworkCookie> cookies = allCookies();
+    bool changed = false;
+    for (int i = cookies.count() - 1; i >= 0; --i) {
+        const QNetworkCookie &cookie = cookies.at(i);
+        if (isOnDomainList(m_exceptions_block, cookie.domain())) {
+            cookies.removeAt(i);
+            changed = true;
+        } else if (isOnDomainList(m_exceptions_allowForSession, cookie.domain())) {
+            const_cast<QNetworkCookie&>(cookie).setExpirationDate(QDateTime());
+            changed = true;
+        }
+    }
+    if (changed) {
+        setAllCookies(cookies);
+        m_saveTimer->changeOccurred();
+        emit cookiesChanged();
+    }
+}
+
 

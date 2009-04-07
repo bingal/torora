@@ -78,6 +78,10 @@ public:
 
 private:
     QSortFilterProxyModel *m_proxyModel;
+    CookieJar *m_cookieJar;
+
+private slots:
+    void addRule();
 };
 
 #endif // COOKIEDIALOG_H
