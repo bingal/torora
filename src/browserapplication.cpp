@@ -323,6 +323,13 @@ void BrowserApplication::reportTorCheckResults(int page)
     }
 
     if (page == TOR_SUCCESS) {
+        /*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
+                is testing */
+        #define TOR_CHECK_PERIOD 60 * 1000 * (qrand() % 10)
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
+        timer->start(TOR_CHECK_PERIOD);
+
         imageBuffer.open(QBuffer::ReadWrite);
         icon = QIcon(QLatin1String(":info.png"));
         pixmap = icon.pixmap(QSize(32, 32));
@@ -406,12 +413,6 @@ void BrowserApplication::postLaunch()
     // through Tor.
     setTor(true);
     checkTorInstallation();
-/*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
-        is testing */
-#define TOR_CHECK_PERIOD 60 * 1000 * (qrand() % 10)
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
-    timer->start(TOR_CHECK_PERIOD);
 #else
     // newMainWindow() needs to be called in main() for this to happen
     if (m_mainWindows.count() > 0) {
