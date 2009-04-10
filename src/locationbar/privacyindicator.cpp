@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+ * Copyright 2009 Benjamin C. Meyer <ben@meyerhome.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,32 +17,16 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef LOCATIONBAR_P_H
-#define LOCATIONBAR_P_H
+#include "privacyindicator.h"
 
-#include <qlabel.h>
+#include "browserapplication.h"
 
-class WebView;
-class LocationBarSiteIcon : public QLabel
+PrivacyIndicator::PrivacyIndicator(QWidget *parent)
+    : QLabel(parent)
 {
-    Q_OBJECT
-
-public:
-    LocationBarSiteIcon(QWidget *parent = 0);
-    void setWebView(WebView *webView);
-
-protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-
-private slots:
-    void webViewSiteIconChanged();
-
-private:
-    WebView *m_webView;
-    QPoint m_dragStartPos;
-
-};
-
-#endif // LOCATIONBAR_P_H
+    setPixmap(QPixmap(QLatin1String(":private.png")));
+    connect(BrowserApplication::instance(), SIGNAL(privacyChanged(bool)),
+            this, SLOT(setVisible(bool)));
+    setVisible(BrowserApplication::isPrivate());
+}
 

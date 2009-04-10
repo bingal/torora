@@ -76,6 +76,7 @@ QT_END_NAMESPACE
 
 class TabWidget;
 class BrowserMainWindow;
+class WebPluginFactory;
 class WebPage : public QWebPage
 {
     Q_OBJECT
@@ -86,6 +87,7 @@ signals:
 public:
     WebPage(QObject *parent = 0);
     BrowserMainWindow *mainWindow();
+    WebPluginFactory *webPluginFactory();
 
 protected:
     bool acceptNavigationRequest(QWebFrame *frame, QNetworkRequest &request, NavigationType type);
@@ -94,6 +96,7 @@ protected:
 #if !defined(QT_NO_UITOOLS)
     QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 #endif
+    QString userAgentForUrl(const QUrl& url) const;
 
 private slots:
     void handleUnsupportedContent(QNetworkReply *reply);
@@ -105,6 +108,7 @@ private:
     // set the webview mousepressedevent
     bool m_forceInNewTab;
     QUrl m_loadingUrl;
+    static WebPluginFactory *s_webPluginFactory;
 };
 
 class WebView : public QWebView

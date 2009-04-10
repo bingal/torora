@@ -80,6 +80,7 @@
 #include <qlibraryinfo.h>
 #include <qmessagebox.h>
 #include <qsettings.h>
+#include <qstatusbar.h>
 #include <qwebsettings.h>
 #include <qwebframe.h>
 #include <QShortcut>
@@ -100,10 +101,6 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
     QCoreApplication::setApplicationName(QLatin1String("Torora"));
     QString version = QLatin1String("0.5");
-//     if (QLatin1String(GITCHANGENUMBER) != QLatin1String("0"))
-//         version += QString(tr(" (Change: %1 %2)"))
-//                     .arg(QLatin1String(GITCHANGENUMBER))
-//                     .arg(QLatin1String(GITVERSION));
 
     QCoreApplication::setApplicationVersion(version);
 #ifndef AUTOTESTS
@@ -247,6 +244,7 @@ void BrowserApplication::torCheckComplete(bool error)
 
 void BrowserApplication::reportTorCheckResults(int page)
 {
+    QString statusbar;
 
     QFile file(QLatin1String(":/torcheck.html"));
     if (!file.open(QIODevice::ReadOnly)) {
@@ -276,6 +274,7 @@ void BrowserApplication::reportTorCheckResults(int page)
         bullettwo = tr("Once Torora is sure you can browse anonymously, browsing will be enabled.");
         bulletthree = tr("This check may take a few seconds, so please be patient.");
         img = QLatin1String(":tor-checking.png");
+        statusbar = QLatin1String("Checking Tor...");
         break;
       case TOR_SUCCESS:
         if (m_checkTorSilently)
@@ -287,11 +286,12 @@ void BrowserApplication::reportTorCheckResults(int page)
         tororaIssues = QString(QLatin1String(issues.readAll()));
         title = tr("Torora Ready For Use..");
         headline = tr("Tor is Working Properly. You Can Browse Anonymously.");
-        bulletone = tr("You can confirm this yourself by visiting <a href='http://check.torproject.org'>http://check.torproject.org</a>");
+        bulletone = tr("You can confirm this yourself by visiting <a href='https://check.torproject.org'>https://check.torproject.org</a>");
         bullettwo = tr("The bookmark toolbar contains some well known hidden services you can check out.");
         bulletthree = tr("You can check Tor at any time by pressing F12 or clicking <b>Tools->Check Tor.</b>");
         img = QLatin1String(":tor-on.png");
-        break;
+        statusbar = QLatin1String("Tor Check Successful");
+       break;
       default:
         title = tr("Check Your Tor Installation");
         headline = tr("Torora Is Not Using Tor for Some Reason");
@@ -300,6 +300,7 @@ void BrowserApplication::reportTorCheckResults(int page)
         bulletthree = tr("Press F12 or Tools->Check Tor to test Tor again.");
         bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
         img = QLatin1String(":tor-off.png");
+        statusbar = QLatin1String("Tor Check Failed");
         break;
     }
     QString html = QString(QLatin1String(file.readAll()))
@@ -347,16 +348,29 @@ void BrowserApplication::reportTorCheckResults(int page)
         }
     }
     mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
+
+    if (!m_checkTorSilently) {
+        m_statusbar=statusbar;
+        QTimer::singleShot(1000, this, SLOT(displayStatusResult()));
+        if (page != TOR_CHECK)
+            mainWindow()->setStatusBarMessagesEnabled(true);
+    }
+}
+
+void BrowserApplication::displayStatusResult()
+{
+    mainWindow()->statusBar()->showMessage(m_statusbar);
 }
 
 void BrowserApplication::checkTorInstallation()
 {
     if (!m_checkTorSilently) {
-      reportTorCheckResults(TOR_CHECK);
       mainWindow()->toolbarSearch()->setEnabled(false);
       mainWindow()->tabWidget()->setLocationBarEnabled(false);
       mainWindow()->enableBookmarksToolbar(false);
       mainWindow()->tabWidget()->setEnabled(false);
+      mainWindow()->setStatusBarMessagesEnabled(false);
+      reportTorCheckResults(TOR_CHECK);
     }
     http = new QHttp(QLatin1String("check.torproject.org"),
                      QHttp::ConnectionModeHttps, 443, this);
@@ -392,7 +406,9 @@ void BrowserApplication::postLaunch()
     // through Tor.
     setTor(true);
     checkTorInstallation();
-#define TOR_CHECK_PERIOD 60 * 1000 * 10
+/*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
+        is testing */
+#define TOR_CHECK_PERIOD 60 * 1000 * (qrand() % 10)
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
     timer->start(TOR_CHECK_PERIOD);
@@ -787,3 +803,4 @@ void BrowserApplication::checkTorExplicitly()
     m_checkTorSilently = false;
     checkTorInstallation();
 }
+

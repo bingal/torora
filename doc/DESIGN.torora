@@ -1,6 +1,7 @@
 
 Torora Requirements and Specification
 -------------------------------------
+Note: To search the code for a requirement's implementation, grep for 'Torora: Req X.X'.
 
 Torora's requirements are modelled on Torbutton's. Torbutton's requirements
 fall under the following headings:
@@ -57,6 +58,8 @@ These considerations leave us with the following requirements for Torora:
 
         3. Regular checks at https://check.torproject.org
            Files Altered: torora/src/browserapplication.cpp
+
+           The interim between checks should probably be unpredictable.
 
         4. Inspection of http headers to ensure privoxy is being used.
            Files Altered: TODO
@@ -125,6 +128,11 @@ These considerations leave us with the following requirements for Torora:
       Referrer and Origin Headers
         These need to be blocked or spoofed.
 
+      Use of '.exit' URLs
+        Websites can utilise '.exit' URLs (e.g. 'http://www.torproject.org.namedexit.exit') to
+        control where users exit the Tor network. Torora needs to ensure that users know when
+        the point from which they exit the Tor network is being chosen by a third party.
+
       Implementation Requirements Arising:
         1. Never store cache/cookie/configuration information in locations shared by other
            browsers.
@@ -150,6 +158,8 @@ These considerations leave us with the following requirements for Torora:
 
         7. Spoof the referrer and origin header as the root of the url's target site.
            Files altered: torora/src/networkaccessmanager.cpp
+
+        8. Warn users about the use of '.exit' URLs, allow them to cancel such requests.
 
     4. Location Neutrality
       The browser SHOULD NOT leak location-specific information, such as timezone
@@ -375,9 +385,9 @@ These considerations leave us with the following requirements for Torora:
        4. Password and Form Saving
           "Since form fields can be read at any time by Javascript, this setting is a
           lot more important than it seems." (Torbutton Design Doc)
-          Setting: QWebSettings::DisableJavascriptSubmit
-          Files altered: WebCore/html/HTMLFormElement.cpp
-          Strategy: Do not save or record values typed into HTML forms.
+          Setting: N/A
+          Files altered: N/A
+          Strategy: WebKit/Torora does not support this feature.
 
        5. Need to prevent random external applications from launching without at least
           warning the user.
@@ -385,10 +395,6 @@ These considerations leave us with the following requirements for Torora:
        6. Javascript should not have access to the clipboard.
           Already implemented by QWebSettings::JavascriptCanAccessClipboard
           Files altered: torora/src/browserapplication.cpp
-
-       7. Google analytics cookies should be rejected/killed. This is because they
-          allow Google to gain a complete view of a user's activity. This may help
-          identify the user.
 
 
 Appendix A

@@ -1465,3 +1465,19 @@ void BrowserMainWindow::slotCheckTor()
 {
     BrowserApplication::instance()->checkTorExplicitly();
 }
+
+void BrowserMainWindow::setStatusBarMessagesEnabled(bool enabled)
+{
+
+    if (enabled) {
+        connect(m_tabWidget, SIGNAL(showStatusBarMessage(const QString&)),
+                statusBar(), SLOT(showMessage(const QString&)));
+        connect(m_tabWidget, SIGNAL(linkHovered(const QString&)),
+                statusBar(), SLOT(showMessage(const QString&)));
+    } else {
+        disconnect(m_tabWidget, SIGNAL(showStatusBarMessage(const QString&)),
+                statusBar(), SLOT(showMessage(const QString&)));
+        disconnect(m_tabWidget, SIGNAL(linkHovered(const QString&)),
+                statusBar(), SLOT(showMessage(const QString&)));
+    }
+}

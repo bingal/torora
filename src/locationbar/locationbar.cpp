@@ -18,68 +18,20 @@
  */
 
 #include "locationbar.h"
-#include "locationbar_p.h"
 
 #include "browserapplication.h"
 #include "clearbutton.h"
+#include "locationbarsiteicon.h"
+#include "privacyindicator.h"
 #include "searchlineedit.h"
 #include "webview.h"
 
 #include <qdrag.h>
 #include <qevent.h>
-#include <qlabel.h>
 #include <qpainter.h>
 #include <qstyleoption.h>
 
 #include <qdebug.h>
-
-LocationBarSiteIcon::LocationBarSiteIcon(QWidget *parent)
-    : QLabel(parent)
-    , m_webView(0)
-{
-    resize(QSize(16, 16));
-    webViewSiteIconChanged();
-}
-
-void LocationBarSiteIcon::setWebView(WebView *webView)
-{
-    m_webView = webView;
-    connect(webView, SIGNAL(loadFinished(bool)),
-            this, SLOT(webViewSiteIconChanged()));
-    connect(webView, SIGNAL(iconChanged()),
-            this, SLOT(webViewSiteIconChanged()));
-}
-
-void LocationBarSiteIcon::webViewSiteIconChanged()
-{
-    QUrl url;
-    if (m_webView)
-        url = m_webView->url();
-    setPixmap(BrowserApplication::instance()->icon(url).pixmap(16, 16));
-}
-
-void LocationBarSiteIcon::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-        m_dragStartPos = event->pos();
-    QLabel::mousePressEvent(event);
-}
-
-void LocationBarSiteIcon::mouseMoveEvent(QMouseEvent *event)
-{
-    if (event->buttons() == Qt::LeftButton
-        && (event->pos() - m_dragStartPos).manhattanLength() > QApplication::startDragDistance()
-        && m_webView) {
-        QDrag *drag = new QDrag(this);
-        QMimeData *mimeData = new QMimeData;
-        mimeData->setText(QString::fromUtf8(m_webView->url().toEncoded()));
-        QList<QUrl> urls;
-        urls.append(m_webView->url());
-        mimeData->setUrls(urls);
-        drag->setMimeData(mimeData);
-        drag->exec();
-    }
-}
 
 LocationBar::LocationBar(QWidget *parent)
     : LineEdit(parent)
@@ -103,13 +55,8 @@ LocationBar::LocationBar(QWidget *parent)
             this, SLOT(setTor(bool)));
     setTor(BrowserApplication::isTor());
 
-    // privacy indicator at rightmost position
-    m_privacyIndicator = new QLabel(this);
-    m_privacyIndicator->setPixmap(QPixmap(QLatin1String(":private.png")));
+    m_privacyIndicator = new PrivacyIndicator(this);
     addWidget(m_privacyIndicator, RightSide);
-    connect(BrowserApplication::instance(), SIGNAL(privacyChanged(bool)),
-            this, SLOT(setPrivate(bool)));
-    setPrivate(BrowserApplication::isPrivate());
 
     // clear button on the right
     ClearButton *m_clearButton = new ClearButton(this);
@@ -118,7 +65,7 @@ LocationBar::LocationBar(QWidget *parent)
     connect(this, SIGNAL(textChanged(const QString&)),
             m_clearButton, SLOT(textChanged(const QString&)));
     addWidget(m_clearButton, RightSide);
-    m_clearButton->hide();
+
     updateTextMargins();
     setUpdatesEnabled(true);
 
@@ -140,9 +87,9 @@ void LocationBar::setWebView(WebView *webView)
             this, SLOT(update()));
 }
 
-void LocationBar::setPrivate(bool isPrivate)
+WebView *LocationBar::webView() const
 {
-    m_privacyIndicator->setVisible(isPrivate);
+    return m_webView;
 }
 
 void LocationBar::setTor(bool isTor)

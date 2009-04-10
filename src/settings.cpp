@@ -71,6 +71,7 @@
 #include "historymanager.h"
 #include "networkaccessmanager.h"
 #include "tabwidget.h"
+#include "webpluginfactory.h"
 #include "webview.h"
 
 #include <qdesktopservices.h>
@@ -140,6 +141,7 @@ void SettingsDialog::loadDefaults()
       enablePlugins->setChecked(defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
     }
     enableImages->setChecked(defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
+    clickToFlash->setChecked(true);
 }
 
 void SettingsDialog::loadFromSettings()
@@ -208,6 +210,7 @@ void SettingsDialog::loadFromSettings()
     }
     enableImages->setChecked(settings.value(QLatin1String("enableImages"), enableImages->isChecked()).toBool());
     userStyleSheet->setText(QString::fromUtf8(settings.value(QLatin1String("userStyleSheet")).toUrl().toEncoded()));
+    clickToFlash->setChecked(settings.value(QLatin1String("enableClickToFlash"), clickToFlash->isChecked()).toBool());
     settings.endGroup();
 
     // Privacy
@@ -343,6 +346,7 @@ void SettingsDialog::saveToSettings()
         settings.setValue(QLatin1String("userStyleSheet"), QUrl::fromLocalFile(userStyleSheetString));
     else
         settings.setValue(QLatin1String("userStyleSheet"), QUrl::fromEncoded(userStyleSheetString.toUtf8()));
+    settings.setValue(QLatin1String("enableClickToFlash"), clickToFlash->isChecked());
     settings.endGroup();
 
     //Privacy
@@ -416,6 +420,13 @@ void SettingsDialog::saveToSettings()
     /*Torora: Req 3.2*/
     BrowserApplication::cookieJar()->loadSettings(BrowserApplication::isTor());
     BrowserApplication::historyManager()->loadSettings();
+
+    if (BrowserMainWindow *mw = static_cast<BrowserMainWindow*>(parent())) {
+        WebView *webView = mw->currentTab();
+        if (webView) {
+            webView->webPage()->webPluginFactory()->refreshPlugins();
+        }
+    }
 }
 
 void SettingsDialog::accept()

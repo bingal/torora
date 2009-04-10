@@ -23,11 +23,12 @@
 #include "lineedit.h"
 
 #include <qpointer.h>
+#include <qlabel.h>
 #include <qurl.h>
 
 class WebView;
-class QLabel;
 class LocationBarSiteIcon;
+class PrivacyIndicator;
 class LocationBar : public LineEdit
 {
     Q_OBJECT
@@ -35,9 +36,9 @@ class LocationBar : public LineEdit
 public:
     LocationBar(QWidget *parent = 0);
     void setWebView(WebView *webView);
+    WebView *webView() const;
 
 public slots:
-    void setPrivate(bool isPrivate);
     void setTor(bool isTor);
 
 protected:
@@ -50,10 +51,10 @@ private slots:
 
 private:
     QPointer<WebView> m_webView;
-    LocationBarSiteIcon *m_siteIcon;
     QColor m_defaultBaseColor;
-    QLabel *m_privacyIndicator;
     QLabel *m_torIndicator;
+    LocationBarSiteIcon *m_siteIcon;
+    PrivacyIndicator *m_privacyIndicator;
 };
 
 #endif // LOCATIONBAR_H

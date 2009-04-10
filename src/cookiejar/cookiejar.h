@@ -127,6 +127,7 @@ protected:
     static bool isOnDomainList(const QStringList &rules, const QString &domain);
 
 private:
+    void applyRules();
     void purgeOldCookies();
     void load();
     bool m_loaded;

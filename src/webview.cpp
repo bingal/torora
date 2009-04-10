@@ -71,6 +71,7 @@
 #include "downloadmanager.h"
 #include "networkaccessmanager.h"
 #include "tabwidget.h"
+#include "webpluginfactory.h"
 
 #include <qbuffer.h>
 #include <qclipboard.h>
@@ -85,13 +86,23 @@
 
 #include <qdebug.h>
 
+WebPluginFactory *WebPage::s_webPluginFactory = 0;
+
 WebPage::WebPage(QObject *parent)
     : QWebPage(parent)
     , m_forceInNewTab(false)
 {
+    setPluginFactory(webPluginFactory());
     setNetworkAccessManager(BrowserApplication::networkAccessManager());
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
+}
+
+WebPluginFactory *WebPage::webPluginFactory()
+{
+    if (!s_webPluginFactory)
+        s_webPluginFactory = new WebPluginFactory(BrowserApplication::instance());
+    return s_webPluginFactory;
 }
 
 BrowserMainWindow *WebPage::mainWindow()
@@ -245,6 +256,11 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     }
 }
 
+QString WebPage::userAgentForUrl(const QUrl& url) const
+{
+    Q_UNUSED(url)
+    return QLatin1String("Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/528.16 (KHTML, like Gecko) Version/4.0 Safari/528.16");
+}
 
 WebView::WebView(QWidget *parent)
     : QWebView(parent)

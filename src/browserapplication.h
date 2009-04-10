@@ -143,12 +143,12 @@ private slots:
     void openUrl(const QUrl &url);
     void torCheckComplete(bool error);
     void checkTorSilently();
+    void displayStatusResult();
 signals:
 #if QT_VERSION >= 0x040500
     void zoomTextOnlyChanged(bool textOnly);
 #endif
     void privacyChanged(bool isPrivate);
-
     void torChanged(bool isTor);
 private:
     void clean();
@@ -165,7 +165,7 @@ private:
     bool quitting;
     bool m_checkTorSilently;
     QHttp *http;
-
+    QString m_statusbar;
     Qt::MouseButtons m_eventMouseButtons;
     Qt::KeyboardModifiers m_eventKeyboardModifiers;
 };
