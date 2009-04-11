@@ -181,7 +181,7 @@ void TorManager::reportTorCheckResults(int page)
             bullettwo = tr("There may be a temporary issue with the website.");
             bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
         }
-        bulletthree = tr("Press F12 or Tools->Check Tor to test Tor again.");
+        bulletthree = tr("Press F12 or <b>Tools->Check Tor</b> to test Tor again.");
         img = QLatin1String(":tor-off.png");
         statusbar = QLatin1String("Tor Check Failed");
         break;
