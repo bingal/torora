@@ -79,6 +79,7 @@
 #include "tabbar.h"
 #include "tabwidget.h"
 #include "toolbarsearch.h"
+#include "tor/tormanager.h"
 #include "webview.h"
 #include "webviewsearch.h"
 
@@ -1463,7 +1464,7 @@ void BrowserMainWindow::enableBookmarksToolbar(bool enabled)
 
 void BrowserMainWindow::slotCheckTor()
 {
-    BrowserApplication::instance()->checkTorExplicitly();
+    BrowserApplication::instance()->torManager()->checkTorExplicitly();
 }
 
 void BrowserMainWindow::setStatusBarMessagesEnabled(bool enabled)

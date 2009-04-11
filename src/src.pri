@@ -106,6 +106,8 @@ include(locationbar/locationbar.pri)
 include(networkmonitor/networkmonitor.pri)
 include(qwebplugins/qwebplugins.pri)
 include(utils/utils.pri)
+include(tor/tor.pri)
+
 
 RESOURCES += \
     $$PWD/data/data.qrc \

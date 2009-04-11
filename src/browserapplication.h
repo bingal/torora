@@ -76,6 +76,7 @@ class CookieJar;
 class DownloadManager;
 class HistoryManager;
 class NetworkAccessManager;
+class TorManager;
 class LanguageManager;
 class BrowserApplication : public SingleApplication
 {
@@ -98,6 +99,7 @@ public:
     static CookieJar *cookieJar();
     static DownloadManager *downloadManager();
     static NetworkAccessManager *networkAccessManager();
+    static TorManager *torManager();
     static BookmarksManager *bookmarksManager();
     static LanguageManager *languageManager();
     static QString dataDirectory();
@@ -110,9 +112,6 @@ public:
 #if QT_VERSION >= 0x040500
     static bool zoomTextOnly();
 #endif
-
-    void checkTorInstallation();
-    void checkTorExplicitly();
 
     static bool isPrivate();
     static void setPrivate(bool isPrivate);
@@ -141,9 +140,6 @@ private slots:
     void messageReceived(const QString &message);
     void postLaunch();
     void openUrl(const QUrl &url);
-    void torCheckComplete(bool error);
-    void checkTorSilently();
-    void displayStatusResult();
 signals:
 #if QT_VERSION >= 0x040500
     void zoomTextOnlyChanged(bool textOnly);
@@ -152,19 +148,17 @@ signals:
     void torChanged(bool isTor);
 private:
     void clean();
-    void reportTorCheckResults(int page);
 
     static HistoryManager *s_historyManager;
     static DownloadManager *s_downloadManager;
     static NetworkAccessManager *s_networkAccessManager;
+    static TorManager *s_torManager;
     static BookmarksManager *s_bookmarksManager;
     static LanguageManager *s_languageManager;
 
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QByteArray m_lastSession;
     bool quitting;
-    bool m_checkTorSilently;
-    QHttp *http;
     QString m_statusbar;
     Qt::MouseButtons m_eventMouseButtons;
     Qt::KeyboardModifiers m_eventKeyboardModifiers;
