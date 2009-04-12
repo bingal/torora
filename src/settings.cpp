@@ -71,6 +71,7 @@
 #include "historymanager.h"
 #include "networkaccessmanager.h"
 #include "tabwidget.h"
+#include "tor/tormanager.h"
 #include "webpluginfactory.h"
 #include "webview.h"
 
@@ -431,6 +432,7 @@ void SettingsDialog::saveToSettings()
 
 void SettingsDialog::accept()
 {
+    BrowserApplication::instance()->torManager()->checkTorInstallation(true);
     saveToSettings();
     QDialog::accept();
 }
