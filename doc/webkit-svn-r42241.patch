@@ -1,6 +1,6 @@
 Index: JavaScriptCore/runtime/DateConstructor.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateConstructor.cpp	(revision 42227)
+--- JavaScriptCore/runtime/DateConstructor.cpp	(revision 42241)
 +++ JavaScriptCore/runtime/DateConstructor.cpp	(working copy)
 @@ -78,7 +78,10 @@
          else {
@@ -28,7 +28,7 @@ Index: JavaScriptCore/runtime/DateConstructor.cpp
  
 Index: JavaScriptCore/runtime/DateMath.h
 ===================================================================
---- JavaScriptCore/runtime/DateMath.h	(revision 42227)
+--- JavaScriptCore/runtime/DateMath.h	(revision 42241)
 +++ JavaScriptCore/runtime/DateMath.h	(working copy)
 @@ -60,7 +60,7 @@
  void getLocalTime(const time_t*, tm*);
@@ -50,7 +50,7 @@ Index: JavaScriptCore/runtime/DateMath.h
          : second(0)
 Index: JavaScriptCore/runtime/DateMath.cpp
 ===================================================================
---- JavaScriptCore/runtime/DateMath.cpp	(revision 42227)
+--- JavaScriptCore/runtime/DateMath.cpp	(revision 42241)
 +++ JavaScriptCore/runtime/DateMath.cpp	(working copy)
 @@ -592,7 +592,7 @@
      return true;
@@ -72,7 +72,7 @@ Index: JavaScriptCore/runtime/DateMath.cpp
      return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
 Index: JavaScriptCore/runtime/DatePrototype.cpp
 ===================================================================
---- JavaScriptCore/runtime/DatePrototype.cpp	(revision 42227)
+--- JavaScriptCore/runtime/DatePrototype.cpp	(revision 42241)
 +++ JavaScriptCore/runtime/DatePrototype.cpp	(working copy)
 @@ -384,7 +384,6 @@
      : DateInstance(structure)
@@ -356,7 +356,7 @@ Index: JavaScriptCore/runtime/DatePrototype.cpp
  
 Index: JavaScriptCore/runtime/JSGlobalObject.h
 ===================================================================
---- JavaScriptCore/runtime/JSGlobalObject.h	(revision 42227)
+--- JavaScriptCore/runtime/JSGlobalObject.h	(revision 42241)
 +++ JavaScriptCore/runtime/JSGlobalObject.h	(working copy)
 @@ -234,6 +234,8 @@
  
@@ -369,7 +369,7 @@ Index: JavaScriptCore/runtime/JSGlobalObject.h
          virtual bool isDynamicScope() const;
 Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
 ===================================================================
---- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 42227)
+--- WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(revision 42241)
 +++ WebKit/mac/WebCoreSupport/WebInspectorClient.mm	(working copy)
 @@ -167,6 +167,7 @@
      WebPreferences *preferences = [[WebPreferences alloc] init];
@@ -381,7 +381,7 @@ Index: WebKit/mac/WebCoreSupport/WebInspectorClient.mm
      [preferences setJavaScriptEnabled:YES];
 Index: WebKit/mac/WebView/WebPreferences.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.h	(revision 42227)
+--- WebKit/mac/WebView/WebPreferences.h	(revision 42241)
 +++ WebKit/mac/WebView/WebPreferences.h	(working copy)
 @@ -366,6 +366,19 @@
  - (BOOL)privateBrowsingEnabled;
@@ -405,7 +405,7 @@ Index: WebKit/mac/WebView/WebPreferences.h
      @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
 Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 42227)
+--- WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(revision 42241)
 +++ WebKit/mac/WebView/WebPreferenceKeysPrivate.h	(working copy)
 @@ -61,6 +61,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
@@ -417,7 +417,7 @@ Index: WebKit/mac/WebView/WebPreferenceKeysPrivate.h
  #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 Index: WebKit/mac/WebView/WebView.mm
 ===================================================================
---- WebKit/mac/WebView/WebView.mm	(revision 42227)
+--- WebKit/mac/WebView/WebView.mm	(revision 42241)
 +++ WebKit/mac/WebView/WebView.mm	(working copy)
 @@ -1373,6 +1373,7 @@
      settings->setDatabasesEnabled([preferences databasesEnabled]);
@@ -429,7 +429,7 @@ Index: WebKit/mac/WebView/WebView.mm
      settings->setStandardFontFamily([preferences standardFontFamily]);
 Index: WebKit/mac/WebView/WebPreferences.mm
 ===================================================================
---- WebKit/mac/WebView/WebPreferences.mm	(revision 42227)
+--- WebKit/mac/WebView/WebPreferences.mm	(revision 42241)
 +++ WebKit/mac/WebView/WebPreferences.mm	(working copy)
 @@ -326,6 +326,7 @@
          @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
@@ -456,9 +456,46 @@ Index: WebKit/mac/WebView/WebPreferences.mm
  - (void)setUsesPageCache:(BOOL)usesPageCache
  {
      [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
+Index: WebKit/qt/Api/qwebsettings.h
+===================================================================
+--- WebKit/qt/Api/qwebsettings.h	(revision 42241)
++++ WebKit/qt/Api/qwebsettings.h	(working copy)
+@@ -64,7 +64,8 @@
+         OfflineStorageDatabaseEnabled,
+         OfflineWebApplicationCacheEnabled,
+         LocalStorageDatabaseEnabled,
+-        AllowUniversalAccessFromFileUrls
++        AllowUniversalAccessFromFileUrls,
++        PreventUserProfiling
+     };
+     enum WebGraphic {
+         MissingImageGraphic,
+Index: WebKit/qt/Api/qwebpage.cpp
+===================================================================
+--- WebKit/qt/Api/qwebpage.cpp	(revision 42241)
++++ WebKit/qt/Api/qwebpage.cpp	(working copy)
+@@ -1079,7 +1079,7 @@
+         Frame *frame = d->page->focusController()->focusedFrame();
+         if (frame) {
+             Document *document = frame->document();
+-            if (document->focusedNode()) {
++            if (document && document->focusedNode()) {
+                 return QVariant(document->focusedNode()->nodeValue());
+             }
+         }
+@@ -2498,7 +2498,9 @@
+ */
+ QString QWebPage::userAgentForUrl(const QUrl& url) const
+ {
++ /*torora user agent header */
+     Q_UNUSED(url)
++
+     QString ua = QLatin1String("Mozilla/5.0 ("
+ 
+     // Plastform
 Index: WebKit/qt/Api/qwebsettings.cpp
 ===================================================================
---- WebKit/qt/Api/qwebsettings.cpp	(revision 42227)
+--- WebKit/qt/Api/qwebsettings.cpp	(revision 42241)
 +++ WebKit/qt/Api/qwebsettings.cpp	(working copy)
 @@ -150,6 +150,11 @@
                                        global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
@@ -482,49 +519,9 @@ Index: WebKit/qt/Api/qwebsettings.cpp
  */
  
  /*!
-Index: WebKit/qt/Api/qwebsettings.h
-===================================================================
---- WebKit/qt/Api/qwebsettings.h	(revision 42227)
-+++ WebKit/qt/Api/qwebsettings.h	(working copy)
-@@ -64,7 +64,8 @@
-         OfflineStorageDatabaseEnabled,
-         OfflineWebApplicationCacheEnabled,
-         LocalStorageDatabaseEnabled,
--        AllowUniversalAccessFromFileUrls
-+        AllowUniversalAccessFromFileUrls,
-+        PreventUserProfiling
-     };
-     enum WebGraphic {
-         MissingImageGraphic,
-Index: WebKit/qt/Api/qwebpage.cpp
-===================================================================
---- WebKit/qt/Api/qwebpage.cpp	(revision 42227)
-+++ WebKit/qt/Api/qwebpage.cpp	(working copy)
-@@ -1079,7 +1079,7 @@
-         Frame *frame = d->page->focusController()->focusedFrame();
-         if (frame) {
-             Document *document = frame->document();
--            if (document->focusedNode()) {
-+            if (document && document->focusedNode()) {
-                 return QVariant(document->focusedNode()->nodeValue());
-             }
-         }
-@@ -2498,7 +2498,12 @@
- */
- QString QWebPage::userAgentForUrl(const QUrl& url) const
- {
-+ /*torora user agent header */
-     Q_UNUSED(url)
-+
-+    if (!QWebPage::settings() || QWebPage::settings()->PreventUserProfiling)
-+      return "Mozilla/5.0 (Windows; U; Windows NT 5.1; LANG; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6";
-+    
-     QString ua = QLatin1String("Mozilla/5.0 ("
- 
-     // Plastform
 Index: WebKit/win/WebPreferences.h
 ===================================================================
---- WebKit/win/WebPreferences.h	(revision 42227)
+--- WebKit/win/WebPreferences.h	(revision 42241)
 +++ WebKit/win/WebPreferences.h	(working copy)
 @@ -193,6 +193,12 @@
      virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
@@ -541,7 +538,7 @@ Index: WebKit/win/WebPreferences.h
      
 Index: WebKit/win/WebPreferenceKeysPrivate.h
 ===================================================================
---- WebKit/win/WebPreferenceKeysPrivate.h	(revision 42227)
+--- WebKit/win/WebPreferenceKeysPrivate.h	(revision 42241)
 +++ WebKit/win/WebPreferenceKeysPrivate.h	(working copy)
 @@ -59,6 +59,7 @@
  #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
@@ -553,7 +550,7 @@ Index: WebKit/win/WebPreferenceKeysPrivate.h
  #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 Index: WebKit/win/WebView.cpp
 ===================================================================
---- WebKit/win/WebView.cpp	(revision 42227)
+--- WebKit/win/WebView.cpp	(revision 42241)
 +++ WebKit/win/WebView.cpp	(working copy)
 @@ -4074,6 +4074,11 @@
          return hr;
@@ -569,7 +566,7 @@ Index: WebKit/win/WebView.cpp
          return hr;
 Index: WebKit/win/WebPreferences.cpp
 ===================================================================
---- WebKit/win/WebPreferences.cpp	(revision 42227)
+--- WebKit/win/WebPreferences.cpp	(revision 42241)
 +++ WebKit/win/WebPreferences.cpp	(working copy)
 @@ -215,6 +215,7 @@
      CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
@@ -602,7 +599,7 @@ Index: WebKit/win/WebPreferences.cpp
  {
 Index: WebKit/win/Interfaces/IWebPreferences.idl
 ===================================================================
---- WebKit/win/Interfaces/IWebPreferences.idl	(revision 42227)
+--- WebKit/win/Interfaces/IWebPreferences.idl	(revision 42241)
 +++ WebKit/win/Interfaces/IWebPreferences.idl	(working copy)
 @@ -141,6 +141,9 @@
      HRESULT setPrivateBrowsingEnabled([in] BOOL enabled);
@@ -616,7 +613,7 @@ Index: WebKit/win/Interfaces/IWebPreferences.idl
  
 Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
 ===================================================================
---- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 42227)
+--- WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(revision 42241)
 +++ WebKit/win/WebCoreSupport/WebInspectorClient.cpp	(working copy)
 @@ -145,6 +145,8 @@
          return 0;
@@ -629,7 +626,7 @@ Index: WebKit/win/WebCoreSupport/WebInspectorClient.cpp
      if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
 Index: WebCore/plugins/win/PluginViewWin.cpp
 ===================================================================
---- WebCore/plugins/win/PluginViewWin.cpp	(revision 42227)
+--- WebCore/plugins/win/PluginViewWin.cpp	(revision 42241)
 +++ WebCore/plugins/win/PluginViewWin.cpp	(working copy)
 @@ -121,11 +121,20 @@
          return pluginView->m_wmPrintHDC;
@@ -675,7 +672,7 @@ Index: WebCore/plugins/win/PluginViewWin.cpp
  static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE*& pProc, const void* pNewProc)
 Index: WebCore/page/Navigator.h
 ===================================================================
---- WebCore/page/Navigator.h	(revision 42227)
+--- WebCore/page/Navigator.h	(revision 42241)
 +++ WebCore/page/Navigator.h	(working copy)
 @@ -48,6 +48,13 @@
          MimeTypeArray* mimeTypes() const;
@@ -693,7 +690,7 @@ Index: WebCore/page/Navigator.h
  
 Index: WebCore/page/History.cpp
 ===================================================================
---- WebCore/page/History.cpp	(revision 42227)
+--- WebCore/page/History.cpp	(revision 42241)
 +++ WebCore/page/History.cpp	(working copy)
 @@ -1,4 +1,4 @@
 -/*
@@ -723,7 +720,7 @@ Index: WebCore/page/History.cpp
  
 Index: WebCore/page/Settings.h
 ===================================================================
---- WebCore/page/Settings.h	(revision 42227)
+--- WebCore/page/Settings.h	(revision 42241)
 +++ WebCore/page/Settings.h	(working copy)
 @@ -112,7 +112,10 @@
  
@@ -747,7 +744,7 @@ Index: WebCore/page/Settings.h
          bool m_localStorageEnabled : 1;
 Index: WebCore/page/DOMWindow.cpp
 ===================================================================
---- WebCore/page/DOMWindow.cpp	(revision 42227)
+--- WebCore/page/DOMWindow.cpp	(revision 42241)
 +++ WebCore/page/DOMWindow.cpp	(working copy)
 @@ -557,6 +557,17 @@
      if (!m_frame)
@@ -875,7 +872,7 @@ Index: WebCore/page/DOMWindow.cpp
      return static_cast<int>(view->scrollY() / m_frame->pageZoomFactor());
 Index: WebCore/page/AccessibilityRenderObject.cpp
 ===================================================================
---- WebCore/page/AccessibilityRenderObject.cpp	(revision 42227)
+--- WebCore/page/AccessibilityRenderObject.cpp	(revision 42241)
 +++ WebCore/page/AccessibilityRenderObject.cpp	(working copy)
 @@ -951,9 +951,9 @@
              return alt;
@@ -892,7 +889,7 @@ Index: WebCore/page/AccessibilityRenderObject.cpp
              if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
 Index: WebCore/page/NavigatorBase.cpp
 ===================================================================
---- WebCore/page/NavigatorBase.cpp	(revision 42227)
+--- WebCore/page/NavigatorBase.cpp	(revision 42241)
 +++ WebCore/page/NavigatorBase.cpp	(working copy)
 @@ -29,6 +29,7 @@
  
@@ -904,7 +901,7 @@ Index: WebCore/page/NavigatorBase.cpp
  #if PLATFORM(MAC) && (PLATFORM(PPC) || PLATFORM(PPC64))
 Index: WebCore/page/FrameView.cpp
 ===================================================================
---- WebCore/page/FrameView.cpp	(revision 42227)
+--- WebCore/page/FrameView.cpp	(revision 42241)
 +++ WebCore/page/FrameView.cpp	(working copy)
 @@ -468,6 +468,8 @@
          return;
@@ -914,15 +911,6 @@ Index: WebCore/page/FrameView.cpp
 +        return;
  
      m_layoutSchedulingEnabled = false;
- 
-@@ -960,7 +962,7 @@
-     return layoutPending()
-         || (root && root->needsLayout())
-         || m_layoutRoot
--        || document->hasChangedChild() // can occur when using WebKit ObjC interface
-+        || (document && document->hasChangedChild()) // can occur when using WebKit ObjC interface
-         || m_frame->needsReapplyStyles();
- }
  
 @@ -1243,7 +1245,7 @@
  void FrameView::updateDashboardRegions()
@@ -945,7 +933,7 @@ Index: WebCore/page/FrameView.cpp
      if (document->printing())
 Index: WebCore/page/Screen.cpp
 ===================================================================
---- WebCore/page/Screen.cpp	(revision 42227)
+--- WebCore/page/Screen.cpp	(revision 42241)
 +++ WebCore/page/Screen.cpp	(working copy)
 @@ -34,6 +34,7 @@
  #include "Frame.h"
@@ -1064,7 +1052,7 @@ Index: WebCore/page/Screen.cpp
  
 Index: WebCore/page/Navigator.cpp
 ===================================================================
---- WebCore/page/Navigator.cpp	(revision 42227)
+--- WebCore/page/Navigator.cpp	(revision 42241)
 +++ WebCore/page/Navigator.cpp	(working copy)
 @@ -87,6 +87,11 @@
  {
@@ -1193,7 +1181,7 @@ Index: WebCore/page/Navigator.cpp
  } // namespace WebCore
 Index: WebCore/page/Settings.cpp
 ===================================================================
---- WebCore/page/Settings.cpp	(revision 42227)
+--- WebCore/page/Settings.cpp	(revision 42241)
 +++ WebCore/page/Settings.cpp	(working copy)
 @@ -56,6 +56,7 @@
      , m_isJavaEnabled(false)
@@ -1217,7 +1205,7 @@ Index: WebCore/page/Settings.cpp
      m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
 Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
 ===================================================================
---- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 42227)
+--- WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(revision 42241)
 +++ WebCore/platform/graphics/qt/GraphicsContextQt.cpp	(working copy)
 @@ -501,7 +501,6 @@
  
@@ -1237,7 +1225,7 @@ Index: WebCore/platform/graphics/qt/GraphicsContextQt.cpp
          // will be 50 pixels.
 Index: WebCore/platform/network/ResourceHandle.cpp
 ===================================================================
---- WebCore/platform/network/ResourceHandle.cpp	(revision 42227)
+--- WebCore/platform/network/ResourceHandle.cpp	(revision 42241)
 +++ WebCore/platform/network/ResourceHandle.cpp	(working copy)
 @@ -113,6 +113,8 @@
  
@@ -1250,7 +1238,7 @@ Index: WebCore/platform/network/ResourceHandle.cpp
      // Since most URLs don't have a port, return early for the "no port" case.
 Index: WebCore/bindings/js/JSDOMWindowBase.h
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.h	(revision 42227)
+--- WebCore/bindings/js/JSDOMWindowBase.h	(revision 42241)
 +++ WebCore/bindings/js/JSDOMWindowBase.h	(working copy)
 @@ -81,6 +81,8 @@
  
@@ -1263,7 +1251,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.h
          bool allowsAccessFrom(JSC::ExecState*, String& message) const;
 Index: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
 ===================================================================
---- WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(revision 42227)
+--- WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(revision 42241)
 +++ WebCore/bindings/js/JSHTMLFormElementCustom.cpp	(working copy)
 @@ -31,6 +31,7 @@
  #include "HTMLFormElement.h"
@@ -1291,7 +1279,7 @@ Index: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
  }
 Index: WebCore/bindings/js/JSDOMWindowBase.cpp
 ===================================================================
---- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 42227)
+--- WebCore/bindings/js/JSDOMWindowBase.cpp	(revision 42241)
 +++ WebCore/bindings/js/JSDOMWindowBase.cpp	(working copy)
 @@ -672,7 +672,7 @@
      Settings* settings = frame->settings();
@@ -1320,7 +1308,7 @@ Index: WebCore/bindings/js/JSDOMWindowBase.cpp
      setCurrentEvent(0);
 Index: WebCore/html/HTMLFormElement.cpp
 ===================================================================
---- WebCore/html/HTMLFormElement.cpp	(revision 42227)
+--- WebCore/html/HTMLFormElement.cpp	(revision 42241)
 +++ WebCore/html/HTMLFormElement.cpp	(working copy)
 @@ -45,6 +45,7 @@
  #include "MIMETypeRegistry.h"
@@ -1340,7 +1328,7 @@ Index: WebCore/html/HTMLFormElement.cpp
  
 Index: WebCore/css/CSSStyleSelector.cpp
 ===================================================================
---- WebCore/css/CSSStyleSelector.cpp	(revision 42227)
+--- WebCore/css/CSSStyleSelector.cpp	(revision 42241)
 +++ WebCore/css/CSSStyleSelector.cpp	(working copy)
 @@ -875,6 +875,10 @@
      if (!page)
@@ -1377,110 +1365,9 @@ Index: WebCore/css/CSSStyleSelector.cpp
      if (!m_linksCheckedForVisitedState.contains(visitedHash))
          return;
      for (Node* node = m_document; node; node = node->traverseNextNode()) {
-Index: WebCore/bridge/qt/qt_runtime.cpp
-===================================================================
---- WebCore/bridge/qt/qt_runtime.cpp	(revision 42227)
-+++ WebCore/bridge/qt/qt_runtime.cpp	(working copy)
-@@ -20,35 +20,6 @@
- #include "config.h"
- #include "qt_runtime.h"
- 
--#include "DateInstance.h"
--#include "DateMath.h"
--#include "DatePrototype.h"
--#include "FunctionPrototype.h"
--#include "Interpreter.h"
--#include "JSArray.h"
--#include "JSByteArray.h"
--#include "JSDOMBinding.h"
--#include "JSGlobalObject.h"
--#include "JSLock.h"
--#include "JSObject.h"
--#include "ObjectPrototype.h"
--#include "PropertyNameArray.h"
--#include "RegExpConstructor.h"
--#include "RegExpObject.h"
--#include "qdatetime.h"
--#include "qdebug.h"
--#include "qmetaobject.h"
--#include "qmetatype.h"
--#include "qobject.h"
--#include "qstringlist.h"
--#include "qt_instance.h"
--#include "qvarlengtharray.h"
--#include <JSFunction.h>
--#include <limits.h>
--#include <runtime.h>
--#include <runtime_array.h>
--#include <runtime_object.h>
--#include "BooleanObject.h"
- 
- // QtScript has these
- Q_DECLARE_METATYPE(QObjectList);
-Index: WebCore/bridge/qt/qt_runtime.h
-===================================================================
---- WebCore/bridge/qt/qt_runtime.h	(revision 42227)
-+++ WebCore/bridge/qt/qt_runtime.h	(working copy)
-@@ -21,15 +21,47 @@
- #define BINDINGS_QT_RUNTIME_H_
- 
- #include "Completion.h"
-+#include "JSGlobalObject.h"
- #include "Protect.h"
- #include "runtime.h"
- #include "runtime_method.h"
-+#include "DateInstance.h"
-+#include "DateMath.h"
-+#include "DatePrototype.h"
-+#include "FunctionPrototype.h"
-+#include "Interpreter.h"
-+#include "JSArray.h"
-+#include "JSByteArray.h"
-+#include "JSDOMBinding.h"
-+#include "JSGlobalObject.h"
-+#include "JSLock.h"
-+#include "JSObject.h"
-+#include "ObjectPrototype.h"
-+#include "PropertyNameArray.h"
-+#include "RegExpConstructor.h"
-+#include "RegExpObject.h"
-+#include "qdatetime.h"
-+#include "qdebug.h"
-+#include "qmetaobject.h"
-+#include "qmetatype.h"
-+#include "qobject.h"
-+#include "qstringlist.h"
-+#include "qt_instance.h"
-+#include "qvarlengtharray.h"
-+#include <JSFunction.h>
-+#include <limits.h>
-+#include <runtime.h>
-+#include <runtime_array.h>
-+#include <runtime_object.h>
-+#include "BooleanObject.h"
- 
- #include <qbytearray.h>
- #include <qmetaobject.h>
- #include <qpointer.h>
- #include <qvariant.h>
- 
-+using namespace WebCore;
-+
- namespace JSC {
- namespace Bindings {
- 
-@@ -144,7 +176,7 @@
- 
-     static const ClassInfo s_info;
- 
--    static FunctionPrototype* createPrototype(ExecState* exec)
-+    static FunctionPrototype* createPrototype(ExecState* exec, JSDOMGlobalObject*)
-     {
-         return exec->lexicalGlobalObject()->functionPrototype();
-     }
 Index: WebCore/loader/FrameLoader.cpp
 ===================================================================
---- WebCore/loader/FrameLoader.cpp	(revision 42227)
+--- WebCore/loader/FrameLoader.cpp	(revision 42241)
 +++ WebCore/loader/FrameLoader.cpp	(working copy)
 @@ -510,6 +510,7 @@
      const String& target, const String& contentType, const String& boundary,
@@ -1500,7 +1387,7 @@ Index: WebCore/loader/FrameLoader.cpp
      String referrer;
 Index: WebCore/loader/loader.cpp
 ===================================================================
---- WebCore/loader/loader.cpp	(revision 42227)
+--- WebCore/loader/loader.cpp	(revision 42241)
 +++ WebCore/loader/loader.cpp	(working copy)
 @@ -234,7 +234,8 @@
          
@@ -1514,7 +1401,7 @@ Index: WebCore/loader/loader.cpp
              referrer.setPath("/");
 Index: WebKitTools/Scripts/webkitdirs.pm
 ===================================================================
---- WebKitTools/Scripts/webkitdirs.pm	(revision 42227)
+--- WebKitTools/Scripts/webkitdirs.pm	(revision 42241)
 +++ WebKitTools/Scripts/webkitdirs.pm	(working copy)
 @@ -1032,7 +1032,7 @@
          return "nmake";

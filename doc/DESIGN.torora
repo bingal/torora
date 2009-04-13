@@ -310,6 +310,10 @@ These considerations leave us with the following requirements for Torora:
                     availWidth()  = window innerWidth()
 
 
+          Note: Maximized browser windows pose a special problem - reporting the size accurately
+                enough for rendering (even rounded to 50 px) can reveal the presence/size/location
+                of the user's taskbar. This needs further investigation.
+
        4. Mask the appname, appversion, platform, oscpu, useragent, productsub, buildid,
           vendor, and vendorsub properties of the Javascript Navigator object. The WebKit
           patch should allow the browser to specify the values for each of these properties
@@ -318,6 +322,7 @@ These considerations leave us with the following requirements for Torora:
           Setting: QWebSettings::MaskPlatform
           Files altered: WebCore/page/Navigator.cpp
                         WebCore/page/NavigatorBase.cpp
+                        torora/src/webview.cpp, webview.h
 
           Strategy: Same approach as Torbutton. Not much point in pretending to be firefox, so we just
                     pretend to be a version of Safari on Windows.
@@ -395,6 +400,13 @@ These considerations leave us with the following requirements for Torora:
        6. Javascript should not have access to the clipboard.
           Already implemented by QWebSettings::JavascriptCanAccessClipboard
           Files altered: torora/src/browserapplication.cpp
+
+
+Enhancements
+------------
+
+    1. A primitive tor controller for geo-browsing.
+    2. Load images on-demand rather than automatically.
 
 
 Appendix A
