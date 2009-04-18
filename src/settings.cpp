@@ -432,8 +432,8 @@ void SettingsDialog::saveToSettings()
 
 void SettingsDialog::accept()
 {
-    BrowserApplication::instance()->torManager()->checkTorInstallation(true);
     saveToSettings();
+    BrowserApplication::instance()->torManager()->checkTorInstallation(false);
     QDialog::accept();
 }
 

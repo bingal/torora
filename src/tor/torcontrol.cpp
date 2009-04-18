@@ -40,9 +40,13 @@
 #include <dirent.h>
 #include <unistd.h>
 
-
 TorControl::TorControl( const QString &host, int port )
 {
+    m_host = host;
+    m_port = port;
+    m_password = QString();
+    m_authMethods = QStringList();
+
     // create the socket and connect various of its signals
     socket = new QTcpSocket( this );
     connect( socket, SIGNAL(connected()),
@@ -54,18 +58,28 @@ TorControl::TorControl( const QString &host, int port )
     connect( socket, SIGNAL(error(QAbstractSocket::SocketError)),
             SLOT(socketError(QAbstractSocket::SocketError)) );
 
-    // connect to the server
-    qDebug() << "connecting to tor" << endl;
-    socket->connectToHost( host, port );
-
+    reconnect();
 }
 
+void TorControl::reconnect()
+{
+    // connect to the server
+    m_state = PREAUTHENTICATING;
+    socket->disconnectFromHost();
+    socket->connectToHost( m_host, m_port );
 
+}
 void TorControl::setExitCountry(const QString &cc)
 {
-    sendToServer(QString(QLatin1String("SETCONF ExitNodes={%1}")).arg(cc));
+    if (m_state != AUTHENTICATED) {
+        return;
+    }
+    strictExitNodes(true);
+    if (!cc.isEmpty())
+      sendToServer(QString(QLatin1String("SETCONF ExitNodes={%1}")).arg(cc));
+    else
+      sendToServer(QString(QLatin1String("SETCONF ExitNodes=")));
     sendToServer(QLatin1String("signal newnym"));
-
 }
 
 void TorControl::strictExitNodes( bool strict )
@@ -78,9 +92,32 @@ void TorControl::strictExitNodes( bool strict )
 }
 
 
+void TorControl::authenticateWithPassword(const QString &password)
+{
+    qDebug() << "auth with pass" << endl;
+    m_password = password;
+    authenticate();
+}
+
+void TorControl::protocolInfo()
+{
+    m_state = PREAUTHENTICATING;
+    sendToServer(QLatin1String("PROTOCOLINFO"));
+}
+
 void TorControl::authenticate()
 {
-    if (!readCookie())
+    qDebug() << "authenticate" << endl;
+    if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD"))) {
+        if (!m_password.isEmpty())
+            sendToServer(QString(QLatin1String("AUTHENTICATE \"%1\"")).arg(m_password));
+        else {
+            emit requestPassword(tr("<qt>Tor Requires A Password for GeoBrowsing Access. <br>"
+                                    "Enter it or click 'Cancel' for help.</qt>"));
+        }
+    } else if (m_authMethods.contains(QLatin1String("COOKIE"))) {
+        readCookie();
+    } else
         sendToServer(QLatin1String("AUTHENTICATE"));
 }
 
@@ -89,10 +126,14 @@ bool TorControl::readCookie()
 {
 
     QStringList cookieCandidates;
+#ifndef Q_OS_WIN
     cookieCandidates << QString(QLatin1String("%1/.tor/control_auth_cookie"))
                         .arg(QDesktopServices::HomeLocation);
     cookieCandidates << QLatin1String("/var/lib/tor/control_auth_cookie");
-
+#else
+    cookieCandidates << QString(QLatin1String("%1\.tor\control_auth_cookie"))
+                        .arg(QDesktopServices::HomeLocation);
+#endif
     for ( QStringList::Iterator it = cookieCandidates.begin(); it != cookieCandidates.end(); ++it ) {
         QFile inf((*it));
         if ( inf.open(QIODevice::ReadOnly) ) {
@@ -104,9 +145,7 @@ bool TorControl::readCookie()
             return true;
         }
     }
-
-    return false; 
-
+    return false;
 }
 
 void TorControl::newIdentity()
@@ -114,42 +153,45 @@ void TorControl::newIdentity()
     sendToServer(QLatin1String("signal newnym"));
 }
 
-
 void TorControl::socketReadyRead()
 {
-    QString line;
-    // read from the server
     while ( socket->canReadLine() ) {
 
-        line = QLatin1String(socket->readLine().trimmed());
-
-        qDebug() << line << endl;
-        if (line.contains(QLatin1String("250 OK"))){
-            if (!m_controllerWorking){
-//                 emit authenticated();
-                m_controllerWorking = true;
-            }
-            continue;
-        }
-
-
-        if (line.contains(QLatin1String("552 Unrecognized key \"ns/all\""))){
-//             emit needAlphaVersion();
-            continue;
-        }
-
-        QString code = line.left(3);
-
-        if (code == QLatin1String("514")){
-            QString eventInfo = line.section(QLatin1String(" "),1);
-/*            emit processWarning("authenticationrequired", eventInfo);
-            emit fatalError();*/
-        }else if (code == QLatin1String("515")){
-            QString eventInfo = line.section(QLatin1String(" "),1);
-//             emit authenticationFailed();
-        }
-
-
+          QString line = QLatin1String(socket->readLine().trimmed());
+          qDebug() << line << endl;
+          qDebug() << m_state << endl;
+          QString code;
+          switch (m_state) {
+              case AUTHENTICATING:
+                  if (line.contains(QLatin1String("250 OK"))){
+                      m_state = AUTHENTICATED;
+                      continue;
+                  }
+                  code = line.left(3);
+                  /*Incorrect password*/
+                  if (code == QLatin1String("515")){
+                      qDebug() << "failed" << line << endl;
+                      reconnect();
+                      emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
+                                              "Try entering it again or click 'Cancel' for help:</qt>"));
+                  }
+                  break;
+              case PREAUTHENTICATING:
+                  if (line.contains(QLatin1String("250 OK"))){
+                      m_state=AUTHENTICATING;
+                      continue;
+                  }
+                  if (line.contains(QLatin1String("250-AUTH METHODS="))){
+                      line.remove(QLatin1String("250-AUTH METHODS="));
+                      m_authMethods = line.split(QLatin1String(","));
+                      /* If there's no auth method we can just make the control
+                         session ready for use now. Otherwise, we wait until it's
+                         required and prompt for a password then.*/
+                      if (m_authMethods.contains(QLatin1String("NULL")))
+                          authenticate();
+                  }
+                  break;
+          }
     }
 }
 
@@ -158,8 +200,3 @@ TorControl::~TorControl()
 
 }
 
-bool TorControl::isControllerWorking()
-{
-    return m_controllerWorking;
-
-}

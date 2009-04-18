@@ -29,6 +29,7 @@
 class WebView;
 class LocationBarSiteIcon;
 class PrivacyIndicator;
+class TorIndicator;
 class LocationBar : public LineEdit
 {
     Q_OBJECT
@@ -52,9 +53,9 @@ private slots:
 private:
     QPointer<WebView> m_webView;
     QColor m_defaultBaseColor;
-    QLabel *m_torIndicator;
     LocationBarSiteIcon *m_siteIcon;
     PrivacyIndicator *m_privacyIndicator;
+    TorIndicator *m_torIndicator;
 };
 
 #endif // LOCATIONBAR_H

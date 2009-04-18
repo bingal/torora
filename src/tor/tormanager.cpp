@@ -25,10 +25,13 @@
 #include <QBuffer>
 #include <QStatusBar>
 #include <qwebframe.h>
+#include <QXmlStreamReader>
 
-#include "tormanager.h"
-#include "torcontrol.h"
 #include "appcheck.h"
+#include "ui_passworddialog.h"
+#include "torcontrol.h"
+#include "tormanager.h"
+
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "tabwidget.h"
@@ -37,8 +40,10 @@
 #include "networkaccessmanager.h"
 
 #define TOR_CHECK 1
-#define TOR_SUCCESS 2
-#define TOR_FAIL 3
+#define USING_TOR 2
+#define INSTALLATION_BROKEN 3
+#define NOT_USING_TOR 4
+
 #define PRIVOXY 8118
 #define POLIPO  8123
 
@@ -48,15 +53,43 @@ TorManager::TorManager()
     privoxy = 0L;
     polipo = 0L;
     userProxy = 0L;
+    torcontrol = 0L;
     m_checkTorSilently = false;
+    m_proxyConfigured = false;
+
+#ifndef Q_OS_WIN
+    privoxyConfigFiles << QLatin1String("/etc/privoxy/config");
+    privoxyConfigFiles << QLatin1String("/usr/etc/privoxy/config");
+    privoxyConfigFiles << QLatin1String("/usr/local/etc/privoxy/config");
+#else
+    privoxyConfigFiles << QString(QLatin1String("%1\Vidalia Bundle\Privoxy\config.txt"))
+                        .arg(QDesktopServices::ApplicationsLocation);
+    privoxyConfigFiles << QString(QLatin1String("%1\Privoxy\config.txt"))
+                        .arg(QDesktopServices::ApplicationsLocation);
+#endif
+
+#ifndef Q_OS_WIN
+    polipoConfigFiles << QLatin1String("/etc/polipo/config");
+    polipoConfigFiles << QLatin1String("/usr/etc/polipo/config");
+    polipoConfigFiles << QLatin1String("/usr/local/etc/polipo/config");
+#else
+    polipoConfigFiles << QString(QLatin1String("%1\Vidalia Bundle\Polipo\config.txt"))
+                        .arg(QDesktopServices::ApplicationsLocation);
+    polipoConfigFiles << QString(QLatin1String("%1\Polipo\config.txt"))
+                        .arg(QDesktopServices::ApplicationsLocation);
+#endif
 
     checkApps();
-    torcontrol = new TorControl(QLatin1String("localhost"), 9051 );
-
+    connectToTor();
+    m_countries = new Countries();
 }
 
 void TorManager::checkApps()
 {
+    QNetworkProxy proxy = BrowserApplication::instance()->networkAccessManager()->currentProxy();
+    QRegExp polipoTorConf(QLatin1String("^([^#]+|)socksParentProxy[^#]+=[^#]+\"(localhost|127.0.0.1):9050\""));
+    QRegExp privoxyTorConf(QLatin1String("^([^#]+|)forward-socks4a[^#]+/[^#]+(localhost|127.0.0.1):9050 \\."));
+
     if (tor)
         delete tor;
     tor = new AppCheck( QLatin1String("localhost"), 9050 );
@@ -72,7 +105,6 @@ void TorManager::checkApps()
     polipo = new AppCheck( QLatin1String("localhost"), POLIPO );
     connect(polipo, SIGNAL(connectedToApp(bool)), this, SLOT(updatePolipoStatus(bool)));
 
-    QNetworkProxy proxy = BrowserApplication::instance()->networkAccessManager()->currentProxy();
     if (proxy.port() != PRIVOXY && proxy.port() != POLIPO) {
         if (userProxy)
             delete userProxy;
@@ -80,6 +112,30 @@ void TorManager::checkApps()
         connect(userProxy, SIGNAL(connectedToApp(bool)),
                 this, SLOT(updateUserProxyStatus(bool)));
     }
+
+    m_proxyConfigured = validProxyConfiguration((proxy.port()==POLIPO) ?
+                                                  polipoConfigFiles : privoxyConfigFiles,
+                                                (proxy.port()==POLIPO) ?
+                                                  polipoTorConf : privoxyTorConf);
+    qDebug() << m_proxyConfigured << endl;
+}
+
+
+bool TorManager::validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx)
+{
+    for ( QStringList::ConstIterator it = proxyConfigFiles.begin(); it != proxyConfigFiles.end(); ++it ) {
+        QFile file((*it));
+        if (!file.open(QFile::ReadOnly))
+            continue;
+        QTextStream stream(&file);
+
+        do {
+            if (rx.indexIn(stream.readLine()) != -1)
+                return true;
+        } while (!stream.atEnd());
+    }
+
+    return false; 
 }
 
 TorManager::~TorManager()
@@ -89,25 +145,40 @@ TorManager::~TorManager()
 
 void TorManager::torCheckComplete(bool error)
 {
-    int success = TOR_FAIL;
+    int result = INSTALLATION_BROKEN;
     if (!error) {
+      QString target;
       QByteArray data;
       data = http->readAll();
       if (data.isNull())
           return;
-      QByteArray pass("<html xmlns=\"http://www.w3.org/1999/xhtml\"><body>"
-                      "<a id=\"TorCheckResult\" target=\"success\" href=\"/\""
-                      "></a></body></html>");
-      qDebug() << data << endl;
-      if (pass == data) {
-          BrowserApplication::instance()->mainWindow()->tabWidget()->setLocationBarEnabled(true);
-          BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(true);
-          BrowserApplication::instance()->mainWindow()->enableBookmarksToolbar(true);
-          BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(true);
-          success = TOR_SUCCESS;
+
+      QXmlStreamReader xml(data);
+      while (!xml.atEnd()) {
+          if (!xml.attributes().value(QLatin1String("target")).isNull()) {
+              target = xml.attributes().value(QLatin1String("target")).toString();
+              break;
+          }
+          xml.readNext();
+      }
+      if (target == QLatin1String("success")) {
+          setBrowsingEnabled(true);
+          result = USING_TOR;
+      } else if (target == QLatin1String("failure")){
+          result = NOT_USING_TOR;
       }
     }
-    reportTorCheckResults(success);
+    reportTorCheckResults(result);
+}
+
+void TorManager::setBrowsingEnabled(bool enabled)
+{
+    BrowserApplication::instance()->mainWindow()->tabWidget()->setLocationBarEnabled(enabled);
+    BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(enabled);
+    BrowserApplication::instance()->mainWindow()->enableBookmarksToolbar(enabled);
+    BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(enabled);
+    BrowserApplication::instance()->mainWindow()->geoBrowsingAction()->setEnabled(enabled);
+    BrowserApplication::instance()->mainWindow()->stopReloadAction()->setEnabled(enabled);
 }
 
 void TorManager::reportTorCheckResults(int page)
@@ -145,7 +216,7 @@ void TorManager::reportTorCheckResults(int page)
         img = QLatin1String(":tor-checking.png");
         statusbar = QLatin1String("Checking Tor...");
         break;
-      case TOR_SUCCESS:
+      case USING_TOR:
         if (m_checkTorSilently)
             return;
         if (!issues.open(QIODevice::ReadOnly)) {
@@ -162,6 +233,7 @@ void TorManager::reportTorCheckResults(int page)
         statusbar = QLatin1String("Tor Check Successful");
        break;
       default:
+        setBrowsingEnabled(false);
         title = tr("Check Your Tor Installation");
         if (!m_torIsRunning) {
             headline = tr("Tor Is Not Running On Your Computer!");
@@ -175,6 +247,19 @@ void TorManager::reportTorCheckResults(int page)
             headline = tr("Privoxy Is Not Running On Your Computer!");
             bulletone = tr("Check that you have installed Privoxy.");
             bullettwo = tr("Check that you have started Privoxy.");
+        } else if (page == NOT_USING_TOR) {
+            bulletone = tr("Testing at https://check.torproject.org indicated that you are not using Tor.");
+            if (!m_proxyConfigured) {
+                headline = tr("Torora Is By-Passing Tor!");
+                bullettwo = tr("<b>A primitive check of your configuration suggests that %1 is not configured to use Tor.</b>")
+                          .arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
+                bulletfour = tr("<li>Check your configuration..</li>");
+            } else {
+                headline = tr("Torora May Be By-Passing Tor!");
+                bullettwo = tr("Your set-up seems OK, Tor and %1 are running and seem to be correctly configured.").
+                            arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
+                bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
+            }
         } else {
             headline = tr("The Tor Check Website May Be Down!");
             bulletone = tr("Check that https://check.torproject.org is available using another browser.");
@@ -205,7 +290,7 @@ void TorManager::reportTorCheckResults(int page)
                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
     }
 
-    if (page == TOR_SUCCESS) {
+    if (page == USING_TOR) {
         /*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
                 is testing */
         #define TOR_CHECK_PERIOD 60 * 1000 * (qrand() % 10)
@@ -251,14 +336,13 @@ void TorManager::checkTorInstallation(bool checkTorSilently)
 {
     checkApps();
     m_checkTorSilently = checkTorSilently;
+
     if (!m_checkTorSilently) {
-      BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(false);
-      BrowserApplication::instance()->mainWindow()->tabWidget()->setLocationBarEnabled(false);
-      BrowserApplication::instance()->mainWindow()->enableBookmarksToolbar(false);
-      BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(false);
+      setBrowsingEnabled(false);
       BrowserApplication::instance()->mainWindow()->setStatusBarMessagesEnabled(false);
       reportTorCheckResults(TOR_CHECK);
     }
+
     http = new QHttp(QLatin1String("check.torproject.org"),
                      QHttp::ConnectionModeHttps, 443, this);
     QNetworkProxy proxy = BrowserApplication::instance()->networkAccessManager()->currentProxy();
@@ -281,5 +365,103 @@ void TorManager::checkTorExplicitly()
 
 void TorManager::displayStatusResult()
 {
-     BrowserApplication::instance()->mainWindow()->statusBar()->showMessage(m_statusbar);
+    BrowserApplication::instance()->mainWindow()->statusBar()->showMessage(m_statusbar);
+}
+
+bool TorManager::readyToUse()
+{
+    if (torcontrol && torcontrol->readyToUse())
+        return true;
+    return false;
+}
+
+void TorManager::authenticate()
+{
+    torcontrol->authenticate();
+}
+
+void TorManager::connectToTor()
+{
+    if (torcontrol)
+        return;
+    torcontrol = new TorControl(QLatin1String("localhost"), 9051 );
+    connect(torcontrol, SIGNAL(requestPassword(const QString &)),
+            this, SLOT(requestPassword(const QString &)));
+}
+
+void TorManager::setGeoBrowsingLocation(int offset)
+{
+    torcontrol->setExitCountry(m_countries->country(offset)->cc());
+    emit geoBrowsingUpdate(offset);
+}
+
+void TorManager::requestPassword(const QString &message)
+{
+    BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
+
+    QDialog dialog(mainWindow);
+    dialog.setWindowFlags(Qt::Sheet);
+
+    Ui::PasswordDialog passwordDialog;
+    passwordDialog.setupUi(&dialog);
+
+    passwordDialog.iconLabel->setText(QLatin1String("Tor Password"));
+    passwordDialog.iconLabel->setPixmap(QPixmap(QLatin1String(":tor-logo.png")));
+
+    QString introMessage = message;
+    passwordDialog.introLabel->setText(introMessage);
+    passwordDialog.introLabel->setWordWrap(true);
+    passwordDialog.userNameLineEdit->setVisible(false);
+    passwordDialog.label->setVisible(false);
+    if (dialog.exec() == QDialog::Accepted) {
+        torcontrol->authenticateWithPassword(passwordDialog.passwordLineEdit->text());
+    } else {
+        passwordHelp();
+    }
+}
+
+void TorManager::passwordHelp()
+{
+    QFile file(QLatin1String(":/passwordhelp.html"));
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open torcheck.html";
+        return;
+    }
+    QString tororaIssues;
+    QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
+    headline = tr("To Enable Geo-Browsing You Need To Set Tor's Password.");
+    intro = tr("Open up the Vidalia 'Advanced' settings dialog.");
+    bullettwo = tr("Clear the 'Randomly Generate Password' check-box.");
+    bulletthree = tr("Type in a password of your choosing and click 'OK'.");
+    bulletfour = tr("Enter this password when Torora requests it.");
+    img = QLatin1String(":vidalia-password.png");
+
+    QString html = QString(QLatin1String(file.readAll()))
+                        .arg(title)
+                        .arg(QString())
+                        .arg(headline)
+                        .arg(intro)
+                        .arg(bullettwo)
+                        .arg(bulletthree)
+                        .arg(bulletfour);
+
+    QBuffer imageBuffer;
+    imageBuffer.open(QBuffer::ReadWrite);
+    QIcon icon = QIcon(img);
+    QPixmap pixmap = icon.pixmap(QSize(546, 219));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":help.png"));
+    pixmap = icon.pixmap(QSize(32, 32));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("INFO_BINARY_DATA_HERE"),
+                    QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    BrowserApplication::instance()->mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
+
 }
