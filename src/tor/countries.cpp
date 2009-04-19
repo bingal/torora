@@ -29,8 +29,13 @@ Countries::Countries()
 
     countries.clear();
 
-    ccs << QLatin1String("us") << QLatin1String("gb") << QLatin1String("de") << QLatin1String("");
-    names << QLatin1String("United States") << QLatin1String("United Kingdom") << QLatin1String("Germany") << QLatin1String("Anonymous");
+    ccs << QLatin1String("us") << QLatin1String("gb") << QLatin1String("de")
+        << QLatin1String("cn") << QLatin1String("fr") << QLatin1String("se")
+        << QLatin1String("");
+    names << QLatin1String("United States") << QLatin1String("United Kingdom")
+          << QLatin1String("Germany") << QLatin1String("China")
+          << QLatin1String("France") << QLatin1String("Sweden")
+          << QLatin1String("Anonymous");
     for ( int i = 0; i != ccs.count(); ++i ) {
         Country *country = new Country(ccs[i],names[i]);
         countries.append(country);
