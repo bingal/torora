@@ -95,7 +95,6 @@ void TorControl::strictExitNodes( bool strict )
 
 void TorControl::authenticateWithPassword(const QString &password)
 {
-    qDebug() << "auth with pass" << endl;
     m_password = password;
     authenticate();
 }
@@ -108,7 +107,6 @@ void TorControl::protocolInfo()
 
 void TorControl::authenticate()
 {
-    qDebug() << "authenticate" << endl;
     if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD"))) {
         if (!m_password.isEmpty())
             sendToServer(QString(QLatin1String("AUTHENTICATE \"%1\"")).arg(m_password));
@@ -134,7 +132,6 @@ bool TorControl::readCookie()
 #else
     cookieCandidates << QString(QLatin1String("%1\\.tor\\control_auth_cookie"))
                         .arg(QDesktopServices::HomeLocation);
-    qDebug() << cookieCandidates << endl;
 #endif
     for ( QStringList::Iterator it = cookieCandidates.begin(); it != cookieCandidates.end(); ++it ) {
         QFile inf((*it));
@@ -160,8 +157,6 @@ void TorControl::socketReadyRead()
     while ( socket->canReadLine() ) {
 
           QString line = QLatin1String(socket->readLine().trimmed());
-          qDebug() << line << endl;
-          qDebug() << m_state << endl;
           QString code;
           switch (m_state) {
               case AUTHENTICATING:
@@ -172,7 +167,6 @@ void TorControl::socketReadyRead()
                   code = line.left(3);
                   /*Incorrect password*/
                   if (code == QLatin1String("515")){
-                      qDebug() << "failed" << line << endl;
                       reconnect();
                       emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
                                               "Try entering it again or click 'Cancel' for help:</qt>"));

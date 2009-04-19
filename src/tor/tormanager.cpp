@@ -400,7 +400,8 @@ void TorManager::connectToTor()
 void TorManager::setGeoBrowsingLocation(int offset)
 {
     if (!torcontrol->geoBrowsingCapable()) {
-        QMessageBox::information(0, tr("Your Version of Tor Does Not Support This Feature."),
+        QMessageBox::information(BrowserApplication::instance()->mainWindow(),
+            tr("Your Version of Tor Does Not Support This Feature."),
             tr("Your version of Tor does not support GeoBrowsing. <br> Install Tor 0.2.1.X or "
                "later if you want to browse the internet from specific countries."));
         return;
