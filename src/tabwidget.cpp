@@ -71,6 +71,7 @@
 #include "locationbar.h"
 #include "toolbarsearch.h"
 #include "webactionmapper.h"
+#include "webpage.h"
 #include "webview.h"
 #include "webviewsearch.h"
 #include "xbel.h"
@@ -430,13 +431,13 @@ void TabWidget::newTab()
     makeNewTab(true);
 }
 
-BrowserMainWindow *TabWidget::mainWindow()
+BrowserMainWindow *TabWidget::mainWindow() const
 {
-    QWidget *w = this->parentWidget();
-    while (w) {
-        if (BrowserMainWindow *mw = qobject_cast<BrowserMainWindow*>(w))
-            return mw;
-        w = w->parentWidget();
+    QObject *widget = this->parent();
+    while (widget) {
+        if (BrowserMainWindow *mainWindow = qobject_cast<BrowserMainWindow*>(widget))
+            return mainWindow;
+        widget = widget->parent();
     }
     return 0;
 }
@@ -611,7 +612,7 @@ void TabWidget::windowCloseRequested()
     int index = webViewIndex(webView);
     if (index >= 0) {
         if (count() == 1)
-            webView->webPage()->mainWindow()->close();
+            mainWindow()->close();
         else
             closeTab(index);
     }
@@ -1005,6 +1006,15 @@ QUrl TabWidget::guessUrlFromString(const QString &string)
 void TabWidget::loadUrlFromUser(const QUrl &url, const QString &title)
 {
     loadUrl(url, modifyWithUserBehavior(CurrentTab), title);
+}
+
+void TabWidget::loadSettings()
+{
+    for (int i = 0; i < count(); ++i) {
+        WebView *v = webView(i);
+        if (v && v->page())
+            v->webPage()->loadSettings();
+    }
 }
 
 /*

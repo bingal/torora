@@ -72,6 +72,7 @@
 #include <qcoreapplication.h>
 #include <qsettings.h>
 #include <qstandarditemmodel.h>
+#include <qtimer.h>
 #include <qurl.h>
 #include <qwebsettings.h>
 
@@ -86,26 +87,22 @@ ToolbarSearch::ToolbarSearch(QWidget *parent)
     , m_model(new QStandardItemModel(this))
     , m_suggestionsItem(0)
     , m_recentSearchesItem(0)
+    , m_suggestTimer(0)
 {
     completer()->setModel(m_model);
     completer()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-    connect(completer(), SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(activated(const QModelIndex &)));
-    connect(completer(), SIGNAL(highlighted(const QModelIndex &)),
-            this, SLOT(highlighted(const QModelIndex &)));
     connect(this, SIGNAL(returnPressed()), SLOT(searchNow()));
     setInactiveText(QLatin1String("Google"));
-
     load();
 }
 
-void ToolbarSearch::activated(const QModelIndex &index)
+void ToolbarSearch::completerActivated(const QModelIndex &index)
 {
-    if (highlighted(index))
+    if (completerHighlighted(index))
         searchNow();
 }
 
-bool ToolbarSearch::highlighted(const QModelIndex &index)
+bool ToolbarSearch::completerHighlighted(const QModelIndex &index)
 {
     if (m_suggestionsItem && m_suggestionsItem->index().row() == index.row())
         return false;
@@ -118,11 +115,19 @@ bool ToolbarSearch::highlighted(const QModelIndex &index)
 void ToolbarSearch::focusInEvent(QFocusEvent *event)
 {
     SearchLineEdit::focusInEvent(event);
+
     // Every time we get a focus in event QLineEdit re-connects...
     disconnect(completer(), SIGNAL(activated(QString)),
                this, SLOT(setText(QString)));
     disconnect(completer(), SIGNAL(highlighted(QString)),
                this, SLOT(_q_completionHighlighted(QString)));
+
+    // And every time it gets a focus out it disconnects everything from the completer to this :(
+    // So we have to re-connect
+    connect(completer(), SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(completerActivated(const QModelIndex &)));
+    connect(completer(), SIGNAL(highlighted(const QModelIndex &)),
+            this, SLOT(completerHighlighted(const QModelIndex &)));
 }
 
 ToolbarSearch::~ToolbarSearch()
@@ -159,11 +164,24 @@ void ToolbarSearch::load()
 
 void ToolbarSearch::textEdited(const QString &text)
 {
+    Q_UNUSED(text);
     // delay settings this to prevent BrowserApplication from creating
     // the object when it isn't needed on startup
     if (!m_googleSuggest->networkAccessManager())
         m_googleSuggest->setNetworkAccessManager(BrowserApplication::networkAccessManager());
-    m_googleSuggest->suggest(text);
+    if (!m_suggestTimer) {
+        m_suggestTimer = new QTimer(this);
+        m_suggestTimer->setSingleShot(true);
+        m_suggestTimer->setInterval(200);
+        connect(m_suggestTimer, SIGNAL(timeout()),
+                this, SLOT(getSuggestions()));
+    }
+    m_suggestTimer->start();
+}
+
+void ToolbarSearch::getSuggestions()
+{
+    m_googleSuggest->suggest(text());
 }
 
 void ToolbarSearch::searchNow()

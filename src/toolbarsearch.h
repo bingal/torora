@@ -70,6 +70,7 @@ class GoogleSuggest;
 class QModelIndex;
 class QStandardItem;
 class QStandardItemModel;
+class QTimer;
 class QUrl;
 class ToolbarSearch : public SearchLineEdit
 {
@@ -90,8 +91,9 @@ private slots:
     void save();
     void textEdited(const QString &);
     void newSuggestions(const QStringList &suggestions);
-    void activated(const QModelIndex &index);
-    bool highlighted(const QModelIndex &index);
+    void completerActivated(const QModelIndex &index);
+    bool completerHighlighted(const QModelIndex &index);
+    void getSuggestions();
 
 protected:
     void changeEvent(QEvent *event);
@@ -111,6 +113,7 @@ private:
 
     QStandardItem *m_suggestionsItem;
     QStandardItem *m_recentSearchesItem;
+    QTimer *m_suggestTimer;
 };
 
 #endif // TOOLBARSEARCH_H

@@ -1022,6 +1022,11 @@ void BrowserMainWindow::downloadManager()
 
 void BrowserMainWindow::selectLineEdit()
 {
+    if (m_navigationBar->isHidden()) {
+        m_navigationBar->show();
+        updateToolbarActionText(true);
+    }
+
     m_tabWidget->currentLineEdit()->selectAll();
     m_tabWidget->currentLineEdit()->setFocus();
 }

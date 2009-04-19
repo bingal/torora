@@ -100,7 +100,7 @@ void tst_HistoryManager::initTestCase()
         QString title = stream.readLine();
         QString date = stream.readLine();
         QDateTime dateTime = QDateTime::fromString(date);
-        QCOMPARE(dateTime.toString(), date);
+        QVERIFY(dateTime.isValid());
         HistoryEntry item(url, dateTime, title);
         list.prepend(item);
     } while (!stream.atEnd());
