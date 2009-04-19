@@ -11,10 +11,17 @@
     <file>tor.png</file>
     <file>tor-on.png</file>
     <file>tor-checking.png</file>
+    <file>tor-logo.png</file>
     <file>tor-off.png</file>
     <file>info.png</file>
     <file>help.png</file>
     <file>important.png</file>
+    <file>geobrowser.png</file>
+    <file>vidalia-password.png</file>
+    <file>flags/gb.png</file>
+    <file>flags/us.png</file>
+    <file>flags/de.png</file>
+    <file>flags/FLAGS_LICENCE</file>
     <file>../../AUTHORS</file>
     <file>../../LICENSE.GPL2</file>
 </qresource>

@@ -28,6 +28,7 @@
 
 #ifndef _TORMANAGER_H_
 #define _TORMANAGER_H_
+#include "countries.h"
 
 #include <QObject>
 #include <qicon.h>
@@ -37,6 +38,8 @@
 
 class AppCheck;
 class TorControl;
+class Countries;
+class Country;
 
 class TorManager : public QObject
 {
@@ -51,6 +54,13 @@ public:
     bool polipoIsRunning(){ return m_polipoIsRunning;};
     void checkApps();
     void checkTorInstallation(bool checkTorSilently);
+    void setGeoBrowsingLocation(int offset);
+    Countries* countries(){ return m_countries; };
+    bool readyToUse();
+    void authenticate();
+
+signals:
+    void geoBrowsingUpdate(int offset);
 
 private slots:
     void updateTorStatus(bool connected) { m_torIsRunning = connected; };
@@ -59,10 +69,18 @@ private slots:
     void torCheckComplete(bool error);
     void reportTorCheckResults(int page);
     void displayStatusResult();
+
+public slots:
     void checkTorSilently();
     void checkTorExplicitly();
+    void requestPassword(const QString &);
 
 private:
+    bool validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx);
+    void setBrowsingEnabled(bool enabled);
+    void passwordHelp();
+    void connectToTor();
+
     AppCheck *tor;
     AppCheck *privoxy;
     AppCheck *polipo;
@@ -71,10 +89,13 @@ private:
     bool m_torIsRunning;
     bool m_privoxyIsRunning;
     bool m_polipoIsRunning;
+    bool m_proxyConfigured;
     bool m_checkTorSilently;
     QHttp *http;
     QString m_statusbar;
-
+    QStringList privoxyConfigFiles;
+    QStringList polipoConfigFiles;
+    Countries *m_countries;
 };
 
 #endif //

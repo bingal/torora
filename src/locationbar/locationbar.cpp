@@ -24,6 +24,7 @@
 #include "locationbarsiteicon.h"
 #include "privacyindicator.h"
 #include "searchlineedit.h"
+#include "torindicator.h"
 #include "webview.h"
 
 #include <qdrag.h>
@@ -47,14 +48,11 @@ LocationBar::LocationBar(QWidget *parent)
     m_siteIcon = new LocationBarSiteIcon(this);
     addWidget(m_siteIcon, LeftSide);
 
-    // privacy indicator at rightmost position
-    m_torIndicator = new QLabel(this);
-    m_torIndicator->setPixmap(QPixmap(QLatin1String(":tor.png")));
+    // tor indicator at rightmost position
+    m_torIndicator = new TorIndicator(this);
     addWidget(m_torIndicator, RightSide);
-    connect(BrowserApplication::instance(), SIGNAL(torChanged(bool)),
-            this, SLOT(setTor(bool)));
-    setTor(BrowserApplication::isTor());
 
+    // privacy indicator at rightmost position
     m_privacyIndicator = new PrivacyIndicator(this);
     addWidget(m_privacyIndicator, RightSide);
 

@@ -103,7 +103,8 @@ public:
     QAction *showMenuBarAction() const;
     void enableBookmarksToolbar(bool enabled);
     void setStatusBarMessagesEnabled(bool enabled);
-
+    QAction *geoBrowsingAction(){ return m_geoBrowsingAction; };
+    QAction *stopReloadAction(){ return m_stopReloadAction; };
 public slots:
     void goHome();
     void privacyChanged(bool isPrivate);
@@ -167,6 +168,9 @@ private slots:
     void updateBookmarksToolbarActionText(bool visible);
     void showNetworkMonitor();
     void slotCheckTor();
+
+    void aboutToShowGeoBrowsingMenu();
+    void setGeoBrowsingLocation(QAction *action);
 
 private:
     void retranslate();
@@ -244,6 +248,9 @@ private:
     QToolBar *m_navigationBar;
     QMenu *m_historyBackMenu;
     QMenu *m_historyForwardMenu;
+    QMenu *m_geoBrowsingMenu;
+    QAction *m_geoBrowsingAction;
+    
     QAction *m_stopReloadAction;
     QIcon m_reloadIcon;
     QIcon m_stopIcon;

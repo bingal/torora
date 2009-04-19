@@ -33,6 +33,9 @@
 #include <qtextstream.h>
 #include <qlistview.h>
 
+#define AUTHENTICATING 1
+#define AUTHENTICATED 2
+#define PREAUTHENTICATING 3
 
 class TorControl : public QObject
 {
@@ -50,24 +53,25 @@ public:
         QTextStream os(socket);
         os << string << "\r\n";
     }
-
+    bool connectedToTor(){ return m_controllerWorking; };
     void newIdentity();
+    bool readyToUse(){return (m_state==AUTHENTICATED)?true:false;}
 
 signals:
 
     void fatalError();
     void serverError();
     void torConnectionClosed();
-    void connectedToTor( );
     void authenticated();
 	void authenticationFailed();
+    void requestPassword(const QString &);
 
 public slots:
     void socketReadyRead();
     void authenticate();
+    void authenticateWithPassword(const QString &password);
     void setExitCountry(const QString &cc );
     void strictExitNodes( bool strict );
-    bool isControllerWorking();
 
 private slots:
     void closeConnection()
@@ -85,7 +89,7 @@ private slots:
 
     void socketConnected()
     {
-       authenticate();
+        protocolInfo();
     }
 
     void socketConnectionClosed()
@@ -106,9 +110,17 @@ private slots:
 
 
 private:
+    void reconnect();
+    void protocolInfo();
+
     QTcpSocket *socket;
     bool readCookie();
     bool m_controllerWorking;
+    QString m_host;
+    int m_port;
+    QString m_password;
+    QStringList m_authMethods;
+    int m_state;
 };
 
 #endif //

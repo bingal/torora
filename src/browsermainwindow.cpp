@@ -682,6 +682,10 @@ void BrowserMainWindow::setupMenu()
     historyActions.append(m_historyRestoreLastSessionAction);
     m_historyMenu->setInitialActions(historyActions);
 
+    m_geoBrowsingAction = new QAction(this);
+    m_geoBrowsingAction->setIconVisibleInMenu(false);
+    m_geoBrowsingAction->setToolTip(tr("Access the Internet From A Specific Country"));
+
     // Bookmarks
     m_bookmarksMenu = new BookmarksMenuBarMenu(this);
     connect(m_bookmarksMenu, SIGNAL(openUrl(const QUrl&, const QString &)),
@@ -882,6 +886,16 @@ void BrowserMainWindow::setupToolBar()
     m_reloadIcon = style()->standardIcon(QStyle::SP_BrowserReload);
     m_stopReloadAction->setIcon(m_reloadIcon);
     m_navigationBar->addAction(m_stopReloadAction);
+
+
+    m_geoBrowsingAction->setIcon(QIcon(QLatin1String(":geobrowser.png")));
+    m_geoBrowsingMenu = new QMenu(this);
+    connect(m_geoBrowsingMenu, SIGNAL(aboutToShow()),
+            this, SLOT(aboutToShowGeoBrowsingMenu()));
+    connect(m_geoBrowsingMenu, SIGNAL(triggered(QAction *)),
+            this, SLOT(setGeoBrowsingLocation(QAction *)));
+    m_geoBrowsingAction->setMenu(m_geoBrowsingMenu);
+    m_navigationBar->addAction(m_geoBrowsingAction);
 
     m_navigationSplitter = new QSplitter(m_navigationBar);
     m_navigationSplitter->addWidget(m_tabWidget->lineEditStack());
@@ -1396,6 +1410,33 @@ void BrowserMainWindow::aboutToShowForwardMenu()
         action->setText(item.title());
         m_historyForwardMenu->addAction(action);
     }
+}
+
+void BrowserMainWindow::aboutToShowGeoBrowsingMenu()
+{
+    if (!BrowserApplication::instance()->torManager()->readyToUse()) {
+        BrowserApplication::instance()->torManager()->authenticate();
+        return;
+    }
+    m_geoBrowsingMenu->clear();
+    if (!currentTab())
+        return;
+    Countries* clist = BrowserApplication::instance()->torManager()->countries();
+    int countryCount = clist->count();
+    for (int i = 0; i < countryCount; ++i) {
+        QAction *action = new QAction(this);
+        Country *ctry = clist->country(i);
+        action->setData(i);
+        action->setIcon(ctry->icon());
+        action->setText(ctry->name());
+        m_geoBrowsingMenu->addAction(action);
+    }
+}
+
+void BrowserMainWindow::setGeoBrowsingLocation(QAction *action)
+{
+    int offset = action->data().toInt();
+    BrowserApplication::instance()->torManager()->setGeoBrowsingLocation(offset);
 }
 
 void BrowserMainWindow::aboutToShowWindowMenu()
