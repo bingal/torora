@@ -70,7 +70,7 @@ void TorControl::setExitCountry(const QString &cc)
       sendToServer(QString(QLatin1String("SETCONF ExitNodes={%1}")).arg(cc));
     else
       sendToServer(QString(QLatin1String("SETCONF ExitNodes=")));
-    sendToServer(QLatin1String("signal newnym"));
+    newIdentity();
 }
 
 bool TorControl::geoBrowsingCapable()
@@ -150,7 +150,16 @@ bool TorControl::readCookie()
 
 void TorControl::newIdentity()
 {
+    /* Get the list of open circuits and close them. This will
+       force Tor to build circuits obeying the new rules. */
+    sendToServer(QLatin1String("GETINFO circuit-status"));
+    /* Tell Tor to use a new circuit for the next connection. */
     sendToServer(QLatin1String("signal newnym"));
+}
+
+void TorControl::closeCircuit(const QString &circid)
+{
+    sendToServer(QString(QLatin1String("CLOSECIRCUIT %1")).arg(circid));
 }
 
 void TorControl::socketReadyRead()
@@ -159,6 +168,8 @@ void TorControl::socketReadyRead()
 
           QString line = QLatin1String(socket->readLine().trimmed());
           QString code;
+          QStringList tokens;
+          qDebug() << line << endl;
           switch (m_state) {
               case AUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
@@ -173,6 +184,21 @@ void TorControl::socketReadyRead()
                       emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
                                               "Try entering it again or click 'Cancel' for help:</qt>"));
                   }
+                  break;
+              case AUTHENTICATED:
+                  if (line.contains(QLatin1String("250+circuit-status="))){
+                      m_state=LISTING_CIRCUITS;
+                      continue;
+                  }
+                  break;
+              case LISTING_CIRCUITS:
+                  if (line.contains(QLatin1String("250 OK"))){
+                      m_state=AUTHENTICATED;
+                      continue;
+                  }
+                  tokens = line.split(QLatin1String(" "));
+                  if (tokens.first().toInt() != 0)
+                      closeCircuit(tokens.first());
                   break;
               case PREAUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){

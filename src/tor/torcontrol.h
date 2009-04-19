@@ -33,9 +33,10 @@
 #include <qtextstream.h>
 #include <qlistview.h>
 
-#define AUTHENTICATING 1
-#define AUTHENTICATED 2
-#define PREAUTHENTICATING 3
+#define PREAUTHENTICATING 1
+#define AUTHENTICATING 2
+#define AUTHENTICATED 3
+#define LISTING_CIRCUITS 4
 
 class TorControl : public QObject
 {
@@ -55,7 +56,7 @@ public:
     }
     bool connectedToTor(){ return m_controllerWorking; };
     void newIdentity();
-    bool readyToUse(){return (m_state==AUTHENTICATED)?true:false;}
+    bool readyToUse(){return (m_state > AUTHENTICATING)?true:false;}
     bool geoBrowsingCapable();
 
 signals:
@@ -114,6 +115,7 @@ private slots:
 private:
     void reconnect();
     void protocolInfo();
+    void closeCircuit(const QString &circid);
 
     QTcpSocket *socket;
     bool readCookie();
