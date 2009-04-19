@@ -26,6 +26,8 @@
 #include <QStatusBar>
 #include <qwebframe.h>
 #include <QXmlStreamReader>
+#include <QDesktopServices>
+#include <QMessageBox>
 
 #include "appcheck.h"
 #include "ui_passworddialog.h"
@@ -60,12 +62,15 @@ TorManager::TorManager()
 #ifndef Q_OS_WIN
     privoxyConfigFiles << QLatin1String("/etc/privoxy/config");
     privoxyConfigFiles << QLatin1String("/usr/etc/privoxy/config");
-    privoxyConfigFiles << QLatin1String("/usr/local/etc/privoxy/config");
+    privoxyConfigFiles << QLatin1Stringc("/usr/local/etc/privoxy/config");
 #else
-    privoxyConfigFiles << QString(QLatin1String("%1\Vidalia Bundle\Privoxy\config.txt"))
-                        .arg(QDesktopServices::ApplicationsLocation);
-    privoxyConfigFiles << QString(QLatin1String("%1\Privoxy\config.txt"))
-                        .arg(QDesktopServices::ApplicationsLocation);
+    privoxyConfigFiles << QString(QLatin1String("c:\\program files\\Vidalia Bundle\\Privoxy\\config.txt"));
+    privoxyConfigFiles << QString(QLatin1String("c:\\program files\\Privoxy\\config.txt"));
+    privoxyConfigFiles << QString(QLatin1String("%1\\Vidalia Bundle\\Privoxy\\config.txt"))
+                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
+    privoxyConfigFiles << QString(QLatin1String("%1\\Privoxy\\config.txt"))
+                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
+    qDebug() << privoxyConfigFiles << endl;
 #endif
 
 #ifndef Q_OS_WIN
@@ -73,10 +78,13 @@ TorManager::TorManager()
     polipoConfigFiles << QLatin1String("/usr/etc/polipo/config");
     polipoConfigFiles << QLatin1String("/usr/local/etc/polipo/config");
 #else
-    polipoConfigFiles << QString(QLatin1String("%1\Vidalia Bundle\Polipo\config.txt"))
-                        .arg(QDesktopServices::ApplicationsLocation);
-    polipoConfigFiles << QString(QLatin1String("%1\Polipo\config.txt"))
-                        .arg(QDesktopServices::ApplicationsLocation);
+    polipoConfigFiles << QString(QLatin1String("c:\\program files\\Polipo\\config.txt"));
+    polipoConfigFiles << QString(QLatin1String("c:\\program files\\Vidalia Bundle\\Polipo\\config.txt"));
+    polipoConfigFiles << QString(QLatin1String("%1\\Vidalia Bundle\\Polipo\\config.txt"))
+                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
+    polipoConfigFiles << QString(QLatin1String("%1\\Polipo\\config.txt"))
+                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
+    qDebug() << polipoConfigFiles << endl;
 #endif
 
     checkApps();
@@ -391,6 +399,12 @@ void TorManager::connectToTor()
 
 void TorManager::setGeoBrowsingLocation(int offset)
 {
+    if (!torcontrol->geoBrowsingCapable()) {
+        QMessageBox::information(0, tr("Your Version of Tor Does Not Support This Feature."),
+            tr("Your version of Tor does not support GeoBrowsing. <br> Install Tor 0.2.1.X or "
+               "later if you want to browse the internet from specific countries."));
+        return;
+    }
     torcontrol->setExitCountry(m_countries->country(offset)->cc());
     emit geoBrowsingUpdate(offset);
 }

@@ -29,16 +29,7 @@
 #include <qtimer.h>
 #include <assert.h>
 #include <qfile.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <qdir.h>
-
-/* Linux-specific includes */
-#include <dirent.h>
-#include <unistd.h>
 
 TorControl::TorControl( const QString &host, int port )
 {
@@ -74,12 +65,22 @@ void TorControl::setExitCountry(const QString &cc)
     if (m_state != AUTHENTICATED) {
         return;
     }
-    strictExitNodes(true);
+    strictExitNodes(!cc.isEmpty());
     if (!cc.isEmpty())
       sendToServer(QString(QLatin1String("SETCONF ExitNodes={%1}")).arg(cc));
     else
       sendToServer(QString(QLatin1String("SETCONF ExitNodes=")));
     sendToServer(QLatin1String("signal newnym"));
+}
+
+bool TorControl::geoBrowsingCapable()
+{
+    /* If Tor version < 0.2.1.X then not supported */
+    if ((m_versionTor.left(0).toInt() < 1) &&
+       (m_versionTor.left(2).toInt() < 3) &&
+       (m_versionTor.left(4).toInt() < 1))
+        return false;
+    return true;
 }
 
 void TorControl::strictExitNodes( bool strict )
@@ -131,8 +132,9 @@ bool TorControl::readCookie()
                         .arg(QDesktopServices::HomeLocation);
     cookieCandidates << QLatin1String("/var/lib/tor/control_auth_cookie");
 #else
-    cookieCandidates << QString(QLatin1String("%1\.tor\control_auth_cookie"))
+    cookieCandidates << QString(QLatin1String("%1\\.tor\\control_auth_cookie"))
                         .arg(QDesktopServices::HomeLocation);
+    qDebug() << cookieCandidates << endl;
 #endif
     for ( QStringList::Iterator it = cookieCandidates.begin(); it != cookieCandidates.end(); ++it ) {
         QFile inf((*it));
@@ -180,6 +182,11 @@ void TorControl::socketReadyRead()
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state=AUTHENTICATING;
                       continue;
+                  }
+                  if (line.contains(QLatin1String("250-VERSION Tor="))){
+                      line.remove(QLatin1String("250-VERSION Tor="));
+                      line.remove(QLatin1String("\""));
+                      m_versionTor = line;
                   }
                   if (line.contains(QLatin1String("250-AUTH METHODS="))){
                       line.remove(QLatin1String("250-AUTH METHODS="));

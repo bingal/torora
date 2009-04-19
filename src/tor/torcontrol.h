@@ -56,6 +56,7 @@ public:
     bool connectedToTor(){ return m_controllerWorking; };
     void newIdentity();
     bool readyToUse(){return (m_state==AUTHENTICATED)?true:false;}
+    bool geoBrowsingCapable();
 
 signals:
 
@@ -119,6 +120,7 @@ private:
     QString m_host;
     int m_port;
     QString m_password;
+    QString m_versionTor;
     QStringList m_authMethods;
     int m_state;
 };
