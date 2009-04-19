@@ -81,6 +81,26 @@
   <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
  </data>
  <data>
+  <variable>RunConfiguration4-CommandLineArguments</variable>
+  <valuelist type="QVariantList" />
+ </data>
+ <data>
+  <variable>RunConfiguration4-ProFile</variable>
+  <value type="QString" >C:/Users/robert/Documents/Development/torora-git/torora/manualtests/googlesuggest/googlesuggest.pro</value>
+ </data>
+ <data>
+  <variable>RunConfiguration4-RunConfiguration.name</variable>
+  <value type="QString" >googlesuggest</value>
+ </data>
+ <data>
+  <variable>RunConfiguration4-UserSetName</variable>
+  <value type="bool" >false</value>
+ </data>
+ <data>
+  <variable>RunConfiguration4-type</variable>
+  <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
+ </data>
+ <data>
   <variable>activeRunConfiguration</variable>
   <value type="int" >0</value>
  </data>
@@ -103,12 +123,12 @@
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
    <value key="QtVersionId" type="int" >4</value>
    <value key="addQDumper" type="" ></value>
-   <value key="buildDirectory" type="QString" >C:\Users\robert\Documents\Development\torora</value>
+   <value key="buildDirectory" type="QString" >C:\Users\robert\Documents\Development\torora-git\torora</value>
    <valuelist key="userEnvironmentChanges" type="QVariantList" >
-    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
-    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >PATH=C:\users\robert\documents\development\WebKit\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >QTDIR=C:\users\robert\documents\development\WebKit\webkit\;C:/Qt/2009.01/qt</value>
     <value type="QString" >QT_WEBKIT=webkit_trunk</value>
-    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
+    <value type="QString" >WEBKITDIR=C:\users\robert\documents\development\WebKit\webkit\</value>
    </valuelist>
   </valuemap>
  </data>
@@ -337,22 +357,23 @@
     <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
     <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
     <value type="QString" >WINDIR=C:\Windows</value>
+    <value type="QString" >XCHAT_WARNING_IGNORE=true</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
-    <value type="QString" >C:/Users/robert/Documents/Development/torora/torora.pro</value>
+    <value type="QString" >C:/Users/robert/Documents/Development/torora-git/torora/torora.pro</value>
     <value type="QString" >-spec</value>
     <value type="QString" >win32-g++</value>
     <value type="QString" >-r</value>
     <value type="QString" >CONFIG+=debug_and_release</value>
     <value type="QString" >CONFIG+=release</value>
     <value type="QString" >DEFINES+=TORORA_WEBKIT_BUILD</value>
-    <value type="QString" >DEFINES-=TORORA</value>
+    <value type="QString" >DEFINES+=TORORA</value>
     <value type="QString" >CONFIG-=DEBUG</value>
     <value type="QString" >CONFIG+=RELEASE</value>
    </valuelist>
    <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/qt/bin/qmake.exe</value>
    <value key="abstractProcess.enabled" type="bool" >false</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora-git/torora</value>
    <value key="buildConfiguration" type="int" >8</value>
    <valuelist key="qmakeArgs" type="QVariantList" >
     <value type="QString" >DEFINES+=TORORA_WEBKIT_BUILD</value>
@@ -406,6 +427,7 @@
     <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
     <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
     <value type="QString" >WINDIR=C:\Windows</value>
+    <value type="QString" >XCHAT_WARNING_IGNORE=true</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
     <value type="QString" >release</value>
@@ -413,7 +435,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
    <value key="abstractProcess.enabled" type="bool" >true</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora-git/torora</value>
    <valuelist key="makeargs" type="QVariantList" >
     <value type="QString" >release</value>
    </valuelist>
@@ -469,6 +491,7 @@
     <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
     <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
     <value type="QString" >WINDIR=C:\Windows</value>
+    <value type="QString" >XCHAT_WARNING_IGNORE=true</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
     <value type="QString" >clean</value>
@@ -476,7 +499,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
    <value key="abstractProcess.enabled" type="bool" >true</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora-git/torora</value>
   </valuemap>
  </data>
  <data>

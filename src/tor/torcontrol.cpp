@@ -29,16 +29,7 @@
 #include <qtimer.h>
 #include <assert.h>
 #include <qfile.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <qdir.h>
-
-/* Linux-specific includes */
-#include <dirent.h>
-#include <unistd.h>
 
 TorControl::TorControl( const QString &host, int port )
 {
@@ -74,12 +65,22 @@ void TorControl::setExitCountry(const QString &cc)
     if (m_state != AUTHENTICATED) {
         return;
     }
-    strictExitNodes(true);
+    strictExitNodes(!cc.isEmpty());
     if (!cc.isEmpty())
       sendToServer(QString(QLatin1String("SETCONF ExitNodes={%1}")).arg(cc));
     else
       sendToServer(QString(QLatin1String("SETCONF ExitNodes=")));
     sendToServer(QLatin1String("signal newnym"));
+}
+
+bool TorControl::geoBrowsingCapable()
+{
+    /* If Tor version < 0.2.1.X then not supported */
+    if ((m_versionTor.left(0).toInt() < 1) &&
+       (m_versionTor.left(2).toInt() < 3) &&
+       (m_versionTor.left(4).toInt() < 1))
+        return false;
+    return true;
 }
 
 void TorControl::strictExitNodes( bool strict )
@@ -94,7 +95,6 @@ void TorControl::strictExitNodes( bool strict )
 
 void TorControl::authenticateWithPassword(const QString &password)
 {
-    qDebug() << "auth with pass" << endl;
     m_password = password;
     authenticate();
 }
@@ -107,7 +107,6 @@ void TorControl::protocolInfo()
 
 void TorControl::authenticate()
 {
-    qDebug() << "authenticate" << endl;
     if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD"))) {
         if (!m_password.isEmpty())
             sendToServer(QString(QLatin1String("AUTHENTICATE \"%1\"")).arg(m_password));
@@ -131,7 +130,7 @@ bool TorControl::readCookie()
                         .arg(QDesktopServices::HomeLocation);
     cookieCandidates << QLatin1String("/var/lib/tor/control_auth_cookie");
 #else
-    cookieCandidates << QString(QLatin1String("%1\.tor\control_auth_cookie"))
+    cookieCandidates << QString(QLatin1String("%1\\.tor\\control_auth_cookie"))
                         .arg(QDesktopServices::HomeLocation);
 #endif
     for ( QStringList::Iterator it = cookieCandidates.begin(); it != cookieCandidates.end(); ++it ) {
@@ -158,8 +157,6 @@ void TorControl::socketReadyRead()
     while ( socket->canReadLine() ) {
 
           QString line = QLatin1String(socket->readLine().trimmed());
-          qDebug() << line << endl;
-          qDebug() << m_state << endl;
           QString code;
           switch (m_state) {
               case AUTHENTICATING:
@@ -170,7 +167,6 @@ void TorControl::socketReadyRead()
                   code = line.left(3);
                   /*Incorrect password*/
                   if (code == QLatin1String("515")){
-                      qDebug() << "failed" << line << endl;
                       reconnect();
                       emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
                                               "Try entering it again or click 'Cancel' for help:</qt>"));
@@ -180,6 +176,11 @@ void TorControl::socketReadyRead()
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state=AUTHENTICATING;
                       continue;
+                  }
+                  if (line.contains(QLatin1String("250-VERSION Tor="))){
+                      line.remove(QLatin1String("250-VERSION Tor="));
+                      line.remove(QLatin1String("\""));
+                      m_versionTor = line;
                   }
                   if (line.contains(QLatin1String("250-AUTH METHODS="))){
                       line.remove(QLatin1String("250-AUTH METHODS="));
