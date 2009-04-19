@@ -10,9 +10,9 @@ Makefile*
 .rcc
 .qm
 .gdb_history
-.kdevelop
-.pcs
-.kdevses
+*.kdevelop
+*.pcs
+*.kdevses
 *.swp
 *~
 *.pdb
