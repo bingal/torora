@@ -28,6 +28,7 @@
 #include <QXmlStreamReader>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QMenu>
 
 #include "appcheck.h"
 #include "ui_passworddialog.h"
@@ -62,7 +63,7 @@ TorManager::TorManager()
 #ifndef Q_OS_WIN
     privoxyConfigFiles << QLatin1String("/etc/privoxy/config");
     privoxyConfigFiles << QLatin1String("/usr/etc/privoxy/config");
-    privoxyConfigFiles << QLatin1Stringc("/usr/local/etc/privoxy/config");
+    privoxyConfigFiles << QLatin1String("/usr/local/etc/privoxy/config");
 #else
     privoxyConfigFiles << QString(QLatin1String("c:\\program files\\Vidalia Bundle\\Privoxy\\config.txt"));
     privoxyConfigFiles << QString(QLatin1String("c:\\program files\\Privoxy\\config.txt"));
@@ -395,6 +396,8 @@ void TorManager::connectToTor()
     torcontrol = new TorControl(QLatin1String("localhost"), 9051 );
     connect(torcontrol, SIGNAL(requestPassword(const QString &)),
             this, SLOT(requestPassword(const QString &)));
+    connect(torcontrol, SIGNAL(showGeoBrowsingMenu()),
+            this, SLOT(showGeoBrowsingMenu()));
 }
 
 void TorManager::setGeoBrowsingLocation(int offset)
@@ -408,6 +411,12 @@ void TorManager::setGeoBrowsingLocation(int offset)
     }
     torcontrol->setExitCountry(m_countries->country(offset)->cc());
     emit geoBrowsingUpdate(offset);
+}
+
+void TorManager::showGeoBrowsingMenu()
+{
+    BrowserApplication::instance()->mainWindow()->geoBrowsingMenu()->hide();
+    BrowserApplication::instance()->mainWindow()->geoBrowsingMenu()->show();
 }
 
 void TorManager::requestPassword(const QString &message)

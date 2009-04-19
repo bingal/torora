@@ -1416,6 +1416,7 @@ void BrowserMainWindow::aboutToShowGeoBrowsingMenu()
 {
     if (!BrowserApplication::instance()->torManager()->readyToUse()) {
         BrowserApplication::instance()->torManager()->authenticate();
+        m_geoBrowsingMenu->hide();
         return;
     }
     m_geoBrowsingMenu->clear();

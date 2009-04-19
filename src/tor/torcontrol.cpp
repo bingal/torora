@@ -76,9 +76,10 @@ void TorControl::setExitCountry(const QString &cc)
 bool TorControl::geoBrowsingCapable()
 {
     /* If Tor version < 0.2.1.X then not supported */
-    if ((m_versionTor.left(0).toInt() < 1) &&
-       (m_versionTor.left(2).toInt() < 3) &&
-       (m_versionTor.left(4).toInt() < 1))
+    qDebug() << m_versionTor << endl;
+    if ((m_versionTor.mid(0,1).toInt() < 1) &&
+       (m_versionTor.mid(2,1).toInt() < 3) &&
+       (m_versionTor.mid(4,1).toInt() < 1))
         return false;
     return true;
 }
@@ -162,6 +163,7 @@ void TorControl::socketReadyRead()
               case AUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state = AUTHENTICATED;
+                      emit showGeoBrowsingMenu();
                       continue;
                   }
                   code = line.left(3);

@@ -66,6 +66,7 @@ signals:
     void authenticated();
 	void authenticationFailed();
     void requestPassword(const QString &);
+    void showGeoBrowsingMenu();
 
 public slots:
     void socketReadyRead();

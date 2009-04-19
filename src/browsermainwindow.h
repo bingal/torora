@@ -105,6 +105,7 @@ public:
     void setStatusBarMessagesEnabled(bool enabled);
     QAction *geoBrowsingAction(){ return m_geoBrowsingAction; };
     QAction *stopReloadAction(){ return m_stopReloadAction; };
+    QMenu *geoBrowsingMenu(){ return m_geoBrowsingMenu; };
 public slots:
     void goHome();
     void privacyChanged(bool isPrivate);

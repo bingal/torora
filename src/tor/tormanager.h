@@ -74,7 +74,7 @@ public slots:
     void checkTorSilently();
     void checkTorExplicitly();
     void requestPassword(const QString &);
-
+    void showGeoBrowsingMenu();
 private:
     bool validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx);
     void setBrowsingEnabled(bool enabled);
