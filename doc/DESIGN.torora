@@ -2,6 +2,8 @@
 Torora Requirements and Specification
 -------------------------------------
 Note: To search the code for a requirement's implementation, grep for 'Torora: Req X.X'.
+      The WebKit patch currently uses one setting 'QWebSettings;:PreventUserProfiling' for
+      all webkit-based changes.
 
 Torora's requirements are modelled on Torbutton's. Torbutton's requirements
 fall under the following headings:
