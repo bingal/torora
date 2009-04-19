@@ -111,6 +111,7 @@ public slots:
     void privacyChanged(bool isPrivate);
     void zoomTextOnlyChanged(bool textOnly);
     void slotTorChanged(bool isTor);
+    void aboutToShowGeoBrowsingMenu();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -170,7 +171,6 @@ private slots:
     void showNetworkMonitor();
     void slotCheckTor();
 
-    void aboutToShowGeoBrowsingMenu();
     void setGeoBrowsingLocation(QAction *action);
 
 private:
