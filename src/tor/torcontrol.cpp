@@ -174,7 +174,10 @@ void TorControl::socketReadyRead()
               case AUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state = AUTHENTICATED;
-                      emit showGeoBrowsingMenu();
+                      /* If the user had to enter a password then they're expecting to see the
+                         geobrowsing menu pop up. */
+                      if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD")))
+                          emit showGeoBrowsingMenu();
                       continue;
                   }
                   code = line.left(3);
