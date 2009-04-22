@@ -96,6 +96,7 @@ private:
     QStringList privoxyConfigFiles;
     QStringList polipoConfigFiles;
     Countries *m_countries;
+    QTimer *m_timer;
 };
 
 #endif //

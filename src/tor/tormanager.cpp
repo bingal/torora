@@ -59,6 +59,8 @@ TorManager::TorManager()
     torcontrol = 0L;
     m_checkTorSilently = false;
     m_proxyConfigured = false;
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
 
 #ifndef Q_OS_WIN
     privoxyConfigFiles << QLatin1String("/etc/privoxy/config");
@@ -226,6 +228,12 @@ void TorManager::reportTorCheckResults(int page)
         statusbar = QLatin1String("Checking Tor...");
         break;
       case USING_TOR:
+        /*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
+                is testing */
+        #define TOR_CHECK_PERIOD (60 * 1000 * ((qrand() % 10) + 1))
+        m_timer->start(TOR_CHECK_PERIOD);
+        qDebug() << "TOR_CHECK_PERIOD " << TOR_CHECK_PERIOD << endl;
+
         if (m_checkTorSilently)
             return;
         if (!issues.open(QIODevice::ReadOnly)) {
@@ -300,13 +308,6 @@ void TorManager::reportTorCheckResults(int page)
     }
 
     if (page == USING_TOR) {
-        /*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
-                is testing */
-        #define TOR_CHECK_PERIOD 60 * 1000 * (qrand() % 10)
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
-        timer->start(TOR_CHECK_PERIOD);
-
         imageBuffer.open(QBuffer::ReadWrite);
         icon = QIcon(QLatin1String(":info.png"));
         pixmap = icon.pixmap(QSize(32, 32));
