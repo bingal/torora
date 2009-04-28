@@ -50,6 +50,8 @@ signals:
     void serverError();
     void torConnectionClosed();
     void connectedToApp( bool connected);
+    void appShutDownUnexpectedly();
+
 public slots:
     void socketReadyRead();
 
@@ -71,7 +73,7 @@ private slots:
     void socketConnected()
     {
        emit connectedToApp(true);
-       closeConnection();
+//       closeConnection();
     }
 
 
@@ -84,8 +86,9 @@ private slots:
          if ( e == QAbstractSocket::ConnectionRefusedError ||
               e == QAbstractSocket::HostNotFoundError )
               emit connectedToApp(false);
+         if ( e == QAbstractSocket::RemoteHostClosedError)
+              emit appShutDownUnexpectedly();
     }
-
 
 private:
     QTcpSocket *socket;

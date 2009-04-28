@@ -49,13 +49,13 @@ public:
 
     virtual ~TorManager();
 
-    bool torIsRunning(){ return m_torIsRunning;};
-    bool privoxyIsRunning(){ return m_privoxyIsRunning;};
-    bool polipoIsRunning(){ return m_polipoIsRunning;};
+    bool torIsRunning(){ return m_torIsRunning;}
+    bool privoxyIsRunning(){ return m_privoxyIsRunning;}
+    bool polipoIsRunning(){ return m_polipoIsRunning;}
     void checkApps();
     void checkTorInstallation(bool checkTorSilently);
     void setGeoBrowsingLocation(int offset);
-    Countries* countries(){ return m_countries; };
+    Countries* countries(){ return m_countries; }
     bool readyToUse();
     void authenticate();
 
@@ -63,12 +63,15 @@ signals:
     void geoBrowsingUpdate(int offset);
 
 private slots:
-    void updateTorStatus(bool connected) { m_torIsRunning = connected; };
-    void updatePrivoxyStatus(bool connected) { m_privoxyIsRunning = connected; };
-    void updatePolipoStatus(bool connected) { m_polipoIsRunning = connected; };
+    void updateTorStatus(bool connected) { m_torIsRunning = connected; }
+    void updatePrivoxyStatus(bool connected) { m_privoxyIsRunning = connected; }
+    void updatePolipoStatus(bool connected) { m_polipoIsRunning = connected; }
     void torCheckComplete(bool error);
     void reportTorCheckResults(int page);
     void displayStatusResult();
+    void torShutDownUnexpectedly();
+    void polipoShutDownUnexpectedly();
+    void privoxyShutDownUnexpectedly();
 
 public slots:
     void checkTorSilently();

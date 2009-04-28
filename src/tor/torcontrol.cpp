@@ -229,6 +229,6 @@ void TorControl::socketReadyRead()
 
 TorControl::~TorControl()
 {
-
+    delete socket;
 }
 

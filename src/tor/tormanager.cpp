@@ -91,7 +91,6 @@ TorManager::TorManager()
 #endif
 
     checkApps();
-    connectToTor();
     m_countries = new Countries();
 }
 
@@ -103,18 +102,21 @@ void TorManager::checkApps()
 
     if (tor)
         delete tor;
-    tor = new AppCheck( QLatin1String("localhost"), 9050 );
+    tor = new AppCheck( QLatin1String("localhost"), 9051 );
     connect(tor, SIGNAL(connectedToApp(bool)), this, SLOT(updateTorStatus(bool)));
+    connect(tor, SIGNAL(appShutDownUnexpectedly()), this, SLOT(torShutDownUnexpectedly()));
 
     if (privoxy)
         delete privoxy;
     privoxy = new AppCheck( QLatin1String("localhost"), PRIVOXY );
     connect(privoxy, SIGNAL(connectedToApp(bool)), this, SLOT(updatePrivoxyStatus(bool)));
+    connect(privoxy, SIGNAL(appShutDownUnexpectedly()), this, SLOT(privoxyShutDownUnexpectedly()));
 
     if (polipo)
         delete polipo;
     polipo = new AppCheck( QLatin1String("localhost"), POLIPO );
     connect(polipo, SIGNAL(connectedToApp(bool)), this, SLOT(updatePolipoStatus(bool)));
+    connect(polipo, SIGNAL(appShutDownUnexpectedly()), this, SLOT(polipoShutDownUnexpectedly()));
 
     if (proxy.port() != PRIVOXY && proxy.port() != POLIPO) {
         if (userProxy)
@@ -152,6 +154,24 @@ bool TorManager::validProxyConfiguration(const QStringList &proxyConfigFiles, QR
 TorManager::~TorManager()
 {
 
+}
+
+void TorManager::torShutDownUnexpectedly()
+{
+    m_torIsRunning = false;
+    reportTorCheckResults(INSTALLATION_BROKEN);
+}
+
+void TorManager::privoxyShutDownUnexpectedly()
+{
+    m_privoxyIsRunning = false;
+    reportTorCheckResults(INSTALLATION_BROKEN);
+}
+
+void TorManager::polipoShutDownUnexpectedly()
+{
+    m_polipoIsRunning = false;
+    reportTorCheckResults(INSTALLATION_BROKEN);
 }
 
 void TorManager::torCheckComplete(bool error)
@@ -334,6 +354,9 @@ void TorManager::reportTorCheckResults(int page)
     }
     BrowserApplication::instance()->mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
 
+    if (!m_checkTorSilently && page == USING_TOR)
+        connectToTor();
+
     if (!m_checkTorSilently) {
         m_statusbar=statusbar;
         QTimer::singleShot(1000, this, SLOT(displayStatusResult()));
@@ -393,7 +416,7 @@ void TorManager::authenticate()
 void TorManager::connectToTor()
 {
     if (torcontrol)
-        return;
+        delete torcontrol;
     torcontrol = new TorControl(QLatin1String("localhost"), 9051 );
     connect(torcontrol, SIGNAL(requestPassword(const QString &)),
             this, SLOT(requestPassword(const QString &)));
