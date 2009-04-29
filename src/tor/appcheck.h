@@ -73,7 +73,6 @@ private slots:
     void socketConnected()
     {
        emit connectedToApp(true);
-//       closeConnection();
     }
 
 
