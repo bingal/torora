@@ -26,8 +26,9 @@
 #include "appcheck.h"
 
 
-AppCheck::AppCheck( const QString &host, int port )
+AppCheck::AppCheck( const QString &host, int port, bool persistent)
 {
+    m_persistent = persistent;
     // create the socket and connect various of its signals
     socket = new QTcpSocket( this );
     connect( socket, SIGNAL(connected()),

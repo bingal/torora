@@ -39,7 +39,7 @@ class AppCheck : public QObject
 {
     Q_OBJECT
 public:
-    AppCheck( const QString &host, int port );
+    AppCheck( const QString &host, int port, bool persistent = false);
 
     virtual ~AppCheck();
 
@@ -59,25 +59,13 @@ private slots:
     void closeConnection()
     {
         socket->close();
-        if ( socket->state() == QAbstractSocket::ClosingState ) {
-            // We have a delayed close.
-            connect( socket, SIGNAL(delayedCloseFinished()),
-                    SLOT(socketClosed()) );
-        } else {
-            // The socket is closed.
-            socketClosed();
-        }
     }
-
 
     void socketConnected()
     {
        emit connectedToApp(true);
-    }
-
-
-    void socketClosed()
-    {
+       if (!m_persistent)
+          closeConnection();
     }
 
     void socketError( QAbstractSocket::SocketError e )
@@ -91,6 +79,7 @@ private slots:
 
 private:
     QTcpSocket *socket;
+    bool m_persistent;
 };
 
 #endif //

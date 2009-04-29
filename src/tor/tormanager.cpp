@@ -102,7 +102,7 @@ void TorManager::checkApps()
 
     if (tor)
         delete tor;
-    tor = new AppCheck( QLatin1String("localhost"), 9051 );
+    tor = new AppCheck( QLatin1String("localhost"), 9051, true );
     connect(tor, SIGNAL(connectedToApp(bool)), this, SLOT(updateTorStatus(bool)));
     connect(tor, SIGNAL(appShutDownUnexpectedly()), this, SLOT(torShutDownUnexpectedly()));
 
@@ -269,6 +269,8 @@ void TorManager::reportTorCheckResults(int page)
        break;
       default:
         setBrowsingEnabled(false);
+        /* Stop the periodic tor checks until we're back up */
+        m_timer->stop();
         title = tr("Check Your Tor Installation");
         if (!m_torIsRunning) {
             headline = tr("Tor Is Not Running On Your Computer!");
