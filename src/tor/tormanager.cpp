@@ -110,13 +110,11 @@ void TorManager::checkApps()
         delete privoxy;
     privoxy = new AppCheck( QLatin1String("localhost"), PRIVOXY );
     connect(privoxy, SIGNAL(connectedToApp(bool)), this, SLOT(updatePrivoxyStatus(bool)));
-    connect(privoxy, SIGNAL(appShutDownUnexpectedly()), this, SLOT(privoxyShutDownUnexpectedly()));
 
     if (polipo)
         delete polipo;
     polipo = new AppCheck( QLatin1String("localhost"), POLIPO );
     connect(polipo, SIGNAL(connectedToApp(bool)), this, SLOT(updatePolipoStatus(bool)));
-    connect(polipo, SIGNAL(appShutDownUnexpectedly()), this, SLOT(polipoShutDownUnexpectedly()));
 
     if (proxy.port() != PRIVOXY && proxy.port() != POLIPO) {
         if (userProxy)
