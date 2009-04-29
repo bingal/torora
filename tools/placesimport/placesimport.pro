@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = arora-placesimport
+TARGET = torora-placesimport
 DEPENDPATH += .
 INCLUDEPATH += .
 
