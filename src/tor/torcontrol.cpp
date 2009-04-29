@@ -31,6 +31,7 @@
 #include <qfile.h>
 #include <qdir.h>
 
+/*FIXME: Check for use of exitnodes when connecting, so locationbar icon is always accurate */
 TorControl::TorControl( const QString &host, int port )
 {
     m_host = host;
