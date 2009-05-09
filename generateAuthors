@@ -1,4 +1,11 @@
 #!/bin/sh
+#
+# Generate a list of everyone who has contributed to the project merging those who commited under two names or email addresses.
+#
+# To can pass an arg (which goes to git log)
+#   Example: to see everyone who contributed between tag 0.6 and now
+#   ./generateAuthors 0.6..HEAD
+#
 git log --pretty="format:%an %ae" $1 \
 	| sed -e 's/smart2128 /Vincenzo Reale /g' \
 	| sed -e 's/buster\.xtense\.dyndns\.org/ts2server\.com/g' \
@@ -11,4 +18,5 @@ git log --pretty="format:%an %ae" $1 \
         | sed -e 's/bks@coldkeck2\.colorado\.edu/bks24@cornell\.edu/g' \
         | sed -e 's/porphyr /Mark Reiche /g' \
         | sed -e 's/vinx@zulu\.(none)/smart2128@baslug\.org/g' \
+        | sed -e 's/Matvey Kozhev/Maia Kozheva/g' \
 	| sort | uniq -c | sort -n -r | sed -e 's/^ *[0-9]* //g'

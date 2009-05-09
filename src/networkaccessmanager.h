@@ -109,7 +109,7 @@ private slots:
     bool requestViolatesTorRules(QNetworkRequest &request);
 
 private:
-    QByteArray acceptLanguage;
+    QByteArray m_acceptLanguage;
 };
 
 #endif // NETWORKACCESSMANAGER_H

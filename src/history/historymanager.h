@@ -64,6 +64,7 @@
 #define HISTORYMANAGER_H
 
 #include <qdatetime.h>
+#include <qhash.h>
 #include <qtimer.h>
 #include <qurl.h>
 #include <qwebhistoryinterface.h>
@@ -142,10 +143,12 @@ protected:
 
 private:
     void load();
+    QString atomicString(const QString &string);
 
     AutoSaver *m_saveTimer;
     int m_daysToExpire;
     QTimer m_expiredTimer;
+    QHash<QString, int> m_atomicStringHash;
     QList<HistoryEntry> m_history;
     QString m_lastSavedUrl;
 

@@ -95,8 +95,10 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
     }
 
     bool accepted = QWebPage::acceptNavigationRequest(frame, request, type);
-    if (accepted && frame == mainFrame())
+    if (accepted && frame == mainFrame()) {
+        m_requestedUrl = request.url();
         emit aboutToLoadUrl(request.url());
+    }
 
     return accepted;
 }
@@ -106,7 +108,7 @@ void WebPage::loadSettings()
     QSettings settings;
     settings.beginGroup(QLatin1String("tabs"));
     m_openTargetBlankLinksIn = (TabWidget::OpenUrlIn)settings.value(QLatin1String("openTargetBlankLinksIn"),
-                                                                    TabWidget::NewWindow).toInt();
+                                                                    TabWidget::NewSelectedTab).toInt();
 }
 
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
@@ -167,19 +169,12 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     }
 
     // Find the frame that has the unsupported content
-    QWebFrame *notFoundFrame = 0;
-    QList<QWebFrame*> frames;
-    frames.append(mainFrame());
-    while (!frames.isEmpty()) {
-        QWebFrame *frame = frames.takeFirst();
-        if (replyUrl == frame->url()) {
-            notFoundFrame = frame;
-            break;
-        }
-        frames.append(frame->childFrames());
-    }
+    if (replyUrl.isEmpty() || replyUrl != m_requestedUrl)
+        return;
+
+    QWebFrame *notFoundFrame = mainFrame();
     if (!notFoundFrame)
-        notFoundFrame = mainFrame();
+        return;
 
     // Generate translated not found error page with an image
     QFile notFoundErrorFile(QLatin1String(":/notfound.html"));
@@ -194,13 +189,12 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
         html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
                      QLatin1String(imageBuffer.buffer().toBase64()));
     }
-    html = QString(html)
-                   .arg(title)
-                   .arg(reply->errorString())
-                   .arg(tr("When connecting to: %1.").arg(QString::fromUtf8(replyUrl.toEncoded())))
-                   .arg(tr("Check the address for errors such as <b>ww</b>.arora-browser.org instead of <b>www</b>.arora-browser.org"))
-                   .arg(tr("If the address is correct, try checking the network connection."))
-                   .arg(tr("If your computer or network is protected by a firewall or proxy, make sure that the browser is permitted to access the network."));
+    html = html.arg(title,
+                    reply->errorString(),
+                    tr("When connecting to: %1.").arg(QString::fromUtf8(replyUrl.toEncoded())),
+                    tr("Check the address for errors such as <b>ww</b>.arora-browser.org instead of <b>www</b>.arora-browser.org"),
+                    tr("If the address is correct, try checking the network connection."),
+                    tr("If your computer or network is protected by a firewall or proxy, make sure that the browser is permitted to access the network."));
     notFoundFrame->setHtml(html, replyUrl);
     // Don't put error pages to the history.
     BrowserApplication::instance()->historyManager()->removeHistoryEntry(replyUrl, notFoundFrame->title());

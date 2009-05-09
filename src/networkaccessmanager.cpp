@@ -126,14 +126,6 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent)
             SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
 #endif
     loadSettings();
-
-#if QT_VERSION >= 0x040500
-    QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
-    QString location = QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
-                            + QLatin1String("/browser");
-    diskCache->setCacheDirectory(location);
-    setCache(diskCache);
-#endif
 }
 
 QNetworkProxy NetworkAccessManager::currentProxy()
@@ -228,7 +220,18 @@ void NetworkAccessManager::loadSettings()
     settings.beginGroup(QLatin1String("network"));
     QStringList acceptList = settings.value(QLatin1String("acceptLanguages"),
             AcceptLanguageDialog::defaultAcceptList()).toStringList();
-    acceptLanguage = AcceptLanguageDialog::httpString(acceptList);
+    m_acceptLanguage = AcceptLanguageDialog::httpString(acceptList);
+
+#if QT_VERSION >= 0x040500
+    bool m_cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
+    if (m_cacheEnabled) {
+        QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
+        QString location = QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
+                                + QLatin1String("/browser");
+        diskCache->setCacheDirectory(location);
+        setCache(diskCache);
+    }
+#endif
     settings.endGroup();
 }
 
@@ -431,8 +434,8 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
         }
     }
 
-    if (!acceptLanguage.isEmpty()) {
-        req.setRawHeader("Accept-Language", acceptLanguage);
+    if (!m_acceptLanguage.isEmpty()) {
+        req.setRawHeader("Accept-Language", m_acceptLanguage);
         reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
         emit requestCreated(op, req, reply);
     } else {

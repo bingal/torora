@@ -191,6 +191,7 @@ void CookieJar::loadSettings(bool isTor)
         setAllCookies(QList<QNetworkCookie>());
 
     m_loaded = true;
+    m_filterTrackingCookies = settings.value(QLatin1String("filterTrackingCookies"), true).toBool();
     emit cookiesChanged();
 }
 
@@ -227,6 +228,8 @@ void CookieJar::save()
 
     QMetaEnum keepPolicyEnum = staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("KeepPolicy"));
     settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(m_keepCookies)));
+
+    settings.setValue(QLatin1String("filterTrackingCookies"), m_filterTrackingCookies);
 }
 
 void CookieJar::purgeOldCookies()
@@ -294,41 +297,47 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
               always start with '_utm' - at least at the moment.*/
             if (m_isTor && cookie.name().startsWith("_utm"))
                 continue;
-            if (eAllowSession) {
-                cookie.setExpirationDate(QDateTime());
-            }
-            if ((m_keepCookies == KeepUntilTimeLimit
-                && !cookie.isSessionCookie()
-                && cookie.expirationDate() > soon) || (m_isTor)) {
-                cookie.setExpirationDate(soon);
-            }
-            lst += cookie;
-            if (NetworkCookieJar::setCookiesFromUrl(lst, url)) {
-                addedCookies = true;
-            } else {
-                // finally force it in if wanted
-                if (m_acceptCookies == AcceptAlways) {
-                    QList<QNetworkCookie> cookies = allCookies();
-                    QList<QNetworkCookie>::Iterator it = cookies.begin(),
-                               end = cookies.end();
-                    for ( ; it != end; ++it) {
-                        // does this cookie already exist?
-                        if (cookie.name() == it->name() &&
-                            cookie.domain() == it->domain() &&
-                            cookie.path() == it->path()) {
-                            // found a match
-                            cookies.erase(it);
-                            break;
-                        }
-                    }
-
-                    cookies += cookie;
-                    setAllCookies(cookies);
+            if (!(m_filterTrackingCookies && cookie.name().startsWith("__utm"))) {
+                if (eAllowSession) {
+                    cookie.setExpirationDate(QDateTime());
+                }
+                if (m_keepCookies == KeepUntilTimeLimit
+                    && !cookie.isSessionCookie()
+                    && cookie.expirationDate() > soon) {
+                    cookie.setExpirationDate(soon);
+                }
+                lst += cookie;
+                if (NetworkCookieJar::setCookiesFromUrl(lst, url)) {
                     addedCookies = true;
+                } else {
+                    // finally force it in if wanted
+                    if (m_acceptCookies == AcceptAlways) {
+                        QList<QNetworkCookie> cookies = allCookies();
+                        QList<QNetworkCookie>::Iterator it = cookies.begin(),
+                                   end = cookies.end();
+                        for ( ; it != end; ++it) {
+                            // does this cookie already exist?
+                            if (cookie.name() == it->name() &&
+                                cookie.domain() == it->domain() &&
+                                cookie.path() == it->path()) {
+                                // found a match
+                                cookies.erase(it);
+                                break;
+                            }
+                        }
+
+                        cookies += cookie;
+                        setAllCookies(cookies);
+                        addedCookies = true;
+                    }
+    #if 0
+                    else
+                        qWarning() << "setCookiesFromUrl failed" << url << cookieList.value(0).toRawForm();
+    #endif
                 }
 #if 0
-                else
-                    qWarning() << "setCookiesFromUrl failed" << url << cookieList.value(0).toRawForm();
+            } else {
+                qWarning() << "cookie treated as tracking cookie" << cookie;
 #endif
             }
         }
@@ -481,4 +490,13 @@ void CookieJar::applyRules()
     }
 }
 
+bool CookieJar::filterTrackingCookies() const
+{
+    return this->m_filterTrackingCookies;
+}
+
+void CookieJar::setFilterTrackingCookies(bool filterTrackingCookies)
+{
+    this->m_filterTrackingCookies = filterTrackingCookies;
+}
 

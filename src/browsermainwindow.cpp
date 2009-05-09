@@ -202,7 +202,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(m_tabWidget, SIGNAL(toolBarVisibilityChangeRequested(bool)),
             m_bookmarksToolbar, SLOT(setVisible(bool)));
     connect(m_tabWidget, SIGNAL(lastTabClosed()),
-            this, SLOT(close()));
+            this, SLOT(lastTabClosed()));
 
     updateWindowTitle();
     loadDefaultState();
@@ -214,7 +214,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
     // Add each item in the menu bar to the main window so
     // if the menu bar is hidden the shortcuts still work.
-    QList<QAction *> actions = menuBar()->actions();
+    QList<QAction*> actions = menuBar()->actions();
     foreach (QAction *action, actions) {
         if (action->menu())
             actions += action->menu()->actions();
@@ -408,6 +408,18 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
         addToolBar(bookmarkArea, m_bookmarksToolbar);
 
     return true;
+}
+
+void BrowserMainWindow::lastTabClosed()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("tabs"));
+    bool quit = settings.value(QLatin1String("quitAsLastTabClosed"), true).toBool();
+
+    if (quit)
+        close();
+    else
+        m_tabWidget->makeNewTab(true);
 }
 
 QAction *BrowserMainWindow::showMenuBarAction() const

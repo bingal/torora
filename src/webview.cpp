@@ -210,6 +210,7 @@ void WebView::copyLinkToClipboard()
 {
     pageAction(QWebPage::CopyLinkToClipboard)->trigger();
 }
+
 void WebView::openActionUrlInNewTab()
 {
     if (QAction *action = qobject_cast<QAction*>(sender())) {
@@ -417,6 +418,30 @@ void WebView::mouseReleaseEvent(QMouseEvent *event)
         if (!url.isEmpty() && url.isValid() && !url.scheme().isEmpty()) {
             loadUrl(url);
         }
+    }
+}
+
+void WebView::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Back:
+        pageAction(WebPage::Back)->trigger();
+        event->accept();
+        break;
+    case Qt::Key_Forward:
+        pageAction(WebPage::Forward)->trigger();
+        event->accept();
+        break;
+    case Qt::Key_Stop:
+        pageAction(WebPage::Stop)->trigger();
+        event->accept();
+        break;
+    case Qt::Key_Refresh:
+        pageAction(WebPage::Reload)->trigger();
+        event->accept();
+        break;
+    default:
+        QWebView::keyPressEvent(event);
     }
 }
 

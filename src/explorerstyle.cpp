@@ -115,15 +115,15 @@ void ExplorerStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
                 //we now require updates that span across the whole toolbar area:
                 QRect topRect = topreg.boundingRect();
                 topRect.setWidth(window->width());
-                if (currentTopRect != topRect) {
-                    currentTopRect = topRect;
+                if (m_currentTopRect != topRect) {
+                    m_currentTopRect = topRect;
                     window->update(topRect);
                 }
 
                 QRect bottomRect = bottomreg.boundingRect();
                 bottomRect.setWidth(window->width());
-                if (currentBottomRect != bottomRect) {
-                    currentBottomRect = bottomRect;
+                if (m_currentBottomRect != bottomRect) {
+                    m_currentBottomRect = bottomRect;
                     window->update(bottomRect);
                 }
 
@@ -153,7 +153,7 @@ void ExplorerStyle::drawControl(ControlElement element, const QStyleOption *opti
     switch (element) {
     case CE_DockWidgetTitle:
         if (isAppThemed()) {
-            if (const QStyleOptionDockWidget *dwOpt = qstyleoption_cast<const QStyleOptionDockWidget *>(option)) {
+            if (const QStyleOptionDockWidget *dwOpt = qstyleoption_cast<const QStyleOptionDockWidget*>(option)) {
                 painter->save();
                 QStyleOptionDockWidget adjustedOpt = *dwOpt;
                 QRect rect = option->rect.adjusted(0, 1, -1, -2);
@@ -172,7 +172,7 @@ void ExplorerStyle::drawControl(ControlElement element, const QStyleOption *opti
 
     case CE_MenuBarItem:
         if (isAppThemed()) {
-            if (const QStyleOptionMenuItem *mbi = qstyleoption_cast<const QStyleOptionMenuItem *>(option)) {
+            if (const QStyleOptionMenuItem *mbi = qstyleoption_cast<const QStyleOptionMenuItem*>(option)) {
                 QStyleOptionMenuItem adjustedItem = *mbi;
                 adjustedItem.palette.setBrush(QPalette::All, QPalette::Dark, shadow);
                 adjustedItem.palette.setBrush(QPalette::All, QPalette::Button, Qt::NoBrush);
@@ -183,7 +183,7 @@ void ExplorerStyle::drawControl(ControlElement element, const QStyleOption *opti
 
     case CE_MenuBarEmptyArea:
         if (isAppThemed()) {
-            if (const QStyleOptionMenuItem *mbi = qstyleoption_cast<const QStyleOptionMenuItem *>(option)) {
+            if (const QStyleOptionMenuItem *mbi = qstyleoption_cast<const QStyleOptionMenuItem*>(option)) {
                 QStyleOptionMenuItem adjustedItem = *mbi;
                 adjustedItem.palette.setBrush(QPalette::All, QPalette::Dark, shadow);
                 adjustedItem.palette.setBrush(QPalette::All, QPalette::Button, Qt::NoBrush);

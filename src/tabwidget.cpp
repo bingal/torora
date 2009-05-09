@@ -176,7 +176,11 @@ TabWidget::TabWidget(QWidget *parent)
     addTabButton->setDefaultAction(m_newTabAction);
     addTabButton->setAutoRaise(true);
     addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+#if QT_VERSION >= 0x040500
+    setCornerWidget(addTabButton, Qt::TopRightCorner);
+#else
     setCornerWidget(addTabButton, Qt::TopLeftCorner);
+#endif
 #endif
 
 #if QT_VERSION >= 0x040500

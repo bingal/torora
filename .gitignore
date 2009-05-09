@@ -16,5 +16,10 @@ Makefile*
 *.swp
 *~
 *.pdb
+<<<<<<< HEAD:.gitignore
 *.kdevel
+=======
+massif.out.*
+ms_print.*
+>>>>>>> ca6cf65947ca10ace90291efa6b7160c9bb6d2a3:.gitignore
 

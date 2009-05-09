@@ -90,8 +90,8 @@ private slots:
     void updateProxyPort(int);
 
 private:
-    QFont standardFont;
-    QFont fixedFont;
+    QFont m_standardFont;
+    QFont m_fixedFont;
     QList<int> proxies;
 };
 

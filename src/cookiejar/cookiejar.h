@@ -116,6 +116,9 @@ public:
     void setAllowedCookies(const QStringList &list);
     void setAllowForSessionCookies(const QStringList &list);
 
+    bool filterTrackingCookies() const;
+    void setFilterTrackingCookies(bool filterTrackingCookies);
+
 public slots:
     void clear();
     void loadSettings(bool isTor);
@@ -133,6 +136,7 @@ private:
     bool m_loaded;
     bool m_isTor;
     AutoSaver *m_saveTimer;
+    bool m_filterTrackingCookies;
 
     AcceptPolicy m_acceptCookies;
     KeepPolicy m_keepCookies;
