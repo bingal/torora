@@ -33,6 +33,9 @@
 #include <qnetworkrequest.h>
 #include <qsettings.h>
 #include <qwebframe.h>
+#if !defined(QT_NO_UITOOLS)
+#include <quiloader.h>
+#endif
 
 WebPluginFactory *WebPage::s_webPluginFactory = 0;
 
