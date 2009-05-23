@@ -58,7 +58,7 @@ public:
     void newIdentity();
     bool readyToUse(){return (m_state > AUTHENTICATING)?true:false;}
     bool geoBrowsingCapable();
-
+    void setCountries(const QStringList &countrycodes) { m_countrycodes = countrycodes; }
 signals:
 
     void fatalError();
@@ -68,6 +68,7 @@ signals:
 	void authenticationFailed();
     void requestPassword(const QString &);
     void showGeoBrowsingMenu();
+    void geoBrowsingUpdate(int);
 
 public slots:
     void socketReadyRead();
@@ -116,6 +117,8 @@ private:
     void reconnect();
     void protocolInfo();
     void closeCircuit(const QString &circid);
+    void getExitCountry();
+    void parseExitNodes(const QString &line);
 
     QTcpSocket *socket;
     bool readCookie();
@@ -126,6 +129,7 @@ private:
     QString m_versionTor;
     QStringList m_authMethods;
     int m_state;
+    QStringList m_countrycodes;
 };
 
 #endif //

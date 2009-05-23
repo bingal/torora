@@ -418,10 +418,13 @@ void TorManager::connectToTor()
     if (torcontrol)
         delete torcontrol;
     torcontrol = new TorControl(QLatin1String("localhost"), 9051 );
+    torcontrol->setCountries(m_countries->countrycodes());
     connect(torcontrol, SIGNAL(requestPassword(const QString &)),
             this, SLOT(requestPassword(const QString &)));
     connect(torcontrol, SIGNAL(showGeoBrowsingMenu()),
             this, SLOT(showGeoBrowsingMenu()));
+    connect(torcontrol, SIGNAL(geoBrowsingUpdate(int)),
+            this, SIGNAL(geoBrowsingUpdate(int)));
 }
 
 void TorManager::setGeoBrowsingLocation(int offset)

@@ -40,6 +40,7 @@ Countries::Countries()
         Country *country = new Country(ccs[i],names[i]);
         countries.append(country);
     }
+    m_countrycodes = ccs;
 }
 
 Countries::~Countries()

@@ -18,6 +18,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.              *
  ***************************************************************************/
+#ifndef COUNTRIES_H
+#define COUNTRIES_H
+
 #include <QPixmap>
 #include <QString>
 #include <QList>
@@ -48,8 +51,11 @@ public:
 
     QList<Country*> countryList(){ return countries; };
     Country* country(int offset){ return countries[offset]; };
+    QStringList countrycodes() { return m_countrycodes; }
     int count(){ return countries.count(); };
 private:
     typedef QList<Country*> CountryList;
     CountryList countries;
+    QStringList m_countrycodes;
 };
+#endif

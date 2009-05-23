@@ -61,6 +61,7 @@ void TorControl::reconnect()
     socket->connectToHost( m_host, m_port );
 
 }
+
 void TorControl::setExitCountry(const QString &cc)
 {
     if (m_state != AUTHENTICATED) {
@@ -72,6 +73,14 @@ void TorControl::setExitCountry(const QString &cc)
     else
       sendToServer(QString(QLatin1String("SETCONF ExitNodes=")));
     newIdentity();
+}
+
+void TorControl::getExitCountry()
+{
+    if (m_state != AUTHENTICATED) {
+        return;
+    }
+    sendToServer(QString(QLatin1String("GETCONF ExitNodes")));
 }
 
 bool TorControl::geoBrowsingCapable()
@@ -94,6 +103,19 @@ void TorControl::strictExitNodes( bool strict )
 
 }
 
+void TorControl::parseExitNodes(const QString &line)
+{
+    QStringList nodes = line.split(QLatin1String(","));
+    QStringList countriesInUse;
+    for ( QStringList::Iterator it = nodes.begin(); it != nodes.end(); ++it ) {
+        if (m_countrycodes.contains((*it).remove(QLatin1String("{")).remove(QLatin1String("}"))))
+            countriesInUse << (*it);
+    }
+    if (countriesInUse.isEmpty() || (countriesInUse.count() > 1))
+        emit geoBrowsingUpdate(6);
+    else
+        emit geoBrowsingUpdate(m_countrycodes.indexOf(countriesInUse.first()));
+}
 
 void TorControl::authenticateWithPassword(const QString &password)
 {
@@ -175,6 +197,7 @@ void TorControl::socketReadyRead()
               case AUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state = AUTHENTICATED;
+                      getExitCountry();
                       /* If the user had to enter a password then they're expecting to see the
                          geobrowsing menu pop up. */
                       if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD")))
@@ -192,6 +215,12 @@ void TorControl::socketReadyRead()
               case AUTHENTICATED:
                   if (line.contains(QLatin1String("250+circuit-status="))){
                       m_state=LISTING_CIRCUITS;
+                      continue;
+                  }
+                  if (line.contains(QLatin1String("250 ExitNodes="))){
+                      line.remove(QLatin1String("250 ExitNodes="));
+                      if (!line.isEmpty())
+                          parseExitNodes(line);
                       continue;
                   }
                   break;
