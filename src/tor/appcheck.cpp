@@ -52,7 +52,7 @@ void AppCheck::socketReadyRead()
 
         line = QLatin1String(socket->readLine().trimmed());
 
-        qDebug() << line << endl;
+//        qDebug() << line << endl;
 
     }
 }

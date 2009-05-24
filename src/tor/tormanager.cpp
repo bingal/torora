@@ -128,7 +128,7 @@ void TorManager::checkApps()
                                                   polipoConfigFiles : privoxyConfigFiles,
                                                 (proxy.port()==POLIPO) ?
                                                   polipoTorConf : privoxyTorConf);
-    qDebug() << m_proxyConfigured << endl;
+//    qDebug() << m_proxyConfigured << endl;
 }
 
 
@@ -250,7 +250,7 @@ void TorManager::reportTorCheckResults(int page)
                 is testing */
         #define TOR_CHECK_PERIOD (60 * 1000 * ((qrand() % 10) + 1))
         m_timer->start(TOR_CHECK_PERIOD);
-        qDebug() << "TOR_CHECK_PERIOD " << TOR_CHECK_PERIOD << endl;
+//        qDebug() << "TOR_CHECK_PERIOD " << TOR_CHECK_PERIOD << endl;
 
         if (m_checkTorSilently)
             return;
