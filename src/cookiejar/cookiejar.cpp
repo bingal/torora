@@ -294,8 +294,8 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
         foreach (QNetworkCookie cookie, cookieList) {
             QList<QNetworkCookie> lst;
             /*Torora: Req 3.3 : Reject google analytics cookies, these
-              always start with '_utm' - at least at the moment.*/
-            if (m_isTor && cookie.name().startsWith("_utm"))
+              always start with '__utm' - at least at the moment.*/
+            if (m_isTor && cookie.name().startsWith("__utm"))
                 continue;
             if (!(m_filterTrackingCookies && cookie.name().startsWith("__utm"))) {
                 if (eAllowSession) {
