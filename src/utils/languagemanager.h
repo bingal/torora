@@ -33,6 +33,7 @@
 #include <qobject.h>
 
 #include <qstringlist.h>
+#include "notificationsbar.h"
 
 class QTranslator;
 class LanguageManager : public QObject
@@ -42,6 +43,7 @@ class LanguageManager : public QObject
 
 signals:
     void languageChanged(const QString &language);
+    void notify(const QString &message, BrowserApplication::Notification type);
 
 public:
     LanguageManager(QObject *parent = 0);

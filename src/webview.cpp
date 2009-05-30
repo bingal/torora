@@ -109,6 +109,7 @@ WebView::WebView(QWidget *parent)
     , m_accessKeysPressed(false)
 #endif
 {
+    BrowserApplication::instance()->registerNotifier(this);
     setPage(m_page);
 #if QT_VERSION >= 0x040600
     QPalette p;
@@ -432,8 +433,8 @@ void WebView::addSearchEngine()
 
     QString method = formElement.attribute(QLatin1String("method"), QLatin1String("get")).toLower();
     if (method != QLatin1String("get")) {
-        QMessageBox::warning(this, tr("Method not supported"),
-                             tr("%1 method is not supported.").arg(method.toUpper()));
+        emit notify(tr("%1 method is not supported.").arg(method.toUpper()),
+                    BrowserApplication::Warning);
         return;
     }
 

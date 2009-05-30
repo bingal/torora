@@ -373,6 +373,18 @@ WebViewSearch *TabWidget::webViewSearch(int index) const
     return 0;
 }
 
+NotificationsBar *TabWidget::webViewNotification(int index) const
+{
+    // so the optimization can be performed
+    webView(index);
+
+    QWidget *widget = this->widget(index);
+    if (WebViewWithSearch *webViewWithSearch = qobject_cast<WebViewWithSearch*>(widget)) {
+        return webViewWithSearch->m_notificationsBar;
+    }
+    return 0;
+}
+
 int TabWidget::webViewIndex(WebView *webView) const
 {
     for (int i = 0; i < count(); ++i) {

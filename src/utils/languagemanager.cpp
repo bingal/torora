@@ -50,6 +50,8 @@ LanguageManager::LanguageManager(QObject *parent)
     , m_appTranslator(0)
     , m_loaded(false)
 {
+    BrowserApplication::instance()->registerNotifier(this);
+
 #ifdef LANGUAGEMANAGER_DEBUG
     qDebug() << "LanguageManager::" << __FUNCTION__;
 #endif
@@ -235,12 +237,7 @@ void LanguageManager::chooseNewLanguage()
 #endif
     loadAvailableLanguages();
     if (m_languages.isEmpty()) {
-        QMessageBox messageBox;
-        QLatin1String separator = QLatin1String(", ");
-        messageBox.setText(tr("No translation files are installed at %1.")
-            .arg(m_localeDirectories.join(separator)));
-        messageBox.setStandardButtons(QMessageBox::Ok);
-        messageBox.exec();
+        emit notify(tr("No translation files are installed."), BrowserApplication::Warning);
         return;
     }
 

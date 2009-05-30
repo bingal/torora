@@ -67,6 +67,7 @@
 #include <qwebview.h>
 
 #include "tabwidget.h"
+#include "browserapplication.h"
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
@@ -103,6 +104,7 @@ public:
 
 signals:
     void search(const QUrl &searchUrl, TabWidget::OpenUrlIn openIn);
+    void notify(const QString &message, BrowserApplication::Notification type);
 
 public slots:
     void zoomIn();

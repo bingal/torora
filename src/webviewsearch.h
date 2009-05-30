@@ -21,6 +21,7 @@
 #define WEBVIEWSEARCH_H
 
 #include "searchbar.h"
+#include "notificationsbar.h"
 
 #include <qwebpage.h>
 
@@ -57,6 +58,7 @@ public:
     WebViewWithSearch(WebView *webView, QWidget *parent = 0);
     WebView *m_webView;
     WebViewSearch *m_webViewSearch;
+    NotificationsBar *m_notificationsBar;
 };
 
 

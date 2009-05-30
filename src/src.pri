@@ -30,6 +30,7 @@ FORMS += \
     acceptlanguagedialog.ui \
     downloaditem.ui \
     downloads.ui \
+    notificationsbanner.ui \
     searchbanner.ui \
     settings.ui
 
@@ -46,6 +47,7 @@ HEADERS += \
     downloadmanager.h \
     modelmenu.h \
     modeltoolbar.h \
+    notificationsbar.h \
     plaintexteditsearch.h \
     searchbar.h \
     searchbutton.h \
@@ -74,6 +76,7 @@ SOURCES += \
     downloadmanager.cpp \
     modelmenu.cpp \
     modeltoolbar.cpp \
+    notificationsbar.cpp \
     plaintexteditsearch.cpp \
     searchbar.cpp \
     searchbutton.cpp \

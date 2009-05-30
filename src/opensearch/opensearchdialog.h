@@ -25,11 +25,16 @@
 
 #include "ui_opensearchdialog.h"
 
+#include "browserapplication.h"
+
 class OpenSearchEngineModel;
 
 class OpenSearchDialog : public QDialog, public Ui_OpenSearchDialog
 {
     Q_OBJECT
+
+signals:
+    void notify(const QString &message, BrowserApplication::Notification type);
 
 public:
     OpenSearchDialog(QWidget *parent = 0);

@@ -83,6 +83,14 @@ class BrowserApplication : public SingleApplication
     Q_OBJECT
 
 public:
+    enum Notification {
+        Success,
+        Information,
+        Warning,
+        Error,
+        Password
+    };
+
     BrowserApplication(int &argc, char **argv);
     ~BrowserApplication();
     static BrowserApplication *instance();
@@ -118,6 +126,8 @@ public:
     static bool isPrivate();
     static void setPrivate(bool isPrivate);
 
+    void registerNotifier(QObject *object);
+
 #if defined(Q_WS_MAC)
     bool event(QEvent *event);
 #endif
@@ -139,6 +149,7 @@ private slots:
     void messageReceived(QLocalSocket *socket);
     void postLaunch();
     void openUrl(const QUrl &url);
+    void notify(const QString &message, BrowserApplication::Notification type);
 
 signals:
     void zoomTextOnlyChanged(bool textOnly);

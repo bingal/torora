@@ -709,3 +709,15 @@ void BrowserApplication::setEventKeyboardModifiers(Qt::KeyboardModifiers modifie
     m_eventKeyboardModifiers = modifiers;
 }
 
+void BrowserApplication::registerNotifier(QObject *object)
+{
+    connect(object, SIGNAL(notify(const QString &, BrowserApplication::Notification)),
+            this, SLOT(notify(const QString &, BrowserApplication::Notification)));
+}
+
+void BrowserApplication::notify(const QString &message, BrowserApplication::Notification type)
+{
+    QObject *object = sender();
+    mainWindow()->displayNotification(message, type, object);
+}
+

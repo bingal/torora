@@ -32,6 +32,7 @@
 #include <qobject.h>
 
 #include <qnetworkrequest.h>
+#include "notificationsbar.h"
 
 class QWebPage;
 class AutoSaver;
@@ -41,6 +42,7 @@ class AutoFillManager : public QObject
 
 signals:
     void autoFillChanged();
+    void notify(const QString &message, BrowserApplication::Notification type);
 
 public:
     typedef QPair<QString, QString> Element;
@@ -67,6 +69,11 @@ public:
     void setForms(const QList<Form> &forms);
     QList<Form> forms() const;
 
+public slots:
+    void notifyAccept();
+    void notifyReject();
+    void notifyDecline();
+
 private slots:
     void save() const;
 
@@ -82,7 +89,8 @@ private:
 
     bool m_savePasswordForms;
     bool m_allowAutoCompleteOff;
-
+    QList<QUrl> m_urlsPendingDecision;
+    QList<Form> m_formsPendingDecision;
     QList<Form> m_forms;
     QList<QUrl> m_never;
     AutoSaver *m_saveTimer;

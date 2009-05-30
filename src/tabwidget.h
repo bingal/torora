@@ -82,6 +82,7 @@ class WebView;
 class WebActionMapper;
 class WebViewSearch;
 class QToolButton;
+class NotificationsBar;
 
 /*!
     TabWidget that contains WebViews and a stack widget of associated line edits.
@@ -139,6 +140,7 @@ public:
     WebView *webView(int index) const;
     WebViewSearch *webViewSearch(int index) const;
     QLineEdit *locationBar(int index) const;
+    NotificationsBar *webViewNotification(int index) const;
     int webViewIndex(WebView *webView) const;
     WebView *makeNewTab(bool makeCurrent = false);
 

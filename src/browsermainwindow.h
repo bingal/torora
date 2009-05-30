@@ -65,6 +65,8 @@
 
 #include <qmainwindow.h>
 
+#include "notificationsbar.h"
+
 class AutoSaver;
 class BookmarksToolBar;
 class QWebFrame;
@@ -102,6 +104,8 @@ public:
     QAction *searchManagerAction() const { return m_toolsSearchManagerAction; }
 
 public slots:
+    void displayNotification(const QString &, BrowserApplication::Notification, QObject *object);
+
     void goHome();
     void privacyChanged(bool isPrivate);
     void zoomTextOnlyChanged(bool textOnly);
@@ -262,6 +266,8 @@ private:
     // used to determine if these bars should be reshown when leaving fullscreen.
     bool m_menuBarVisible;
     bool m_statusBarVisible;
+
+    NotificationsBar *m_notificationsBar;
 
     friend class BrowserApplication;
 };

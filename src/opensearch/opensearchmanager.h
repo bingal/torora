@@ -24,6 +24,8 @@
 
 #include <qobject.h>
 
+#include "browserapplication.h"
+
 #include <qhash.h>
 #include <qpixmap.h>
 #include <qurl.h>
@@ -40,6 +42,7 @@ class OpenSearchManager : public QObject
     Q_OBJECT
 
 signals:
+    void notify(const QString &message, BrowserApplication::Notification type);
     void changed();
     void currentEngineChanged();
 

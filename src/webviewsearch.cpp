@@ -86,8 +86,19 @@ WebViewWithSearch::WebViewWithSearch(WebView *webView, QWidget *parent)
     layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 0, 0);
     m_webViewSearch = new WebViewSearch(m_webView, this);
-    layout->addWidget(m_webViewSearch);
+    m_notificationsBar = new NotificationsBar(this);
+
+    // A thin border between notification bar and web frame
+    QWidget *strip = new QWidget(this);
+    strip->setMinimumWidth(webView->minimumWidth());
+    strip->setMaximumWidth(webView->maximumWidth());
+    strip->setMaximumHeight(3);
+    strip->setMinimumHeight(3);
+
+    layout->addWidget(m_notificationsBar);
+    layout->addWidget(strip);
     layout->addWidget(m_webView);
+    layout->addWidget(m_webViewSearch);
     setLayout(layout);
 }
 

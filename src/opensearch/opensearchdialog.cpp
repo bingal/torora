@@ -32,6 +32,8 @@ OpenSearchDialog::OpenSearchDialog(QWidget *parent)
     : QDialog(parent)
     , m_model(0)
 {
+    BrowserApplication::instance()->registerNotifier(this);
+
     setModal(true);
     setupUi(this);
 
@@ -64,8 +66,8 @@ void OpenSearchDialog::addButtonClicked()
 
     foreach (const QString &fileName, fileNames) {
         if (!ToolbarSearch::openSearchManager()->addEngine(fileName)) {
-            QMessageBox::critical(this, tr("Error"),
-                    tr("%1 is not a valid OpenSearch 1.1 description or is already on your list.").arg(fileName));
+            emit notify(tr("%1 is not a valid OpenSearch 1.1 description or is already "
+                           "on your list.").arg(fileName), BrowserApplication::Error);
         }
     }
 }
@@ -73,8 +75,8 @@ void OpenSearchDialog::addButtonClicked()
 void OpenSearchDialog::deleteButtonClicked()
 {
     if (m_tableView->model()->rowCount() == 1) {
-        QMessageBox::critical(this, tr("Error"),
-                tr("You must have at least one search engine in here."));
+        emit notify(tr("You must have at least one search engine in here."),
+                    BrowserApplication::Error);
         return;
     }
 

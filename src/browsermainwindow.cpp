@@ -120,6 +120,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     , m_bookmarksToolbar(0)
     , m_tabWidget(new TabWidget(this))
     , m_autoSaver(new AutoSaver(this))
+    , m_notificationsBar(new NotificationsBar(this))
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     statusBar()->setSizeGripEnabled(true);
@@ -1585,3 +1586,8 @@ void BrowserMainWindow::geometryChangeRequested(const QRect &geometry)
     setGeometry(geometry);
 }
 
+void BrowserMainWindow::displayNotification(const QString &message, BrowserApplication::Notification type, QObject *object)
+{
+    NotificationsBar *bar = tabWidget()->webViewNotification(m_tabWidget->currentIndex());
+    bar->queueItem(message, type, object);
+}

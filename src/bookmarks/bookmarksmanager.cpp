@@ -98,6 +98,7 @@ BookmarksManager::BookmarksManager(QObject *parent)
     , m_menu(0)
     , m_bookmarkModel(0)
 {
+    BrowserApplication::instance()->registerNotifier(this);
     connect(this, SIGNAL(entryAdded(BookmarkNode *)),
             m_saveTimer, SLOT(changeOccurred()));
     connect(this, SIGNAL(entryRemoved(BookmarkNode *, int, BookmarkNode *)),
@@ -131,9 +132,9 @@ void BookmarksManager::load()
     XbelReader reader;
     m_bookmarkRootNode = reader.read(bookmarkFile);
     if (reader.error() != QXmlStreamReader::NoError) {
-        QMessageBox::warning(0, QLatin1String("Loading Bookmark"),
-            tr("Error when loading bookmarks on line %1, column %2:\n"
-               "%3").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString()));
+        emit notify(tr("Error when loading bookmarks on line %1, column %2: "
+                        "%3").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString()),
+                        BrowserApplication::Error);
     }
 
     QList<BookmarkNode*> others;
@@ -298,12 +299,12 @@ void BookmarksManager::importBookmarks()
         process.waitForFinished(-1);
         if (process.error() != QProcess::UnknownError) {
             if (process.error() == QProcess::FailedToStart) {
-                QMessageBox::warning(0, tr("htmlToXBel tool required"),
-                    tr("htmlToXBel tool, which is shipped with Arora and is needed to import HTML bookmarks, "
-                       "is not installed or not available in the search paths."));
+                emit notify(tr("htmlToXBel tool, which is shipped with Arora and is needed to import HTML bookmarks, "
+                                "is not installed or not available in the search paths."),
+                                BrowserApplication::Warning);
             } else {
-                QMessageBox::warning(0, tr("Loading Bookmark"),
-                    tr("Error when loading HTML bookmarks: %1\n").arg(process.errorString()));
+                emit notify(tr("Error when loading HTML bookmarks: %1\n").arg(process.errorString()),
+                                BrowserApplication::Error);
             }
             return;
         }
@@ -312,9 +313,9 @@ void BookmarksManager::importBookmarks()
         importRootNode = reader.read(fileName);
     }
     if (reader.error() != QXmlStreamReader::NoError) {
-        QMessageBox::warning(0, QLatin1String("Loading Bookmark"),
-            tr("Error when loading bookmarks on line %1, column %2:\n"
-               "%3").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString()));
+        emit notify(tr("Error when loading bookmarks on line %1, column %2: "
+                       "%3").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString()),
+                        BrowserApplication::Error);
         delete importRootNode;
         return;
     }
@@ -334,7 +335,8 @@ void BookmarksManager::exportBookmarks()
 
     XbelWriter writer;
     if (!writer.write(fileName, m_bookmarkRootNode))
-        QMessageBox::critical(0, tr("Export error"), tr("error saving bookmarks"));
+        emit notify(tr("error saving bookmarks"),
+                    BrowserApplication::Error);
 }
 
 RemoveBookmarksCommand::RemoveBookmarksCommand(BookmarksManager *m_bookmarkManagaer, BookmarkNode *parent, int row)

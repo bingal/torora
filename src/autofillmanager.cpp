@@ -53,6 +53,7 @@ AutoFillManager::AutoFillManager(QObject *parent)
     , m_allowAutoCompleteOff(true)
     , m_saveTimer(new AutoSaver(this))
 {
+    BrowserApplication::instance()->registerNotifier(this);
     connect(this, SIGNAL(autoFillChanged()),
             m_saveTimer, SLOT(changeOccurred()));
     loadSettings();
@@ -193,22 +194,28 @@ void AutoFillManager::post(const QNetworkRequest &request, const QByteArray &out
         }
     }
     if (form.hasAPassword && alreadyAccepted == -1) {
-        QMessageBox messageBox;
-        messageBox.setText(tr("<b>Would you like to save this password?</b><br> \
-        To review passwords you have saved and remove them, open the AutoFill panel of preferences."));
-        messageBox.addButton(tr("Never for this site"), QMessageBox::DestructiveRole);
-        messageBox.addButton(tr("Not now"), QMessageBox::RejectRole);
-        messageBox.addButton(QMessageBox::Yes);
-        messageBox.setDefaultButton(QMessageBox::Yes);
-        switch (messageBox.exec()) {
-        case QMessageBox::DestructiveRole:
-            m_never.append(url);
-            return;
-        case QMessageBox::RejectRole:
-            return;
-        default:
-            break;
-        }
+/*       QMessageBox messageBox;
+       messageBox.setText(tr("<b>Would you like to save this password?</b><br> \
+       To review passwords you have saved and remove them, open the AutoFill panel of preferences."));
+       messageBox.addButton(tr("Never for this site"), QMessageBox::DestructiveRole);
+       messageBox.addButton(tr("Not now"), QMessageBox::RejectRole);
+       messageBox.addButton(QMessageBox::Yes);
+       messageBox.setDefaultButton(QMessageBox::Yes);
+       switch (messageBox.exec()) {
+       case QMessageBox::DestructiveRole:
+           m_never.append(url);
+           return;
+       case QMessageBox::RejectRole:
+           return;
+       default:
+           break;
+       }*/
+        emit notify(tr("<b>Would you like to save this password?</b> "
+                        "To review passwords you have saved, open the AutoFill panel of preferences."),
+                        BrowserApplication::Password);
+        m_formsPendingDecision.append(form);
+        m_urlsPendingDecision.append(url);
+        return;
     }
 
 #ifdef AUTOFILL_DEBUG
@@ -219,6 +226,27 @@ void AutoFillManager::post(const QNetworkRequest &request, const QByteArray &out
         m_forms.removeAt(alreadyAccepted);
     m_forms.append(form);
     emit autoFillChanged();
+}
+
+void AutoFillManager::notifyReject()
+{
+    m_formsPendingDecision.takeFirst();
+    m_never.append(m_urlsPendingDecision.takeFirst());
+}
+
+void AutoFillManager::notifyAccept()
+{
+    m_urlsPendingDecision.takeFirst();
+    m_forms.append(m_formsPendingDecision.takeFirst());
+    emit autoFillChanged();
+}
+
+void AutoFillManager::notifyDecline()
+{
+    if (m_urlsPendingDecision.isEmpty() || m_formsPendingDecision.isEmpty())
+        return;
+    m_urlsPendingDecision.takeFirst();
+    m_formsPendingDecision.takeFirst();
 }
 
 AutoFillManager::Form AutoFillManager::findForm(QWebPage *webPage, const QByteArray &outgoingData) const
