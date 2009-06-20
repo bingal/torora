@@ -417,6 +417,7 @@ HistoryDialog::HistoryDialog(QWidget *parent, HistoryManager *setHistory) : QDia
     setupUi(this);
     tree->setUniformRowHeights(true);
     tree->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tree->setSelectionMode(QAbstractItemView::ExtendedSelection);
     tree->setTextElideMode(Qt::ElideMiddle);
     QAbstractItemModel *model = history->historyTreeModel();
     TreeProxyModel *proxyModel = new TreeProxyModel(this);
@@ -795,7 +796,7 @@ QVariant HistoryTreeModel::data(const QModelIndex &index, int role) const
     }
     case Qt::DecorationRole: {
         if (index.column() == 0 && !index.parent().isValid())
-            return QIcon(QLatin1String(":history.png"));
+            return QIcon(QLatin1String(":graphics/history.png"));
     }
     case HistoryModel::DateRole: {
         if (index.column() == 0 && index.internalId() == 0) {

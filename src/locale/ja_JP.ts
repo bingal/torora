@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="ja_JP">
-<defaultcodec></defaultcodec>
 <context>
     <name>AboutDialog</name>
     <message>
         <source>About</source>
-        <translation>About</translation>
+        <translation type="obsolete">About</translation>
     </message>
     <message>
         <source>Authors</source>
@@ -34,11 +33,27 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>%1 について</translation>
+    </message>
+    <message utf8="true">
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -184,11 +199,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name Change</source>
-        <translation>名前変更</translation>
+        <translation type="obsolete">名前変更</translation>
     </message>
     <message>
         <source>Address Change</source>
-        <translation>アドレス変更</translation>
+        <translation type="obsolete">アドレス変更</translation>
     </message>
     <message>
         <source>Bookmarks Bar</source>
@@ -200,13 +215,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>XBEL (*.xbel *.xml *.html)</source>
-        <translation>XBEL (*.xbel *.xml *.html)</translation>
+        <translation type="obsolete">XBEL (*.xbel *.xml *.html)</translation>
     </message>
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
         <translation>HTML形式ブックマークの読み込み中にエラー: %1
 </translation>
+    </message>
+    <message>
+        <source>XBEL</source>
+        <translation>XBEL</translation>
+    </message>
+    <message>
+        <source>Name Change</source>
+        <comment>Undo bookmark title change</comment>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Address Change</source>
+        <comment>Undo bookmark url change</comment>
+        <translation>アドレス変更</translation>
     </message>
 </context>
 <context>
@@ -681,6 +710,40 @@ Do you want to reload all pages?</source>
     </message>
 </context>
 <context>
+    <name>ClickToFlash</name>
+    <message>
+        <source>Load</source>
+        <translation>Flash をロード</translation>
+    </message>
+    <message>
+        <source>Load All</source>
+        <translation>このページの全ての Flash をロード</translation>
+    </message>
+    <message>
+        <source>Add %1 to Whitelist</source>
+        <translation>このサイト(%1)をホワイトリストに追加</translation>
+    </message>
+    <message>
+        <source>Remove from Whitelist</source>
+        <translation>ホワイトリストから除外</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>設定</translation>
+    </message>
+    <message>
+        <source>Load Flash</source>
+        <translation>Flash のロード</translation>
+    </message>
+</context>
+<context>
+    <name>ClickToFlashSettings</name>
+    <message>
+        <source>Whitelist sites</source>
+        <translation>ホワイトリスト一覧</translation>
+    </message>
+</context>
+<context>
     <name>CookieExceptionsModel</name>
     <message>
         <source>Website</source>
@@ -737,6 +800,10 @@ Do you want to reload all pages?</source>
         <source>false</source>
         <translation>いいえ</translation>
     </message>
+    <message>
+        <source>Session cookie</source>
+        <translation>セッション Cookie</translation>
+    </message>
 </context>
 <context>
     <name>CookiesDialog</name>
@@ -751,6 +818,10 @@ Do you want to reload all pages?</source>
     <message>
         <source>Remove &amp;All Cookies</source>
         <translation>全ての Cookie を削除(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Add &amp;Rule</source>
+        <translation>ルールを追加(&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -808,7 +879,7 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <translation type="obsolete">&amp;OK</translation>
     </message>
 </context>
 <context>
@@ -1074,6 +1145,10 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>&lt;qt&gt;Certifactes:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
+        <translation type="obsolete">&lt;qt&gt;証明書:&lt;br/&gt;%1&lt;br/&gt;全ての証明書を受け入れますか?&lt;/qt&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
         <translation>&lt;qt&gt;証明書:&lt;br/&gt;%1&lt;br/&gt;全ての証明書を受け入れますか?&lt;/qt&gt;</translation>
     </message>
 </context>
@@ -1116,6 +1191,67 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
 </context>
 <context>
+    <name>OpenSearchDialog</name>
+    <message>
+        <source>Open File</source>
+        <translation>ファイルを開く</translation>
+    </message>
+    <message>
+        <source>OpenSearch</source>
+        <translation>OpenSearch</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>エラー</translation>
+    </message>
+    <message>
+        <source>%1 is not a valid OpenSearch 1.1 description or is already on your list.</source>
+        <translation>%1 は有効なOpenSearch 1.1定義ではないか、既にリストに登録済みです。</translation>
+    </message>
+    <message>
+        <source>You must have at least one search engine in here.</source>
+        <translation>1つ以上の検索エンジンを登録して下さい。</translation>
+    </message>
+    <message>
+        <source>OpenSearch Manager</source>
+        <translation>OpenSearch マネージャ</translation>
+    </message>
+    <message>
+        <source>&amp;Restore Defaults</source>
+        <translation>デフォルトに戻す(&amp;R)</translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation>削除(&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;Add</source>
+        <translation>追加(&amp;A)</translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>閉じる(&amp;C)</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchEngineModel</name>
+    <message>
+        <source>&lt;strong&gt;Description:&lt;/strong&gt; %1</source>
+        <translation>&lt;strong&gt;説明:&lt;/strong&gt; %1</translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;文脈に沿った候補を提供する&lt;/strong&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchManager</name>
+    <message>
+        <source>Do you want to add the following engine to your list of search engines?&lt;br /&gt;&lt;br /&gt;Name: %1&lt;br /&gt;Searches on: %2</source>
+        <translation>以下の検索エンジンを追加しますか?&lt;br /&gt;&lt;br /&gt;検索エンジン名: %1&lt;br /&gt;URL: %2</translation>
+    </message>
+</context>
+<context>
     <name>PasswordDialog</name>
     <message>
         <source>Authentication Required</source>
@@ -1153,7 +1289,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>ICON</source>
-        <translation>ICON</translation>
+        <translation type="obsolete">ICON</translation>
     </message>
     <message>
         <source>Connect to proxy</source>
@@ -1177,6 +1313,10 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     <message>
         <source>Unknown title</source>
         <translation>不明なタイトル</translation>
+    </message>
+    <message>
+        <source>The file is not an OpenSearch 1.1 file.</source>
+        <translation>これは OpenSearch 1.1 ファイルではありません。</translation>
     </message>
 </context>
 <context>
@@ -1218,15 +1358,15 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation type="obsolete">TextLabel</translation>
     </message>
     <message>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <source>Done</source>
@@ -1340,7 +1480,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Times 16</source>
-        <translation>Times 16</translation>
+        <translation type="obsolete">Times 16</translation>
     </message>
     <message>
         <source>Select...</source>
@@ -1352,7 +1492,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Courier 13</source>
-        <translation>Courier 13</translation>
+        <translation type="obsolete">Courier 13</translation>
     </message>
     <message>
         <source>Privacy</source>
@@ -1408,7 +1548,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Confirm when closing multiple tabs</source>
-        <translation>複数のタブを閉じる時に確認する</translation>
+        <translation type="obsolete">複数のタブを閉じる時に確認する</translation>
     </message>
     <message>
         <source>Proxy</source>
@@ -1513,6 +1653,45 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     <message>
         <source>Http (Transparent)</source>
         <translation>Http (透過)</translation>
+    </message>
+    <message>
+        <source>Use ClickToFlash on flash plugins</source>
+        <translation>Flash プラグインとして ClickToFlash を使う</translation>
+    </message>
+    <message>
+        <source>Filter Tracking Cookies</source>
+        <translation>追跡用 Cookie をフィルタする</translation>
+    </message>
+    <message>
+        <source>Confirm when closing multiple tabs or windows</source>
+        <translation>複数のタブやウィンドウを閉じる時に確認する</translation>
+    </message>
+    <message>
+        <source>Quit the application when last tab is closed</source>
+        <translation>最後のタブを閉じる時にアプリケーションを終了する</translation>
+    </message>
+    <message>
+        <source>Enable network cache</source>
+        <translation>ネットワーク キャッシュを有功にする</translation>
+    </message>
+    <message>
+        <source>Maximum Size:</source>
+        <translation>最大サイズ:</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <translation> MB</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <source>Restart required</source>
+        <translation>再起動が必要</translation>
+    </message>
+    <message>
+        <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation>ネットワーク キャッシュの構成を変更しました。設定を有効にするにはブラウザの再起動が必要です。</translation>
     </message>
 </context>
 <context>
@@ -1659,11 +1838,19 @@ Do you really want to close this page?
     </message>
     <message>
         <source>Clear Recent Searches</source>
-        <translation type="obsolete">検索履歴の消去</translation>
+        <translation>検索履歴の消去</translation>
     </message>
     <message>
         <source>Suggestions</source>
         <translation>候補</translation>
+    </message>
+    <message>
+        <source>Add &apos;%1&apos;</source>
+        <translation>&apos;%1&apos; を追加</translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation>検索エンジンのカスタマイズ...</translation>
     </message>
 </context>
 <context>
@@ -1738,6 +1925,10 @@ Do you really want to close this page?
     <message>
         <source>Loading...</source>
         <translation>読み込み中...</translation>
+    </message>
+    <message>
+        <source>Search with...</source>
+        <translation>検索エンジンを指定して検索...</translation>
     </message>
 </context>
 <context>

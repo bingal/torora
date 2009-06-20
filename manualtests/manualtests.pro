@@ -1,7 +1,7 @@
 TEMPLATE      = subdirs
 SUBDIRS = bookmarks \
           downloadmanager \
-          googlesuggest \
+          editview \
           history \
           lineedit \
           locationbar \

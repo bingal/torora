@@ -1,0 +1,27 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/graphics">
+    <file>addtab.png</file>
+    <file>closetab.png</file>
+    <file>defaulticon.png</file>
+    <file>history.png</file>
+    <file>loading.gif</file>
+    <file>private.png</file>
+    <file>tor.png</file>
+    <file>tor-on.png</file>
+    <file>tor-checking.png</file>
+    <file>tor-logo.png</file>
+    <file>tor-off.png</file>
+    <file>info.png</file>
+    <file>help.png</file>
+    <file>important.png</file>
+    <file>geobrowser.png</file>
+    <file>vidalia-password.png</file>
+    <file>flags/gb.png</file>
+    <file>flags/cn.png</file>
+    <file>flags/se.png</file>
+    <file>flags/fr.png</file>
+    <file>flags/us.png</file>
+    <file>flags/de.png</file>
+    <file>flags/FLAGS_LICENCE</file>
+</qresource>
+</RCC>

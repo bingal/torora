@@ -9,7 +9,12 @@ GenericName[en_US]=Anonymous Web Browser
 GenericName[cs_CZ]=Webový prohlížeč
 GenericName[nl]=Webbrowser
 GenericName[nl_NL]=Webbrowser
+<<<<<<< HEAD:src/torora.desktop
 Exec=torora %u
+=======
+GenericName[pl_PL]=Przeglądarka WWW
+Exec=arora %u
+>>>>>>> 7c3f3daab998c620af11378ddc7701933b6b3b24:src/arora.desktop
 Terminal=false
 Type=Application
 Icon=torora

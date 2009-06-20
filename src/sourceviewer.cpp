@@ -37,7 +37,7 @@
 SourceViewer::SourceViewer(const QString &source,
         const QString &title, const QUrl &url, QWidget *parent)
     : QDialog(parent)
-    , m_edit(new QPlainTextEdit(tr("Loading..."),this))
+    , m_edit(new QPlainTextEdit(tr("Loading..."), this))
     , m_highlighter(new SourceHighlighter(m_edit->document()))
     , m_plainTextEditSearch(new PlainTextEditSearch(m_edit, this))
     , m_layout(new QVBoxLayout(this))
@@ -47,16 +47,16 @@ SourceViewer::SourceViewer(const QString &source,
     , m_viewMenu(new QMenu(tr("&View"), m_menuBar))
     , m_setWrappingAction(new QAction(tr("&Wrap lines"), m_viewMenu))
 {
-    setWindowTitle(QString(tr("Source of Page ")).append(title));
+    setWindowTitle(tr("Source of Page %1").arg(title));
     resize(640, 480);
 
     m_source = new QString(source);
 
     m_edit->setLineWrapMode(QPlainTextEdit::NoWrap);
     m_edit->setReadOnly(true);
-    QFont mFont = m_edit->font();
-    mFont.setFamily(QLatin1String("Monospace"));
-    m_edit->setFont(mFont);
+    QFont font = m_edit->font();
+    font.setFamily(QLatin1String("Monospace"));
+    m_edit->setFont(font);
     m_edit->setLineWidth(0);
     m_edit->setFrameShape(QFrame::NoFrame);
 
@@ -99,12 +99,15 @@ void SourceViewer::loadingFinished()
 {
     QWebPage page;
     QByteArray response = m_reply->readAll();
-    page.mainFrame()->setContent(response,QString(),m_request->url());
+    page.mainFrame()->setContent(response, QString(), m_request->url());
+
     /* If original request was POST or a different problem is there, fall
        back to modified version of QWebFrame.toHtml() */
     if (page.mainFrame()->toHtml() != *m_source)
         m_edit->setPlainText(*m_source);
-    else m_edit->setPlainText(QLatin1String(response));
+    else
+        m_edit->setPlainText(QLatin1String(response));
+
     m_reply->close();
     delete m_request;
     delete m_source;

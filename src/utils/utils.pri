@@ -3,7 +3,9 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     autosaver.h \
-    googlesuggest.h \
+    editlistview.h \
+    edittableview.h \
+    edittreeview.h \
     lineedit.h \
     lineedit_p.h \
     proxystyle.h \
@@ -12,7 +14,9 @@ HEADERS += \
 
 SOURCES += \
     autosaver.cpp \
-    googlesuggest.cpp \
+    editlistview.cpp \
+    edittableview.cpp \
+    edittreeview.cpp \
     lineedit.cpp \
     singleapplication.cpp \
     squeezelabel.cpp

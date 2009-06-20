@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="pl_PL">
-<defaultcodec></defaultcodec>
 <context>
     <name>AboutDialog</name>
     <message>
         <source>About</source>
-        <translation>O programie</translation>
+        <translation type="obsolete">O programie</translation>
     </message>
     <message>
         <source>Authors</source>
@@ -28,7 +27,7 @@
         <source>Close</source>
         <translation>Zamknij</translation>
     </message>
-    <message>
+    <message utf8="true">
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -39,6 +38,10 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>O programie %1</translation>
     </message>
 </context>
 <context>
@@ -581,7 +584,7 @@ Czy chcesz odświeżyć wszystkie strony?</translation>
     </message>
     <message>
         <source>Stop loading the current page</source>
-        <translation>Zatrzymaj ładowenie strony</translation>
+        <translation>Zatrzymaj ładowanie strony</translation>
     </message>
     <message>
         <source>Reload the current page</source>
@@ -927,7 +930,7 @@ Czy chcesz odświeżyć wszystkie strony?</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <translation type="obsolete">&amp;OK</translation>
     </message>
 </context>
 <context>
@@ -1275,6 +1278,67 @@ Czy chcesz zignorować te błędy?&lt;/qt&gt;</translation>
     </message>
 </context>
 <context>
+    <name>OpenSearchDialog</name>
+    <message>
+        <source>Open File</source>
+        <translation>Otwórz plik</translation>
+    </message>
+    <message>
+        <source>OpenSearch</source>
+        <translation>OpenSearch</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Błąd</translation>
+    </message>
+    <message>
+        <source>%1 is not a valid OpenSearch 1.1 description or is already on your list.</source>
+        <translation>%1 nie jest prawidłowym plikiem OpenSearch 1.1 lub jest już na Twojej liście.</translation>
+    </message>
+    <message>
+        <source>You must have at least one search engine in here.</source>
+        <translation>Musisz mieć co najmniej jedną wyszukiwarkę.</translation>
+    </message>
+    <message>
+        <source>OpenSearch Manager</source>
+        <translation>Menedżer wyszukiwarek OpenSearch</translation>
+    </message>
+    <message>
+        <source>&amp;Restore Defaults</source>
+        <translation>&amp;Przywróć domyślne</translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation>&amp;Usuń</translation>
+    </message>
+    <message>
+        <source>&amp;Add</source>
+        <translation>&amp;Dodaj</translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>&amp;Zamknij</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchEngineModel</name>
+    <message>
+        <source>&lt;strong&gt;Description:&lt;/strong&gt; %1</source>
+        <translation>&lt;strong&gt;Opis:&lt;/strong&gt; %1</translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;Oferuje sugestie kontekstowe&lt;/strong&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchManager</name>
+    <message>
+        <source>Do you want to add the following engine to your list of search engines?&lt;br /&gt;&lt;br /&gt;Name: %1&lt;br /&gt;Searches on: %2</source>
+        <translation>Czy chcesz dodać następującą wyszukiwarkę do swojej listy?&lt;br /&gt;&lt;br /&gt;Nazwa: %1&lt;br /&gt;Wyszukuje na: %2</translation>
+    </message>
+</context>
+<context>
     <name>PasswordDialog</name>
     <message>
         <source>Authentication Required</source>
@@ -1336,6 +1400,10 @@ Czy chcesz zignorować te błędy?&lt;/qt&gt;</translation>
     <message>
         <source>Unknown title</source>
         <translation>Nieznany tytuł</translation>
+    </message>
+    <message>
+        <source>The file is not an OpenSearch 1.1 file.</source>
+        <translation>Plik nie jest prawidłowym plikiem OpenSearch 1.1.</translation>
     </message>
 </context>
 <context>
@@ -1631,7 +1699,7 @@ Czy chcesz zignorować te błędy?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Confirm when closing multiple tabs</source>
-        <translation>Potwierdź zamknięcie wielu kart naraz</translation>
+        <translation type="obsolete">Potwierdź zamknięcie wielu kart naraz</translation>
     </message>
     <message>
         <source>Preferences</source>
@@ -1713,6 +1781,41 @@ Czy chcesz zignorować te błędy?&lt;/qt&gt;</translation>
         <source>Use ClickToFlash on flash plugins</source>
         <translatorcomment>not sure if ClickToFlash needs to be translated at all...</translatorcomment>
         <translation>Użyj ClickToFlash dla pluginów flash</translation>
+    </message>
+    <message>
+        <source>Filter Tracking Cookies</source>
+        <translation>Odrzucaj śledzące ciastka</translation>
+    </message>
+    <message>
+        <source>Confirm when closing multiple tabs or windows</source>
+        <translation>Potwierdź zamknięcie wielu kart lub okien naraz</translation>
+    </message>
+    <message>
+        <source>Quit the application when last tab is closed</source>
+        <translation>Zamknij aplikację, gdy ostatnia karta zostanie zamknięta</translation>
+    </message>
+    <message>
+        <source>Enable network cache</source>
+        <translation>Włącz sieciową pamięć podręczną</translation>
+    </message>
+    <message>
+        <source>Maximum Size:</source>
+        <translation>Maksymalny rozmiar:</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <translation>MB</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <source>Restart required</source>
+        <translation>Ponowne uruchomienie wymagane</translation>
+    </message>
+    <message>
+        <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation>Konfiguracja pamięci podręcznej została zmieniona. Aby została wzięta pod uwagę, przeglądarka musi być uruchomiona ponownie.</translation>
     </message>
 </context>
 <context>
@@ -1833,7 +1936,7 @@ Czy na pewno chcesz zamknąć tę stronę?
     </message>
     <message>
         <source>Loading %1% (%2 %3)...</source>
-        <translation>Ładowanie %1 (%2 %3)...</translation>
+        <translation>Ładowanie %1% (%2 %3)...</translation>
     </message>
     <message>
         <source>Finished loading</source>
@@ -1868,11 +1971,19 @@ Czy na pewno chcesz zamknąć tę stronę?
     </message>
     <message>
         <source>Clear Recent Searches</source>
-        <translation type="obsolete">Wyczyść listę ostatnio wyszukiwanych fraz</translation>
+        <translation>Wyczyść listę ostatnio wyszukiwanych fraz</translation>
     </message>
     <message>
         <source>Suggestions</source>
         <translation>Sugestie</translation>
+    </message>
+    <message>
+        <source>Add &apos;%1&apos;</source>
+        <translation>Dodaj &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation>Konfiguruj wyszukiwarki...</translation>
     </message>
 </context>
 <context>
@@ -1955,6 +2066,10 @@ Czy na pewno chcesz zamknąć tę stronę?
     <message>
         <source>Loading...</source>
         <translation>Ładowanie...</translation>
+    </message>
+    <message>
+        <source>Search with...</source>
+        <translation>Szukaj z...</translation>
     </message>
 </context>
 <context>

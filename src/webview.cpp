@@ -64,18 +64,29 @@
 
 #include "webview.h"
 
-#include "bookmarks.h"
+#include "addbookmarkdialog.h"
+#include "bookmarksmanager.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "downloadmanager.h"
+#include "opensearchengine.h"
+#include "opensearchengineaction.h"
+#include "opensearchmanager.h"
+#include "toolbarsearch.h"
 #include "webpage.h"
 
 #include <qclipboard.h>
+#include <qdebug.h>
 #include <qevent.h>
 #include <qmenubar.h>
 #include <qwebframe.h>
 
-#include <qdebug.h>
+#ifdef WEBKIT_TRUNK
+Q_DECLARE_METATYPE(QWebElement)
+#include <qinputdialog.h>
+#include <qmessagebox.h>
+#include <qwebelement.h>
+#endif
 
 WebView::WebView(QWidget *parent)
     : QWebView(parent)
@@ -107,6 +118,41 @@ WebView::WebView(QWidget *parent)
     m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
 }
 
+#if 1 // soon to be #if QT_VERSION <= 0x040600
+#include <qdir.h>
+QUrl WebView::guessUrlFromString(const QString &string)
+{
+    QString trimmedString = string.trimmed();
+
+    // Check the most common case of a valid url with scheme and host first
+    QUrl url = QUrl::fromEncoded(trimmedString.toUtf8(), QUrl::TolerantMode);
+    if (url.isValid() && !url.scheme().isEmpty() && !url.host().isEmpty())
+        return url;
+
+    // Absolute files that exists
+    if (QDir::isAbsolutePath(trimmedString) && QFile::exists(trimmedString))
+        return QUrl::fromLocalFile(trimmedString);
+
+    // If the string is missing the scheme or the scheme is not valid prepend a scheme
+    QString scheme = url.scheme();
+    if (scheme.isEmpty() || scheme.contains(QLatin1Char('.')) || scheme == QLatin1String("localhost")) {
+        // Do not do anything for strings such as "foo", only "foo.com"
+        int dotIndex = trimmedString.indexOf(QLatin1Char('.'));
+        if (dotIndex != -1 || trimmedString.startsWith(QLatin1String("localhost"))) {
+            const QString hostscheme = trimmedString.left(dotIndex).toLower();
+            QByteArray scheme = (hostscheme == QLatin1String("ftp")) ? "ftp" : "http";
+            trimmedString = QLatin1String(scheme) + QLatin1String("://") + trimmedString;
+        }
+        url = QUrl::fromEncoded(trimmedString.toUtf8(), QUrl::TolerantMode);
+    }
+
+    if (url.isValid())
+        return url;
+
+    return QUrl();
+}
+#endif
+
 TabWidget *WebView::tabWidget() const
 {
     QObject *widget = this->parent();
@@ -125,7 +171,8 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
     QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
 
     if (!r.linkUrl().isEmpty()) {
-        menu->addAction(tr("Open in New &Window"), this, SLOT(openLinkInNewWindow()));
+        QAction *newWindowAction = menu->addAction(tr("Open in New &Window"), this, SLOT(openActionUrlInNewWindow()));
+        newWindowAction->setData(r.linkUrl());
         QAction *newTabAction = menu->addAction(tr("Open in New &Tab"), this, SLOT(openActionUrlInNewTab()));
         newTabAction->setData(r.linkUrl());
         menu->addSeparator();
@@ -142,7 +189,8 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
     if (!r.imageUrl().isEmpty()) {
         if (!menu->isEmpty())
             menu->addSeparator();
-        menu->addAction(tr("Open Image in New &Window"), this, SLOT(openImageInNewWindow()));
+        QAction *newWindowAction = menu->addAction(tr("Open Image in New &Window"), this, SLOT(openActionUrlInNewWindow()));
+        newWindowAction->setData(r.imageUrl());
         QAction *newTabAction = menu->addAction(tr("Open Image in New &Tab"), this, SLOT(openActionUrlInNewTab()));
         newTabAction->setData(r.imageUrl());
         menu->addSeparator();
@@ -150,6 +198,43 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
         menu->addAction(tr("&Copy Image"), this, SLOT(copyImageToClipboard()));
         menu->addAction(tr("C&opy Image Location"), this, SLOT(copyImageLocationToClipboard()))->setData(r.imageUrl().toString());
     }
+
+    if (!page()->selectedText().isEmpty()) {
+        if (menu->isEmpty()) {
+            menu->addAction(pageAction(QWebPage::Copy));
+        } else {
+            menu->addSeparator();
+        }
+        QMenu *searchMenu = menu->addMenu(tr("Search with..."));
+
+        QList<QString> list = ToolbarSearch::openSearchManager()->allEnginesNames();
+        for (int i = 0; i < list.count(); ++i) {
+            QString name = list.at(i);
+            OpenSearchEngine *engine = ToolbarSearch::openSearchManager()->engine(name);
+            QAction *action = new OpenSearchEngineAction(engine, searchMenu);
+            searchMenu->addAction(action);
+            action->setData(name);
+        }
+
+        connect(searchMenu, SIGNAL(triggered(QAction *)), this, SLOT(searchRequested(QAction *)));
+    }
+
+#ifdef WEBKIT_TRUNK
+    QWebElement element = r.element();
+    if (!element.isNull()
+        && element.tagName().toLower() == QLatin1String("input")
+        && element.attribute(QLatin1String("type"), QLatin1String("text")) == QLatin1String("text")) {
+        if (menu->isEmpty()) {
+            menu->addAction(pageAction(QWebPage::Copy));
+        } else {
+            menu->addSeparator();
+        }
+
+        QVariant variant;
+        variant.setValue(element);
+        menu->addAction(tr("Add to the toolbar search"), this, SLOT(addSearchEngine()))->setData(variant);
+    }
+#endif
 
 #if QT_VERSION >= 0x040500
     if (menu->isEmpty()) {
@@ -159,9 +244,9 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
 #endif
 
     if (!menu->isEmpty()) {
-        if (tabWidget()->mainWindow()->menuBar()->isHidden()) {
+        if (BrowserMainWindow::parentWindow(tabWidget())->menuBar()->isHidden()) {
             menu->addSeparator();
-            menu->addAction(tabWidget()->mainWindow()->showMenuBarAction());
+            menu->addAction(BrowserMainWindow::parentWindow(tabWidget())->showMenuBarAction());
         }
 
         menu->exec(mapToGlobal(event->pos()));
@@ -196,11 +281,6 @@ void WebView::resizeEvent(QResizeEvent *event)
     QWebView::resizeEvent(event);
 }
 
-void WebView::openLinkInNewWindow()
-{
-    pageAction(QWebPage::OpenLinkInNewWindow)->trigger();
-}
-
 void WebView::downloadLinkToDisk()
 {
     pageAction(QWebPage::DownloadLinkToDisk)->trigger();
@@ -215,6 +295,16 @@ void WebView::openActionUrlInNewTab()
 {
     if (QAction *action = qobject_cast<QAction*>(sender())) {
         QWebPage *page = tabWidget()->getView(TabWidget::NewNotSelectedTab, this)->page();
+        QNetworkRequest request(action->data().toUrl());
+        request.setRawHeader("Referer", url().toEncoded());
+        page->mainFrame()->load(request);
+    }
+}
+
+void WebView::openActionUrlInNewWindow()
+{
+    if (QAction *action = qobject_cast<QAction*>(sender())) {
+        QWebPage *page = tabWidget()->getView(TabWidget::NewWindow, this)->page();
         QNetworkRequest request(action->data().toUrl());
         request.setRawHeader("Referer", url().toEncoded());
         page->mainFrame()->load(request);
@@ -251,6 +341,115 @@ void WebView::bookmarkLink()
         dialog.exec();
     }
 }
+
+void WebView::searchRequested(QAction *action)
+{
+    QString searchText = page()->selectedText();
+
+    if (searchText.isEmpty())
+        return;
+
+    QVariant index = action->data();
+
+    if (index.canConvert<QString>()) {
+        OpenSearchEngine *engine = ToolbarSearch::openSearchManager()->engine(index.toString());
+        emit search(engine->searchUrl(searchText), TabWidget::NewSelectedTab);
+    }
+}
+
+#ifdef WEBKIT_TRUNK
+void WebView::addSearchEngine()
+{
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action)
+        return;
+
+    QVariant variant = action->data();
+    if (!variant.canConvert<QWebElement>())
+        return;
+
+    QWebElement element = qvariant_cast<QWebElement>(variant);
+    QString elementName = element.attribute(QLatin1String("name"));
+    QWebElement formElement = element;
+    while (formElement.tagName().toLower() != QLatin1String("form"))
+        formElement = formElement.parent();
+
+    if (formElement.isNull() || formElement.attribute(QLatin1String("action")).isEmpty())
+        return;
+
+    QString method = formElement.attribute(QLatin1String("method"), QLatin1String("get")).toLower();
+    if (method != QLatin1String("get")) {
+        QMessageBox::warning(this, tr("Method not supported"),
+                             tr("%1 method is not supported.").arg(method.toUpper()));
+        return;
+    }
+
+    QUrl searchUrl(url().resolved(QUrl(formElement.attribute(QLatin1String("action")))));
+    QMap<QString, QString> searchEngines;
+    QList<QWebElement> inputFields = formElement.findAll(QLatin1String("input"));
+    foreach (const QWebElement &inputField, inputFields) {
+        QString type = inputField.attribute(QLatin1String("type"), QLatin1String("text"));
+        QString name = inputField.attribute(QLatin1String("name"));
+        QString value = inputField.scriptableProperty(QLatin1String("value")).toString();
+
+        if (type == QLatin1String("submit")) {
+            searchEngines.insert(value, name);
+        } else if (type == QLatin1String("text")) {
+            if (inputField == element)
+                value = QLatin1String("{searchTerms}");
+
+            searchUrl.addQueryItem(name, value);
+        } else if (type == QLatin1String("checkbox") || type == QLatin1String("radio")) {
+            if (inputField.scriptableProperty(QLatin1String("checked")).toBool()) {
+                searchUrl.addQueryItem(name, value);
+            }
+        } else if (type == QLatin1String("hidden")) {
+            searchUrl.addQueryItem(name, value);
+        }
+    }
+
+    QList<QWebElement> selectFields = formElement.findAll(QLatin1String("select"));
+    foreach (const QWebElement &selectField, selectFields) {
+        QString name = selectField.attribute(QLatin1String("name"));
+        int selectedIndex = selectField.scriptableProperty(QLatin1String("selectedIndex")).toInt();
+        if (selectedIndex == -1)
+            continue;
+
+        QList<QWebElement> options = selectField.findAll(QLatin1String("option"));
+        QString value = options.at(selectedIndex).toPlainText();
+        searchUrl.addQueryItem(name, value);
+    }
+
+    bool ok = true;
+    if (searchEngines.count() > 1) {
+        QString searchEngine = QInputDialog::getItem(this, tr("Search engine"),
+                                                    tr("Choose the desired search engine"), searchEngines.keys(),
+                                                    0, false, &ok);
+        if (!ok)
+            return;
+        if (!searchEngines[searchEngine].isEmpty())
+            searchUrl.addQueryItem(searchEngines[searchEngine], searchEngine);
+    }
+
+    QString engineName;
+    QList<QWebElement> labels = formElement.findAll(QString(QLatin1String("label[for=\"%1\"]")).arg(elementName));
+    if (!labels.isEmpty())
+        engineName = labels.at(0).toPlainText();
+
+    engineName = QInputDialog::getText(this, tr("Engine name"), tr("Type in a name for the engine"),
+                                       QLineEdit::Normal, engineName, &ok);
+    if (!ok)
+        return;
+
+    OpenSearchEngine *engine = new OpenSearchEngine();
+    engine->setName(engineName);
+    engine->setDescription(engineName);
+    engine->setSearchUrlTemplate(searchUrl.toString());
+    engine->setImage(icon().pixmap(16, 16).toImage());
+
+    ToolbarSearch::openSearchManager()->addEngine(engine);
+}
+#endif
 
 void WebView::setProgress(int progress)
 {
@@ -411,14 +610,17 @@ void WebView::dropEvent(QDropEvent *event)
 
 void WebView::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWebView::mouseReleaseEvent(event);
+    const bool isAccepted = event->isAccepted();
+    m_page->event(event);
     if (!event->isAccepted()
         && (BrowserApplication::instance()->eventMouseButtons() & Qt::MidButton)) {
         QUrl url(QApplication::clipboard()->text(QClipboard::Selection));
         if (!url.isEmpty() && url.isValid() && !url.scheme().isEmpty()) {
+            BrowserApplication::instance()->setEventMouseButtons(Qt::NoButton);
             loadUrl(url);
         }
     }
+    event->setAccepted(isAccepted);
 }
 
 void WebView::keyPressEvent(QKeyEvent *event)

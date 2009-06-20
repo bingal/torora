@@ -80,10 +80,14 @@
 #include <qfile.h>
 #include <qfontdialog.h>
 #include <qmetaobject.h>
+#include <qmessagebox.h>
 #include <qsettings.h>
 
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
+#if QT_VERSION >= 0x040500
+    , m_cacheEnabled(false)
+#endif
 {
     /* Privoxy */
     proxies << 8118;
@@ -101,6 +105,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 #if QT_VERSION < 0x040500
     oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
+    networkCache->setVisible(false);
+#else
+    // As network cache has too many bugs in 4.5.1, do not allow to enable it.
+    if (QLatin1String(qVersion()) == QLatin1String("4.5.1"))
+        networkCache->setVisible(false);
 #endif
 
     /*Torora: Req 2.2*/
@@ -143,7 +152,7 @@ void SettingsDialog::loadDefaults()
       enablePlugins->setChecked(defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
     }
     enableImages->setChecked(defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
-    clickToFlash->setChecked(true);
+    clickToFlash->setChecked(false);
     filterTrackingCookiesCheckbox->setChecked(true);
 }
 
@@ -267,6 +276,14 @@ void SettingsDialog::loadFromSettings()
     filterTrackingCookiesCheckbox->setChecked(settings.value(QLatin1String("filterTrackingCookies"), true).toBool());
     settings.endGroup();
 
+#if QT_VERSION >= 0x040500
+    // Network
+    settings.beginGroup(QLatin1String("network"));
+    m_cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
+    networkCache->setChecked(m_cacheEnabled);
+    networkCacheMaximumSizeSpinBox->setValue(settings.value(QLatin1String("maximumCacheSize"), 50).toInt());
+    settings.endGroup();
+#endif
 
     // Proxy
     settings.beginGroup(QLatin1String("proxy"));
@@ -390,9 +407,18 @@ void SettingsDialog::saveToSettings()
       }
       QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
       settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(keepPolicy)));
-
+      settings.setValue(QLatin1String("filterTrackingCookies"), filterTrackingCookiesCheckbox->isChecked());
       settings.endGroup();
     }
+
+
+#if QT_VERSION >= 0x040500
+    // Network
+    settings.beginGroup(QLatin1String("network"));
+    settings.setValue(QLatin1String("cacheEnabled"), networkCache->isChecked());
+    settings.setValue(QLatin1String("maximumCacheSize"), networkCacheMaximumSizeSpinBox->value());
+    settings.endGroup();
+#endif
 
     // proxy
     settings.beginGroup(QLatin1String("proxy"));
@@ -427,12 +453,8 @@ void SettingsDialog::saveToSettings()
     BrowserApplication::cookieJar()->loadSettings(BrowserApplication::isTor());
     BrowserApplication::historyManager()->loadSettings();
 
-    if (BrowserMainWindow *mw = static_cast<BrowserMainWindow*>(parent())) {
-        WebView *webView = mw->currentTab();
-        if (webView) {
-            webView->webPage()->webPluginFactory()->refreshPlugins();
-        }
-    }
+    WebPage::webPluginFactory()->refreshPlugins();
+
     QList<BrowserMainWindow*> list = BrowserApplication::instance()->mainWindows();
     foreach (BrowserMainWindow *mainWindow, list) {
         mainWindow->tabWidget()->loadSettings();
@@ -443,6 +465,14 @@ void SettingsDialog::accept()
 {
     saveToSettings();
     BrowserApplication::instance()->torManager()->checkTorInstallation(false);
+#if QT_VERSION >= 0x040500
+    // Due to a bug in Qt <= 4.5.1, enabling/disabling cache requires the browser to be restarted.
+    if (QLatin1String(qVersion()) <= QLatin1String("4.5.1") && networkCache->isChecked() != m_cacheEnabled) {
+        QMessageBox::information(this, tr("Restart required"),
+                                 tr("The network cache configuration has changed. "
+                                    "So that it can be taken into account, the browser has to be restarted."));
+    }
+#endif
     QDialog::accept();
 }
 

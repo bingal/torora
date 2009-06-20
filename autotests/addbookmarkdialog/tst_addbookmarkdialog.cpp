@@ -19,9 +19,13 @@
 
 #include <QtTest/QtTest>
 
-#include <bookmarks.h>
-#include <xbel.h>
-#include <browserapplication.h>
+#include "addbookmarkdialog.h"
+#include "bookmarksmanager.h"
+#include "bookmarknode.h"
+#include "browserapplication.h"
+
+#include <qpushbutton.h>
+#include <qabstractitemview.h>
 
 class tst_AddBookmarkDialog : public QObject
 {
@@ -107,7 +111,7 @@ void tst_AddBookmarkDialog::addbookmarkdialog()
     QFETCH(int, select);
 
     BookmarksManager *manager = BrowserApplication::bookmarksManager();
-    qRegisterMetaType<BookmarkNode *>("BookmarkNode *");
+    qRegisterMetaType<BookmarkNode*>("BookmarkNode *");
     QSignalSpy spy(manager, SIGNAL(entryAdded(BookmarkNode *)));
     BookmarkNode *menu = manager->menu();
     BookmarkNode *toolbar = manager->toolbar();
@@ -138,6 +142,8 @@ void tst_AddBookmarkDialog::addbookmarkdialog()
     if (node) {
         QCOMPARE(node->title, title);
         QCOMPARE(node->url, url);
+        QVERIFY(dialog.addedNode());
+        QVERIFY(*node == *dialog.addedNode());
     }
 }
 

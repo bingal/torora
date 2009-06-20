@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="uk">
+<!DOCTYPE TS><TS version="1.1" language="uk">
 <defaultcodec></defaultcodec>
 <context>
     <name>AboutDialog</name>
     <message>
         <source>About</source>
-        <translation>Про програму</translation>
+        <translation type="obsolete">Про програму</translation>
     </message>
     <message>
         <source>Authors</source>
@@ -25,8 +24,8 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright &#xa9; 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
@@ -39,6 +38,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Close</source>
         <translation>Закрити</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>Про %1</translation>
+    </message>
+    <message encoding="UTF-8">
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;￼&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;￼p, li { white-space: pre-wrap; }￼&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;￼&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -72,7 +83,7 @@ p, li { white-space: pre-wrap; }
     <name>AddBookmarkDialog</name>
     <message>
         <source>Add Bookmark</source>
-        <translation>Додати закладинку</translation>
+        <translation>Додати закладку</translation>
     </message>
     <message>
         <source>Type a name for the bookmark, and choose where to keep it.</source>
@@ -80,7 +91,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Url</source>
-        <translation>Url</translation>
+        <translation>Посилання</translation>
     </message>
     <message>
         <source>Title</source>
@@ -103,7 +114,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <source>New Folder</source>
@@ -135,12 +146,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error when loading bookmarks on line %1, column %2:
 %3</source>
-        <translation>Помилка завантаження закладинок на рядку %1, стовпець %2:
+        <translation>Помилка завантаження закладок у рядку %1, стовпець %2:
 %3</translation>
     </message>
     <message>
         <source>Toolbar Bookmarks</source>
-        <translation>Панель закладинок</translation>
+        <translation>Панель закладок</translation>
     </message>
     <message>
         <source>Menu</source>
@@ -172,40 +183,54 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>error saving bookmarks</source>
-        <translation>Помилка збереження закладинок</translation>
+        <translation>Помилка збереження закладок</translation>
     </message>
     <message>
         <source>Remove Bookmark</source>
-        <translation>Вилучити закладинку</translation>
+        <translation>Вилучити закладку</translation>
     </message>
     <message>
         <source>Insert Bookmark</source>
-        <translation>Вставити закладинку</translation>
+        <translation>Вставити закладку</translation>
     </message>
     <message>
         <source>Name Change</source>
-        <translation>Зміна назви</translation>
+        <translation type="obsolete">Зміна назви</translation>
     </message>
     <message>
         <source>Address Change</source>
-        <translation>Зміна адреси</translation>
+        <translation type="obsolete">Зміна адреси</translation>
     </message>
     <message>
         <source>Bookmarks Bar</source>
-        <translation>Панель закладинок</translation>
+        <translation>Панель закладок</translation>
     </message>
     <message>
         <source>Bookmarks Menu</source>
-        <translation>Меню закладинок</translation>
+        <translation>Меню закладок</translation>
     </message>
     <message>
         <source>XBEL (*.xbel *.xml *.html)</source>
-        <translation>XBEL (*.xbel *.xml *.html)</translation>
+        <translation type="obsolete">XBEL (*.xbel *.xml *.html)</translation>
     </message>
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
-        <translation>Помилка під час завантаження закладинки html: %1</translation>
+        <translation>Помилка під час завантаження закладки html: %1</translation>
+    </message>
+    <message>
+        <source>XBEL</source>
+        <translation>XBEL</translation>
+    </message>
+    <message>
+        <source>Name Change</source>
+        <comment>Undo bookmark title change</comment>
+        <translation>Зміна назви</translation>
+    </message>
+    <message>
+        <source>Address Change</source>
+        <comment>Undo bookmark url change</comment>
+        <translation>Зміна адреси</translation>
     </message>
 </context>
 <context>
@@ -230,7 +255,7 @@ p, li { white-space: pre-wrap; }
     <name>BookmarksToolBar</name>
     <message>
         <source>Bookmark</source>
-        <translation>Закладинка</translation>
+        <translation>Закладка</translation>
     </message>
     <message>
         <source>Open</source>
@@ -246,7 +271,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Bookmark...</source>
-        <translation>Додати закладинку...</translation>
+        <translation>Додати закладку...</translation>
     </message>
     <message>
         <source>Add Folder...</source>
@@ -263,7 +288,7 @@ p, li { white-space: pre-wrap; }
         <source>There are %1 windows and %2 tabs open
 Do you want to quit anyway?</source>
         <translation>Відкрито %1 вікон та %2 вкладок
-Ви хочете вийти в будь-якому разі?</translation>
+Ви бажаєте вийти в будь-якому разі?</translation>
     </message>
     <message>
         <source>Restore failed</source>
@@ -271,7 +296,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>The saved session will not be restored because Arora crashed while trying to restore this session.</source>
-        <translation>Збережена сесія не буде відновлена, тому що Arora ламається, коли намагається відновити її.</translation>
+        <translation>Збережена сесія не буде відновлена, тому що Arora аварійно завершується, коли намагається відновити її.</translation>
     </message>
 </context>
 <context>
@@ -290,7 +315,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Open &amp;Location...</source>
-        <translation>Відкрити &amp;Location...</translation>
+        <translation>Відкрити &amp;місце...</translation>
     </message>
     <message>
         <source>&amp;Save As...</source>
@@ -298,15 +323,15 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>&amp;Import Bookmarks...</source>
-        <translation>&amp;Імпортувати закладинки...</translation>
+        <translation>&amp;Імпортувати закладки...</translation>
     </message>
     <message>
         <source>&amp;Export Bookmarks...</source>
-        <translation>&amp;Експортувати закладинки...</translation>
+        <translation>&amp;Експортувати закладки...</translation>
     </message>
     <message>
         <source>P&amp;rint Preview...</source>
-        <translation>&amp;Попередній перегляд...</translation>
+        <translation>&amp;Попередній перегляд друку...</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
@@ -326,7 +351,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>&amp;Відмінити</translation>
+        <translation>&amp;Повернути</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
@@ -406,7 +431,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Page S&amp;ource</source>
-        <translation>&amp;Джерело сторінки</translation>
+        <translation>&amp;Код сторінки</translation>
     </message>
     <message>
         <source>Ctrl+Alt+U</source>
@@ -438,7 +463,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>&amp;Bookmarks</source>
-        <translation>&amp;Закладинки</translation>
+        <translation>&amp;Закладки</translation>
     </message>
     <message>
         <source>Manage Bookmarks...</source>
@@ -446,7 +471,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Add Bookmark...</source>
-        <translation>Додати закладинки...</translation>
+        <translation>Додати закладку...</translation>
     </message>
     <message>
         <source>&amp;Window</source>
@@ -496,7 +521,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Navigation</source>
-        <translation>Переміщення</translation>
+        <translation>Навігація</translation>
     </message>
     <message>
         <source>Show Status Bar</source>
@@ -516,11 +541,11 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Show Bookmarks Bar</source>
-        <translation>Показати панель закладинок</translation>
+        <translation>Показати панель закладок</translation>
     </message>
     <message>
         <source>Hide Bookmarks Bar</source>
-        <translation>Сховати панель закладинок</translation>
+        <translation>Сховати панель закладок</translation>
     </message>
     <message>
         <source>Arora</source>
@@ -529,7 +554,7 @@ Do you want to quit anyway?</source>
     <message>
         <source>%1 - Arora</source>
         <comment>Page title and Browser name</comment>
-        <translation>%1 - Arora</translation>
+        <translation>%1 — Arora</translation>
     </message>
     <message>
         <source>Open Web Resource</source>
@@ -545,7 +570,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Are you sure you want to turn on private browsing?</source>
-        <translation>Ви впевнені, що хочете ввімкнути приватне переглядання?</translation>
+        <translation>Ви впевнені, що бажаєте ввімкнути приватне переглядання?</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not addded to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
@@ -553,7 +578,7 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Are you sure you want to close the window?  There are %1 tabs open</source>
-        <translation>Ви впевнені, що хочете закрити вікно? Відкриті %1 вкладок</translation>
+        <translation>Ви впевнені, що бажаєте закрити вікно? Відкрито %1 вкладок</translation>
     </message>
     <message>
         <source>Web Inspector</source>
@@ -562,8 +587,8 @@ Do you want to quit anyway?</source>
     <message>
         <source>The web inspector will only work correctly for pages that were loaded after enabling.
 Do you want to reload all pages?</source>
-        <translation>Вебінспектор буде працювати вірно лише для сторінок, які завантажені після його вмикання.
-Ви хочете перезавантажити всі сторінки?</translation>
+        <translation>Web Inspector буде працювати правильно лише для сторінок, які завантажені після його вмикання.
+Ви бажаєте перезавантажити всі сторінки?</translation>
     </message>
     <message>
         <source>Stop loading the current page</source>
@@ -608,7 +633,7 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>Show All Bookmarks...</source>
-        <translation>Показати всі закладинки...</translation>
+        <translation>Показати всі закладки...</translation>
     </message>
     <message>
         <source>Add Folder...</source>
@@ -621,7 +646,7 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Якщо приватний перегляд увімкнено, деякі дії, що стосуються вашої приватності, будуть вимкнені:&lt;ul&gt;&lt;li&gt; Сторінки тенет не додаються до історії.&lt;/li&gt;&lt;li&gt; Елементи автоматично вилучаються з вікна звантажень&lt;/li&gt;&lt;li&gt; Нові куки не зберігаються, до поточних немає доступу.&lt;/li&gt;&lt;li&gt; Піктограми сайтів не зберігатимуться, сесії не будуть збережені.&lt;/li&gt;&lt;li&gt; Пошуки не додані до виринаючого меню в панелі пошуку.&lt;/li&gt;&lt;/ul&gt;Поки не закриєте вікно, ви все ще можете натискати кнопки &quot;Назад&quot; та &quot;Вперед&quot;, щоб повернутись до сторінок, які ви відкривали.</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Якщо приватний перегляд увімкнено, деякі дії, що стосуються вашої приватності, будуть вимкнені:&lt;ul&gt;&lt;li&gt; Сторінки тенет не додаються до історії.&lt;/li&gt;&lt;li&gt; Елементи автоматично вилучаються з вікна звантажень&lt;/li&gt;&lt;li&gt; Нові куки не зберігаються, до поточних немає доступу.&lt;/li&gt;&lt;li&gt; Піктограми сайтів не зберігатимуться, сесії не будуть збережені.&lt;/li&gt;&lt;li&gt; Пошуки не додані до виринаючого меню в панелі пошуку.&lt;/li&gt;&lt;/ul&gt;Поки не закриєте вікно, ви все ще можете натискати кнопки „Назад“ та „Вперед“, щоб повернутись до сторінок, які ви відкривали.</translation>
     </message>
     <message>
         <source>Ctrl+Y</source>
@@ -644,7 +669,7 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>Clear the following items:</source>
-        <translation>Очистити наступні елементи:</translation>
+        <translation>Очистити такі елементи:</translation>
     </message>
     <message>
         <source>&amp;Browsing History</source>
@@ -660,7 +685,7 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>&amp;Cookies</source>
-        <translation>&amp;Коржики</translation>
+        <translation>&amp;Куки</translation>
     </message>
     <message>
         <source>C&amp;ached Web Pages</source>
@@ -677,6 +702,40 @@ Do you want to reload all pages?</source>
     <message>
         <source>&amp;Cancel</source>
         <translation>&amp;Скасувати</translation>
+    </message>
+</context>
+<context>
+    <name>ClickToFlash</name>
+    <message>
+        <source>Load</source>
+        <translation>Завантажити</translation>
+    </message>
+    <message>
+        <source>Load All</source>
+        <translation>Завантажити все</translation>
+    </message>
+    <message>
+        <source>Add %1 to Whitelist</source>
+        <translation>Долучити %1 до рекомендаційного списку</translation>
+    </message>
+    <message>
+        <source>Remove from Whitelist</source>
+        <translation>Вилучити з рекомендаційного списку</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Налаштування</translation>
+    </message>
+    <message>
+        <source>Load Flash</source>
+        <translation>Завантажити Flash</translation>
+    </message>
+</context>
+<context>
+    <name>ClickToFlashSettings</name>
+    <message>
+        <source>Whitelist sites</source>
+        <translation>Сайти, які рекомендовано до списку</translation>
     </message>
 </context>
 <context>
@@ -736,12 +795,16 @@ Do you want to reload all pages?</source>
         <source>false</source>
         <translation>ні</translation>
     </message>
+    <message>
+        <source>Session cookie</source>
+        <translation>Сеанс куки</translation>
+    </message>
 </context>
 <context>
     <name>CookiesDialog</name>
     <message>
         <source>Cookies</source>
-        <translation>Коржики</translation>
+        <translation>Куки</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
@@ -749,14 +812,18 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>Remove &amp;All Cookies</source>
-        <translation>Вилучити &amp;всі коржики</translation>
+        <translation>Вилучити &amp;всі куки</translation>
+    </message>
+    <message>
+        <source>Add &amp;Rule</source>
+        <translation>Додати &amp;Правило</translation>
     </message>
 </context>
 <context>
     <name>CookiesExceptionsDialog</name>
     <message>
         <source>Cookie Exceptions</source>
-        <translation>Винятки коржиків</translation>
+        <translation>Винятки куків</translation>
     </message>
     <message>
         <source>New Exception</source>
@@ -878,7 +945,7 @@ Do you want to reload all pages?</source>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation>&amp;Гаразд</translation>
+        <translation type="obsolete">&amp;Гаразд</translation>
     </message>
 </context>
 <context>
@@ -990,7 +1057,7 @@ Do you want to reload all pages?</source>
         <source>There are %1 downloads in progress
 Do you want to quit anyway?</source>
         <translation>Активних звантажень: %1
-Ви хочете вийти у будь-якому разі?</translation>
+Ви бажаєте вийти у будь-якому разі?</translation>
     </message>
     <message numerus="yes">
         <source>%n minutes remaining</source>
@@ -1014,11 +1081,11 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>kB</source>
-        <translation>кб</translation>
+        <translation>кБ</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation>Мб</translation>
+        <translation>МБ</translation>
     </message>
 </context>
 <context>
@@ -1033,11 +1100,11 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <source>History</source>
-        <translation>Історія</translation>
+        <translation>Журнал</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
@@ -1101,11 +1168,11 @@ Do you want to quit anyway?</source>
     </message>
     <message>
         <source>Choose language</source>
-        <translation>Виберіть мову</translation>
+        <translation>Вибрати мову</translation>
     </message>
     <message>
         <source>&lt;p&gt;You can run with a different language than&lt;br&gt;the operating system default.&lt;/p&gt;&lt;p&gt;Please choose the language which should be used&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Ви можете працювати з іншою мовою,&lt;br&gt;що не є системною за замовчуванням.&lt;/p&gt;&lt;p&gt;Будь ласка, виберіть мову, яку слід використовувати&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Ви можете працювати з іншою мовою,&lt;br&gt;що не є типово системною.&lt;/p&gt;&lt;p&gt;Будь ласка, виберіть мову, яку слід використовувати&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No translation files are installed.</source>
@@ -1144,7 +1211,7 @@ Do you want to ignore these errors?</source>
     </message>
     <message>
         <source> - SSL Errors</source>
-        <translation> - помилки SSL</translation>
+        <translation> — помилки SSL</translation>
     </message>
     <message>
         <source>&lt;qt&gt;SSL Errors:&lt;br/&gt;&lt;br/&gt;for: &lt;tt&gt;%1&lt;/tt&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;
@@ -1152,11 +1219,15 @@ Do you want to ignore these errors?</source>
 Do you want to ignore these errors?&lt;/qt&gt;</source>
         <translation>&lt;qt&gt;Помилки SSL:&lt;br/&gt;&lt;br/&gt;для: &lt;tt&gt;%1&lt;/tt&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;
 
-Ви хочете не зважати на ці помилки?&lt;/qt&gt;</translation>
+Ви бажаєте нехтувати цими помилками?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&lt;qt&gt;Certifactes:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
-        <translation>&lt;qt&gt;Сертифікати:&lt;br/&gt;%1&lt;br/&gt;Ви хочете прийняти всі ці сертифікати?&lt;/qt&gt;</translation>
+        <translation type="obsolete">&lt;qt&gt;Сертифікати:&lt;br/&gt;%1&lt;br/&gt;Ви хочете прийняти всі ці сертифікати?&lt;/qt&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
+        <translation>&lt;qt&gt;Сертифікати:&lt;br/&gt;%1&lt;br/&gt;Ви бажаєте дозволити всі оці сертифікати?&lt;/qt&gt;</translation>
     </message>
 </context>
 <context>
@@ -1198,6 +1269,67 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
 </context>
 <context>
+    <name>OpenSearchDialog</name>
+    <message>
+        <source>Open File</source>
+        <translation>Відкрити файл</translation>
+    </message>
+    <message>
+        <source>OpenSearch</source>
+        <translation>OpenSearch</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Помилка</translation>
+    </message>
+    <message>
+        <source>%1 is not a valid OpenSearch 1.1 description or is already on your list.</source>
+        <translation>%1 — не OpenSearch 1.1 або він вже є у вашому списку.</translation>
+    </message>
+    <message>
+        <source>You must have at least one search engine in here.</source>
+        <translation>Ви змушені мати щонайменше один з рушіїв пошуку тут.</translation>
+    </message>
+    <message>
+        <source>OpenSearch Manager</source>
+        <translation>Керування OpenSearch</translation>
+    </message>
+    <message>
+        <source>&amp;Restore Defaults</source>
+        <translation>&amp;Відновити до типових</translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation>В&amp;илучити</translation>
+    </message>
+    <message>
+        <source>&amp;Add</source>
+        <translation>&amp;Додати</translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>&amp;Закрити</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchEngineModel</name>
+    <message>
+        <source>&lt;strong&gt;Description:&lt;/strong&gt; %1</source>
+        <translation>&lt;strong&gt;Опис:&lt;/strong&gt; %1</translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;Забезпечує контекстові поради&lt;/strong&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchManager</name>
+    <message>
+        <source>Do you want to add the following engine to your list of search engines?&lt;br /&gt;&lt;br /&gt;Name: %1&lt;br /&gt;Searches on: %2</source>
+        <translation>Ви бажаєте додати такий рушій пошуку до вашого списку?&lt;br /&gt;&lt;br /&gt;Назва: %1&lt;br /&gt;Шукає в: %2</translation>
+    </message>
+</context>
+<context>
     <name>PasswordDialog</name>
     <message>
         <source>Authentication Required</source>
@@ -1213,7 +1345,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Username:</source>
-        <translation>Ім&apos;я коритсувача:</translation>
+        <translation>Ім&apos;я користувача:</translation>
     </message>
     <message>
         <source>Password:</source>
@@ -1235,7 +1367,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>ICON</source>
-        <translation>ICON</translation>
+        <translation type="obsolete">ICON</translation>
     </message>
     <message>
         <source>Connect to proxy</source>
@@ -1243,7 +1375,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Username:</source>
-        <translation>Ім&apos;я коритсувача:</translation>
+        <translation>Ім&apos;я користувача:</translation>
     </message>
     <message>
         <source>Password:</source>
@@ -1260,6 +1392,10 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
         <source>Unknown title</source>
         <translation>Невідома назва</translation>
     </message>
+    <message>
+        <source>The file is not an OpenSearch 1.1 file.</source>
+        <translation>Файл — не є файлом OpenSearch 1.1.</translation>
+    </message>
 </context>
 <context>
     <name>RequestModel</name>
@@ -1269,7 +1405,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Method</source>
-        <translation>Метод</translation>
+        <translation>Спосіб</translation>
     </message>
     <message>
         <source>Address</source>
@@ -1300,15 +1436,15 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>ТекстоваМітка</translation>
+        <translation type="obsolete">ТекстоваМітка</translation>
     </message>
     <message>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <source>Done</source>
@@ -1346,7 +1482,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Restore windows and tabs from last time</source>
-        <translation>Відновити вікна на вкладки з минулого разу</translation>
+        <translation>Відновити попередні вікна і вкладки</translation>
     </message>
     <message>
         <source>Home Page:</source>
@@ -1358,7 +1494,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Remove history items:</source>
-        <translation>Вилучити елемент історії:</translation>
+        <translation>Вилучати елементи журнала:</translation>
     </message>
     <message>
         <source>After one day</source>
@@ -1390,7 +1526,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Open links from applications:</source>
-        <translation>Відкрити посилання з програми:</translation>
+        <translation>Відкривати посилання з програми:</translation>
     </message>
     <message>
         <source>In a tab in the current window</source>
@@ -1422,7 +1558,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Times 16</source>
-        <translation>Times 16</translation>
+        <translation type="obsolete">Times 16</translation>
     </message>
     <message>
         <source>Select...</source>
@@ -1434,7 +1570,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Courier 13</source>
-        <translation>Courier 13</translation>
+        <translation type="obsolete">Courier 13</translation>
     </message>
     <message>
         <source>Privacy</source>
@@ -1446,7 +1582,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Enable Plugins</source>
-        <translation>Ввімкнути плагіни</translation>
+        <translation>Ввімкнути модулі</translation>
     </message>
     <message>
         <source>Enable Javascript</source>
@@ -1458,11 +1594,11 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Cookies</source>
-        <translation>Коржики</translation>
+        <translation>Куки</translation>
     </message>
     <message>
         <source>Accept Cookies:</source>
-        <translation>Дозволити коржики:</translation>
+        <translation>Дозволяти куки:</translation>
     </message>
     <message>
         <source>Always</source>
@@ -1474,7 +1610,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Only from sites you navigate to</source>
-        <translation>Тільки з сайту, який переглядаєте</translation>
+        <translation>Тільки з сайтів, які ви переглядаєте</translation>
     </message>
     <message>
         <source>Exceptions...</source>
@@ -1482,15 +1618,15 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Keep Cookies Until:</source>
-        <translation>Зберігати коржики до:</translation>
+        <translation>Зберігати куки допоки:</translation>
     </message>
     <message>
         <source>They expire</source>
-        <translation>Спливе час дії</translation>
+        <translation>Вони не застаріють</translation>
     </message>
     <message>
         <source>I exit the application</source>
-        <translation>поки не вийду з програми</translation>
+        <translation>Я не вийду з програми</translation>
     </message>
     <message>
         <source>At most 90 days</source>
@@ -1498,7 +1634,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Cookies...</source>
-        <translation>Коржики...</translation>
+        <translation>Куки...</translation>
     </message>
     <message>
         <source>Tabs</source>
@@ -1510,7 +1646,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Confirm when closing multiple tabs</source>
-        <translation>Запитувати перед закриттям багатьох вкладок</translation>
+        <translation type="obsolete">Запитувати перед закриттям багатьох вкладок</translation>
     </message>
     <message>
         <source>Proxy</source>
@@ -1534,7 +1670,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Host name:</source>
-        <translation>Назва хосту:</translation>
+        <translation>Назва хоста:</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -1558,7 +1694,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Show only one close button instead of one for each tab</source>
-        <translation>Показувати тільки одну кнопку для закривання замість по одній на кожній вкладці</translation>
+        <translation>Показувати тільки одну кнопку для закривання, замість по одній на кожній вкладці</translation>
     </message>
     <message>
         <source>Preferred languages for viewing webpages in:</source>
@@ -1574,15 +1710,15 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Links that want to open in a new window:</source>
-        <translation>Посилання, які хочете відкрити у новому вікні:</translation>
+        <translation>Посилання, які бажаєте відкрити у новому вікні:</translation>
     </message>
     <message>
         <source>In a new selected tab in the current window</source>
-        <translation>В новій вибраній вкладці поточного вікна</translation>
+        <translation>У новій вибраній вкладці поточного вікна</translation>
     </message>
     <message>
         <source>In a new tab in the current window</source>
-        <translation>В новій вкладці поточного вікна</translation>
+        <translation>У новій вкладці поточного вікна</translation>
     </message>
     <message>
         <source>In the current tab</source>
@@ -1595,6 +1731,45 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     <message>
         <source>Http (Transparent)</source>
         <translation>Http (прозоре)</translation>
+    </message>
+    <message>
+        <source>Use ClickToFlash on flash plugins</source>
+        <translation>Використовувати ClickToFlash для модулів Flash</translation>
+    </message>
+    <message>
+        <source>Filter Tracking Cookies</source>
+        <translation>Фільтр відстежування куків</translation>
+    </message>
+    <message>
+        <source>Confirm when closing multiple tabs or windows</source>
+        <translation>Запитувати перед закриттям багатьох вкладок і вікон</translation>
+    </message>
+    <message>
+        <source>Quit the application when last tab is closed</source>
+        <translation>Вимкнути програму, коли остання вкладка закрита</translation>
+    </message>
+    <message>
+        <source>Enable network cache</source>
+        <translation>Увімкнути мережевий кеш</translation>
+    </message>
+    <message>
+        <source>Maximum Size:</source>
+        <translation>Максимальний розмір:</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <translation>МБ</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <source>Restart required</source>
+        <translation>Необхіно перезапустити</translation>
+    </message>
+    <message>
+        <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation>Налаштування мережевого кеша змінено. Але переглядач потрібно перезапустити, щоб налаштування набрали чинності.</translation>
     </message>
 </context>
 <context>
@@ -1613,7 +1788,7 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Source of Page </source>
-        <translation>Джерело сторінки</translation>
+        <translation>Код сторінки</translation>
     </message>
     <message>
         <source>&amp;View</source>
@@ -1687,14 +1862,14 @@ Do you want to ignore these errors?&lt;/qt&gt;</source>
     </message>
     <message>
         <source>Do you really want to close this page?</source>
-        <translation>Ви дійсно хочете закрити цю сторінку?</translation>
+        <translation>Ви справді хочете закрити цю сторінку?</translation>
     </message>
     <message>
         <source>You have modified this page and when closing it you would lose the modification.
 Do you really want to close this page?
 </source>
-        <translation>Ви змінили цю сторінку, і коли закриєте її, втратите зміни.
-Ви дійсно хочете закрити цю сторінку?
+        <translation>Ви змінили цю сторінку і коли закриєте її, втратите зміни.
+Ви справді бажаєте закрити цю сторінку?
 </translation>
     </message>
     <message>
@@ -1727,7 +1902,7 @@ Do you really want to close this page?
     </message>
     <message>
         <source>Bookmark All Tabs</source>
-        <translation>Додати всі вкладки до закладинок</translation>
+        <translation>Додати всі вкладки до закладок</translation>
     </message>
 </context>
 <context>
@@ -1742,11 +1917,19 @@ Do you really want to close this page?
     </message>
     <message>
         <source>Clear Recent Searches</source>
-        <translation type="obsolete">Очистити нещодавні пошуки</translation>
+        <translation>Очистити нещодавні пошуки</translation>
     </message>
     <message>
         <source>Suggestions</source>
-        <translation>Припущення</translation>
+        <translation>Поради</translation>
+    </message>
+    <message>
+        <source>Add &apos;%1&apos;</source>
+        <translation>Додати &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation>Налаштувати рушії пошуку...</translation>
     </message>
 </context>
 <context>
@@ -1761,15 +1944,15 @@ Do you really want to close this page?
     </message>
     <message>
         <source>Check the address for errors such as &lt;b&gt;ww&lt;/b&gt;.arora-browser.org instead of &lt;b&gt;www&lt;/b&gt;.arora-browser.org</source>
-        <translation>Перевірте адресу на помилки такі як &lt;b&gt;ww&lt;/b&gt;.arora-browser.org замість &lt;b&gt;www&lt;/b&gt;.arora-browser.org</translation>
+        <translation>Перевірте адресу на помилки такі, як &lt;b&gt;ww&lt;/b&gt;.arora-browser.org замість &lt;b&gt;www&lt;/b&gt;.arora-browser.org</translation>
     </message>
     <message>
         <source>If your computer or network is protected by a firewall or proxy, make sure that the browser is permitted to access the network.</source>
-        <translation>Якщо ваш комп&apos;ютер або мережа захищена мережевим екраном або проксі, впевніться, що переглядачеві дозволений доступ в мережу.</translation>
+        <translation>Якщо ваш комп&apos;ютер або мережа захищена вогняною стінкою(firewall) або проксі, впевніться, що переглядачеві дозволений доступ до мережі.</translation>
     </message>
     <message>
         <source>If the address is correct, try checking the network connection.</source>
-        <translation>Ящо адреса вірна, спробуйте перевірити з&apos;єднання з мережею.</translation>
+        <translation>Якщо адреса правильна, спробуйте перевірити з&apos;єднання з мережею.</translation>
     </message>
 </context>
 <context>
@@ -1788,7 +1971,7 @@ Do you really want to close this page?
     </message>
     <message>
         <source>&amp;Bookmark This Link</source>
-        <translation>&amp;Додати посилання до закладинок</translation>
+        <translation>&amp;Додати посилання до закладок</translation>
     </message>
     <message>
         <source>&amp;Copy Link Location</source>
@@ -1816,14 +1999,18 @@ Do you really want to close this page?
     </message>
     <message>
         <source>Loading...</source>
-        <translation>Завантажується...</translation>
+        <translation>Завантаження...</translation>
+    </message>
+    <message>
+        <source>Search with...</source>
+        <translation>Шукати з...</translation>
     </message>
 </context>
 <context>
     <name>WebViewSearch</name>
     <message>
         <source>Not Found</source>
-        <translation>Не знайдений</translation>
+        <translation>Не знайдено</translation>
     </message>
 </context>
 <context>

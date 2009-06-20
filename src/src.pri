@@ -7,11 +7,6 @@ win32 : Debug : CONFIG += console
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-RCC_DIR     = $$PWD/.rcc
-UI_DIR      = $$PWD/.ui
-MOC_DIR     = $$PWD/.moc
-OBJECTS_DIR = $$PWD/.obj
-
 QT += webkit network
 
 win32 {
@@ -20,6 +15,12 @@ win32 {
 }
 !win32 {
     exists($$PWD/../.git/HEAD) {
+        # Share object files for faster compiling
+        RCC_DIR     = $$PWD/.rcc
+        UI_DIR      = $$PWD/.ui
+        MOC_DIR     = $$PWD/.moc
+        OBJECTS_DIR = $$PWD/.obj
+
         GITVERSION=$$system(git log -n1 --pretty=format:%h)
         DEFINES += GITVERSION=\"\\\"$$GITVERSION\\\"\"
         GITCHANGENUMBER=$$system(git log --pretty=format:%h | wc -l)
@@ -32,9 +33,7 @@ win32 {
 
 FORMS += \
     aboutdialog.ui \
-    addbookmarkdialog.ui \
     acceptlanguagedialog.ui \
-    bookmarks.ui \
     downloaditem.ui \
     downloads.ui \
     passworddialog.ui \
@@ -45,14 +44,11 @@ FORMS += \
 HEADERS += \
     aboutdialog.h \
     acceptlanguagedialog.h \
-    bookmarks.h \
     browserapplication.h \
     browsermainwindow.h \
     clearprivatedata.h \
     clearbutton.h \
     downloadmanager.h \
-    edittableview.h \
-    edittreeview.h \
     languagemanager.h \
     modelmenu.h \
     networkaccessmanager.h \
@@ -69,20 +65,16 @@ HEADERS += \
     webactionmapper.h \
     webpage.h \
     webview.h \
-    webviewsearch.h \
-    xbel.h
+    webviewsearch.h
 
 SOURCES += \
     aboutdialog.cpp \
     acceptlanguagedialog.cpp \
-    bookmarks.cpp \
     browserapplication.cpp \
     browsermainwindow.cpp \
     clearprivatedata.cpp \
     clearbutton.cpp \
     downloadmanager.cpp \
-    edittableview.cpp \
-    edittreeview.cpp \
     languagemanager.cpp \
     modelmenu.cpp \
     networkaccessmanager.cpp \
@@ -99,13 +91,14 @@ SOURCES += \
     webactionmapper.cpp \
     webpage.cpp \
     webview.cpp \
-    webviewsearch.cpp \
-    xbel.cpp
+    webviewsearch.cpp
 
+include(bookmarks/bookmarks.pri)
 include(cookiejar/cookiejar.pri)
 include(history/history.pri)
 include(locationbar/locationbar.pri)
 include(networkmonitor/networkmonitor.pri)
+include(opensearch/opensearch.pri)
 include(qwebplugins/qwebplugins.pri)
 include(utils/utils.pri)
 include(tor/tor.pri)
@@ -113,6 +106,8 @@ include(tor/tor.pri)
 
 RESOURCES += \
     $$PWD/data/data.qrc \
+    $$PWD/data/graphics/graphics.qrc \
+    $$PWD/data/searchengines/searchengines.qrc \
     $$PWD/htmls/htmls.qrc
 
 DISTFILES += ../AUTHORS \

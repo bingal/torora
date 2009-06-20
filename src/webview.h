@@ -66,6 +66,8 @@
 
 #include <qwebview.h>
 
+#include "tabwidget.h"
+
 class BrowserMainWindow;
 class TabWidget;
 class WebPage;
@@ -77,12 +79,19 @@ public:
     WebView(QWidget *parent = 0);
     WebPage *webPage() const { return m_page; }
 
+#if 1 // soon to be #if QT_VERSION <= 0x040600
+    static QUrl guessUrlFromString(const QString &url);
+#endif
+
     void loadUrl(const QUrl &url, const QString &title = QString());
     QUrl url() const;
 
     QString lastStatusBarText() const;
     inline int progress() const { return m_progress; }
     TabWidget *tabWidget() const;
+
+signals:
+    void search(const QUrl &searchUrl, TabWidget::OpenUrlIn openIn);
 
 public slots:
     void zoomIn();
@@ -110,7 +119,7 @@ private slots:
     void setStatusBarText(const QString &string);
     void downloadRequested(const QNetworkRequest &request);
     void openActionUrlInNewTab();
-    void openLinkInNewWindow();
+    void openActionUrlInNewWindow();
     void downloadLinkToDisk();
     void copyLinkToClipboard();
     void openImageInNewWindow();
@@ -118,6 +127,10 @@ private slots:
     void copyImageToClipboard();
     void copyImageLocationToClipboard();
     void bookmarkLink();
+    void searchRequested(QAction *action);
+#ifdef WEBKIT_TRUNK
+    void addSearchEngine();
+#endif
 
 private:
     QString m_statusBarText;

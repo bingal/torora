@@ -65,8 +65,13 @@
 #include "browsermainwindow.h"
 
 #include "aboutdialog.h"
+#include "addbookmarkdialog.h"
 #include "autosaver.h"
-#include "bookmarks.h"
+#include "bookmarksdialog.h"
+#include "bookmarksmanager.h"
+#include "bookmarksmenu.h"
+#include "bookmarksmodel.h"
+#include "bookmarkstoolbar.h"
 #include "browserapplication.h"
 #include "clearprivatedata.h"
 #include "downloadmanager.h"
@@ -90,6 +95,7 @@
 #include <qprintpreviewdialog.h>
 #include <qprinter.h>
 #include <qsettings.h>
+#include <qtextcodec.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qstatusbar.h>
@@ -244,6 +250,27 @@ BrowserMainWindow::~BrowserMainWindow()
 {
     m_autoSaver->changeOccurred();
     m_autoSaver->saveIfNeccessary();
+}
+
+BrowserMainWindow *BrowserMainWindow::parentWindow(QWidget *widget)
+{
+    BrowserMainWindow *parentWindow = 0;
+
+    while (widget) {
+        if (BrowserMainWindow *parent = qobject_cast<BrowserMainWindow*>(widget)) {
+            parentWindow = parent;
+            break;
+        }
+
+        widget = widget->parentWidget();
+    }
+
+    if (!parentWindow) {
+        qWarning() << "BrowserMainWindow::" << __FUNCTION__ << " used with a widget none of whose parents is a main window.";
+        parentWindow = BrowserApplication::instance()->mainWindow();
+    }
+
+    return parentWindow;
 }
 
 void BrowserMainWindow::loadDefaultState()
@@ -515,7 +542,11 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addAction(m_fileCloseWindow);
 
     m_fileQuit = new QAction(m_fileMenu);
-    connect(m_fileQuit, SIGNAL(triggered()), BrowserApplication::instance(), SLOT(quitBrowser()));
+    int kdeSessionVersion = QString::fromLocal8Bit(qgetenv("KDE_SESSION_VERSION")).toInt();
+    if (kdeSessionVersion != 0)
+        connect(m_fileQuit, SIGNAL(triggered()), this, SLOT(close()));
+    else
+        connect(m_fileQuit, SIGNAL(triggered()), BrowserApplication::instance(), SLOT(quitBrowser()));
     m_fileQuit->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
     m_fileMenu->addAction(m_fileQuit);
 
@@ -647,6 +678,14 @@ void BrowserMainWindow::setupMenu()
     m_viewMenu->addAction(m_viewZoomTextOnlyAction);
 #endif
 
+    m_viewFullScreenAction = new QAction(m_viewMenu);
+    m_viewFullScreenAction->setShortcut(Qt::Key_F11);
+    connect(m_viewFullScreenAction, SIGNAL(triggered(bool)),
+            this, SLOT(viewFullScreen(bool)));
+    m_viewFullScreenAction->setCheckable(true);
+    m_viewMenu->addAction(m_viewFullScreenAction);
+
+
     m_viewMenu->addSeparator();
 
     m_viewSourceAction = new QAction(m_viewMenu);
@@ -654,12 +693,18 @@ void BrowserMainWindow::setupMenu()
             this, SLOT(viewPageSource()));
     m_viewMenu->addAction(m_viewSourceAction);
 
-    m_viewFullScreenAction = new QAction(m_viewMenu);
-    m_viewFullScreenAction->setShortcut(Qt::Key_F11);
-    connect(m_viewFullScreenAction, SIGNAL(triggered(bool)),
-            this, SLOT(viewFullScreen(bool)));
-    m_viewFullScreenAction->setCheckable(true);
-    m_viewMenu->addAction(m_viewFullScreenAction);
+#if WEBKIT_TRUNK
+    m_viewMenu->addSeparator();
+
+    m_viewTextEncodingAction = new QAction(m_viewMenu);
+    m_viewMenu->addAction(m_viewTextEncodingAction);
+    m_viewTextEncodingMenu = new QMenu(m_viewMenu);
+    m_viewTextEncodingAction->setMenu(m_viewTextEncodingMenu);
+    connect(m_viewTextEncodingMenu, SIGNAL(aboutToShow()),
+            this, SLOT(aboutToShowTextEncodingMenu()));
+    connect(m_viewTextEncodingMenu, SIGNAL(triggered(QAction *)),
+            this, SLOT(viewTextEncoding(QAction *)));
+#endif
 
     // History
     m_historyMenu = new HistoryMenu(this);
@@ -790,6 +835,46 @@ void BrowserMainWindow::setupMenu()
     m_helpMenu->addAction(m_helpAboutApplicationAction);
 }
 
+
+void BrowserMainWindow::aboutToShowTextEncodingMenu()
+{
+#if WEBKIT_TRUNK
+    m_viewTextEncodingMenu->clear();
+    int currentCodec = -1;
+    QList<QByteArray> codecs = QTextCodec::availableCodecs();
+    QByteArray defaultTextEncoding = QWebSettings::globalSettings()->defaultTextEncoding().toUtf8();
+    currentCodec = codecs.indexOf(defaultTextEncoding);
+    QAction *defaultEncoding = m_viewTextEncodingMenu->addAction(tr("Default"));
+    defaultEncoding->setData(-1);
+    defaultEncoding->setCheckable(true);
+    if (currentCodec == -1)
+        defaultEncoding->setChecked(true);
+    m_viewTextEncodingMenu->addSeparator();
+    for (int i = 0; i < codecs.count(); ++i) {
+        const QByteArray &codec = codecs.at(i);
+        QAction *action = m_viewTextEncodingMenu->addAction(QLatin1String(codec));
+        action->setData(i);
+        action->setCheckable(true);
+        if (currentCodec == i)
+            action->setChecked(true);
+    }
+#endif
+}
+
+void BrowserMainWindow::viewTextEncoding(QAction *action)
+{
+    Q_UNUSED(action);
+#if WEBKIT_TRUNK
+    Q_ASSERT(action);
+    QList<QByteArray> codecs = QTextCodec::availableCodecs();
+    int offset = action->data().toInt();
+    if (offset < 0 || offset >= codecs.count())
+        QWebSettings::globalSettings()->setDefaultTextEncoding(QString());
+    else
+        QWebSettings::globalSettings()->setDefaultTextEncoding(QLatin1String(codecs[offset]));
+#endif
+}
+
 void BrowserMainWindow::retranslate()
 {
     m_fileMenu->setTitle(tr("&File"));
@@ -832,6 +917,9 @@ void BrowserMainWindow::retranslate()
     m_viewSourceAction->setText(tr("Page S&ource"));
     m_viewSourceAction->setShortcut(tr("Ctrl+Alt+U"));
     m_viewFullScreenAction->setText(tr("&Full Screen"));
+#if WEBKIT_TRUNK
+    m_viewTextEncodingAction->setText(tr("Text Encoding"));
+#endif
 
     m_historyMenu->setTitle(tr("Hi&story"));
     m_historyBackAction->setText(tr("Back"));
@@ -863,9 +951,9 @@ void BrowserMainWindow::retranslate()
 
     // Toolbar
     m_navigationBar->setWindowTitle(tr("Navigation"));
-    updateStatusbarActionText(m_viewStatusbarAction->isVisible());
-    updateToolbarActionText(m_viewToolbarAction->isVisible());
-    updateBookmarksToolbarActionText(m_viewBookmarkBarAction->isVisible());
+    updateStatusbarActionText(m_statusBarVisible);
+    updateToolbarActionText(m_navigationBar->isVisible());
+    updateBookmarksToolbarActionText(m_bookmarksToolbar->isVisible());
 }
 
 void BrowserMainWindow::setupToolBar()
@@ -951,7 +1039,7 @@ void BrowserMainWindow::addBookmark()
 
 void BrowserMainWindow::addBookmarkFolder()
 {
-    AddBookmarkDialog dialog(this);
+    AddBookmarkDialog dialog;
     BookmarksManager *bookmarksManager = BrowserApplication::bookmarksManager();
     BookmarkNode *menu = bookmarksManager->menu();
     QModelIndex index = bookmarksManager->bookmarksModel()->index(menu);
@@ -1080,8 +1168,7 @@ void BrowserMainWindow::aboutApplication()
 
 void BrowserMainWindow::fileNew()
 {
-    BrowserApplication::instance()->newMainWindow();
-    BrowserMainWindow *mw = BrowserApplication::instance()->mainWindow();
+    BrowserMainWindow *mw = BrowserApplication::instance()->newMainWindow();
     mw->goHome();
 }
 

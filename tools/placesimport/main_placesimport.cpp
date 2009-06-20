@@ -19,19 +19,17 @@
  */
 
 #include <qdatetime.h>
+#include <qdebug.h>
 #include <qdir.h>
 #include <qfile.h>
-#include <qtextstream.h>
-
 #include <qsqldatabase.h>
 #include <qsqlerror.h>
 #include <qsqlquery.h>
+#include <qtextstream.h>
 #include <qvariant.h>
 
-#include <singleapplication.h>
-#include <historymanager.h>
-
-#include <qdebug.h>
+#include "singleapplication.h"
+#include "historymanager.h"
 
 static HistoryEntry formatEntry(QByteArray url, QByteArray title, qlonglong prdate)
 {
@@ -47,7 +45,7 @@ int main(int argc, char **argv)
     QCoreApplication::setOrganizationDomain(QLatin1String("torora-browser.org"));
     QCoreApplication::setApplicationName(QLatin1String("Torora"));
 
-    if (application.startSingleServer()) {
+    if (application.sendMessage(QString())) {
         qWarning() << "To prevent the loss of any history please exit Arora while this is tool is being run";
         return 1;
     }

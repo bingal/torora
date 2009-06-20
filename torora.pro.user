@@ -106,7 +106,7 @@
  </data>
  <data>
   <variable>activebuildconfiguration</variable>
-  <value type="QString" >Release</value>
+  <value type="QString" >Debug</value>
  </data>
  <data>
   <variable>buildConfiguration-Debug</variable>
@@ -114,7 +114,7 @@
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <value key="QtVersionId" type="int" >4</value>
    <value key="addQDumper" type="" ></value>
-   <value key="buildDirectory" type="QString" >C:\Users\robert\Documents\Development\torora</value>
+   <value key="buildDirectory" type="QString" >/home/robert/Development/torora</value>
   </valuemap>
  </data>
  <data>
@@ -123,7 +123,7 @@
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
    <value key="QtVersionId" type="int" >4</value>
    <value key="addQDumper" type="" ></value>
-   <value key="buildDirectory" type="QString" >C:\Users\robert\Documents\Development\torora-git\torora</value>
+   <value key="buildDirectory" type="QString" >/home/robert/Development/torora</value>
    <valuelist key="userEnvironmentChanges" type="QVariantList" >
     <value type="QString" >PATH=C:\users\robert\documents\development\WebKit\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
     <value type="QString" >QTDIR=C:\users\robert\documents\development\WebKit\webkit\;C:/Qt/2009.01/qt</value>
@@ -318,62 +318,56 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
-    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
-    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
-    <value type="QString" >COMPUTERNAME=MWENGE</value>
-    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
-    <value type="QString" >DFSTRACINGON=FALSE</value>
-    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
-    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
-    <value type="QString" >HOME=C:\Users\robert</value>
-    <value type="QString" >HOMEDRIVE=C:</value>
-    <value type="QString" >HOMEPATH=\Users\robert</value>
-    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
-    <value type="QString" >LOGONSERVER=\\MWENGE</value>
-    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
-    <value type="QString" >OS=Windows_NT</value>
-    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
-    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
-    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
-    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
-    <value type="QString" >PROCESSOR_LEVEL=6</value>
-    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
-    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
-    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
-    <value type="QString" >PUBLIC=C:\Users\Public</value>
-    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-255Wq48kjE,guid=ca471615b60e8836ad71bafd4a3bcbef</value>
+    <value type="QString" >DESKTOP_SESSION=kde</value>
+    <value type="QString" >DESKTOP_STARTUP_ID=</value>
+    <value type="QString" >DISPLAY=:0.0</value>
+    <value type="QString" >DM_CONTROL=/var/run/xdmctl</value>
+    <value type="QString" >GPG_AGENT_INFO=/tmp/gpg-T3wWV3/S.gpg-agent:4639:1</value>
+    <value type="QString" >GS_LIB=/home/robert/.fonts</value>
+    <value type="QString" >GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/robert/.gtkrc-2.0:/home/robert/.gtkrc-2.0-kde4:/home/robert/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString" >GTK_RC_FILES=/etc/gtk/gtkrc:/home/robert/.gtkrc::/home/robert/.kde/share/config/gtkrc</value>
+    <value type="QString" >HOME=/home/robert</value>
+    <value type="QString" >KDE_FULL_SESSION=true</value>
+    <value type="QString" >KDE_MULTIHEAD=false</value>
+    <value type="QString" >KDE_SESSION_UID=</value>
+    <value type="QString" >KDE_SESSION_VERSION=4</value>
+    <value type="QString" >LANG=en_IE.UTF-8</value>
+    <value type="QString" >LANGUAGE=</value>
+    <value type="QString" >LIBGL_DRIVERS_PATH=/usr/lib/dri</value>
+    <value type="QString" >LOGNAME=robert</value>
+    <value type="QString" >PATH=C:\users\robert\documents\development\WebKit\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >PWD=/home/robert</value>
+    <value type="QString" >QTDIR=C:\users\robert\documents\development\WebKit\webkit\;C:/Qt/2009.01/qt</value>
+    <value type="QString" >QT_PLUGIN_PATH=/home/robert/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/</value>
     <value type="QString" >QT_WEBKIT=webkit_trunk</value>
-    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
-    <value type="QString" >SESSIONNAME=Console</value>
-    <value type="QString" >SYSTEMDRIVE=C:</value>
-    <value type="QString" >SYSTEMROOT=C:\Windows</value>
-    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
-    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
-    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
-    <value type="QString" >USERDOMAIN=mwenge</value>
-    <value type="QString" >USERNAME=robert</value>
-    <value type="QString" >USERPROFILE=C:\Users\robert</value>
-    <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
-    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
-    <value type="QString" >WINDIR=C:\Windows</value>
-    <value type="QString" >XCHAT_WARNING_IGNORE=true</value>
+    <value type="QString" >SESSION_MANAGER=local/mwenge:/tmp/.ICE-unix/4738</value>
+    <value type="QString" >SHELL=/bin/bash</value>
+    <value type="QString" >SHLVL=0</value>
+    <value type="QString" >SSH_AGENT_PID=4638</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/ssh-ePVszN4585/agent.4585</value>
+    <value type="QString" >USER=robert</value>
+    <value type="QString" >WEBKITDIR=C:\users\robert\documents\development\WebKit\webkit\</value>
+    <value type="QString" >WINDOWPATH=7</value>
+    <value type="QString" >XCURSOR_THEME=oxy-white</value>
+    <value type="QString" >XDG_DATA_DIRS=/usr/share:/usr/share:/usr/local/share</value>
+    <value type="QString" >XDG_SESSION_COOKIE=f631b562ee5481188d9cec3248a2d018-1245432814.124306-411312747</value>
+    <value type="QString" >XDM_MANAGED=method=classic</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
-    <value type="QString" >C:/Users/robert/Documents/Development/torora-git/torora/torora.pro</value>
+    <value type="QString" >/home/robert/Development/torora/torora.pro</value>
     <value type="QString" >-spec</value>
-    <value type="QString" >win32-g++</value>
+    <value type="QString" >linux-g++</value>
     <value type="QString" >-r</value>
     <value type="QString" >CONFIG+=debug_and_release</value>
-    <value type="QString" >CONFIG+=release</value>
     <value type="QString" >DEFINES+=TORORA_WEBKIT_BUILD</value>
     <value type="QString" >DEFINES+=TORORA</value>
     <value type="QString" >CONFIG-=DEBUG</value>
     <value type="QString" >CONFIG+=RELEASE</value>
    </valuelist>
-   <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/qt/bin/qmake.exe</value>
+   <value key="abstractProcess.command" type="QString" >/home/robert/qtsdk-2009.01/qt/bin/qmake</value>
    <value key="abstractProcess.enabled" type="bool" >false</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora-git/torora</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/home/robert/Development/torora</value>
    <value key="buildConfiguration" type="int" >8</value>
    <valuelist key="qmakeArgs" type="QVariantList" >
     <value type="QString" >DEFINES+=TORORA_WEBKIT_BUILD</value>
@@ -388,46 +382,41 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >ALLUSERSPROFILE=C:\ProgramData</value>
-    <value type="QString" >APPDATA=C:\Users\robert\AppData\Roaming</value>
-    <value type="QString" >COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
-    <value type="QString" >COMPUTERNAME=MWENGE</value>
-    <value type="QString" >COMSPEC=C:\Windows\system32\cmd.exe</value>
-    <value type="QString" >DFSTRACINGON=FALSE</value>
-    <value type="QString" >EMC_AUTOPLAY=C:\Program Files\Common Files\Roxio Shared\</value>
-    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
-    <value type="QString" >HOME=C:\Users\robert</value>
-    <value type="QString" >HOMEDRIVE=C:</value>
-    <value type="QString" >HOMEPATH=\Users\robert</value>
-    <value type="QString" >LOCALAPPDATA=C:\Users\robert\AppData\Local</value>
-    <value type="QString" >LOGONSERVER=\\MWENGE</value>
-    <value type="QString" >NUMBER_OF_PROCESSORS=4</value>
-    <value type="QString" >OS=Windows_NT</value>
-    <value type="QString" >PATH=C:\users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
-    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
-    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
-    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel</value>
-    <value type="QString" >PROCESSOR_LEVEL=6</value>
-    <value type="QString" >PROCESSOR_REVISION=0f0b</value>
-    <value type="QString" >PROGRAMDATA=C:\ProgramData</value>
-    <value type="QString" >PROGRAMFILES=C:\Program Files</value>
-    <value type="QString" >PUBLIC=C:\Users\Public</value>
-    <value type="QString" >QTDIR=C:\Users\robert\WebKit-SVN-source\webkit;C:/Qt/2009.01/qt</value>
+    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-255Wq48kjE,guid=ca471615b60e8836ad71bafd4a3bcbef</value>
+    <value type="QString" >DESKTOP_SESSION=kde</value>
+    <value type="QString" >DESKTOP_STARTUP_ID=</value>
+    <value type="QString" >DISPLAY=:0.0</value>
+    <value type="QString" >DM_CONTROL=/var/run/xdmctl</value>
+    <value type="QString" >GPG_AGENT_INFO=/tmp/gpg-T3wWV3/S.gpg-agent:4639:1</value>
+    <value type="QString" >GS_LIB=/home/robert/.fonts</value>
+    <value type="QString" >GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/robert/.gtkrc-2.0:/home/robert/.gtkrc-2.0-kde4:/home/robert/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString" >GTK_RC_FILES=/etc/gtk/gtkrc:/home/robert/.gtkrc::/home/robert/.kde/share/config/gtkrc</value>
+    <value type="QString" >HOME=/home/robert</value>
+    <value type="QString" >KDE_FULL_SESSION=true</value>
+    <value type="QString" >KDE_MULTIHEAD=false</value>
+    <value type="QString" >KDE_SESSION_UID=</value>
+    <value type="QString" >KDE_SESSION_VERSION=4</value>
+    <value type="QString" >LANG=en_IE.UTF-8</value>
+    <value type="QString" >LANGUAGE=</value>
+    <value type="QString" >LIBGL_DRIVERS_PATH=/usr/lib/dri</value>
+    <value type="QString" >LOGNAME=robert</value>
+    <value type="QString" >PATH=C:\users\robert\documents\development\WebKit\webkit\WebKitBuild\Release\lib;c:\Qt\2009.01\mingw\bin;c:\Qt\2009.01\qt\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Intel\DMIX;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\10.0\DLLShared\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\Program Files\Git\bin;C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll</value>
+    <value type="QString" >PWD=/home/robert</value>
+    <value type="QString" >QTDIR=C:\users\robert\documents\development\WebKit\webkit\;C:/Qt/2009.01/qt</value>
+    <value type="QString" >QT_PLUGIN_PATH=/home/robert/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/</value>
     <value type="QString" >QT_WEBKIT=webkit_trunk</value>
-    <value type="QString" >ROXIOCENTRAL=C:\Program Files\Common Files\Roxio Shared\10.0\Roxio Central36\</value>
-    <value type="QString" >SESSIONNAME=Console</value>
-    <value type="QString" >SYSTEMDRIVE=C:</value>
-    <value type="QString" >SYSTEMROOT=C:\Windows</value>
-    <value type="QString" >TEMP=C:\Users\robert\AppData\Local\Temp</value>
-    <value type="QString" >TMP=C:\Users\robert\AppData\Local\Temp</value>
-    <value type="QString" >TRACE_FORMAT_SEARCH_PATH=\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat</value>
-    <value type="QString" >USERDOMAIN=mwenge</value>
-    <value type="QString" >USERNAME=robert</value>
-    <value type="QString" >USERPROFILE=C:\Users\robert</value>
-    <value type="QString" >VS80COMNTOOLS=C:\Program Files\Microsoft Visual Studio 8\Common7\Tools\</value>
-    <value type="QString" >WEBKITDIR=C:\Users\robert\WebKit-SVN-source\webkit</value>
-    <value type="QString" >WINDIR=C:\Windows</value>
-    <value type="QString" >XCHAT_WARNING_IGNORE=true</value>
+    <value type="QString" >SESSION_MANAGER=local/mwenge:/tmp/.ICE-unix/4738</value>
+    <value type="QString" >SHELL=/bin/bash</value>
+    <value type="QString" >SHLVL=0</value>
+    <value type="QString" >SSH_AGENT_PID=4638</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/ssh-ePVszN4585/agent.4585</value>
+    <value type="QString" >USER=robert</value>
+    <value type="QString" >WEBKITDIR=C:\users\robert\documents\development\WebKit\webkit\</value>
+    <value type="QString" >WINDOWPATH=7</value>
+    <value type="QString" >XCURSOR_THEME=oxy-white</value>
+    <value type="QString" >XDG_DATA_DIRS=/usr/share:/usr/share:/usr/local/share</value>
+    <value type="QString" >XDG_SESSION_COOKIE=f631b562ee5481188d9cec3248a2d018-1245432814.124306-411312747</value>
+    <value type="QString" >XDM_MANAGED=method=classic</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
     <value type="QString" >release</value>
@@ -435,7 +424,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString" >C:/Qt/2009.01/mingw/bin/mingw32-make.exe</value>
    <value key="abstractProcess.enabled" type="bool" >true</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >C:/Users/robert/Documents/Development/torora-git/torora</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/home/robert/Development/torora</value>
    <valuelist key="makeargs" type="QVariantList" >
     <value type="QString" >release</value>
    </valuelist>

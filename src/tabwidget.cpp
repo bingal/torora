@@ -62,7 +62,10 @@
 
 #include "tabwidget.h"
 
-#include "bookmarks.h"
+#include "addbookmarkdialog.h"
+#include "bookmarknode.h"
+#include "bookmarksmanager.h"
+#include "bookmarksmodel.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "history.h"
@@ -74,7 +77,6 @@
 #include "webpage.h"
 #include "webview.h"
 #include "webviewsearch.h"
-#include "xbel.h"
 
 #include <qcompleter.h>
 #include <qdir.h>
@@ -140,7 +142,7 @@ TabWidget::TabWidget(QWidget *parent)
     m_bookmarkTabsAction = new QAction(this);
     connect(m_bookmarkTabsAction, SIGNAL(triggered()), this, SLOT(bookmarkTabs()));
 
-    m_newTabAction->setIcon(QIcon(QLatin1String(":addtab.png")));
+    m_newTabAction->setIcon(QIcon(QLatin1String(":graphics/addtab.png")));
     m_newTabAction->setIconVisibleInMenu(false);
 
 #if QT_VERSION >= 0x040500
@@ -150,7 +152,7 @@ TabWidget::TabWidget(QWidget *parent)
     if (oneCloseButton) {
 #endif
         // With Qt < 4.5 do this always, with >=4.5 only if enabled.
-        m_closeTabAction->setIcon(QIcon(QLatin1String(":closetab.png")));
+        m_closeTabAction->setIcon(QIcon(QLatin1String(":graphics/closetab.png")));
         m_closeTabAction->setIconVisibleInMenu(false);
 #if QT_VERSION >= 0x040500
     }
@@ -176,11 +178,7 @@ TabWidget::TabWidget(QWidget *parent)
     addTabButton->setDefaultAction(m_newTabAction);
     addTabButton->setAutoRaise(true);
     addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-#if QT_VERSION >= 0x040500
     setCornerWidget(addTabButton, Qt::TopRightCorner);
-#else
-    setCornerWidget(addTabButton, Qt::TopLeftCorner);
-#endif
 #endif
 
 #if QT_VERSION >= 0x040500
@@ -192,7 +190,7 @@ TabWidget::TabWidget(QWidget *parent)
         closeTabButton->setDefaultAction(m_closeTabAction);
         closeTabButton->setAutoRaise(true);
         closeTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        setCornerWidget(closeTabButton, Qt::TopRightCorner);
+        setCornerWidget(closeTabButton, Qt::TopLeftCorner);
 #if QT_VERSION >= 0x040500
     } else {
         m_tabBar->setTabsClosable(true);
@@ -435,17 +433,6 @@ void TabWidget::newTab()
     makeNewTab(true);
 }
 
-BrowserMainWindow *TabWidget::mainWindow() const
-{
-    QObject *widget = this->parent();
-    while (widget) {
-        if (BrowserMainWindow *mainWindow = qobject_cast<BrowserMainWindow*>(widget))
-            return mainWindow;
-        widget = widget->parent();
-    }
-    return 0;
-}
-
 WebView *TabWidget::makeNewTab(bool makeCurrent)
 {
     // line edit
@@ -470,7 +457,7 @@ WebView *TabWidget::makeNewTab(bool makeCurrent)
     m_lineEdits->addWidget(locationBar);
     m_lineEdits->setSizePolicy(locationBar->sizePolicy());
 
-    QWidget::setTabOrder(locationBar, qFindChild<ToolbarSearch*>(mainWindow()));
+    QWidget::setTabOrder(locationBar, qFindChild<ToolbarSearch*>(BrowserMainWindow::parentWindow(this)));
 
     // optimization to delay creating the more expensive WebView, history, etc
     if (count() == 0) {
@@ -502,6 +489,8 @@ WebView *TabWidget::makeNewTab(bool makeCurrent)
             this, SLOT(webViewTitleChanged(const QString &)));
     connect(webView, SIGNAL(urlChanged(const QUrl &)),
             this, SLOT(webViewUrlChanged(const QUrl &)));
+    connect(webView, SIGNAL(search(const QUrl&, TabWidget::OpenUrlIn)),
+            this, SLOT(loadUrl(const QUrl&, TabWidget::OpenUrlIn)));
     connect(webView->page(), SIGNAL(windowCloseRequested()),
             this, SLOT(windowCloseRequested()));
     connect(webView->page(), SIGNAL(printRequested(QWebFrame *)),
@@ -567,34 +556,26 @@ void TabWidget::reloadAllTabs()
 
 void TabWidget::bookmarkTabs()
 {
-    AddBookmarkDialog dialog(parentWidget());
-    dialog.address->hide();
+    AddBookmarkDialog dialog;
+    dialog.setFolder(true);
     dialog.setTitle(tr("Saved Tabs"));
-    dialog.resize(dialog.sizeHint());
     dialog.exec();
-    if (dialog.result() == QDialog::Accepted) {
-        QModelIndex index = dialog.currentIndex();
-        if (!index.isValid())
-            return;
-        BookmarksManager *m_bookmarksManager = BrowserApplication::bookmarksManager();
-        BookmarkNode *parentFolder = m_bookmarksManager->bookmarksModel()->node(index);
-        if (parentFolder->type() != BookmarkNode::Folder)
-            return;
 
-        BookmarkNode *folder = new BookmarkNode(BookmarkNode::Folder);
-        folder->title = dialog.name->text();
-        m_bookmarksManager->addBookmark(parentFolder, folder, -1);
+    BookmarkNode *folder = dialog.addedNode();
+    if (!folder)
+        return;
 
-        for (int i = 0; i < count(); ++i) {
-            if (WebView *tab = webView(i)) {
-                QString title = tab->title();
-                QString url = QString::fromUtf8(tab->url().toEncoded());
-                BookmarkNode *bookmark = new BookmarkNode(BookmarkNode::Bookmark);
-                bookmark->url = url;
-                bookmark->title = title;
-                m_bookmarksManager->addBookmark(folder, bookmark);
-            }
-        }
+    for (int i = 0; i < count(); ++i) {
+        WebView *tab = webView(i);
+        if (!tab)
+            continue;
+
+        QString title = tab->title();
+        QString url = QString::fromUtf8(tab->url().toEncoded());
+        BookmarkNode *bookmark = new BookmarkNode(BookmarkNode::Bookmark);
+        bookmark->url = url;
+        bookmark->title = title;
+        BrowserApplication::bookmarksManager()->addBookmark(folder, bookmark);
     }
 }
 
@@ -616,7 +597,7 @@ void TabWidget::windowCloseRequested()
     int index = webViewIndex(webView);
     if (index >= 0) {
         if (count() == 1)
-            mainWindow()->close();
+            BrowserMainWindow::parentWindow(this)->close();
         else
             closeTab(index);
     }
@@ -706,7 +687,7 @@ QLabel *TabWidget::animationLabel(int index, bool addMovie)
         loadingAnimation = new QLabel(this);
     }
     if (addMovie && !loadingAnimation->movie()) {
-        QMovie *movie = new QMovie(QLatin1String(":loading.gif"), QByteArray(), loadingAnimation);
+        QMovie *movie = new QMovie(QLatin1String(":graphics/loading.gif"), QByteArray(), loadingAnimation);
         movie->setSpeed(50);
         loadingAnimation->setMovie(movie);
         movie->start();
@@ -727,7 +708,7 @@ void TabWidget::webViewLoadStarted()
         if (label->movie())
             label->movie()->start();
 #else
-        QIcon icon(QLatin1String(":loading.gif"));
+        QIcon icon(QLatin1String(":graphics/loading.gif"));
         setTabIcon(index, icon);
 #endif
     }
@@ -813,6 +794,7 @@ void TabWidget::webViewTitleChanged(const QString &title)
         tabTitle = QString::fromUtf8(webView->url().toEncoded());
     tabTitle.replace(QLatin1Char('&'), QLatin1String("&&"));
     setTabText(index, tabTitle);
+    setTabToolTip(index, tabTitle);
     if (currentIndex() == index)
         emit setCurrentTitle(title);
     /* Torora: candidate location for clearing history after each site visit */
@@ -899,7 +881,8 @@ void TabWidget::wheelEvent(QWheelEvent *event)
 }
 #endif
 
-void TabWidget::retranslate() {
+void TabWidget::retranslate()
+{
     m_nextTabAction->setText(tr("Show Next Tab"));
     QList<QKeySequence> shortcuts;
     shortcuts.append(QKeySequence(Qt::CTRL | Qt::Key_BraceRight));
@@ -920,6 +903,7 @@ void TabWidget::retranslate() {
     m_newTabAction->setText(tr("New &Tab"));
     m_closeTabAction->setText(tr("&Close Tab"));
     m_bookmarkTabsAction->setText(tr("Bookmark All Tabs"));
+    m_tabBar->updateViewToolBarAction();
 }
 
 void TabWidget::changeEvent(QEvent *event)
@@ -946,59 +930,14 @@ void TabWidget::loadString(const QString &string, OpenUrlIn tab)
 
 QUrl TabWidget::guessUrlFromString(const QString &string)
 {
-    QString urlStr = string.trimmed();
+    QUrl url = WebView::guessUrlFromString(string);
+    if (url.isValid())
+        return url;
 
-    // check if the string is just a host with a port
-    QRegExp hostWithPort(QLatin1String("^[a-zA-Z\\.]+\\:[0-9]*$"));
-    if (hostWithPort.exactMatch(urlStr))
-        urlStr = QLatin1String("http://") + urlStr;
-
-    // Check if it looks like a qualified URL. Try parsing it and see.
-    QRegExp test(QLatin1String("^[a-zA-Z]+\\:.*"));
-    bool hasSchema = test.exactMatch(urlStr);
-    if (hasSchema) {
-        bool isAscii = true;
-        foreach (const QChar &c, urlStr) {
-            if (c >= 0x80) {
-                isAscii = false;
-                break;
-            }
-        }
-
-        QUrl url;
-        if (isAscii) {
-            url = QUrl::fromEncoded(urlStr.toAscii(), QUrl::TolerantMode);
-        } else {
-            url = QUrl::fromEncoded(urlStr.toUtf8(), QUrl::TolerantMode);
-        }
-        if (url.isValid())
-            return url;
-    }
-
-    // Might be a file.
-    if (QDir::isAbsolutePath(urlStr) && QFile::exists(urlStr)) {
-        return QUrl::fromLocalFile(urlStr);
-    }
-
-    // Might be a shorturl - try to detect the schema.
-    if (!hasSchema) {
-        int dotIndex = urlStr.indexOf(QLatin1Char('.'));
-        if (dotIndex != -1) {
-            QString prefix = urlStr.left(dotIndex).toLower();
-            QByteArray schema = (prefix == QLatin1String("ftp")) ? "ftp" : "http";
-            QUrl url = QUrl::fromEncoded(schema + "://" + urlStr.toUtf8(), QUrl::TolerantMode);
-            if (url.isValid())
-                return url;
-        }
-    }
-
-    // Fall back to QUrl's own tolerant parser.
-    QUrl url = QUrl::fromEncoded(string.toUtf8(), QUrl::TolerantMode);
-
-    // finally for cases where the user just types in a hostname add http
-    if (url.scheme().isEmpty())
-        url = QUrl::fromEncoded("http://" + string.toUtf8(), QUrl::TolerantMode);
-    return url;
+    // In the future we could do more fancy things such as automatically searching
+    // on the current search engine, looking through our history or something else.
+    QString urlString = QLatin1String("http://") + string;
+    return QUrl::fromEncoded(urlString.toUtf8(), QUrl::TolerantMode);
 }
 
 /*
@@ -1083,8 +1022,7 @@ WebView *TabWidget::getView(OpenUrlIn tab, WebView *currentView)
 #ifdef USERMODIFIEDBEHAVIOR_DEBUG
             qDebug() << __FUNCTION__ << "NewWindow";
 #endif
-            BrowserApplication::instance()->newMainWindow();
-            BrowserMainWindow *newMainWindow = BrowserApplication::instance()->mainWindow();
+            BrowserMainWindow *newMainWindow = BrowserApplication::instance()->newMainWindow();
             webView = newMainWindow->currentTab();
             webView->setFocus();
             break;

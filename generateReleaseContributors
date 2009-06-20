@@ -1,5 +1,5 @@
 #!/bin/bash
-./generateAuthors 0.5..HEAD | while read line
+./generateAuthors 0.6.0..HEAD | while read line
 do
         name=`echo $line | sed -e 's/ [^ ]*@[^ ]*//g'`
         email=`echo $line | sed -e 's/.* //g' | tr [A-Z] [a-z]`
@@ -10,6 +10,6 @@ do
         md5=`echo -e "$email\c" | md5sum | sed -e s/\ -//g`
         echo -n $md5
         echo -n ".jpg?s=40\" width=\"40\" height=\"40\" />";
-        echo "$name $email<br>"
+        echo " $name $email<br>"
 done
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1" language="tr_TR">
-<defaultcodec></defaultcodec>
-<context encoding="UTF-8">
+<!DOCTYPE TS>
+<TS version="2.0" language="tr_TR">
+<context>
     <name>AboutDialog</name>
     <message>
         <source>Lightweight WebKit-based web browser</source>
         <translation>Webkit tabanlı hafif bir web tarayıcı</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -33,15 +33,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>About</source>
-        <translation>Hakkında</translation>
+        <translation type="obsolete">Hakkında</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright &#xa9; 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2008 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>%1 Hakkında</translation>
+    </message>
+    <message utf8="true">
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -187,11 +203,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name Change</source>
-        <translation>İsim Değiştir</translation>
+        <translation type="obsolete">İsim Değiştir</translation>
     </message>
     <message>
         <source>Address Change</source>
-        <translation>Adres Değiştir</translation>
+        <translation type="obsolete">Adres Değiştir</translation>
     </message>
     <message>
         <source>Bookmarks Bar</source>
@@ -203,13 +219,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>XBEL (*.xbel *.xml *.html)</source>
-        <translation>XBEL (*.xbel *.xml *.html)</translation>
+        <translation type="obsolete">XBEL (*.xbel *.xml *.html)</translation>
     </message>
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
         <translation>Html yerimlerini yüklerken hata: %1
 </translation>
+    </message>
+    <message>
+        <source>XBEL</source>
+        <translation>XBEL</translation>
+    </message>
+    <message>
+        <source>Name Change</source>
+        <comment>Undo bookmark title change</comment>
+        <translation>İsim Değiştir</translation>
+    </message>
+    <message>
+        <source>Address Change</source>
+        <comment>Undo bookmark url change</comment>
+        <translation>Adres Değiştir</translation>
     </message>
 </context>
 <context>
@@ -633,11 +663,11 @@ Tüm sayfaları yenilemeyi istiyor musunuz?</translation>
     <message>
         <source>About &amp;%1</source>
         <comment>About Browser</comment>
-        <translation>Hakkında &amp;%1</translation>
+        <translation>&amp;%1 Hakkında</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Özel gezinme aktif olduğunda, gizliliğinizle ilgili bazı eylemler etkisizleştirilecek:&lt;ul&gt;&lt;li&gt; Web sayfaları geçmişe eklenmeyecek.&lt;/li&gt;&lt;li&gt; İndirme penceresindeki öğeler otomatik olarak kaldırılacak.&lt;/li&gt;&lt;li&gt; Yeni çerezler saklanmayacak, mevcut çerezlere erişilemeyecek.&lt;/li&gt;&lt;li&gt; Sayfa simgeleri saklanmayacak, oturum kaydedilmeyecek.&lt;/li&gt;&lt;li&gt; Aramalarınız arama kutusundaki açılır menüye eklenmeyecek.&lt;/li&gt;&lt;/ul&gt;Siz pencereyi kapatana kadar, açmış olduğunu web sayfalarına Geri ve İleri düğmelerine tıklayarak geri dönebileceksiniz.</translation>
     </message>
     <message>
         <source>Ctrl+Y</source>
@@ -693,6 +723,40 @@ Tüm sayfaları yenilemeyi istiyor musunuz?</translation>
     <message>
         <source>&amp;Cancel</source>
         <translation>&amp;İptal</translation>
+    </message>
+</context>
+<context>
+    <name>ClickToFlash</name>
+    <message>
+        <source>Load</source>
+        <translation>Yükle</translation>
+    </message>
+    <message>
+        <source>Load All</source>
+        <translation>Hepsini Yükle</translation>
+    </message>
+    <message>
+        <source>Add %1 to Whitelist</source>
+        <translation>%1 i aklisteye ekle</translation>
+    </message>
+    <message>
+        <source>Remove from Whitelist</source>
+        <translation>Aklisteden kaldır</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>Load Flash</source>
+        <translation>Flash Yükle</translation>
+    </message>
+</context>
+<context>
+    <name>ClickToFlashSettings</name>
+    <message>
+        <source>Whitelist sites</source>
+        <translation>Akliste siteleri</translation>
     </message>
 </context>
 <context>
@@ -752,6 +816,10 @@ Tüm sayfaları yenilemeyi istiyor musunuz?</translation>
         <source>false</source>
         <translation>yanlış</translation>
     </message>
+    <message>
+        <source>Session cookie</source>
+        <translation>Oturum çerezi</translation>
+    </message>
 </context>
 <context>
     <name>CookiesDialog</name>
@@ -766,6 +834,10 @@ Tüm sayfaları yenilemeyi istiyor musunuz?</translation>
     <message>
         <source>Remove &amp;All Cookies</source>
         <translation>Tüm Çerezleri Kaldı&amp;r</translation>
+    </message>
+    <message>
+        <source>Add &amp;Rule</source>
+        <translation>&amp;Kural Ekle</translation>
     </message>
 </context>
 <context>
@@ -823,7 +895,7 @@ Tüm sayfaları yenilemeyi istiyor musunuz?</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation>&amp;Tamam</translation>
+        <translation type="obsolete">&amp;Tamam</translation>
     </message>
 </context>
 <context>
@@ -1095,6 +1167,10 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&lt;qt&gt;Certifactes:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
+        <translation type="obsolete">&lt;qt&gt;Sertifikalar:&lt;br/&gt;%1&lt;br/&gt;Tüm bu sertifikaları kabul etmek istiyor musunuz?&lt;/qt&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
         <translation>&lt;qt&gt;Sertifikalar:&lt;br/&gt;%1&lt;br/&gt;Tüm bu sertifikaları kabul etmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
 </context>
@@ -1137,6 +1213,67 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
 </context>
 <context>
+    <name>OpenSearchDialog</name>
+    <message>
+        <source>Open File</source>
+        <translation>Dosya Aç</translation>
+    </message>
+    <message>
+        <source>OpenSearch</source>
+        <translation>OpenSearch</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Hata</translation>
+    </message>
+    <message>
+        <source>%1 is not a valid OpenSearch 1.1 description or is already on your list.</source>
+        <translation>%1 geçerli bir OpenSearch 1.1 açıklaması değil ya da zaten listenizde bulunuyor.</translation>
+    </message>
+    <message>
+        <source>You must have at least one search engine in here.</source>
+        <translation>Burada en az bir arama motoru olmalı.</translation>
+    </message>
+    <message>
+        <source>OpenSearch Manager</source>
+        <translation>OpenSearch Yöneticisi</translation>
+    </message>
+    <message>
+        <source>&amp;Restore Defaults</source>
+        <translation>&amp;Öntanımlıları Geri Yükle</translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation>&amp;Sil</translation>
+    </message>
+    <message>
+        <source>&amp;Add</source>
+        <translation>&amp;Ekle</translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>&amp;Kapat</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchEngineModel</name>
+    <message>
+        <source>&lt;strong&gt;Description:&lt;/strong&gt; %1</source>
+        <translation>&lt;strong&gt;Açıklama:&lt;/strong&gt; %1</translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;İçeriksel öneriler sağlar&lt;/strong&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>OpenSearchManager</name>
+    <message>
+        <source>Do you want to add the following engine to your list of search engines?&lt;br /&gt;&lt;br /&gt;Name: %1&lt;br /&gt;Searches on: %2</source>
+        <translation>Aşağıdaki motoru arama motoru listenize eklemek istiyor musunuz?&lt;br /&gt;&lt;br /&gt;İsim: %1&lt;br /&gt;Şurada arar: %2</translation>
+    </message>
+</context>
+<context>
     <name>PasswordDialog</name>
     <message>
         <source>Authentication Required</source>
@@ -1174,7 +1311,7 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>ICON</source>
-        <translation>ICON</translation>
+        <translation type="obsolete">ICON</translation>
     </message>
     <message>
         <source>Connect to proxy</source>
@@ -1198,6 +1335,10 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     <message>
         <source>Unknown title</source>
         <translation>Bilinmeyen başlık</translation>
+    </message>
+    <message>
+        <source>The file is not an OpenSearch 1.1 file.</source>
+        <translation>Bu dosya bir OpenSearch 1.1 dosyası değil.</translation>
     </message>
 </context>
 <context>
@@ -1239,15 +1380,15 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation type="obsolete">TextLabel</translation>
     </message>
     <message>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <source>Done</source>
@@ -1361,7 +1502,7 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Times 16</source>
-        <translation>Times 16</translation>
+        <translation type="obsolete">Times 16</translation>
     </message>
     <message>
         <source>Select...</source>
@@ -1373,7 +1514,7 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Courier 13</source>
-        <translation>Courier 13</translation>
+        <translation type="obsolete">Courier 13</translation>
     </message>
     <message>
         <source>Privacy</source>
@@ -1449,15 +1590,15 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Confirm when closing multiple tabs</source>
-        <translation>Çoklu sekmeleri kapatırken onay iste</translation>
+        <translation type="obsolete">Çoklu sekmeleri kapatırken onay iste</translation>
     </message>
     <message>
         <source>Proxy</source>
-        <translation>Vekil</translation>
+        <translation>Vekil Sunucu</translation>
     </message>
     <message>
         <source>Use proxy server</source>
-        <translation>Vekil sunucusu kullan</translation>
+        <translation>Vekil sunucu kullan</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -1509,19 +1650,19 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Opening links</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantıların açılması</translation>
     </message>
     <message>
         <source>Links that want to open in a new window:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni pencerede açılması istenilen bağlantılar:</translation>
     </message>
     <message>
         <source>In a new selected tab in the current window</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut pencerede seçilmiş yeni bir sekmede</translation>
     </message>
     <message>
         <source>In a new tab in the current window</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut pencerede yeni bir sekmede</translation>
     </message>
     <message>
         <source>In the current tab</source>
@@ -1534,6 +1675,45 @@ Bu hataları görmezden gelmek istiyor musunuz?&lt;/qt&gt;</translation>
     <message>
         <source>Http (Transparent)</source>
         <translation>Http (Transparent)</translation>
+    </message>
+    <message>
+        <source>Use ClickToFlash on flash plugins</source>
+        <translation>Flash eklentilerinde ClickToFlash kullan</translation>
+    </message>
+    <message>
+        <source>Filter Tracking Cookies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm when closing multiple tabs or windows</source>
+        <translation>Birden çok pencere ve sekme kapatılırken doğrula</translation>
+    </message>
+    <message>
+        <source>Quit the application when last tab is closed</source>
+        <translation>Son sekme kapatıldığında uygulamayı kapat</translation>
+    </message>
+    <message>
+        <source>Enable network cache</source>
+        <translation>Ağ önbelleğini etkinleştir</translation>
+    </message>
+    <message>
+        <source>Maximum Size:</source>
+        <translation>Azami Boyut:</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <translation> MB</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <source>Restart required</source>
+        <translation>Yeniden başlatmak gerekiyor</translation>
+    </message>
+    <message>
+        <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation>Ağ önbelleği yapılandırması değişti. İşleme alınması için tarayıcının yeniden başlatılması gerekiyor.</translation>
     </message>
 </context>
 <context>
@@ -1685,11 +1865,19 @@ Bu sayfayı gerçekten kapatmayı istiyor musunuz?
     </message>
     <message>
         <source>Clear Recent Searches</source>
-        <translation type="obsolete">Yeni Aramaları Temizle</translation>
+        <translation>En Son Aramaları Temizle</translation>
     </message>
     <message>
         <source>Suggestions</source>
         <translation>Öneriler</translation>
+    </message>
+    <message>
+        <source>Add &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation>Arama Motorlarını Yapılandır...</translation>
     </message>
 </context>
 <context>
@@ -1760,6 +1948,10 @@ Bu sayfayı gerçekten kapatmayı istiyor musunuz?
     <message>
         <source>Loading...</source>
         <translation>Yükleniyor...</translation>
+    </message>
+    <message>
+        <source>Search with...</source>
+        <translation>Şununla ara...</translation>
     </message>
 </context>
 <context>

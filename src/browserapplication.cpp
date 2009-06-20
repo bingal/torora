@@ -62,7 +62,7 @@
 
 #include "browserapplication.h"
 
-#include "bookmarks.h"
+#include "bookmarksmanager.h"
 #include "browsermainwindow.h"
 #include "cookiejar.h"
 #include "downloadmanager.h"
@@ -324,7 +324,7 @@ void BrowserApplication::loadSettings()
 
 #if defined(TORORA_WEBKIT_BUILD)
     defaultSettings->setAttribute(QWebSettings::PreventUserProfiling, true);
-    defaultSettings->setAttribute(QWebSettings::AllowUniversalAccessFromFileUrls, false);
+    defaultSettings->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, false);
     defaultSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
 #endif
 
@@ -484,9 +484,18 @@ BrowserMainWindow *BrowserApplication::newMainWindow()
 BrowserMainWindow *BrowserApplication::mainWindow()
 {
     clean();
-    if (m_mainWindows.isEmpty())
-        newMainWindow();
-    return m_mainWindows[0];
+
+    BrowserMainWindow *activeWindow = 0;
+
+    if (m_mainWindows.isEmpty()) {
+        activeWindow = newMainWindow();
+    } else {
+        activeWindow = qobject_cast<BrowserMainWindow*>(QApplication::activeWindow());
+        if (!activeWindow)
+            activeWindow = m_mainWindows[0];
+    }
+
+    return activeWindow;
 }
 
 CookieJar *BrowserApplication::cookieJar()
@@ -550,7 +559,7 @@ QIcon BrowserApplication::icon(const QUrl &url)
     if (icon.isNull()) {
         QPixmap pixmap = QWebSettings::webGraphic(QWebSettings::DefaultFrameIconGraphic);
         if (pixmap.isNull()) {
-            pixmap = QPixmap(QLatin1String(":defaulticon.png"));
+            pixmap = QPixmap(QLatin1String(":graphics/defaulticon.png"));
             QWebSettings::setWebGraphic(QWebSettings::DefaultFrameIconGraphic, pixmap);
         }
         return pixmap;

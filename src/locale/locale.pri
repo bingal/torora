@@ -22,8 +22,11 @@ TRANSLATIONS += \
     nb_NO.ts \
     nl_NL.ts \
     pl_PL.ts \
+    pt_BR.ts \
     ru_RU.ts \
     sk_SK.ts \
+    sr_RS.ts \
+    sr_RS@latin.ts \
     tr_TR.ts \
     uk.ts \
     zh_CN.ts \
