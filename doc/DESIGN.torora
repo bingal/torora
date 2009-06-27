@@ -1,3 +1,5 @@
+TODO: Investigate use of navigator.plugins
+      Investigate 'Accept-Language' header
 
 Torora Requirements and Specification
 -------------------------------------
@@ -368,6 +370,7 @@ These considerations leave us with the following requirements for Torora:
     7. Miscellaneous Security Requirements
        1. The Javascript submit() method should be disabled, or should at least require
           user interaction.
+          WebKit maintains a blacklist of ports for the POST method.
           Ref: http://www.remote.org/jochen/sec/hfpa/hfpa.pdf
           Setting: QWebSettings::DisableJavascriptSubmit
           Files altered: WebCore/bindings/js/JSHTMLFormElementCustom.cpp
