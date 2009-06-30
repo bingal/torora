@@ -165,6 +165,8 @@ These considerations leave us with the following requirements for Torora:
 
         8. Warn users about the use of '.exit' URLs, allow them to cancel such requests.
 
+        
+
     4. Location Neutrality
       The browser SHOULD NOT leak location-specific information, such as timezone
       or locale. This information is available through Javascript's Date
@@ -265,6 +267,9 @@ These considerations leave us with the following requirements for Torora:
         actually resize to multiples of 50px.
         POC: Theoretical, http://browserspy.dk/screen.php, http://browserspy.dk/window.php
 
+        Javascript Document object
+        The referrer and history.length objects should be blank and zero respectively.
+
       Implementation Requirements Arising:
        1. Never return links to 'a:visited' CSS tag. This can be used to determine
           the sites the user has visited.
@@ -361,6 +366,18 @@ These considerations leave us with the following requirements for Torora:
        6. Disable java.
            Files Altered: TODO. Java not currently supported in arora!
 
+       7. Disable document.referrer
+          Files altered: WebCore/dom/document.cpp (String Document::referrer() const)
+
+          Problem here is that many sites will expect a valid referrer object rather than a
+          blank and may not serve content if the referrer object is unexpected.
+
+       8. Disable history.length
+          Files altered: WebCore/page/history.cpp (History:)
+
+          This value has potential, in cases where it is unusually high due to prolonged use
+          of a single browser/tab session, to assist sites in tracking the user. That said,
+          such users already have a pretty revealing cache and coookie data set.
 
     6. Transparency
         The user should receive some assurance that they are indeed using tor.
@@ -382,6 +399,9 @@ These considerations leave us with the following requirements for Torora:
           Ref: http://www.remote.org/jochen/sec/hfpa/hfpa.pdf
           Files altered: torora/src/networkaccessmanager.cpp
 
+          Could also look at optionalizing the list in:
+           WebCore/platform/network/ResourceHandle.cpp (portAllowed(const ResourceRequest& request))
+          
        3. Same origin policy for file:// urls.
           "Firefox 2's implementation of same origin policy allows file urls to read
           and submit arbitrary files from the local filesystem to arbitrary websites."
