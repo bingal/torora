@@ -242,7 +242,7 @@ void TorManager::reportTorCheckResults(int page)
         bulletone = tr("Torora is checking https://check.torproject.org.");
         bullettwo = tr("Once Torora is sure you can browse anonymously, browsing will be enabled.");
         bulletthree = tr("This check may take a few seconds, so please be patient.");
-        img = QLatin1String(":tor-checking.png");
+        img = QLatin1String(":graphics/tor-checking.png");
         statusbar = QLatin1String("Checking Tor...");
         break;
       case USING_TOR:
@@ -264,7 +264,7 @@ void TorManager::reportTorCheckResults(int page)
         bulletone = tr("You can confirm this yourself by visiting <a href='https://check.torproject.org'>https://check.torproject.org</a>");
         bullettwo = tr("The bookmark toolbar contains some well known hidden services you can check out.");
         bulletthree = tr("You can check Tor at any time by pressing F12 or clicking <b>Tools->Check Tor.</b>");
-        img = QLatin1String(":tor-on.png");
+        img = QLatin1String(":graphics/tor-on.png");
         statusbar = QLatin1String("Tor Check Successful");
        break;
       default:
@@ -304,7 +304,7 @@ void TorManager::reportTorCheckResults(int page)
             bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
         }
         bulletthree = tr("Press F12 or <b>Tools->Check Tor</b> to test Tor again.");
-        img = QLatin1String(":tor-off.png");
+        img = QLatin1String(":graphics/tor-off.png");
         statusbar = QLatin1String("Tor Check Failed");
         break;
     }
@@ -329,7 +329,7 @@ void TorManager::reportTorCheckResults(int page)
 
     if (page == USING_TOR) {
         imageBuffer.open(QBuffer::ReadWrite);
-        icon = QIcon(QLatin1String(":info.png"));
+        icon = QIcon(QLatin1String(":graphics/info.png"));
         pixmap = icon.pixmap(QSize(32, 32));
         if (pixmap.save(&imageBuffer, "PNG")) {
             html.replace(QLatin1String("INFO_IMAGE_HERE"),
@@ -337,7 +337,7 @@ void TorManager::reportTorCheckResults(int page)
         }
 
         imageBuffer.open(QBuffer::ReadWrite);
-        icon = QIcon(QLatin1String(":important.png"));
+        icon = QIcon(QLatin1String(":graphics/important.png"));
         pixmap = icon.pixmap(QSize(32, 32));
         if (pixmap.save(&imageBuffer, "PNG")) {
             html.replace(QLatin1String("WARNING_IMAGE_HERE"),
@@ -345,7 +345,7 @@ void TorManager::reportTorCheckResults(int page)
         }
 
         imageBuffer.open(QBuffer::ReadWrite);
-        icon = QIcon(QLatin1String(":help.png"));
+        icon = QIcon(QLatin1String(":graphics/help.png"));
         pixmap = icon.pixmap(QSize(32, 32));
         if (pixmap.save(&imageBuffer, "PNG")) {
             html.replace(QLatin1String("QUESTION_IMAGE_HERE"),
@@ -458,7 +458,7 @@ void TorManager::requestPassword(const QString &message)
     passwordDialog.setupUi(&dialog);
 
     passwordDialog.iconLabel->setText(QLatin1String("Tor Password"));
-    passwordDialog.iconLabel->setPixmap(QPixmap(QLatin1String(":tor-logo.png")));
+    passwordDialog.iconLabel->setPixmap(QPixmap(QLatin1String(":graphics/tor-logo.png")));
 
     QString introMessage = message;
     passwordDialog.introLabel->setText(introMessage);
@@ -486,7 +486,7 @@ void TorManager::passwordHelp()
     bullettwo = tr("Clear the 'Randomly Generate Password' check-box.");
     bulletthree = tr("Type in a password of your choosing and click 'OK'.");
     bulletfour = tr("Enter this password when Torora requests it.");
-    img = QLatin1String(":vidalia-password.png");
+    img = QLatin1String(":graphics/vidalia-password.png");
 
     QString html = QString(QLatin1String(file.readAll()))
                         .arg(title)
@@ -507,7 +507,7 @@ void TorManager::passwordHelp()
     }
 
     imageBuffer.open(QBuffer::ReadWrite);
-    icon = QIcon(QLatin1String(":help.png"));
+    icon = QIcon(QLatin1String(":graphics/help.png"));
     pixmap = icon.pixmap(QSize(32, 32));
     if (pixmap.save(&imageBuffer, "PNG")) {
         html.replace(QLatin1String("INFO_BINARY_DATA_HERE"),

@@ -50,9 +50,9 @@ Countries::~Countries()
 Country::Country(const QString &cc, const QString &name )
 {
     if (!cc.isEmpty())
-        m_icon = QPixmap(QString(QLatin1String(":flags/%1.png")).arg(cc));
+        m_icon = QPixmap(QString(QLatin1String(":graphics/flags/%1.png")).arg(cc));
     else
-        m_icon = QPixmap(QString(QLatin1String(":tor.png")));
+        m_icon = QPixmap(QString(QLatin1String(":graphics/tor.png")));
     m_name = name;
     m_cc = cc;
 }

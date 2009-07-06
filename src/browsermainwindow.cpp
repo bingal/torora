@@ -988,7 +988,7 @@ void BrowserMainWindow::setupToolBar()
     m_navigationBar->addAction(m_stopReloadAction);
 
 
-    m_geoBrowsingAction->setIcon(QIcon(QLatin1String(":geobrowser.png")));
+    m_geoBrowsingAction->setIcon(QIcon(QLatin1String(":graphics/geobrowser.png")));
     m_geoBrowsingMenu = new QMenu(this);
     connect(m_geoBrowsingMenu, SIGNAL(aboutToShow()),
             this, SLOT(aboutToShowGeoBrowsingMenu()));

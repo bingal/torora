@@ -150,6 +150,7 @@ void WebPage::addExternalBinding(QWebFrame *frame)
     }
     frame->addToJavaScriptWindowObject(QLatin1String("external"),
            m_javaScriptBinding);
+
 }
 
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request,
