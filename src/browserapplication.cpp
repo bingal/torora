@@ -85,8 +85,11 @@
 #include <qwebsettings.h>
 #include <qwebframe.h>
 #include <QShortcut>
- 
 #include <qdebug.h>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 DownloadManager *BrowserApplication::s_downloadManager = 0;
 HistoryManager *BrowserApplication::s_historyManager = 0;
@@ -146,6 +149,13 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     QTimer::singleShot(0, this, SLOT(postLaunch()));
 #endif
     languageManager();
+
+    //Torora 4.1: Set our timezone to UTC
+#ifdef Q_OS_WIN
+    SetEnvironmentVariable("TZ",":UTC");
+#else
+    setenv("TZ",":UTC",1);
+#endif
 }
 
 BrowserApplication::~BrowserApplication()

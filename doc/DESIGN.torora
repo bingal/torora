@@ -180,45 +180,16 @@ These considerations leave us with the following requirements for Torora:
         DOM. POC: http://browserspy.dk/language.php
 
       Implementation Requirements Arising:
-        1. Patch WebKit to modify the values returned by the Date object.
-           Setting: QWebSettings::MaskTimeZone
-           Files altered: JavaScriptCore/runtime/DatePrototype.cpp
-                         JavaScriptCore/runtime/DateConstructor.cpp
-                         JavaScriptCore/runtime/DateMath.cpp
+        1. On startup torora will set the local timezone to UTC by setting the
+           environment variable TZ as follows:
 
-           Strategy: Same approach as Torbutton. Once PreventUserProfiling is enabled the default
-                     Date object is created as UTC. Attempts to set the Date object using localtime
-                     (e.g. new Date('10:10:10')) also use UTC rather than actual localtime. Calls
-                     to getTimeZoneOffset() returns 0 explicitly.
+              setenv("TZ",":UTC",1);
 
-                     The following Date javascript methods always return UTC time:
+           This will ensure that WebKit always returns the local time as UTC.
 
-                     getTime          getHours                  getUTCSeconds
-                     getFullYear      getMinutes                getUTCMilliseconds
-                     getYear          getSeconds                toUTCString
-                     getMonth         getMilliseconds           toGMTString
-                     getDate          getUTCFullYear            toString
-                     getDay           getUTCMonth               toLocaleString
-                                     getUTCDate                toLocaleTimeString
-                                     getUTCDay                 toLocaleDateString
-                                     getUTCHours               toDateString
-                                     getUTCMinutes             toTimeString
-
-                     The following Date javascript methods always return 0:
-
-                     getTimezoneOffset
-
-                     The following Date javascript methods always set UTC time:
-
-                     setTime                setMilliseconds
-                     setFullYear            setUTCFullYear
-                     setYear                setUTCMonth
-                     setMonth               setUTCDate
-                     setDate                setUTCDay
-                     setDay                 setUTCHours
-                     setHours               setUTCMinutes
-                     setMinutes             setUTCSeconds
-                     setSeconds             setUTCMilliseconds
+           TODO: Get Windows equivalent.
+                 Do we need to call tzset() to ensure it is read in on Windows?
+                 (See: https://bugzilla.mozilla.org/show_bug.cgi?id=392274)
 
         2. The time returned by javascript should build in a random margin of error
            of up to a couple of minutes. This will prevent sites from attempting
