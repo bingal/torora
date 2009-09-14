@@ -66,6 +66,8 @@
 #include <qmainwindow.h>
 #include <qicon.h>
 #include <qurl.h>
+#include <QKeyEvent>
+#include <qdebug.h>
 
 class AutoSaver;
 class BookmarksToolBar;
@@ -78,6 +80,7 @@ class QSplitter;
 class QFrame;
 class HistoryMenu;
 class BookmarksMenuBarMenu;
+class QKeyEvent;
 
 
 /*!
@@ -169,11 +172,14 @@ private slots:
     void printRequested(QWebFrame *frame);
     void geometryChangeRequested(const QRect &geometry);
 
+    void quickBack();
+    void quickForward();
 private:
     void retranslate();
     void loadDefaultState();
     void setupMenu();
     void setupToolBar();
+    void keyReleaseEvent ( QKeyEvent * event );
 
 private:
     QMenu *m_fileMenu;
@@ -218,7 +224,9 @@ private:
 
     HistoryMenu *m_historyMenu;
     QAction *m_historyBackAction;
+    QAction *m_historyQuickBackAction;
     QAction *m_historyForwardAction;
+    QAction *m_historyQuickForwardAction;
     QAction *m_historyHomeAction;
     QAction *m_historyRestoreLastSessionAction;
 
@@ -263,6 +271,7 @@ private:
     // used to determine if these bars should be reshown when leaving fullscreen.
     bool m_menuBarVisible;
     bool m_statusBarVisible;
+    bool m_lookback;
 
     friend class BrowserApplication;
 };
