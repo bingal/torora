@@ -1102,8 +1102,8 @@ void TabWidget::displayThumb(int index, int x)
     if (WebView *tab = webView(index)) {
         WebView *currentTab = webView(currentIndex());
         QPixmap image = tab->currentScreenImage();
-        int height = image.height() / 3;
-        int width = image.width() / 3;
+        int height = image.height() / 5;
+        int width = image.width() / 5;
         currentTab->displayThumb(image.scaled(width,height), x);
     }
 }
@@ -1126,8 +1126,8 @@ void TabWidget::rotateThumb(int numSteps, int index, int x)
         if (moved) {
             WebView *currentTab = webView(currentIndex());
             QPixmap image = tab->currentScreenImage();
-            int height = image.height() / 3;
-            int width = image.width() / 3;
+            int height = image.height() / 5;
+            int width = image.width() / 5;
             currentTab->displayThumb(image.scaled(width,height), x);
         }
     }

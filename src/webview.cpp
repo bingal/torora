@@ -930,12 +930,13 @@ void WebView::paintEvent(QPaintEvent *event)
             toaster = m_thumbnail;
 
         painter.setBrush(palette().color(QPalette::Background));
-        painter.drawRoundedRect(QRect(m_thumbx - 10, y() - 10, m_thumbnail.width() + 15, m_height - 5), 10, 10);
+        int hideTop = 10;
+        painter.drawRoundedRect(QRect(m_thumbx - 6, y() - hideTop, m_thumbnail.width() + 12, toaster.height() + 6 + hideTop), 10, 10);
         QPen pen(Qt::white);
         pen.setWidth(1);
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
-        painter.drawRoundedRect(QRect(m_thumbx - 10, y() - 10, m_thumbnail.width() + 12, m_height - 8), 10, 10);
+        painter.drawRoundedRect(QRect(m_thumbx - 3, y() - hideTop, m_thumbnail.width() + 6, toaster.height() + 3 + hideTop), 10, 10);
 
         painter.drawPixmap(QPoint(m_thumbx, y()), toaster);
         event->accept();
