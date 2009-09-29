@@ -197,10 +197,24 @@ TabWidget *WebView::tabWidget() const
     return 0;
 }
 
+#include <qscriptengine.h>
+#include <qscriptvalue.h>
+
+
 void WebView::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *menu = new QMenu(this);
 
+    /*
+    QScriptEngine *engine = new QScriptEngine(this);
+    engine->globalObject().setProperty(QLatin1String("menu"), engine->newQObject(menu));
+    QString fileName = BrowserApplication::dataFilePath(QLatin1String("menu.js"));
+    QFile file(fileName);
+    if (file.open(QFile::ReadOnly)) {
+        QString program = QLatin1String(file.readAll());
+        engine->evaluate(program, fileName, 0);
+    }
+*/
     QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
 
     if (!r.linkUrl().isEmpty()) {
