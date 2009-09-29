@@ -109,6 +109,9 @@
 
 #include <qdebug.h>
 
+#include <qscriptengine.h>
+#include <qscriptvalue.h>
+
 BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
     , m_navigationBar(0)
@@ -227,6 +230,18 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     setWindowRole(QLatin1String("browser"));
 #endif
     retranslate();
+
+    QScriptEngine *engine = new QScriptEngine(this);
+    engine->globalObject().setProperty(QLatin1String("mainWindow"), engine->newQObject(this));
+    engine->globalObject().setProperty(QLatin1String("bookmarkToolbar"), engine->newQObject(m_bookmarksToolbar));
+    engine->globalObject().setProperty(QLatin1String("navigationToolbar"), engine->newQObject(m_navigationBar));
+    QString fileName = BrowserApplication::dataFilePath(QLatin1String("qscript.js"));
+    QFile file(fileName);
+    if (file.open(QFile::ReadOnly)) {
+        QString program = QLatin1String(file.readAll());
+        engine->evaluate(program, fileName, 0);
+        //qDebug() << engine->uncaughtException();
+    }
 }
 
 BrowserMainWindow::~BrowserMainWindow()
