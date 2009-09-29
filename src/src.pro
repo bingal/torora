@@ -1,8 +1,8 @@
 TEMPLATE = app
 
-TARGET = torora
+TARGET = mgeni
 mac {
-    TARGET = Torora
+    TARGET = Mgeni
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 }
 

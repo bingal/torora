@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication application(argc, argv);
     QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
-    QCoreApplication::setApplicationName(QLatin1String("Torora"));
+    QCoreApplication::setApplicationName(QLatin1String("Mgeni"));
 
     QStringList args = application.arguments();
     args.takeFirst();

@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QCoreApplication::setApplicationName(QLatin1String("torora"));
+    QCoreApplication::setApplicationName(QLatin1String("mgeni"));
     QCoreApplication::setApplicationVersion(QLatin1String("0.1"));
 
     new ModelTest(BrowserApplication::bookmarksManager()->bookmarksModel());

@@ -239,8 +239,8 @@ void TorManager::reportTorCheckResults(int page)
             return;
         title = tr("Checking Tor..");
         headline = tr("Checking Tor..");
-        bulletone = tr("Torora is checking https://check.torproject.org.");
-        bullettwo = tr("Once Torora is sure you can browse anonymously, browsing will be enabled.");
+        bulletone = tr("Mgeni is checking https://check.torproject.org.");
+        bullettwo = tr("Once Mgeni is sure you can browse anonymously, browsing will be enabled.");
         bulletthree = tr("This check may take a few seconds, so please be patient.");
         img = QLatin1String(":graphics/tor-checking.png");
         statusbar = QLatin1String("Checking Tor...");
@@ -259,7 +259,7 @@ void TorManager::reportTorCheckResults(int page)
             return;
         }
         tororaIssues = QString(QLatin1String(issues.readAll()));
-        title = tr("Torora Ready For Use..");
+        title = tr("Mgeni Ready For Use..");
         headline = tr("Tor is Working Properly. You Can Browse Anonymously.");
         bulletone = tr("You can confirm this yourself by visiting <a href='https://check.torproject.org'>https://check.torproject.org</a>");
         bullettwo = tr("The bookmark toolbar contains some well known hidden services you can check out.");
@@ -287,12 +287,12 @@ void TorManager::reportTorCheckResults(int page)
         } else if (page == NOT_USING_TOR) {
             bulletone = tr("Testing at https://check.torproject.org indicated that you are not using Tor.");
             if (!m_proxyConfigured) {
-                headline = tr("Torora Is By-Passing Tor!");
+                headline = tr("Mgeni Is By-Passing Tor!");
                 bullettwo = tr("<b>A primitive check of your configuration suggests that %1 is not configured to use Tor.</b>")
                           .arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
                 bulletfour = tr("<li>Check your configuration..</li>");
             } else {
-                headline = tr("Torora May Be By-Passing Tor!");
+                headline = tr("Mgeni May Be By-Passing Tor!");
                 bullettwo = tr("Your set-up seems OK, Tor and %1 are running and seem to be correctly configured.").
                             arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
                 bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
@@ -485,7 +485,7 @@ void TorManager::passwordHelp()
     intro = tr("Open up the Vidalia 'Advanced' settings dialog.");
     bullettwo = tr("Clear the 'Randomly Generate Password' check-box.");
     bulletthree = tr("Type in a password of your choosing and click 'OK'.");
-    bulletfour = tr("Enter this password when Torora requests it.");
+    bulletfour = tr("Enter this password when Mgeni requests it.");
     img = QLatin1String(":graphics/vidalia-password.png");
 
     QString html = QString(QLatin1String(file.readAll()))

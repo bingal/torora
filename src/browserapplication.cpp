@@ -103,7 +103,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     , quitting(false)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
-    QCoreApplication::setApplicationName(QLatin1String("Torora"));
+    QCoreApplication::setApplicationName(QLatin1String("Mgeni"));
     QString version = QLatin1String("0.1");
 
     QCoreApplication::setApplicationVersion(version);
@@ -633,14 +633,14 @@ void BrowserApplication::setEventKeyboardModifiers(Qt::KeyboardModifiers modifie
 bool BrowserApplication::isTor()
 {
     QSettings settings;
-    settings.beginGroup(QLatin1String("Torora"));
+    settings.beginGroup(QLatin1String("Mgeni"));
     return settings.value(QLatin1String("torBrowsing")).toBool();
 }
 
 void BrowserApplication::setTor(bool isTor)
 {
     QSettings settings;
-    settings.beginGroup(QLatin1String("Torora"));
+    settings.beginGroup(QLatin1String("Mgeni"));
     settings.setValue(QLatin1String("torBrowsing"),isTor);
     settings.endGroup();
 

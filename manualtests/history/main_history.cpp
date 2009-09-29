@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     QApplication application(argc, argv);
     QMainWindow w;
 
-    QCoreApplication::setApplicationName("torora");
+    QCoreApplication::setApplicationName("mgeni");
 
     HistoryManager history;
 

@@ -154,7 +154,7 @@ void CookieJar::load()
     qSort(m_exceptions_allowForSession.begin(), m_exceptions_allowForSession.end());
 
     QSettings settings;
-    settings.beginGroup(QLatin1String("Torora"));
+    settings.beginGroup(QLatin1String("Mgeni"));
     bool isTor = settings.value(QLatin1String("torBrowsing")).toBool();
     loadSettings(isTor);
 }

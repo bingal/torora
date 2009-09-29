@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 {
     SingleApplication application(argc, argv);
     QCoreApplication::setOrganizationDomain(QLatin1String("torora-browser.org"));
-    QCoreApplication::setApplicationName(QLatin1String("Torora"));
+    QCoreApplication::setApplicationName(QLatin1String("Mgeni"));
 
     if (application.sendMessage(QString())) {
         qWarning() << "To prevent the loss of any history please exit Arora while this is tool is being run";
