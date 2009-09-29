@@ -2,12 +2,12 @@
 
 SetCompressor /SOLID /FINAL lzma
 
-!define PRODUCT_NAME "Torora"
+!define PRODUCT_NAME "Mgeni"
 !define /date PRODUCT_VERSION "Snapshot (%#m-%#d-%#Y)"
-!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\torora.exe"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\mgeni.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define QTDIR "C:\Qt\qt-all-opensource-src-4.5.0"
+!define QTDIR "C:\Qt\qt-all-opensource-src-4.5.2"
 
 !include "MUI.nsh"
 !define MUI_ABORTWARNING
@@ -17,7 +17,7 @@ SetCompressor /SOLID /FINAL lzma
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_FINISHPAGE_RUN "$INSTDIR\torora.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\mgeni.exe"
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -32,18 +32,20 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section "Main Components"
-  KillProcDLL::KillProc "torora.exe"
+  KillProcDLL::KillProc "mgeni.exe"
   Sleep 100
   SetOverwrite on
 
   SetOutPath "$INSTDIR"
-  File "torora.exe"
+  File "mgeni.exe"
   File "tools\htmlToXBel\release\htmlToXBel.exe"
+  File "tools\cacheinfo\release\arora-cacheinfo.exe"
+  File "tools\placesimport\release\arora-placesimport.exe"
   File "C:\Qt\2009.01\mingw\bin\mingwm10.dll"
   File "C:\Qt\2009.01\qt\bin\QtCore4.dll"
   File "C:\Qt\2009.01\qt\bin\QtGui4.dll"
   File "C:\Qt\2009.01\qt\bin\QtNetwork4.dll"
-  File "C:\Users\robert\WebKit-SVN-source\webkit\WebKitBuild\Release\lib\QtWebKit4.dll"
+  File "C:\Qt\2009.01\qt\bin\QtWebKit4.dll"
   File "C:\Qt\2009.01\bin\phonon4.dll"
   File "C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll\ssleay32.dll"
   File "C:\Users\robert\Documents\Development\openssl-0.9.8j\out32dll\libeay32.dll"
@@ -74,15 +76,15 @@ Section "Main Components"
 SectionEnd
 
 Section Icons
-  CreateShortCut "$SMPROGRAMS\Torora.lnk" "$INSTDIR\torora.exe"
+  CreateShortCut "$SMPROGRAMS\Mgeni.lnk" "$INSTDIR\mgeni.exe"
 SectionEnd
 
 Section Uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\torora.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\mgeni.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\torora.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\mgeni.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
 SectionEnd
 
@@ -95,12 +97,12 @@ SectionEnd
 ;SectionEnd
 
 Section Uninstall
-  KillProcDLL::KillProc "torora.exe"
+  KillProcDLL::KillProc "mgeni.exe"
   Sleep 100
-  Delete $SMPROGRAMS\Torora.lnk
+  Delete $SMPROGRAMS\Mgeni.lnk
   RMDir /r "$INSTDIR"
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 SectionEnd
 
-BrandingText "torora.net"
+BrandingText "mgeni.net"

@@ -10,6 +10,7 @@ Makefile*
 .rcc
 .qm
 .gdb_history
+<<<<<<< HEAD:.gitignore
 *.kdevelop
 *.pcs
 *.kdevses
@@ -22,4 +23,15 @@ Makefile*
 massif.out.*
 ms_print.*
 >>>>>>> ca6cf65947ca10ace90291efa6b7160c9bb6d2a3:.gitignore
+=======
+ui_
+*.exe
+*.swp
+*~
+*.pdb
+*.ilk
+massif.out.*
+ms_print.*
+doc/
+>>>>>>> 06c968a268a4fe712f69e8d2b8454a47489c6230:.gitignore
 

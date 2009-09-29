@@ -9,8 +9,11 @@ if [ $? -eq 0 ] ; then
     QMAKE=qmake-qt4
 fi
 dir=`dirname $0`
-for file in `git-diff-index --name-only HEAD | grep .cpp` ; do
-    file=`echo $file | sed -e s/.cpp//g -e 's/.*\///g'`
+for file in `git diff-index --name-only HEAD | grep .cpp` ; do
+    file=`echo $file | sed -e 's/src\///g' -e 's/.cpp//g'`
+    if [ ! -d $dir/../autotests/$file ] ; then
+        file=`echo $file | sed -e 's/.*\///g'`;
+    fi
     if [ -d $dir/../manualtests/$file ] ; then
         echo "--checking manualtest (should still build): $file--"
         cd "$dir/../../manualtests/$file/";

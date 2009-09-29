@@ -20,20 +20,22 @@
 #ifndef WEBPAGE_H
 #define WEBPAGE_H
 
+#include "webpageproxy.h"
 #include "tabwidget.h"
 
 #include <qlist.h>
-#include <qwebpage.h>
+#include <qnetworkrequest.h>
 
 class WebPageLinkedResource
 {
 public:
     QString rel;
     QString type;
-    QString href;
+    QUrl href;
     QString title;
 };
 
+class OpenSearchEngine;
 class QNetworkReply;
 class WebPluginFactory;
 // See https://developer.mozilla.org/en/adding_search_engines_from_web_pages
@@ -48,7 +50,22 @@ public slots:
     void AddSearchProvider(const QString &url);
 };
 
-class WebPage : public QWebPage
+class JavaScriptAroraObject : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QObject *currentEngine READ currentEngine)
+
+public:
+    JavaScriptAroraObject(QObject *parent = 0);
+
+public slots:
+    QString translate(const QString &string);
+    QObject *currentEngine() const;
+    QString searchUrl(const QString &string) const;
+};
+
+class WebPage : public WebPageProxy
 {
     Q_OBJECT
 
@@ -74,10 +91,18 @@ protected slots:
     void addExternalBinding(QWebFrame *frame = 0);
 
 protected:
+    void populateNetworkRequest(QNetworkRequest &request);
+    static QString s_userAgent;
     static WebPluginFactory *s_webPluginFactory;
     TabWidget::OpenUrlIn m_openTargetBlankLinksIn;
     QUrl m_requestedUrl;
-    JavaScriptExternalObject *m_javaScriptBinding;
+    JavaScriptExternalObject *m_javaScriptExternalObject;
+    JavaScriptAroraObject *m_javaScriptAroraObject;
+
+private:
+    QNetworkRequest lastRequest;
+    QWebPage::NavigationType lastRequestType;
+
 };
 
 #endif // WEBPAGE_H

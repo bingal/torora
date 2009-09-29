@@ -30,12 +30,13 @@ public slots:
     void init();
     void cleanup();
 
+    void save();
+
 private slots:
     void AutoSaver_data();
     void AutoSaver();
     void changeOccurred_data();
     void changeOccurred();
-
     void deleted();
 };
 
@@ -44,7 +45,7 @@ class SubAutoSaver : public AutoSaver
 {
 public:
     SubAutoSaver(QObject *parent = 0) : AutoSaver(parent) {}
-    void call_timerEvent(QTimerEvent* event)
+    void call_timerEvent(QTimerEvent *event)
         { return SubAutoSaver::timerEvent(event); }
 };
 
@@ -103,6 +104,11 @@ void tst_AutoSaver::AutoSaver()
 {
     SubAutoSaver save(this);
     save.changeOccurred();
+    save.saveIfNeccessary();
+}
+
+void tst_AutoSaver::save()
+{
 }
 
 typedef QList<int> IntList;

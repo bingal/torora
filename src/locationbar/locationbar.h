@@ -46,6 +46,9 @@ protected:
     void paintEvent(QPaintEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 
 private slots:
     void webViewUrlChanged(const QUrl &url);

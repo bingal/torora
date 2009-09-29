@@ -22,6 +22,7 @@
 
 #include <historymanager.h>
 #include <history.h>
+#include <historycompleter.h>
 #include <modeltest.h>
 
 class tst_HistoryManager : public QObject
@@ -189,7 +190,7 @@ void tst_HistoryManager::addHistoryEntry_data()
     */
 }
 
-// public void addHistoryEntry(HistoryEntry* item)
+// public void addHistoryEntry(HistoryEntry *item)
 void tst_HistoryManager::addHistoryEntry()
 {
     QFETCH(HistoryList, initial);
@@ -215,7 +216,7 @@ void tst_HistoryManager::updateHistoryEntry_data()
     QTest::newRow("two") << (HistoryList() << HistoryEntry() << HistoryEntry("http://foo.com")) << QUrl() << QString("foo");
 }
 
-// public void updateHistoryEntry(QUrl const& url, QString const title)
+// public void updateHistoryEntry(QUrl const &url, QString const title)
 void tst_HistoryManager::updateHistoryEntry()
 {
     QFETCH(HistoryList, list);
@@ -270,7 +271,7 @@ void tst_HistoryManager::daysToExpire()
     history.setDaysToExpire(daysToExpire);
     QCOMPARE(history.daysToExpire(), daysToExpire);
 
-    QTest::qWait(wait_seconds * 1000);
+    QTest::qWait(wait_seconds*1000);
     QCOMPARE(history.history(), post);
 
     // re-add the items that have probably expired to catch any cache issues
@@ -401,43 +402,36 @@ void tst_HistoryManager::big()
     history.setDaysToExpire(-1);
     history.setHistory(bigHistory);
 
-    qDebug() << "removed dups:" << history.history().count();
     QCOMPARE(history.history().count(), bigHistory.count());
 
-    qDebug() << "loaded, making menu";
     HistoryMenu menu;
-    menu.show();
 
-    qDebug() << "menu done, making model";
     HistoryModel model(&history);
     ModelTest test(&model);
-    qDebug() << "model rowCount" << model.rowCount();
     QCOMPARE(model.rowCount(), bigHistory.count());
 
-    qDebug() << "making completion model";
     HistoryCompletionModel completionModel;
     completionModel.setSourceModel(&model);
     ModelTest test2(&completionModel);
-    QCOMPARE(completionModel.rowCount(), bigHistory.count() * 2);
+    QCOMPARE(completionModel.rowCount(), bigHistory.count());
 
-    qDebug() << "making history dialog model";
     HistoryTreeModel dialogModel(&model);
     ModelTest test3(&dialogModel);
 
-
     int r = 0;
     QDate d;
-    for (int i = 0; i < bigHistory.count(); ++i)
+    for (int i = 0; i < bigHistory.count(); ++i) {
         if (bigHistory[i].dateTime.date() != d) {
             d = bigHistory[i].dateTime.date();
             QDate rowDate = dialogModel.index(r, 0).data(HistoryModel::DateRole).toDate();
             QCOMPARE(d, rowDate);
             r++;
         }
+    }
+
     QCOMPARE(dialogModel.rowCount(), 328);
 
     HistoryDialog dialog(0, &history);
-    dialog.show();
     QTest::qWait(100);
 }
 
@@ -486,7 +480,6 @@ void tst_HistoryManager::historyDialog()
     history.setDaysToExpire(-1);
     history.setHistory(bigHistory);
     HistoryDialog dialog(0, &history);
-    dialog.show();
     //QTest::qWait(300);
 
     QAbstractItemModel *model = dialog.tree->model();

@@ -51,19 +51,25 @@ private slots:
     void createWindow();
     void handleUnsupportedContent();
     void linkedResources();
+    void javaScriptObjects_data();
+    void javaScriptObjects();
+    void userAgent();
 };
 
 // Subclass that exposes the protected functions.
 class SubWebPage : public WebPage
 {
 public:
-    void call_aboutToLoadUrl(QUrl const& url)
+    QString call_userAgentForUrl(const QUrl &url) const
+        { return SubWebPage::userAgentForUrl(url); }
+
+    void call_aboutToLoadUrl(QUrl const &url)
         { return SubWebPage::aboutToLoadUrl(url); }
 
-    bool call_acceptNavigationRequest(QWebFrame* frame, QNetworkRequest const& request, NavigationType type)
+    bool call_acceptNavigationRequest(QWebFrame *frame, QNetworkRequest const &request, NavigationType type)
         { return SubWebPage::acceptNavigationRequest(frame, request, type); }
 
-    QObject* call_createPlugin(QString const& classId, QUrl const& url, QStringList const& paramNames, QStringList const& paramValues)
+    QObject* call_createPlugin(QString const &classId, QUrl const &url, QStringList const &paramNames, QStringList const &paramValues)
         { return SubWebPage::createPlugin(classId, url, paramNames, paramValues); }
 
     QWebPage* call_createWindow(QWebPage::WebWindowType type)
@@ -74,6 +80,8 @@ public:
 // It is only called once.
 void tst_WebPage::initTestCase()
 {
+    QCoreApplication::setApplicationName("tst_webpage");
+
     QDesktopServices::setUrlHandler(QLatin1String("mailto"), this, "openUrl");
     QDesktopServices::setUrlHandler(QLatin1String("ftp"), this, "openUrl");
 }
@@ -82,6 +90,8 @@ void tst_WebPage::initTestCase()
 // It is only called once.
 void tst_WebPage::cleanupTestCase()
 {
+    QSettings settings;
+    settings.setValue("userAgent", QString());
 }
 
 // This will be called before each test function is executed.
@@ -142,7 +152,7 @@ void tst_WebPage::webPluginFactory_data()
 #endif
 }
 
-// public WebPluginFactory* webPluginFactory()
+// public WebPluginFactory *webPluginFactory()
 void tst_WebPage::webPluginFactory()
 {
 #if 0
@@ -190,7 +200,7 @@ void tst_WebPage::acceptNavigationRequest_data()
     QTest::newRow("midclick-2") << Qt::MidButton << Qt::AltModifier << true << QNetworkRequest(QUrl("http://www.foo.com")) << QWebPage::NavigationTypeLinkClicked << false << 0;
 }
 
-// protected bool acceptNavigationRequest(QWebFrame* frame, QNetworkRequest const& request, NavigationType type)
+// protected bool acceptNavigationRequest(QWebFrame *frame, QNetworkRequest const &request, NavigationType type)
 void tst_WebPage::acceptNavigationRequest()
 {
     QFETCH(Qt::MouseButton, pressedButton);
@@ -228,7 +238,7 @@ void tst_WebPage::createPlugin_data()
 #endif
 }
 
-// protected QObject* createPlugin(QString const& classId, QUrl const& url, QStringList const& paramNames, QStringList const& paramValues)
+// protected QObject* createPlugin(QString const &classId, QUrl const &url, QStringList const &paramNames, QStringList const &paramValues)
 void tst_WebPage::createPlugin()
 {
 #if 0
@@ -287,43 +297,99 @@ void tst_WebPage::handleUnsupportedContent()
 
 void tst_WebPage::linkedResources()
 {
-    QLatin1String html("<html>"
-                       "    <head>"
-                       "        <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"/>"
-                       "        <link rel=\"alternate\" type=\"application/rss+xml\" href=\"rss1.xml\"/>"
-                       "        <link rel=\"alternate\" type=\"application/rss+xml\" href=\"rss2.xml\" title=\"Lorem Ipsum\"/>"
-                       "        <link rel=\"alternate\" type=\"application/atom+xml\" href=\"atom1.xml\"/>"
-                       "    </head>"
-                       "    <body>"
-                       "        <link rel=\"alternate\" type=\"application/atom+xml\" href=\"atom2.xml\"/>"
-                       "    </body>"
-                       "</html>");
+    SubWebPage page;
+
+    QString html = "<html>"
+        "<head>"
+            "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/common.css\" />"
+            "<link rel=\"alternate\" type=\"application/rss+xml\" href=\"./rss.xml\" />"
+            "<link rel=\"alternate\" type=\"application/atom+xml\" href=\"../atom.xml\" title=\"Feed\" />"
+            "<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"http://external.foo/search.xml\" />"
+        "</head>"
+        "<body>"
+            "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/ie.css\" />"
+        "</body>"
+    "</html>";
+
+    page.mainFrame()->setHtml(html, QUrl("http://foobar.baz/foo/"));
+
+    QList<WebPageLinkedResource> resources = page.linkedResources();
+    QCOMPARE(resources.count(), 4);
+
+    QCOMPARE(resources.at(0).rel, QString("stylesheet"));
+    QCOMPARE(resources.at(0).type, QString("text/css"));
+    QCOMPARE(resources.at(0).href, QUrl("http://foobar.baz/foo/styles/common.css"));
+    QCOMPARE(resources.at(0).title, QString());
+
+    QCOMPARE(resources.at(1).rel, QString("alternate"));
+    QCOMPARE(resources.at(1).type, QString("application/rss+xml"));
+    QCOMPARE(resources.at(1).href, QUrl("http://foobar.baz/foo/rss.xml"));
+
+    QCOMPARE(resources.at(2).href, QUrl("http://foobar.baz/atom.xml"));
+    QCOMPARE(resources.at(2).title, QString("Feed"));
+
+    QCOMPARE(resources.at(3).rel, QString("search"));
+    QCOMPARE(resources.at(3).type, QString("application/opensearchdescription+xml"));
+    QCOMPARE(resources.at(3).href, QUrl("http://external.foo/search.xml"));
+
+    QString js = "var base = document.createElement('base');"
+                 "base.setAttribute('href', 'http://barbaz.foo/bar/');"
+                 "document.getElementsByTagName('head')[0].appendChild(base);";
+
+    page.mainFrame()->evaluateJavaScript(js);
+
+    resources = page.linkedResources();
+    QCOMPARE(resources.count(), 4);
+
+    QCOMPARE(resources.at(0).href, QUrl("http://barbaz.foo/bar/styles/common.css"));
+    QCOMPARE(resources.at(1).href, QUrl("http://barbaz.foo/bar/rss.xml"));
+    QCOMPARE(resources.at(2).href, QUrl("http://barbaz.foo/atom.xml"));
+    QCOMPARE(resources.at(3).href, QUrl("http://external.foo/search.xml"));
+}
+
+void tst_WebPage::javaScriptObjects_data()
+{
+    QTest::addColumn<QUrl>("url");
+    QTest::addColumn<bool>("windowExternal");
+    QTest::addColumn<bool>("windowArora");
+
+    QTest::newRow("qrc:/notfound.html") << QUrl("qrc:/notfound.html") << true << false;
+    QTest::newRow("qrc:/startpage.html") << QUrl("qrc:/startpage.html") << true << true;
+}
+
+void tst_WebPage::javaScriptObjects()
+{
+    QFETCH(QUrl, url);
+    QFETCH(bool, windowExternal);
+    QFETCH(bool, windowArora);
 
     SubWebPage page;
-    page.mainFrame()->setHtml(QString(html));
+    QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
+    page.mainFrame()->load(url);
+    QTRY_COMPARE(spy.count(), 1);
 
-    QList<WebPageLinkedResource> linkedResources = page.linkedResources();
-    QCOMPARE(linkedResources.count(), 4);
+    QVariant windowExternalVariant = page.mainFrame()->evaluateJavaScript(QLatin1String("window.external"));
+    QVariant windowAroraVariant = page.mainFrame()->evaluateJavaScript(QLatin1String("window.arora"));
 
-    QCOMPARE(linkedResources.at(0).rel, QLatin1String("stylesheet"));
-    QCOMPARE(linkedResources.at(0).type, QLatin1String("text/css"));
-    QCOMPARE(linkedResources.at(0).href, QLatin1String("styles.css"));
-    QCOMPARE(linkedResources.at(0).title, QString());
-
-    QCOMPARE(linkedResources.at(1).rel, QLatin1String("alternate"));
-    QCOMPARE(linkedResources.at(1).type, QLatin1String("application/rss+xml"));
-    QCOMPARE(linkedResources.at(1).href, QLatin1String("rss1.xml"));
-
-    QCOMPARE(linkedResources.at(2).title, QLatin1String("Lorem Ipsum"));
-
-    QCOMPARE(linkedResources.at(3).type, QLatin1String("application/atom+xml"));
-
-    QList<WebPageLinkedResource> linkedFeeds = page.linkedResources(QLatin1String("alternate"));
-    QCOMPARE(linkedFeeds.count(), 3);
-
-    QCOMPARE(linkedFeeds.at(2).rel, QLatin1String("alternate"));
-    QCOMPARE(linkedFeeds.at(2).href, QLatin1String("atom1.xml"));
+    QCOMPARE(windowExternal, !windowExternalVariant.isNull());
+    QCOMPARE(windowArora, !windowAroraVariant.isNull());
 }
+
+void tst_WebPage::userAgent()
+{
+    QSettings settings;
+    settings.setValue("userAgent", QString());
+    SubWebPage page;
+    QString defaultUserAgent = page.call_userAgentForUrl(QUrl());
+    QVERIFY(!defaultUserAgent.isEmpty());
+    QVERIFY(defaultUserAgent.contains("tst_webpage"));
+    settings.setValue("userAgent", "ben");
+    page.loadSettings();
+    QString customUserAgent = page.call_userAgentForUrl(QUrl());
+    QVERIFY(!customUserAgent.isEmpty());
+    QCOMPARE(customUserAgent, QString("ben"));
+}
+
 
 QTEST_MAIN(tst_WebPage)
 #include "tst_webpage.moc"

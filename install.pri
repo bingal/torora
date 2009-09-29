@@ -7,5 +7,7 @@ unix {
 
     INSTALLS += target
     target.path = $$BINDIR
+
+    DATADIR = $$PREFIX/share
 }
 

@@ -24,6 +24,7 @@
 #include "downloadmanager.h"
 #include "historymanager.h"
 #include "networkaccessmanager.h"
+#include "opensearchengine.h"
 #include "opensearchmanager.h"
 #include "tabwidget.h"
 #include "toolbarsearch.h"
@@ -37,15 +38,13 @@
 #include <qnetworkrequest.h>
 #include <qsettings.h>
 #include <qwebframe.h>
-#if !defined(QT_NO_UITOOLS)
-#include <quiloader.h>
-#endif
 
-#ifdef WEBKIT_TRUNK
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
 #endif
 
 WebPluginFactory *WebPage::s_webPluginFactory = 0;
+QString WebPage::s_userAgent;
 
 JavaScriptExternalObject::JavaScriptExternalObject(QObject *parent)
     : QObject(parent)
@@ -57,13 +56,56 @@ void JavaScriptExternalObject::AddSearchProvider(const QString &url)
     ToolbarSearch::openSearchManager()->addEngine(QUrl(url));
 }
 
+Q_DECLARE_METATYPE(OpenSearchEngine*)
+JavaScriptAroraObject::JavaScriptAroraObject(QObject *parent)
+    : QObject(parent)
+{
+    static const char *translations[] = {
+        QT_TR_NOOP("Welcome to Arora!"),
+        QT_TR_NOOP("Arora Start"),
+        QT_TR_NOOP("Search!"),
+        QT_TR_NOOP("Search results provided by"),
+        QT_TR_NOOP("About Arora")
+    };
+    Q_UNUSED(translations);
+
+    qRegisterMetaType<OpenSearchEngine*>("OpenSearchEngine*");
+}
+
+QString JavaScriptAroraObject::translate(const QString &string)
+{
+    QString translatedString = trUtf8(string.toUtf8().constData());
+
+    // If the translation is the same as the original string
+    // it could not be translated.  In that case
+    // try to translate using the QApplication domain
+    if (translatedString != string)
+        return translatedString;
+    else
+        return qApp->trUtf8(string.toUtf8().constData());
+}
+
+QObject *JavaScriptAroraObject::currentEngine() const
+{
+    return ToolbarSearch::openSearchManager()->currentEngine();
+}
+
+QString JavaScriptAroraObject::searchUrl(const QString &string) const
+{
+    return QString::fromUtf8(ToolbarSearch::openSearchManager()->currentEngine()->searchUrl(string).toEncoded());
+}
+
 WebPage::WebPage(QObject *parent)
-    : QWebPage(parent)
+    : WebPageProxy(parent)
     , m_openTargetBlankLinksIn(TabWidget::NewWindow)
-    , m_javaScriptBinding(0)
+    , m_javaScriptExternalObject(0)
+    , m_javaScriptAroraObject(0)
 {
     setPluginFactory(webPluginFactory());
-    setNetworkAccessManager(BrowserApplication::networkAccessManager());
+    NetworkAccessManagerProxy *networkManagerProxy = new NetworkAccessManagerProxy(this);
+    networkManagerProxy->setWebPage(this);
+    networkManagerProxy->setPrimaryNetworkAccessManager(BrowserApplication::networkAccessManager());
+    setNetworkAccessManager(networkManagerProxy);
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
     connect(this, SIGNAL(frameCreated(QWebFrame *)),
@@ -83,7 +125,9 @@ QList<WebPageLinkedResource> WebPage::linkedResources(const QString &relation)
 {
     QList<WebPageLinkedResource> resources;
 
-#ifdef WEBKIT_TRUNK
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    QUrl baseUrl = mainFrame()->baseUrl();
+
     QList<QWebElement> linkElements = mainFrame()->findAllElements(QLatin1String("html > head > link"));
 
     foreach (const QWebElement &linkElement, linkElements) {
@@ -100,12 +144,15 @@ QList<WebPageLinkedResource> WebPage::linkedResources(const QString &relation)
         WebPageLinkedResource resource;
         resource.rel = rel;
         resource.type = type;
-        resource.href = href;
+        resource.href = baseUrl.resolved(QUrl::fromEncoded(href.toUtf8()));
         resource.title = title;
 
         resources.append(resource);
     }
 #else
+    QString baseUrlString = mainFrame()->evaluateJavaScript(QLatin1String("document.baseURI")).toString();
+    QUrl baseUrl = QUrl::fromEncoded(baseUrlString.toUtf8());
+
     QFile file(QLatin1String(":fetchLinks.js"));
     if (!file.open(QFile::ReadOnly))
         return resources;
@@ -127,7 +174,7 @@ QList<WebPageLinkedResource> WebPage::linkedResources(const QString &relation)
         WebPageLinkedResource resource;
         resource.rel = rel;
         resource.type = type;
-        resource.href = href;
+        resource.href = baseUrl.resolved(QUrl::fromEncoded(href.toUtf8()));
         resource.title = title;
 
         resources.append(resource);
@@ -137,29 +184,54 @@ QList<WebPageLinkedResource> WebPage::linkedResources(const QString &relation)
     return resources;
 }
 
+void WebPage::populateNetworkRequest(QNetworkRequest &request)
+{
+    if (request == lastRequest) {
+        request.setAttribute((QNetworkRequest::Attribute)(pageAttributeId() + 1), lastRequestType);
+    }
+    WebPageProxy::populateNetworkRequest(request);
+}
+
 void WebPage::addExternalBinding(QWebFrame *frame)
 {
-    if (!m_javaScriptBinding)
-        m_javaScriptBinding = new JavaScriptExternalObject(this);
+    if (!m_javaScriptExternalObject)
+        m_javaScriptExternalObject = new JavaScriptExternalObject(this);
 
     if (frame == 0) { // called from QWebFrame::javaScriptWindowObjectCleared
         frame = qobject_cast<QWebFrame*>(sender());
+
+        if (frame->url().scheme() == QLatin1String("qrc")
+            && frame->url().path() == QLatin1String("/startpage.html")) {
+
+            if (!m_javaScriptAroraObject)
+                m_javaScriptAroraObject = new JavaScriptAroraObject(this);
+
+            frame->addToJavaScriptWindowObject(QLatin1String("arora"), m_javaScriptAroraObject);
+        }
     } else { // called from QWebPage::frameCreated
         connect(frame, SIGNAL(javaScriptWindowObjectCleared()),
                 this, SLOT(addExternalBinding()));
     }
-    frame->addToJavaScriptWindowObject(QLatin1String("external"),
-           m_javaScriptBinding);
+    frame->addToJavaScriptWindowObject(QLatin1String("external"), m_javaScriptExternalObject);
+}
 
+QString WebPage::userAgentForUrl(const QUrl &url) const
+{
+    if (s_userAgent.isEmpty())
+        s_userAgent = QWebPage::userAgentForUrl(url);
+    return s_userAgent;
 }
 
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request,
                                       NavigationType type)
 {
+    lastRequest = request;
+    lastRequestType = type;
+
     QString scheme = request.url().scheme();
     if (scheme == QLatin1String("mailto")
         || scheme == QLatin1String("ftp")) {
-        QDesktopServices::openUrl(request.url());
+        BrowserApplication::instance()->askDesktopToOpenUrl(request.url());
         return false;
     }
 
@@ -214,6 +286,8 @@ void WebPage::loadSettings()
     settings.beginGroup(QLatin1String("tabs"));
     m_openTargetBlankLinksIn = (TabWidget::OpenUrlIn)settings.value(QLatin1String("openTargetBlankLinksIn"),
                                                                     TabWidget::NewSelectedTab).toInt();
+    settings.endGroup();
+    s_userAgent = settings.value(QLatin1String("userAgent")).toString();
 }
 
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
@@ -251,6 +325,9 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
         return;
 
     QUrl replyUrl = reply->url();
+
+    if (replyUrl.scheme() == QLatin1String("abp"))
+        return;
 
     switch (reply->error()) {
     case QNetworkReply::NoError:
@@ -303,10 +380,4 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     notFoundFrame->setHtml(html, replyUrl);
     // Don't put error pages to the history.
     BrowserApplication::instance()->historyManager()->removeHistoryEntry(replyUrl, notFoundFrame->title());
-}
-
-QString WebPage::userAgentForUrl(const QUrl& url) const
-{
-    Q_UNUSED(url)
-    return QLatin1String("Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/528.16 (KHTML, like Gecko) Version/4.0 Safari/528.16");
 }

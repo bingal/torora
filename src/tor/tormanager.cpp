@@ -29,6 +29,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QMenu>
+#include <qnetworkproxy.h>
 
 #include "appcheck.h"
 #include "ui_passworddialog.h"
@@ -240,7 +241,7 @@ void TorManager::reportTorCheckResults(int page)
         title = tr("Checking Tor..");
         headline = tr("Checking Tor..");
         bulletone = tr("Mgeni is checking https://check.torproject.org.");
-        bullettwo = tr("Once Mgeni is sure you can browse anonymously, browsing will be enabled.");
+        bullettwo = tr("Once Mgeni is sure you are using Tor, browsing will be enabled.");
         bulletthree = tr("This check may take a few seconds, so please be patient.");
         img = QLatin1String(":graphics/tor-checking.png");
         statusbar = QLatin1String("Checking Tor...");
@@ -260,10 +261,10 @@ void TorManager::reportTorCheckResults(int page)
         }
         tororaIssues = QString(QLatin1String(issues.readAll()));
         title = tr("Mgeni Ready For Use..");
-        headline = tr("Tor is Working Properly. You Can Browse Anonymously.");
+        headline = tr("Tor is Working Properly. You Are Ready to Browse from Another Country.");
         bulletone = tr("You can confirm this yourself by visiting <a href='https://check.torproject.org'>https://check.torproject.org</a>");
-        bullettwo = tr("The bookmark toolbar contains some well known hidden services you can check out.");
-        bulletthree = tr("You can check Tor at any time by pressing F12 or clicking <b>Tools->Check Tor.</b>");
+        bullettwo = tr("You can check Tor at any time by pressing F12 or clicking <b>Tools->Check Tor.</b>");
+        bulletthree = tr("Select the country you wish to browse from by following the illustration below:");
         img = QLatin1String(":graphics/tor-on.png");
         statusbar = QLatin1String("Tor Check Successful");
        break;
@@ -328,6 +329,14 @@ void TorManager::reportTorCheckResults(int page)
     }
 
     if (page == USING_TOR) {
+        imageBuffer.open(QBuffer::ReadWrite);
+        icon = QIcon(QLatin1String(":graphics/country-select.png"));
+        pixmap = icon.pixmap(QSize(482, 191));
+        if (pixmap.save(&imageBuffer, "PNG")) {
+            html.replace(QLatin1String("HELP_BINARY_DATA_HERE"),
+                        QString(QLatin1String(imageBuffer.buffer().toBase64())));
+        }
+
         imageBuffer.open(QBuffer::ReadWrite);
         icon = QIcon(QLatin1String(":graphics/info.png"));
         pixmap = icon.pixmap(QSize(32, 32));

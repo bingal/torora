@@ -41,12 +41,12 @@ private slots:
     void addWebAction();
     void closeTab_data();
     void closeTab();
-    void currentLineEdit_data();
-    void currentLineEdit();
+    void currentLocationBar_data();
+    void currentLocationBar();
     void currentWebView_data();
     void currentWebView();
-    void lineEditStack_data();
-    void lineEditStack();
+    void locationBarStack_data();
+    void locationBarStack();
     void loadUrl_data();
     void loadUrl();
     void newTab_data();
@@ -75,16 +75,16 @@ private slots:
 class SubTabWidget : public TabWidget
 {
 public:
-    void call_linkHovered(QString const& link)
+    void call_linkHovered(QString const &link)
         { return SubTabWidget::linkHovered(link); }
 
     void call_loadProgress(int progress)
         { return SubTabWidget::loadProgress(progress); }
 
-    void call_setCurrentTitle(QString const& url)
+    void call_setCurrentTitle(QString const &url)
         { return SubTabWidget::setCurrentTitle(url); }
 
-    void call_showStatusBarMessage(QString const& message)
+    void call_showStatusBarMessage(QString const &message)
         { return SubTabWidget::showStatusBarMessage(message); }
 
     void call_tabsChanged()
@@ -124,7 +124,7 @@ void tst_TabWidget::tabwidget()
     widget.closeTab();
     QVERIFY(widget.closeTabAction());
     widget.currentWebView();
-    widget.lineEditStack();
+    widget.locationBarStack();
     widget.loadUrl(QUrl());
     widget.newTab();
     QVERIFY(widget.newTabAction());
@@ -133,7 +133,7 @@ void tst_TabWidget::tabwidget()
     widget.previousTab();
     QVERIFY(widget.previousTabAction());
     QVERIFY(widget.recentlyClosedTabsAction());
-    QVERIFY(widget.currentLineEdit());
+    QVERIFY(widget.currentLocationBar());
 }
 
 Q_DECLARE_METATYPE(QWebPage::WebAction)
@@ -218,19 +218,19 @@ void tst_TabWidget::closeTab()
 }
 
 Q_DECLARE_METATYPE(QLineEdit*)
-void tst_TabWidget::currentLineEdit_data()
+void tst_TabWidget::currentLocationBar_data()
 {
     /*
-    QTest::addColumn<QLineEdit*>("currentLineEdit");
+    QTest::addColumn<QLineEdit*>("currentLocationBar");
     QTest::newRow("null") << QLineEdit*();
     */
 }
 
-// public QLineEdit* currentLineEdit() const
-void tst_TabWidget::currentLineEdit()
+// public QLineEdit *currentLocationBar() const
+void tst_TabWidget::currentLocationBar()
 {
     /*
-    QFETCH(QLineEdit*, currentLineEdit);
+    QFETCH(QLineEdit*, currentLocationBar);
 
     SubTabWidget widget;
 
@@ -241,7 +241,7 @@ void tst_TabWidget::currentLineEdit()
     QSignalSpy spy5(&widget, SIGNAL(tabsChanged()));
     QSignalSpy spy6(&widget, SIGNAL(lastTabClosed()));
 
-    QCOMPARE(widget.currentLineEdit(), currentLineEdit);
+    QCOMPARE(widget.currentLocationBar(), currentLocationBar);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy2.count(), 0);
@@ -262,7 +262,7 @@ void tst_TabWidget::currentWebView_data()
     */
 }
 
-// public WebView* currentWebView() const
+// public WebView *currentWebView() const
 void tst_TabWidget::currentWebView()
 {
     /*
@@ -290,19 +290,19 @@ void tst_TabWidget::currentWebView()
 }
 
 Q_DECLARE_METATYPE(QWidget*)
-void tst_TabWidget::lineEditStack_data()
+void tst_TabWidget::locationBarStack_data()
 {
     /*
-    QTest::addColumn<QWidget*>("lineEditStack");
+    QTest::addColumn<QWidget*>("locationBarStack");
     QTest::newRow("null") << QWidget*();
     */
 }
 
-// public QWidget* lineEditStack() const
-void tst_TabWidget::lineEditStack()
+// public QWidget *locationBarStack() const
+void tst_TabWidget::locationBarStack()
 {
     /*
-    QFETCH(QWidget*, lineEditStack);
+    QFETCH(QWidget*, locationBarStack);
 
     SubTabWidget widget;
 
@@ -313,7 +313,7 @@ void tst_TabWidget::lineEditStack()
     QSignalSpy spy5(&widget, SIGNAL(tabsChanged()));
     QSignalSpy spy6(&widget, SIGNAL(lastTabClosed()));
 
-    QCOMPARE(widget.lineEditStack(), lineEditStack);
+    QCOMPARE(widget.locationBarStack(), locationBarStack);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy2.count(), 0);
@@ -331,7 +331,7 @@ void tst_TabWidget::loadUrl_data()
     QTest::newRow("null") << QUrl();
 }
 
-// public void loadUrl(QUrl const& url)
+// public void loadUrl(QUrl const &url)
 void tst_TabWidget::loadUrl()
 {
     /*
@@ -465,7 +465,7 @@ void tst_TabWidget::recentlyClosedTabsAction_data()
     */
 }
 
-// public QAction* recentlyClosedTabsAction() const
+// public QAction *recentlyClosedTabsAction() const
 void tst_TabWidget::recentlyClosedTabsAction()
 {
     /*
@@ -498,7 +498,7 @@ void tst_TabWidget::linkHovered_data()
     QTest::newRow("null") << QString("foo");
 }
 
-// protected void linkHovered(QString const& link)
+// protected void linkHovered(QString const &link)
 void tst_TabWidget::linkHovered(const QString &)
 {
     /*
@@ -564,7 +564,7 @@ void tst_TabWidget::setCurrentTitle_data()
     QTest::newRow("null") << QString("foo");
 }
 
-// protected void setCurrentTitle(QString const& url)
+// protected void setCurrentTitle(QString const &url)
 void tst_TabWidget::setCurrentTitle(const QString &)
 {
     /*
@@ -597,7 +597,7 @@ void tst_TabWidget::showStatusBarMessage_data()
     QTest::newRow("null") << QString("foo");
 }
 
-// protected void showStatusBarMessage(QString const& message)
+// protected void showStatusBarMessage(QString const &message)
 void tst_TabWidget::showStatusBarMessage(const QString &)
 {
     /*

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  * Copyright 2008 Jason A. Donenfeld <Jason@zx2c4.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,12 +119,14 @@ private:
     bool m_startedSaving;
     bool m_finishedDownloading;
     bool m_gettingFileName;
+    QTime m_lastProgressTime;
 };
 
 class AutoSaver;
 class DownloadModel;
 QT_BEGIN_NAMESPACE
 class QFileIconProvider;
+class QMimeData;
 QT_END_NAMESPACE
 
 class DownloadManager : public QDialog, public Ui_DownloadDialog
@@ -151,6 +153,9 @@ public:
     static QString timeString(double timeRemaining);
     static QString dataString(qint64 size);
 
+    void setDownloadDirectory(const QString &directory);
+    QString downloadDirectory();
+
 public slots:
     void download(const QNetworkRequest &request, bool requestFileName = false);
     inline void download(const QUrl &url, bool requestFileName = false)
@@ -174,6 +179,8 @@ private:
     QFileIconProvider *m_iconProvider;
     QList<DownloadItem*> m_downloads;
     RemovePolicy m_removePolicy;
+    QString m_downloadDirectory;
+
     friend class DownloadModel;
 };
 
@@ -187,6 +194,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    QMimeData *mimeData(const QModelIndexList &indexes) const;
 
 private:
     DownloadManager *m_downloadManager;

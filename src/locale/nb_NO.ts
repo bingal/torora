@@ -54,7 +54,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Om %1</translation>
     </message>
     <message utf8="true">
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -62,7 +62,15 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-size:9pt;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opphavsrett © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>WebKit version: %1</source>
+        <translation>WebKit versjon: %1</translation>
     </message>
 </context>
 <context>
@@ -93,6 +101,74 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AdBlockBlockedNetworkReply</name>
+    <message>
+        <source>Blocked by AdBlockRule: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockDialog</name>
+    <message>
+        <source>Add Custom Rule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more about writing rules...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse Subscriptions...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AdBlock Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable AdBlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockManager</name>
+    <message>
+        <source>Custom Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockModel</name>
+    <message>
+        <source>Rule</source>
+        <translation type="unfinished">Regel</translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockSchemeAccessHandler</name>
+    <message>
+        <source>Subscribe?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to this AdBlock subscription?
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddBookmarkDialog</name>
     <message>
         <source>Add Bookmark</source>
@@ -113,6 +189,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Folder</source>
         <translation>Legg til mappe</translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillDialog</name>
+    <message>
+        <source>Form Passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Fjern</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillManager</name>
+    <message>
+        <source>&lt;b&gt;Would you like to save this password?&lt;/b&gt;&lt;br&gt;         To review passwords you have saved and remove them, open the AutoFill pane of preferences.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never for this site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not now</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillModel</name>
+    <message>
+        <source>WebSite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -176,7 +293,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>XBEL (*.xbel *.xml)</source>
-        <translation>XBEL (*.xbel *.xml)</translation>
+        <translation type="obsolete">XBEL (*.xbel *.xml)</translation>
     </message>
     <message>
         <source>Imported %1</source>
@@ -221,21 +338,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
-        <translation>Feil ved lasting av html bokmerker: %1</translation>
-    </message>
-    <message>
-        <source>XBEL</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Feil ved lasting av html bokmerker: %1</translation>
     </message>
     <message>
         <source>Name Change</source>
         <comment>Undo bookmark title change</comment>
-        <translation type="unfinished"></translation>
+        <translation>Navneendring</translation>
     </message>
     <message>
         <source>Address Change</source>
         <comment>Undo bookmark url change</comment>
-        <translation type="unfinished"></translation>
+        <translation>Addresseendring</translation>
+    </message>
+    <message>
+        <source>XBEL bookmarks</source>
+        <translation>XBEL bokmerker</translation>
+    </message>
+    <message>
+        <source>HTML Netscape bookmarks</source>
+        <translation>HTML Netscape bokmerker</translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool required</source>
+        <translation>trenger htmlToXBel verktøy</translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool, which is shipped with Arora and is needed to import HTML bookmarks, is not installed or not available in the search paths.</source>
+        <translation>htmlToXBel verktøyet som følger med Arora og som trengs for å importere HTML bokmerker, er ikke installert eller er ikke i søkebanene.</translation>
+    </message>
+    <message>
+        <source>Loading Bookmark</source>
+        <translation>Laster bokmerker</translation>
+    </message>
+    <message>
+        <source>Error when loading HTML bookmarks: %1
+</source>
+        <translation>Feil ved lasting av HTML bokmerker: %1</translation>
     </message>
 </context>
 <context>
@@ -260,7 +398,7 @@ p, li { white-space: pre-wrap; }
     <name>BookmarksToolBar</name>
     <message>
         <source>Bookmark</source>
-        <translation>Bokmerker</translation>
+        <translation type="obsolete">Bokmerker</translation>
     </message>
     <message>
         <source>Open</source>
@@ -282,6 +420,10 @@ p, li { white-space: pre-wrap; }
         <source>Add Folder...</source>
         <translation>Legg til mappe...</translation>
     </message>
+    <message>
+        <source>Bookmarks</source>
+        <translation type="obsolete">Bokmerker</translation>
+    </message>
 </context>
 <context>
     <name>BrowserApplication</name>
@@ -301,11 +443,15 @@ Er du sikker på at du vil avslutte Arora?</translation>
     </message>
     <message>
         <source> (Change: %1 %2)</source>
-        <translation>(Endring: %1 %2)</translation>
+        <translation type="obsolete">(Endring: %1 %2)</translation>
     </message>
     <message>
         <source>The saved session will not be restored because Arora crashed while trying to restore this session.</source>
-        <translation>Den lagrede økten blir ikke gjennoprettet siden det førte til at Arora krasjet.</translation>
+        <translation type="obsolete">Den lagrede økten blir ikke gjennoprettet siden det førte til at Arora krasjet.</translation>
+    </message>
+    <message>
+        <source>Arora crashed while trying to restore this session.  Should I try again?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -392,7 +538,7 @@ Er du sikker på at du vil avslutte Arora?</translation>
     </message>
     <message>
         <source>Shift+Ctrl+B</source>
-        <translation>Shift+Ctrl+B</translation>
+        <translation type="obsolete">Shift+Ctrl+B</translation>
     </message>
     <message>
         <source>Ctrl+|</source>
@@ -618,7 +764,7 @@ Vil du laste alle sider på nytt?</translation>
     </message>
     <message>
         <source>Prefere&amp;nces...</source>
-        <translation>&amp;Instillinger...</translation>
+        <translation type="obsolete">&amp;Instillinger...</translation>
     </message>
     <message>
         <source>Show Menu Bar</source>
@@ -630,7 +776,7 @@ Vil du laste alle sider på nytt?</translation>
     </message>
     <message>
         <source>Show &amp;Network Monitor</source>
-        <translation>&amp;Vis nettverksovervåkeren</translation>
+        <translation type="obsolete">&amp;Vis nettverksovervåkeren</translation>
     </message>
     <message>
         <source>Close Window</source>
@@ -667,12 +813,84 @@ Vil du laste alle sider på nytt?</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Noen handlinger relatert til dine personlige opplysninger vil bli deaktiverte når privat surfing er skrudd på:&lt;ul&gt;&lt;li&gt; Nettsider blir ikke lagt til i historien.&lt;/li&gt;&lt;li&gt; Elementer blir automatisk fjernet fra Nedlastinger vinduet.&lt;/li&gt;&lt;li&gt; Nye informasjonskapsler blir ikke lagret og gamle kan ikke åpnes.&lt;/li&gt;&lt;li&gt; Ikoner og økter blir ikke lagret.&lt;/li&gt;&lt;li&gt; Søk blir ikke lagt til i sprett-opp menyen i søkeboksen.&lt;/li&gt;&lt;/ul&gt;Du kan fremdeles klikke Tilbake og Fram intill du lukker vinduet.</translation>
+        <translation type="obsolete">&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Noen handlinger relatert til dine personlige opplysninger vil bli deaktiverte når privat surfing er skrudd på:&lt;ul&gt;&lt;li&gt; Nettsider blir ikke lagt til i historien.&lt;/li&gt;&lt;li&gt; Elementer blir automatisk fjernet fra Nedlastinger vinduet.&lt;/li&gt;&lt;li&gt; Nye informasjonskapsler blir ikke lagret og gamle kan ikke åpnes.&lt;/li&gt;&lt;li&gt; Ikoner og økter blir ikke lagret.&lt;/li&gt;&lt;li&gt; Søk blir ikke lagt til i sprett-opp menyen i søkeboksen.&lt;/li&gt;&lt;/ul&gt;Du kan fremdeles klikke Tilbake og Fram intill du lukker vinduet.</translation>
     </message>
     <message>
         <source>Ctrl+Y</source>
         <comment>Download Manager</comment>
         <translation>Ctrl+Y</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Forvalg</translation>
+    </message>
+    <message>
+        <source>Text Encoding</source>
+        <translation>Tekstkoding</translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation>Velg &amp;alt</translation>
+    </message>
+    <message>
+        <source>Alt+Ctrl+B</source>
+        <translation>Alt+Ctrl+B</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;li&gt; No new network cache is written to disk.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
+        <translation type="obsolete">&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Noen handlinger relatert til dine personlige opplysninger vil bli deaktiverte når privat surfing er skrudd på:&lt;ul&gt;&lt;li&gt; Nettsider blir ikke lagt til i historien.&lt;/li&gt;&lt;li&gt; Elementer blir automatisk fjernet fra Nedlastninger vinduet.&lt;/li&gt;&lt;li&gt; Nye informasjonskapsler blir ikke lagret og gamle kan ikke åpnes.&lt;/li&gt;&lt;li&gt; Ikoner og økter blir ikke lagret.&lt;/li&gt;&lt;li&gt; Søk blir ikke lagt til i sprett-opp menyen i søkeboksen.&lt;/li&gt;&lt;/ul&gt;Du kan fremdeles klikke Tilbake og Fram intill du lukker vinduet.</translation>
+    </message>
+    <message>
+        <source>Options...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation type="unfinished">Konfigurer søkemotorer...</translation>
+    </message>
+    <message>
+        <source>&amp;Ad Block...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When private browsing is turned on, some actions concerning your privacy will be disabled:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webpages are not added to the history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Items are automatically removed from the Downloads window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New cookies are not stored, current cookies can&apos;t be accessed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site icons won&apos;t be stored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Session won&apos;t be saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searches are not added to the pop-up menu in the search box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No new network cache is written to disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private Browsing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -733,34 +951,34 @@ Vil du laste alle sider på nytt?</translation>
     <name>ClickToFlash</name>
     <message>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Last</translation>
     </message>
     <message>
         <source>Load All</source>
-        <translation type="unfinished"></translation>
+        <translation>Last alle</translation>
     </message>
     <message>
         <source>Add %1 to Whitelist</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til %1 i godkjentlisten</translation>
     </message>
     <message>
         <source>Remove from Whitelist</source>
-        <translation type="unfinished"></translation>
+        <translation>Fjern fra godkjentlisten</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished">Innstilinger</translation>
+        <translation>Innstilinger</translation>
     </message>
     <message>
         <source>Load Flash</source>
-        <translation type="unfinished"></translation>
+        <translation>Last Flash</translation>
     </message>
 </context>
 <context>
     <name>ClickToFlashSettings</name>
     <message>
         <source>Whitelist sites</source>
-        <translation type="unfinished"></translation>
+        <translation>Godkjente sider</translation>
     </message>
 </context>
 <context>
@@ -826,7 +1044,7 @@ Vil du laste alle sider på nytt?</translation>
     </message>
     <message>
         <source>Session cookie</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesjonsinformasjonskapsel</translation>
     </message>
 </context>
 <context>
@@ -845,7 +1063,7 @@ Vil du laste alle sider på nytt?</translation>
     </message>
     <message>
         <source>Add &amp;Rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til &amp;regel</translation>
     </message>
 </context>
 <context>
@@ -958,7 +1176,7 @@ Vil du laste alle sider på nytt?</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation>Skjema</translation>
+        <translation type="obsolete">Skjema</translation>
     </message>
     <message>
         <source>Ico</source>
@@ -1002,6 +1220,10 @@ Vil du laste alle sider på nytt?</translation>
         <source>%1 of %2 (%3/sec) - %4</source>
         <translation>%1 av %2 (%3/sek) - %4</translation>
     </message>
+    <message>
+        <source>Download directory (%1) couldn&apos;t be created.</source>
+        <translation>Nedlastningsbanen (%1) kunne ikke opprettes.</translation>
+    </message>
 </context>
 <context>
     <name>DownloadManager</name>
@@ -1043,6 +1265,33 @@ Er du sikker på at du vil avslutte?</translation>
     <message>
         <source>MB</source>
         <translation>MB</translation>
+    </message>
+    <message>
+        <source>GB</source>
+        <translation>GB</translation>
+    </message>
+</context>
+<context>
+    <name>FileAccessReply</name>
+    <message>
+        <source>No Error</source>
+        <translation>Ingen feil</translation>
+    </message>
+    <message>
+        <source>Error opening: %1: No such file or directory</source>
+        <translation>Feil ved åpning av: %1: Filen eller banen finnes ikke</translation>
+    </message>
+    <message>
+        <source>Unable to read %1</source>
+        <translation>Kan ikke lese %1</translation>
+    </message>
+    <message>
+        <source>Contents of %1</source>
+        <translation>Innhold i %1</translation>
+    </message>
+    <message>
+        <source>%1 KB</source>
+        <translation>%1 KB</translation>
     </message>
 </context>
 <context>
@@ -1117,6 +1366,29 @@ Er du sikker på at du vil avslutte?</translation>
     </message>
 </context>
 <context>
+    <name>JavaScriptAroraObject</name>
+    <message>
+        <source>Welcome to Arora!</source>
+        <translation>Velkommen til Arora!</translation>
+    </message>
+    <message>
+        <source>Arora Start</source>
+        <translation>Arora start</translation>
+    </message>
+    <message>
+        <source>Search!</source>
+        <translation>Søk!</translation>
+    </message>
+    <message>
+        <source>Search results provided by</source>
+        <translation>Søkeresultater levert av</translation>
+    </message>
+    <message>
+        <source>About Arora</source>
+        <translation>Om Arora</translation>
+    </message>
+</context>
+<context>
     <name>LanguageManager</name>
     <message>
         <source>Default</source>
@@ -1132,7 +1404,11 @@ Er du sikker på at du vil avslutte?</translation>
     </message>
     <message>
         <source>No translation files are installed.</source>
-        <translation>Ingen oversettelses filer er installert.</translation>
+        <translation type="obsolete">Ingen oversettelses filer er installert.</translation>
+    </message>
+    <message>
+        <source>No translation files are installed at %1.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1183,106 +1459,134 @@ Vil du ignorere disse feilene?&lt;qt&gt;</translation>
     </message>
     <message>
         <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;qt&gt;Sertifikater:&lt;br/&gt;%1&lt;br/&gt;Vil du akseptere alle disse sertifikatene?&lt;/qt&gt;</translation>
+    </message>
+    <message>
+        <source>Issuer: %1</source>
+        <translation>Utsteder: %1</translation>
+    </message>
+    <message>
+        <source>Not valid before: %1</source>
+        <translation>Ikke gyldig før: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1</source>
+        <translation>Gyldig inntil: %1</translation>
+    </message>
+    <message>
+        <source>Alternate Names:</source>
+        <translation>Alternative navn:</translation>
     </message>
 </context>
 <context>
     <name>NetworkMonitor</name>
     <message>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation type="obsolete">Navn</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation>Verdi</translation>
+        <translation type="obsolete">Verdi</translation>
     </message>
 </context>
 <context>
     <name>NetworkMonitorDialog</name>
     <message>
         <source>Network Monitor</source>
-        <translation>Nettverksovervåker</translation>
+        <translation type="obsolete">Nettverksovervåker</translation>
     </message>
     <message>
         <source>Network Requests</source>
-        <translation>Nettverksforespørselser</translation>
+        <translation type="obsolete">Nettverksforespørselser</translation>
     </message>
     <message>
         <source>Request Headers</source>
-        <translation>Forespørselshode</translation>
+        <translation type="obsolete">Forespørselshode</translation>
     </message>
     <message>
         <source>Response Headers</source>
-        <translation>Svarhode</translation>
+        <translation type="obsolete">Svarhode</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation>&amp;Fjern</translation>
+        <translation type="obsolete">&amp;Fjern</translation>
     </message>
     <message>
         <source>Remove &amp;All Requests</source>
-        <translation>Fjern &amp;alle forespørselser</translation>
+        <translation type="obsolete">Fjern &amp;alle forespørselser</translation>
     </message>
 </context>
 <context>
     <name>OpenSearchDialog</name>
     <message>
         <source>Open File</source>
-        <translation type="unfinished">Åpne fil</translation>
+        <translation>Åpne fil</translation>
     </message>
     <message>
         <source>OpenSearch</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenSearch</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Feil</translation>
     </message>
     <message>
         <source>%1 is not a valid OpenSearch 1.1 description or is already on your list.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 er ikke en gyldig OpenSearch 1.1 beskrivelse, eller så finnes den allerede i listen.</translation>
     </message>
     <message>
         <source>You must have at least one search engine in here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det må være minst en søkemotor her.</translation>
     </message>
     <message>
         <source>OpenSearch Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenSearch-behandler</translation>
     </message>
     <message>
         <source>&amp;Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Gjennoprett forvalg</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Slett</translation>
     </message>
     <message>
         <source>&amp;Add</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Legg til</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lukk</translation>
     </message>
 </context>
 <context>
     <name>OpenSearchEngineModel</name>
     <message>
         <source>&lt;strong&gt;Description:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Beskrivelse:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;Gir forslag&lt;/strong&gt;</translation>
+    </message>
+    <message>
+        <source>Comma-separated list of keywords that may be entered in the location barfollowed by search terms to search with this engine</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Navn</translation>
+    </message>
+    <message>
+        <source>Keywords</source>
+        <translation>Nøkkelord</translation>
     </message>
 </context>
 <context>
     <name>OpenSearchManager</name>
     <message>
         <source>Do you want to add the following engine to your list of search engines?&lt;br /&gt;&lt;br /&gt;Name: %1&lt;br /&gt;Searches on: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Vil du legge til den følgende motoren i listen over søkemotorer?&lt;br /&gt;&lt;br /&gt;Navn: %1&lt;br /&gt;Søker på: %2</translation>
     </message>
 </context>
 <context>
@@ -1346,38 +1650,38 @@ Vil du ignorere disse feilene?&lt;qt&gt;</translation>
     </message>
     <message>
         <source>The file is not an OpenSearch 1.1 file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Filen er ikke en OpenSearch 1.1 fil.</translation>
     </message>
 </context>
 <context>
     <name>RequestModel</name>
     <message>
         <source>Redirect: %1</source>
-        <translation>Videresend: %1</translation>
+        <translation type="obsolete">Videresend: %1</translation>
     </message>
     <message>
         <source>Method</source>
-        <translation>Metode</translation>
+        <translation type="obsolete">Metode</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation>Adresse</translation>
+        <translation type="obsolete">Adresse</translation>
     </message>
     <message>
         <source>Response</source>
-        <translation>Svar</translation>
+        <translation type="obsolete">Svar</translation>
     </message>
     <message>
         <source>Length</source>
-        <translation>Lengde</translation>
+        <translation type="obsolete">Lengde</translation>
     </message>
     <message>
         <source>Content Type</source>
-        <translation>Innholdstype</translation>
+        <translation type="obsolete">Innholdstype</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation type="obsolete">Info</translation>
     </message>
 </context>
 <context>
@@ -1389,7 +1693,11 @@ Vil du ignorere disse feilene?&lt;qt&gt;</translation>
     <message>
         <source>Form</source>
         <translatorcomment>Is there a way for things like these be ommitted from translation since they are never shown in the UI? A comment would probably do, so translators don&apos;t have to figure it out :-)</translatorcomment>
-        <translation type="unfinished">Skjema</translation>
+        <translation type="obsolete">Skjema</translation>
+    </message>
+    <message>
+        <source>Highlight All</source>
+        <translation>Merk alt</translation>
     </message>
 </context>
 <context>
@@ -1700,30 +2008,86 @@ Vil du ignorere disse feilene?&lt;qt&gt;</translation>
     </message>
     <message>
         <source>Use ClickToFlash on flash plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Bruk ClickToFlash på flash-programtillegg</translation>
     </message>
     <message>
         <source>Filter Tracking Cookies</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrer ut sporingsinformasjonskapsler</translation>
     </message>
     <message>
         <source>Confirm when closing multiple tabs or windows</source>
-        <translation type="unfinished"></translation>
+        <translation>Be om bekreftelse for å lukke flere faner eller viduer</translation>
     </message>
     <message>
         <source>Quit the application when last tab is closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Lukk programmet når siste fane blir lukket</translation>
     </message>
     <message>
         <source>Enable network cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiver nettverkshurtiglager</translation>
     </message>
     <message>
         <source>Maximum Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksimal størrelse:</translation>
     </message>
     <message>
         <source> MB</source>
+        <translation>MB</translation>
+    </message>
+    <message>
+        <source>Use the default search engine as fallback when the URL given by the user is invalid</source>
+        <translation>Bruk standardsøkemotoren hvis URLen gitt av brukeren er ugyldig</translation>
+    </message>
+    <message>
+        <source>Choose Directory...</source>
+        <translation>Velg katalog...</translation>
+    </message>
+    <message>
+        <source>A cookie session ends:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When I exit the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>7 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>30 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill web forms:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User names and passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1731,10 +2095,18 @@ Vil du ignorere disse feilene?&lt;qt&gt;</translation>
     <name>SettingsDialog</name>
     <message>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Omstart påkrevd</translation>
     </message>
     <message>
         <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation>Nettverkshurtiglagerkonfigurasjonen har blitt endret. Nettleseren må startes på nytt for å kunne bruke endringene.</translation>
+    </message>
+    <message>
+        <source>Choose Directory</source>
+        <translation>Velg katalog</translation>
+    </message>
+    <message>
+        <source>Choose CSS File</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1754,15 +2126,19 @@ Vil du ignorere disse feilene?&lt;qt&gt;</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Vis</translation>
+        <translation type="obsolete">&amp;Vis</translation>
     </message>
     <message>
         <source>&amp;Wrap lines</source>
-        <translation>&amp;Bryt linjer</translation>
+        <translation type="obsolete">&amp;Bryt linjer</translation>
     </message>
     <message>
         <source>Source of Page </source>
-        <translation>Sidens kildekode</translation>
+        <translation type="obsolete">Sidens kildekode</translation>
+    </message>
+    <message>
+        <source>Source of Page %1</source>
+        <translation>Kildekoden til %1</translation>
     </message>
 </context>
 <context>
@@ -1891,7 +2267,7 @@ Vil du virkelig lukke denne siden?
     </message>
     <message>
         <source>Clear Recent Searches</source>
-        <translation type="unfinished">Slett nylige søk</translation>
+        <translation>Slett nylige søk</translation>
     </message>
     <message>
         <source>Suggestions</source>
@@ -1899,11 +2275,11 @@ Vil du virkelig lukke denne siden?
     </message>
     <message>
         <source>Add &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Configure Search Engines...</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Konfigurer søkemotorer...</translation>
     </message>
 </context>
 <context>
@@ -1935,6 +2311,14 @@ Vil du virkelig lukke denne siden?
     <message>
         <source>If the address is correct, try checking the network connection.</source>
         <translation>Hvis adressen er riktig undersøk nettilkoblingen.</translation>
+    </message>
+    <message>
+        <source>Resending POST request</source>
+        <translation>Sender POST forespørsel på nytt</translation>
+    </message>
+    <message>
+        <source>In order to display the site, the request along with all the data must be sent once again, which may lead to some unexpected behaviour of the site e.g. the same action might be performed once again. Do you want to continue anyway?</source>
+        <translation>Forespørselen, sammen med all dataen, må sendes på nytt for å kunne vise siden. Dette kan føre til uforutsette konsekvenser. F.eks., kan den samme handlingen bli utført flere ganger. Vil du fortsette?</translation>
     </message>
 </context>
 <context>
@@ -1985,6 +2369,38 @@ Vil du virkelig lukke denne siden?
     </message>
     <message>
         <source>Search with...</source>
+        <translation>Søk med...</translation>
+    </message>
+    <message>
+        <source>Add to the toolbar search</source>
+        <translation>Legg til i søkeverktøylinja</translation>
+    </message>
+    <message>
+        <source>Method not supported</source>
+        <translation>Metoden er ikke støttet</translation>
+    </message>
+    <message>
+        <source>%1 method is not supported.</source>
+        <translation>%1 metoden er ikke støttet.</translation>
+    </message>
+    <message>
+        <source>Search engine</source>
+        <translation>Søkemotor</translation>
+    </message>
+    <message>
+        <source>Choose the desired search engine</source>
+        <translation>Velg den ønskede søkemotoren</translation>
+    </message>
+    <message>
+        <source>Engine name</source>
+        <translation>Søkemotorens navn</translation>
+    </message>
+    <message>
+        <source>Type in a name for the engine</source>
+        <translation>Gi søkemotoren et navn</translation>
+    </message>
+    <message>
+        <source>Block Image</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

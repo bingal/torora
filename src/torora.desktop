@@ -1,20 +1,33 @@
 [Desktop Entry]
-Name=Torora
-Name[en_US]=Torora
+Name=Mgeni
+Name[en_US]=Mgeni
 Comment=Browse the World Wide Web Anonymously
 Comment[nl]=Surfen op het wereldwijde web
 Comment[nl_NL]=Surfen op het wereldwijde web
 GenericName=Anonymous Web Browser
 GenericName[en_US]=Anonymous Web Browser
-GenericName[cs_CZ]=Webový prohlížeč
-GenericName[nl]=Webbrowser
-GenericName[nl_NL]=Webbrowser
-<<<<<<< HEAD:src/torora.desktop
-Exec=torora %u
-=======
+Name[es]=Mgeni
+Name[gl]=Mgeni
+Name[sr]=Арора
+Name[sr@latin]=Mgeni
+Comment=Browse the World Wide Web
+Comment[ast]=Restola pola World Wide Web
+Comment[es]=Navegar por internet
+Comment[fr_FR]=Surfer sur le web
+Comment[gl]=Navegar pola internet
+Comment[nl]=Surfen op het wereldwijde web
+Comment[nl_NL]=Surfen op het wereldwijde web
+Comment[sr]=Крстарите интернетом
+Comment[sr@latin]=Krstarite Internetom
+Comment[ja_JP]=Webを閲覧します
+GenericName=Web Browser
+GenericName[ast]=Restolador web
 GenericName[pl_PL]=Przeglądarka WWW
-Exec=arora %u
->>>>>>> 7c3f3daab998c620af11378ddc7701933b6b3b24:src/arora.desktop
+GenericName[sr]=Веб прегледач
+GenericName[sr@latin]=Web pregledač
+GenericName[nb_NO]=Nettleser
+GenericName[ja_JP]=Webブラウザ
+Exec=torora %u
 Terminal=false
 Type=Application
 Icon=torora

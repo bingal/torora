@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,12 +64,9 @@
 #define BROWSERMAINWINDOW_H
 
 #include <qmainwindow.h>
-#include <qicon.h>
-#include <qurl.h>
 
 class AutoSaver;
 class BookmarksToolBar;
-class ChaseWidget;
 class QWebFrame;
 class TabWidget;
 class ToolbarSearch;
@@ -78,7 +75,6 @@ class QSplitter;
 class QFrame;
 class HistoryMenu;
 class BookmarksMenuBarMenu;
-
 
 /*!
     The MainWindow of the Browser Application.
@@ -108,6 +104,8 @@ public:
     QAction *geoBrowsingAction(){ return m_geoBrowsingAction; };
     QAction *stopReloadAction(){ return m_stopReloadAction; };
     QMenu *geoBrowsingMenu(){ return m_geoBrowsingMenu; };
+    QAction *searchManagerAction() const { return m_toolsSearchManagerAction; }
+
 public slots:
     void goHome();
     void privacyChanged(bool isPrivate);
@@ -164,17 +162,16 @@ private slots:
 
     void aboutToShowBackMenu();
     void aboutToShowForwardMenu();
+    void aboutToShowViewMenu();
     void aboutToShowWindowMenu();
     void aboutToShowTextEncodingMenu();
     void openActionUrl(QAction *action);
+    void showSearchDialog();
     void showWindow();
     void swapFocus();
 
     void printRequested(QWebFrame *frame);
     void geometryChangeRequested(const QRect &geometry);
-    void updateToolbarActionText(bool visible);
-    void updateBookmarksToolbarActionText(bool visible);
-    void showNetworkMonitor();
     void slotCheckTor();
 
     void setGeoBrowsingLocation(QAction *action);
@@ -184,7 +181,6 @@ private:
     void loadDefaultState();
     void setupMenu();
     void setupToolBar();
-    void updateStatusbarActionText(bool visible);
 
 private:
     QMenu *m_fileMenu;
@@ -207,10 +203,10 @@ private:
     QAction *m_editCutAction;
     QAction *m_editCopyAction;
     QAction *m_editPasteAction;
+    QAction *m_editSelectAllAction;
     QAction *m_editFindAction;
     QAction *m_editFindNextAction;
     QAction *m_editFindPreviousAction;
-    QAction *m_editPreferencesAction;
 
     QMenu *m_viewMenu;
     QAction *m_viewShowMenuBarAction;
@@ -244,9 +240,11 @@ private:
     QMenu *m_toolsMenu;
     QAction *m_toolsWebSearchAction;
     QAction *m_toolsClearPrivateDataAction;
-    QAction *m_toolsShowNetworkMonitor;
-    QAction *m_toolsEnableInspector;
     QAction *m_toolsCheckTor;
+    QAction *m_toolsEnableInspectorAction;
+    QAction *m_toolsPreferencesAction;
+    QAction *m_toolsSearchManagerAction;
+    QAction *m_adBlockDialogAction;
 
     QMenu *m_helpMenu;
     QAction *m_helpChangeLanguageAction;
@@ -273,8 +271,13 @@ private:
     TabWidget *m_tabWidget;
 
     AutoSaver *m_autoSaver;
+
+    // These store if the user requested the menu/status bars visible. They are
+    // used to determine if these bars should be reshown when leaving fullscreen.
     bool m_menuBarVisible;
     bool m_statusBarVisible;
+
+    friend class BrowserApplication;
 };
 
 #endif // BROWSERMAINWINDOW_H

@@ -1,10 +1,13 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+    <file>dirlist.html</file>
     <file>notfound.html</file>
     <file>torcheck.html</file>
     <file>passwordhelp.html</file>
     <file>TORORA_ISSUES</file>
     <file>ARORA_ISSUES</file>
     <file>TORORA_WEBKIT_BUILD_ISSUES</file>
+    <file>startpage.html</file>
+    <file>startpage.css</file>
 </qresource>
 </RCC>

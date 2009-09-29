@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,11 +65,12 @@
 
 #include "singleapplication.h"
 
-#include <qicon.h>
 #include <qpointer.h>
 #include <qurl.h>
 #include <qhttp.h>
+#include <qdatetime.h>
 
+class AutoFillManager;
 class BookmarksManager;
 class BrowserMainWindow;
 class CookieJar;
@@ -78,6 +79,7 @@ class HistoryManager;
 class NetworkAccessManager;
 class TorManager;
 class LanguageManager;
+class QLocalSocket;
 class BrowserApplication : public SingleApplication
 {
     Q_OBJECT
@@ -90,6 +92,8 @@ public:
 
     BrowserMainWindow *mainWindow();
     QList<BrowserMainWindow*> mainWindows();
+    bool allowToCloseWindow(BrowserMainWindow *window);
+
     static QIcon icon(const QUrl &url);
 
     void saveSession();
@@ -102,16 +106,17 @@ public:
     static TorManager *torManager();
     static BookmarksManager *bookmarksManager();
     static LanguageManager *languageManager();
-    static QString dataDirectory();
+    static AutoFillManager *autoFillManager();
+
+    static QString installedDataDirectory();
+    static QString dataFilePath(const QString &fileName);
 
     Qt::MouseButtons eventMouseButtons() const;
     Qt::KeyboardModifiers eventKeyboardModifiers() const;
     void setEventMouseButtons(Qt::MouseButtons buttons);
     void setEventKeyboardModifiers(Qt::KeyboardModifiers modifiers);
 
-#if QT_VERSION >= 0x040500
     static bool zoomTextOnly();
-#endif
 
     static bool isPrivate();
     static void setPrivate(bool isPrivate);
@@ -131,22 +136,21 @@ public slots:
 #endif
     void quitBrowser();
 
-#if QT_VERSION >= 0x040500
     static void setZoomTextOnly(bool textOnly);
-#endif
+
+    void askDesktopToOpenUrl(const QUrl &url);
 
 private slots:
     void retranslate();
-    void messageReceived(const QString &message);
+    void messageReceived(QLocalSocket *socket);
     void postLaunch();
     void openUrl(const QUrl &url);
 signals:
-#if QT_VERSION >= 0x040500
     void zoomTextOnlyChanged(bool textOnly);
-#endif
     void privacyChanged(bool isPrivate);
     void torChanged(bool isTor);
 private:
+    QString parseArgumentUrl(const QString &string) const;
     void clean();
 
     static HistoryManager *s_historyManager;
@@ -155,6 +159,7 @@ private:
     static TorManager *s_torManager;
     static BookmarksManager *s_bookmarksManager;
     static LanguageManager *s_languageManager;
+    static AutoFillManager *s_autoFillManager;
 
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QByteArray m_lastSession;
@@ -162,6 +167,9 @@ private:
     QString m_statusbar;
     Qt::MouseButtons m_eventMouseButtons;
     Qt::KeyboardModifiers m_eventKeyboardModifiers;
+
+    QUrl m_lastAskedUrl;
+    QDateTime m_lastAskedUrlDateTime;
 };
 
 #endif // BROWSERAPPLICATION_H
