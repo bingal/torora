@@ -247,11 +247,6 @@ void TorManager::reportTorCheckResults(int page)
         statusbar = QLatin1String("Checking Tor...");
         break;
       case USING_TOR:
-        /*FIXME: Pseudorandom intervals may not be enough to prevent an attacker guessing who
-                is testing */
-        #define TOR_CHECK_PERIOD (60 * 1000 * ((qrand() % 10) + 1))
-        m_timer->start(TOR_CHECK_PERIOD);
-//        qDebug() << "TOR_CHECK_PERIOD " << TOR_CHECK_PERIOD << endl;
 
         if (m_checkTorSilently)
             return;
