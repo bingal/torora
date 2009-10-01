@@ -164,7 +164,6 @@ void CookieJar::load()
 
     QSettings settings;
     settings.beginGroup(QLatin1String("Mgeni"));
-    bool isTor = settings.value(QLatin1String("torBrowsing")).toBool();
     loadSettings();
 }
 

@@ -35,7 +35,7 @@ Countries::Countries()
     names << QLatin1String("United States") << QLatin1String("United Kingdom")
           << QLatin1String("Germany") << QLatin1String("China")
           << QLatin1String("France") << QLatin1String("Sweden")
-          << QLatin1String("Anonymous");
+          << QLatin1String("Random");
     for ( int i = 0; i != ccs.count(); ++i ) {
         Country *country = new Country(ccs[i],names[i]);
         countries.append(country);

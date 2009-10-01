@@ -78,11 +78,15 @@ public slots:
     void checkTorExplicitly();
     void requestPassword(const QString &);
     void showGeoBrowsingMenu();
+    void runServer();
+    void enableRelay();
+    
 private:
     bool validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx);
     void setBrowsingEnabled(bool enabled);
     void passwordHelp();
     void connectToTor();
+    void serverRunning();
 
     AppCheck *tor;
     AppCheck *privoxy;
@@ -100,6 +104,7 @@ private:
     QStringList polipoConfigFiles;
     Countries *m_countries;
     QTimer *m_timer;
+    bool m_displayedAlready;
 };
 
 #endif //
