@@ -8,15 +8,3 @@
      <li><a href='http://www.torproject.org/torbutton/design/#setpreservation'>Mgeni does not protect you from sites that attempt to track you.</a></li>
      <li><b>Mgeni may leak information about you!</b> <a href='http://github.com/mwenge/torora/tree/master/doc'>Research and Specifications are not complete.</a></li>
     </ul>
-    <h2></h2>
-    <img src="data:image/png;base64,INFO_IMAGE_HERE" width="32" height="32"/>
-    <h2>Information on Mgeni</h2>
-    <ul>
-      <li>Mgeni will periodically check <a href='http://check.torproject.org'>http://check.torproject.org</a> to ensure you are using Tor.</li>
-    </ul>
-    <h2></h2>
-    <img src="data:image/png;base64,QUESTION_IMAGE_HERE" width="32" height="32"/>
-    <h2>More Information</h2>
-    <ul>
-      <li><a href='http://github.com/mwenge/torora/tree/mgeni/doc'>Further reading on the Torora design is available here.</a></li>
-    </ul>

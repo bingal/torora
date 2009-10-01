@@ -28,6 +28,7 @@
 #include "opensearchmanager.h"
 #include "tabwidget.h"
 #include "toolbarsearch.h"
+#include "tormanager.h"
 #include "webpluginfactory.h"
 #include "webview.h"
 
@@ -38,6 +39,8 @@
 #include <qnetworkrequest.h>
 #include <qsettings.h>
 #include <qwebframe.h>
+
+#include <quiloader.h>
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
@@ -307,16 +310,28 @@ QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
 QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
                                const QStringList &paramNames, const QStringList &paramValues)
 {
-    Q_UNUSED(classId);
     Q_UNUSED(url);
     Q_UNUSED(paramNames);
     Q_UNUSED(paramValues);
-#if !defined(QT_NO_UITOOLS)
-    QUiLoader loader;
-    return loader.createWidget(classId, view());
-#else
+    if (classId == QLatin1String("QPushButton")) {
+        for (int i = 1; i < paramNames.count(); ++i) {
+            if (paramValues[i] == QString(QLatin1String("RunServerButton"))) {
+                QUiLoader loader;
+                QObject *object;
+                object = loader.createWidget(classId, view());
+                connect (object, SIGNAL(clicked()), BrowserApplication::instance()->torManager(), SLOT(enableRelay()));
+                return object;
+            }
+            if (paramValues[i] == QString(QLatin1String("TryAgainButton"))) {
+                QUiLoader loader;
+                QObject *object;
+                object = loader.createWidget(classId, view());
+                connect (object, SIGNAL(clicked()), BrowserApplication::instance()->torManager(), SLOT(checkTorExplicitly()));
+                return object;
+            }
+        }
+    }
     return 0;
-#endif
 }
 
 void WebPage::handleUnsupportedContent(QNetworkReply *reply)

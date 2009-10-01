@@ -38,6 +38,7 @@ TorControl::TorControl( const QString &host, int port )
     m_port = port;
     m_password = QString();
     m_authMethods = QStringList();
+    m_serverRunning = false;
 
     // create the socket and connect various of its signals
     socket = new QTcpSocket( this );
@@ -83,6 +84,14 @@ void TorControl::getExitCountry()
     sendToServer(QString(QLatin1String("GETCONF ExitNodes")));
 }
 
+void TorControl::checkForServer()
+{
+    if (m_state != AUTHENTICATED) {
+        return;
+    }
+    sendToServer(QString(QLatin1String("GETCONF OrPort")));
+}
+
 bool TorControl::geoBrowsingCapable()
 {
     /* If Tor version < 0.2.1.X then not supported */
@@ -115,6 +124,15 @@ void TorControl::parseExitNodes(const QString &line)
         emit geoBrowsingUpdate(6);
     else
         emit geoBrowsingUpdate(m_countrycodes.indexOf(countriesInUse.first()));
+}
+
+void TorControl::parseServerStatus(const QString &line)
+{
+    if (line.toInt() > 0) {
+        m_serverRunning = true;
+    } else {
+        m_serverRunning = false;
+    }
 }
 
 void TorControl::authenticateWithPassword(const QString &password)
@@ -171,6 +189,17 @@ bool TorControl::readCookie()
     return false;
 }
 
+void TorControl::enableRelay()
+{
+    /* Get the list of open circuits and close them. This will
+       force Tor to build circuits obeying the new rules. */
+    sendToServer(QLatin1String("SETCONF OrPort=9030"));
+    sendToServer(QLatin1String("SETCONF NickName=MgeniUser"));
+    sendToServer(QLatin1String("SETCONF ExitPolicy=reject *:*"));
+    /* Tell Tor to use a new circuit for the next connection. */
+    sendToServer(QLatin1String("saveconf"));
+}
+
 void TorControl::newIdentity()
 {
     /* Get the list of open circuits and close them. This will
@@ -197,6 +226,7 @@ void TorControl::socketReadyRead()
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state = AUTHENTICATED;
                       getExitCountry();
+                      checkForServer();
                       /* If the user had to enter a password then they're expecting to see the
                          geobrowsing menu pop up. */
                       if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD")))
@@ -220,6 +250,13 @@ void TorControl::socketReadyRead()
                       line.remove(QLatin1String("250 ExitNodes="));
                       if (!line.isEmpty())
                           parseExitNodes(line);
+                      continue;
+                  }
+                  if (line.contains(QLatin1String("250 ORPort="))){
+                      line.remove(QLatin1String("250 ORPort="));
+                      m_serverRunning = false;
+                      if (!line.isEmpty())
+                          parseServerStatus(line);
                       continue;
                   }
                   break;
