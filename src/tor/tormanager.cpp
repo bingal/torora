@@ -454,6 +454,7 @@ void TorManager::setGeoBrowsingLocation(int offset)
         return;
     }
     torcontrol->setExitCountry(m_countries->country(offset)->cc());
+    m_country = m_countries->country(offset)->friendlyName();
     emit geoBrowsingUpdate(offset);
 }
 
@@ -551,7 +552,7 @@ void TorManager::runServer()
     }
     QString tororaIssues;
     QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
-    headline = tr("Help Make Tor Faster!");
+    headline = tr("You're Ready to Browse From %1!").arg(m_country);
     intro = tr("While browsing, you can join the Tor network and help improve its performance.");
     bullettwo = tr("Joining is safe and easy, your computer will only act as an internal relay.");
     bulletthree = tr("You can use Vidalia to manage your membership");

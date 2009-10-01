@@ -105,6 +105,7 @@ private:
     Countries *m_countries;
     QTimer *m_timer;
     bool m_displayedAlready;
+    QString m_country;
 };
 
 #endif //
