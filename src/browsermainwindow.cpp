@@ -1062,6 +1062,8 @@ void BrowserMainWindow::setupToolBar()
 
     m_geoBrowsingAction->setIcon(QIcon(QLatin1String(":graphics/geobrowser.png")));
     m_geoBrowsingMenu = new QMenu(this);
+    connect(m_geoBrowsingAction, SIGNAL(triggered()),
+            this, SLOT(showGeoBrowsingMenu()));
     connect(m_geoBrowsingMenu, SIGNAL(aboutToShow()),
             this, SLOT(aboutToShowGeoBrowsingMenu()));
     connect(m_geoBrowsingMenu, SIGNAL(triggered(QAction *)),
@@ -1607,6 +1609,7 @@ void BrowserMainWindow::setGeoBrowsingLocation(QAction *action)
 {
     int offset = action->data().toInt();
     BrowserApplication::instance()->torManager()->setGeoBrowsingLocation(offset);
+    BrowserApplication::instance()->torManager()->runServer();
 }
 
 void BrowserMainWindow::aboutToShowWindowMenu()
@@ -1692,4 +1695,12 @@ void BrowserMainWindow::setStatusBarMessagesEnabled(bool enabled)
         disconnect(m_tabWidget, SIGNAL(linkHovered(const QString&)),
                 statusBar(), SLOT(showMessage(const QString&)));
     }
+}
+
+void BrowserMainWindow::showGeoBrowsingMenu()
+{
+    if (!m_geoBrowsingMenu)
+        return;
+    QWidget *w = m_navigationBar->widgetForAction(m_geoBrowsingAction);
+    m_geoBrowsingMenu->exec(w->mapToGlobal(QPoint(0,w->height())));
 }

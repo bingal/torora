@@ -175,6 +175,7 @@ private slots:
     void slotCheckTor();
 
     void setGeoBrowsingLocation(QAction *action);
+    void showGeoBrowsingMenu();
 
 private:
     void retranslate();
