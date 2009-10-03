@@ -767,4 +767,3 @@ void BrowserApplication::setTor(bool isTor)
     BrowserApplication::cookieJar()->loadSettings();
     BrowserApplication::historyManager()->loadSettings();
 }
-

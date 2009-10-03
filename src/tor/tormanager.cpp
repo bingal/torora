@@ -460,9 +460,7 @@ void TorManager::setGeoBrowsingLocation(int offset)
 
 void TorManager::showGeoBrowsingMenu()
 {
-    BrowserApplication::instance()->mainWindow()->geoBrowsingMenu()->hide();
-    BrowserApplication::instance()->mainWindow()->aboutToShowGeoBrowsingMenu();
-    BrowserApplication::instance()->mainWindow()->geoBrowsingMenu()->show();
+    BrowserApplication::instance()->mainWindow()->showGeoBrowsingMenu();
 }
 
 void TorManager::requestPassword(const QString &message)

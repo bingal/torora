@@ -1068,7 +1068,6 @@ void BrowserMainWindow::setupToolBar()
             this, SLOT(aboutToShowGeoBrowsingMenu()));
     connect(m_geoBrowsingMenu, SIGNAL(triggered(QAction *)),
             this, SLOT(setGeoBrowsingLocation(QAction *)));
-    m_geoBrowsingAction->setMenu(m_geoBrowsingMenu);
     m_navigationBar->addAction(m_geoBrowsingAction);
 
     m_navigationSplitter = new QSplitter(m_navigationBar);
@@ -1585,16 +1584,12 @@ void BrowserMainWindow::aboutToShowForwardMenu()
 
 void BrowserMainWindow::aboutToShowGeoBrowsingMenu()
 {
-    if (!BrowserApplication::instance()->torManager()->readyToUse()) {
-        BrowserApplication::instance()->torManager()->authenticate();
-        m_geoBrowsingMenu->hide();
-        return;
-    }
     m_geoBrowsingMenu->clear();
     if (!currentTab())
         return;
     Countries* clist = BrowserApplication::instance()->torManager()->countries();
     int countryCount = clist->count();
+
     for (int i = 0; i < countryCount; ++i) {
         QAction *action = new QAction(this);
         Country *ctry = clist->country(i);
@@ -1701,6 +1696,15 @@ void BrowserMainWindow::showGeoBrowsingMenu()
 {
     if (!m_geoBrowsingMenu)
         return;
+    if (!BrowserApplication::instance()->torManager()->readyToUse()) {
+        BrowserApplication::instance()->torManager()->authenticate();
+        return;
+    }
+    if (!m_geoBrowsingAction->menu()) {
+        m_geoBrowsingAction->setMenu(m_geoBrowsingMenu);
+        m_navigationBar->layout()->update();
+    }
+
     QWidget *w = m_navigationBar->widgetForAction(m_geoBrowsingAction);
     m_geoBrowsingMenu->exec(w->mapToGlobal(QPoint(0,w->height())));
 }
