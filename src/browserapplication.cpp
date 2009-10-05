@@ -78,6 +78,7 @@
 #include <qdesktopservices.h>
 #include <qdir.h>
 #include <qevent.h>
+#include <qglobal.h>
 #include <qlibraryinfo.h>
 #include <qmessagebox.h>
 #include <qsettings.h>
@@ -87,8 +88,9 @@
 #include <QShortcut>
 #include <qdebug.h>
 
+
 #ifdef Q_OS_WIN
-#include <windows.h>
+#include <time.h>
 #endif
 
 DownloadManager *BrowserApplication::s_downloadManager = 0;
@@ -151,10 +153,17 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     languageManager();
 
     //Torora 4.1: Set our timezone to UTC
+    if (!qputenv("TZ", "UTC")) {
+        int ret = QMessageBox::warning(mainWindow(), QString(),
+                            tr("Couldn't set Arora's timezone to UTC. This will harm your anonymity\n"
+                              "Do you want to browse anyway?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No);
+        if (ret == QMessageBox::No)
+            quitBrowser();
+     }
 #ifdef Q_OS_WIN
-    SetEnvironmentVariable("TZ",":UTC");
-#else
-    setenv("TZ",":UTC",1);
+    _tzset();
 #endif
 }
 
