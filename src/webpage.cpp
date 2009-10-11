@@ -21,11 +21,14 @@
 #include "webpage.h"
 
 #include "browserapplication.h"
+#include "cookiejar.h"
 #include "downloadmanager.h"
 #include "historymanager.h"
 #include "networkaccessmanager.h"
 #include "opensearchengine.h"
 #include "opensearchmanager.h"
+#include "sslerror.h"
+#include "sslstrings.h"
 #include "tabwidget.h"
 #include "toolbarsearch.h"
 #include "webpluginfactory.h"
@@ -38,6 +41,8 @@
 #include <qnetworkrequest.h>
 #include <qsettings.h>
 #include <qwebframe.h>
+
+#include <quiloader.h>
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
@@ -57,6 +62,7 @@ void JavaScriptExternalObject::AddSearchProvider(const QString &url)
 }
 
 Q_DECLARE_METATYPE(OpenSearchEngine*)
+Q_DECLARE_METATYPE(QWebFrame*)
 JavaScriptAroraObject::JavaScriptAroraObject(QObject *parent)
     : QObject(parent)
 {
@@ -106,10 +112,20 @@ WebPage::WebPage(QObject *parent)
     networkManagerProxy->setWebPage(this);
     networkManagerProxy->setPrimaryNetworkAccessManager(BrowserApplication::networkAccessManager());
     setNetworkAccessManager(networkManagerProxy);
+    networkManagerProxy->setCookieJar(BrowserApplication::instance()->cookieJar());
+    networkManagerProxy->cookieJar()->setParent(0); // Required for CookieJars shared by networkaccessmanagers
+    connect(networkManagerProxy, SIGNAL(setSSLError(AroraSSLError *, QNetworkReply *)),
+            this, SLOT(setSSLError(AroraSSLError *, QNetworkReply *)));
+    connect(networkManagerProxy, SIGNAL(sslErrorPage(AroraSSLError *, QNetworkReply*)),
+            this, SLOT(handleSSLErrorPage(AroraSSLError *, QNetworkReply*)));
+    connect(networkManagerProxy, SIGNAL(finished(QNetworkReply*)),
+            SLOT(setSSLConfiguration(QNetworkReply*)));
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
     connect(this, SIGNAL(frameCreated(QWebFrame *)),
             this, SLOT(addExternalBinding(QWebFrame *)));
+    connect(this, SIGNAL(networkRequestStarted(QWebFrame *, QNetworkRequest *)),
+            this, SLOT(bindRequestToFrame(QWebFrame *, QNetworkRequest *)));
     addExternalBinding(mainFrame());
     loadSettings();
 }
@@ -276,8 +292,15 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
         return false;
     }
 
+    /* If this frame has an SSLError in its page, and the url being requested
+       is not a child of the page's url, then clear the certificate and ssl
+       error associated with the page in this frame. */
+//     if (pageHasSSLErrors(frame) && isNewWebsite(frame, request.url()))
+//         clearSSLErrors(frame);
+
     bool accepted = QWebPage::acceptNavigationRequest(frame, request, type);
     if (accepted && frame == mainFrame()) {
+//         clearAllSSLErrors();
         m_requestedUrl = request.url();
         emit aboutToLoadUrl(request.url());
     }
@@ -317,11 +340,37 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
     Q_UNUSED(paramNames);
     Q_UNUSED(paramValues);
 #if !defined(QT_NO_UITOOLS)
-    QUiLoader loader;
-    return loader.createWidget(classId, view());
-#else
-    return 0;
+    if (classId == QLatin1String("QPushButton")) {
+        for (int i = 0; i < paramNames.count(); ++i) {
+            if (paramValues[i].contains(QLatin1String("SSLProceedButton")) ||
+                paramValues[i].contains(QLatin1String("SSLCancelButton"))) {
+              QUiLoader loader;
+              QObject *object;
+              object = loader.createWidget(classId, view());
+              qDebug() << "m_AroraSSLCertificates" << m_AroraSSLCertificates;
+              QListIterator<AroraSSLCertificate*> certs(m_AroraSSLCertificates);
+              while (certs.hasNext()) {
+                  AroraSSLCertificate *cert = certs.next();
+                  if (!cert->hasError())
+                      continue;
+                  QListIterator<AroraSSLError*> errors(cert->errors());
+                  while (errors.hasNext()) {
+                      AroraSSLError *error = errors.next();
+                      if (paramValues[i] == QString(QLatin1String("SSLProceedButton%1")).arg(error->errorid())) {
+                          connect (object, SIGNAL(clicked()), error, SLOT(loadFrame()));
+                          return object;
+                      }
+                      if (paramValues[i] == QString(QLatin1String("SSLCancelButton%1")).arg(error->errorid())) {
+                          connect (object, SIGNAL(clicked()), networkAccessManager(), SLOT(sslCancel()));
+                          return object;
+                      }
+                  }
+              }
+            }
+        }
+    }
 #endif
+    return 0;
 }
 
 // The chromium guys have documented many examples of incompatibilities that
@@ -424,5 +473,261 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     notFoundFrame->setHtml(html, replyUrl);
     // Don't put error pages to the history.
     BrowserApplication::instance()->historyManager()->removeHistoryEntry(replyUrl, notFoundFrame->title());
+    // FIXME: Not really the right place for this.
+    clearAllSSLErrors();
 }
 
+#ifndef QT_NO_OPENSSL
+void WebPage::setSSLError(AroraSSLError *sslError, QNetworkReply *reply)
+{
+    if (alreadyHasSSLCertForUrl(sslError->url(), reply, sslError))
+        return;
+
+    AroraSSLCertificate *certificate = new AroraSSLCertificate(sslError, reply->sslConfiguration(), sslError->url());
+    m_AroraSSLCertificates.append(certificate);
+
+    QVariant var;
+    QWebFrame *replyframe;
+    replyframe = getFrame(reply->request());
+    sslError->setFrame(replyframe);
+    certificate->addFrame(replyframe);
+    qDebug() << "certframe(error) for "<< sslError->url().host() << " is" << replyframe;
+    qDebug() << "Parent of certframe(error) " << replyframe << "is " << replyframe->parentFrame();
+    qDebug() << "Geometry of certframe(error) is "<< replyframe->geometry() << endl;
+//    qDebug() << "sslerror: got frame" << replyframe << "for url " << sslError->url() << endl;
+}
+
+bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
+{
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        if (cert->url().host() == url.host()) {
+            QVariant var;
+            QWebFrame *replyframe = getFrame(reply->request());
+            cert->addFrame(replyframe);
+            if (sslError) {
+                sslError->setFrame(replyframe);
+                cert->addError(sslError);
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+void WebPage::markPollutedFrame(QNetworkReply *reply)
+{
+    QWebFrame *replyframe = getFrame(reply->request());
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        if (cert->frames().contains(replyframe) &&
+            cert->url().host() == replyframe->url().host()) {
+//            qDebug() << reply->url().host() << "polluting frame  " << replyframe->url().host();
+            m_pollutedFrames.append(replyframe);
+            return;
+        }
+    }
+}
+
+bool WebPage::frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert)
+{
+    if (m_pollutedFrames.contains(frame) &&
+        cert->url().host() == frame->url().host())
+        return true;
+    return false;
+}
+
+bool WebPage::certHasPollutedFrame(AroraSSLCertificate *cert)
+{
+    QListIterator<QWebFrame*> frames(cert->frames());
+    while (frames.hasNext()) {
+        QWebFrame *frame = frames.next();
+        if (frameIsPolluted(frame, cert))
+            return true;
+    }
+    return false;
+}
+
+void WebPage::handleSSLErrorPage(AroraSSLError *error, QNetworkReply* reply)
+{
+    QString html = sslErrorHtml(error);
+    QWebFrame *replyframe = getFrame(reply->request());
+    replyframe->setHtml(html, error->url());
+}
+
+void WebPage::setSSLConfiguration(QNetworkReply *reply)
+{
+    if (reply->sslConfiguration().sessionCipher().isNull()) {
+        markPollutedFrame(reply);
+        return;
+    }
+
+    if (alreadyHasSSLCertForUrl(reply->url(), reply))
+        return;
+
+    AroraSSLCertificate *certificate = new AroraSSLCertificate(0L, reply->sslConfiguration(), reply->url());
+    QSslCipher sessionCipher = reply->sslConfiguration().sessionCipher();
+    bool lowGrade = lowGradeEncryption(sessionCipher);
+    m_sslLowGradeEncryption = lowGrade;
+    certificate->setLowGradeEncryption(lowGrade);
+    m_AroraSSLCertificates.append(certificate);
+
+    /* Associate the cert with it's frame */
+    /* FIXME: Remove the duplication of code with sslerror */
+    QWebFrame *certFrame = 0;
+    QList<QWebFrame*> frames;
+    frames.append(mainFrame());
+    while (!frames.isEmpty()) {
+        QWebFrame *frame = frames.takeFirst();
+        if (getFrame(reply->request()) == frame) {
+            certFrame = frame;
+            break;
+        }
+        frames += frame->childFrames();
+    }
+
+
+    if (certFrame) {
+        qDebug() << "certframe for "<< reply->url().host() << " is" << certFrame;
+        qDebug() << "Parent of certframe " << certFrame << "is " << certFrame->parentFrame();
+        qDebug() << "Geometry of certframe is "<< certFrame->geometry() << endl;
+        certificate->addFrame(certFrame);
+    }
+
+}
+
+int WebPage::sslSecurity()
+{
+    if (hasSSLErrors())
+        return SECURITY_LOW;
+    if (m_sslLowGradeEncryption || !m_pollutedFrames.isEmpty())
+        return SECURITY_MEDIUM;
+    return SECURITY_HIGH;
+}
+
+bool WebPage::hasSSLErrors()
+{
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        if (cert->hasError())
+            return true;
+    }
+    return false;
+}
+
+bool WebPage::hasSSLCerts()
+{
+    if (m_AroraSSLCertificates.count() > 0)
+        return true;
+    return false;
+}
+
+bool WebPage::pageHasSSLErrors(QWebFrame *frame)
+{
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        QListIterator<AroraSSLError*> errors(cert->errors());
+        while (errors.hasNext()) {
+            AroraSSLError *error = errors.next();
+            if (error->frame() == frame)
+                return true;
+        }
+    }
+    return false;
+}
+
+bool WebPage::pageHasSSLCerts(QWebFrame *frame)
+{
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        if (cert->frames().contains(frame)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
+{
+    /* A frame's page can have multiple SSL errors from multiple different
+       SSL connections in it. Here we depend on the fact that the
+       first SSL error associated with a frame is the one that all the others
+       associated with it depend on. So if we're jumping away from the url
+       that has the first SSL error we no longer have to alert the user to the
+       error. */
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        QListIterator<AroraSSLError*> errors(cert->errors());
+        while (errors.hasNext()) {
+            AroraSSLError *error = errors.next();
+            if (error->frame() == frame) {
+                if (!error->url().isParentOf(url) && error->url() != url)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+void WebPage::clearSSLErrors(QWebFrame *frame)
+{
+    if (frame == mainFrame()) {
+        m_AroraSSLCertificates.clear();
+        m_pollutedFrames.clear();
+        return;
+    }
+
+    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
+        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+        QListIterator<AroraSSLError*> errors(cert->errors());
+        while (errors.hasNext()) {
+            AroraSSLError *error = errors.next();
+            if (error->frame() == frame)
+              m_AroraSSLCertificates.removeAt(i);
+        }
+    }
+}
+
+void WebPage::clearAllSSLErrors()
+{
+    m_AroraSSLCertificates.clear();
+}
+
+void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)
+{
+    if (!frame)
+        return;
+    QVariant var;
+    qDebug() << request->url();
+    qDebug() << frame;
+    var.setValue(frame);
+    request->setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200), var);
+}
+
+bool WebPage::containsFrame(QWebFrame *frame)
+{
+    QList<QWebFrame*> frames;
+    frames.append(mainFrame());
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        if (f == frame)
+            return true;
+        frames += f->childFrames();
+    }
+    return false;
+}
+
+QWebFrame* WebPage::getFrame(const QNetworkRequest& request)
+{
+    QVariant v;
+    QWebFrame *frame;
+    v = request.attribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200));
+    frame = v.value<QWebFrame*>();
+    qDebug() << request.url();
+    qDebug() << frame;
+    if (containsFrame(frame))
+        return frame;
+    return 0L;
+}
+
+#endif

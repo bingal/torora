@@ -28,6 +28,7 @@
 class WebView;
 class LocationBarSiteIcon;
 class PrivacyIndicator;
+class SSLIndicator;
 class LocationBar : public LineEdit
 {
     Q_OBJECT
@@ -36,6 +37,7 @@ public:
     LocationBar(QWidget *parent = 0);
     void setWebView(WebView *webView);
     WebView *webView() const;
+    SSLIndicator *sslIndicator() { return m_SSLIndicator; }
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -47,12 +49,14 @@ protected:
 
 private slots:
     void webViewUrlChanged(const QUrl &url);
+    void displaySSL();
 
 private:
     QPointer<WebView> m_webView;
 
     LocationBarSiteIcon *m_siteIcon;
     PrivacyIndicator *m_privacyIndicator;
+    SSLIndicator *m_SSLIndicator;
 };
 
 #endif // LOCATIONBAR_H

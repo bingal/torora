@@ -24,7 +24,9 @@
 #include "locationbarsiteicon.h"
 #include "privacyindicator.h"
 #include "searchlineedit.h"
+#include "sslindicator.h"
 #include "webview.h"
+#include "webpage.h"
 
 #include <qdrag.h>
 #include <qevent.h>
@@ -38,6 +40,7 @@ LocationBar::LocationBar(QWidget *parent)
     , m_webView(0)
     , m_siteIcon(0)
     , m_privacyIndicator(0)
+    , m_SSLIndicator(0)
 {
     // Urls are always LeftToRight
     setLayoutDirection(Qt::LeftToRight);
@@ -50,6 +53,12 @@ LocationBar::LocationBar(QWidget *parent)
     // privacy indicator at rightmost position
     m_privacyIndicator = new PrivacyIndicator(this);
     addWidget(m_privacyIndicator, RightSide);
+
+    // ssl indicator at rightmost position
+    m_SSLIndicator = new SSLIndicator(this);
+    connect(m_SSLIndicator, SIGNAL(clicked()),
+            this, SLOT(displaySSL()));
+    addWidget(m_SSLIndicator, RightSide);
 
     // clear button on the right
     ClearButton *m_clearButton = new ClearButton(this);
@@ -74,6 +83,17 @@ void LocationBar::setWebView(WebView *webView)
             this, SLOT(update()));
 }
 
+void LocationBar::displaySSL()
+{
+    QWidget *parent = this->parentWidget();
+    if (!parent)
+        return;
+
+    QPoint pos = parent->mapToGlobal(QPoint(parent->width(), parent->height()));
+
+    m_webView->displaySSLCertificateList(pos);
+}
+
 WebView *LocationBar::webView() const
 {
     return m_webView;
@@ -92,11 +112,42 @@ void LocationBar::paintEvent(QPaintEvent *event)
     QPalette p = palette();
     QColor defaultBaseColor = QApplication::palette().color(QPalette::Base);
     QColor backgroundColor = defaultBaseColor;
+
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    if (m_webView && m_webView->webPage()->hasSSLCerts())
+        m_SSLIndicator->displayPadlock(m_webView->webPage()->sslSecurity());
+    else
+        m_SSLIndicator->setVisible(false);
+
+    if (m_webView && m_webView->webPage()
+        && (m_webView->webPage()->hasSSLErrors() ||
+            (m_webView->url().scheme() == QLatin1String("https")
+             && !m_webView->webPage()->hasSSLCerts()))
+        && p.color(QPalette::Text).value() < 128) {
+        QColor lightYellow(248, 248, 210);
+        if (m_defaultBaseColor.value() < 128) {
+            lightYellow.setHsv(0, 70, m_defaultBaseColor.value()+30);
+        } else {
+            lightYellow.setHsv(0, 60, m_defaultBaseColor.value());
+        }
+        backgroundColor = lightYellow;
+    }else if (m_webView && m_webView->url().scheme() == QLatin1String("https")
+              && text().startsWith(QLatin1String("https"))) {
+        QColor lightYellow;
+        if (m_defaultBaseColor.value() < 128) {
+            lightYellow.setHsv(90, 70, m_defaultBaseColor.value()+30);
+        } else {
+            lightYellow.setHsv(90, 60, m_defaultBaseColor.value());
+        }
+        backgroundColor = lightYellow;
+    }
+#else
     if (m_webView && m_webView->url().scheme() == QLatin1String("https")
         && p.color(QPalette::Text).value() < 128) {
         QColor lightYellow(248, 248, 210);
         backgroundColor = lightYellow;
     }
+#endif
 
     // set the progress bar
     if (m_webView) {

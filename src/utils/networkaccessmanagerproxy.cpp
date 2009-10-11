@@ -29,10 +29,21 @@
 #include "networkaccessmanagerproxy.h"
 #include "networkaccessmanagerproxy_p.h"
 
+#include "browserapplication.h"
+#include "browsermainwindow.h"
 #include "webpageproxy.h"
+#include "locationbar.h"
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#ifndef QT_NO_OPENSSL
+#include "sslindicator.h"
+#include "sslstrings.h"
+#endif
+#endif
 
 #include <qnetworkcookie.h>
 #include <qnetworkrequest.h>
+#include <qnetworkreply.h>
+#include <qwebhistory.h>
 
 NetworkAccessManagerProxy *NetworkAccessManagerProxy::m_primaryManager = 0;
 
@@ -64,9 +75,16 @@ void NetworkAccessManagerProxy::setPrimaryNetworkAccessManager(NetworkAccessMana
             m_primaryManager, SIGNAL(finished(QNetworkReply *)));
     connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
             m_primaryManager, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
+#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
 #ifndef QT_NO_OPENSSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
             m_primaryManager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif
+#else
+#ifndef QT_NO_OPENSSL
+    connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
+            SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif
 #endif
 }
 
@@ -80,3 +98,33 @@ QNetworkReply *NetworkAccessManagerProxy::createRequest(QNetworkAccessManager::O
     return QNetworkAccessManager::createRequest(op, request, outgoingData);
 }
 
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#ifndef QT_NO_OPENSSL
+void NetworkAccessManagerProxy::sslErrors(QNetworkReply *reply, const QList<QSslError> &error)
+{
+    AroraSSLError *sslError;
+
+    if (error.count() > 0) {
+        sslError = new AroraSSLError(error, reply->url());
+        emit setSSLError(sslError, reply);
+    }
+
+    if (BrowserApplication::instance()->m_sslwhitelist.contains(reply->url().host())) {
+        reply->ignoreSslErrors();
+        return;
+    }
+
+    if (error.count() > 0)
+        emit sslErrorPage(sslError, reply);
+}
+
+void NetworkAccessManagerProxy::sslCancel()
+{
+    BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
+    if (mainWindow->currentTab()->history()->backItems(1).empty())
+        return;
+    mainWindow->currentTab()->history()->goToItem(mainWindow->currentTab()->history()->backItems(1).first()); // back
+}
+
+#endif
+#endif

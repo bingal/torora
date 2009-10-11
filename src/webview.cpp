@@ -76,6 +76,8 @@
 #include "opensearchengine.h"
 #include "opensearchengineaction.h"
 #include "opensearchmanager.h"
+#include "ssldialog.h"
+#include "sslerror.h"
 #include "toolbarsearch.h"
 #include "webpage.h"
 
@@ -85,6 +87,8 @@
 #include <qmenubar.h>
 #include <qtimer.h>
 #include <qwebframe.h>
+#include <qsslconfiguration.h>
+#include <qsslerror.h>
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 Q_DECLARE_METATYPE(QWebElement)
@@ -144,6 +148,7 @@ WebView::WebView(QWidget *parent)
             this, SLOT(hideAccessKeys()));
 #endif
     loadSettings();
+    qRegisterMetaType<AroraSSLCertificate*>("AroraSSLCertificate*");
 }
 
 void WebView::loadSettings()
@@ -285,6 +290,43 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
     } else {
         if (page()->settings()->testAttribute(QWebSettings::DeveloperExtrasEnabled))
             menu->addAction(pageAction(QWebPage::InspectElement));
+    }
+
+    if (webPage()->pageHasSSLCerts(page()->currentFrame()) || webPage()->pageHasSSLErrors(page()->currentFrame())) {
+        menu->addSeparator();
+        QList<AroraSSLCertificate*> certificates;
+        certificates = allSSLCertificates();
+        for (int i = 0; i < certificates.count(); i++) {
+            AroraSSLCertificate *cert = certificates.at(i);
+            QListIterator<QWebFrame*> frames(cert->frames());
+            while (frames.hasNext()) {
+                QWebFrame* frame = frames.next();
+                if (!frame)
+                    break;
+                if (frame == page()->currentFrame() ||
+                    (frame->parentFrame() == page()->currentFrame()))
+/*                    || (cert->error() &&
+                        (cert->error()->frame() == page()->currentFrame() ||
+                        cert->error()->frame()->parentFrame() == page()->currentFrame())))*/ {
+                    QSslCertificate peerCert = cert->sslConfiguration().peerCertificate();
+
+                    QString url = QString(QLatin1String("%1 (%2)"))
+                                  .arg(cert->url().host())
+                                  .arg(peerCert.subjectInfo(QSslCertificate::Organization));
+                    QIcon image;
+                    image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
+                                  .arg(cert->icon(webPage()->frameIsPolluted(frame, cert)))).scaled(QSize(16,16)));
+                    QAction *action = new QAction(image, url, menu);
+                    QVariant var;
+                    var.setValue(certificates.at(i));
+                    action->setData(var);
+                    connect(action, SIGNAL(triggered()), this, SLOT(displayChosenSSLCertificate()));
+                    connect(menu, SIGNAL(hovered(QAction*)), this, SLOT(highlightSSLResource(QAction*)));
+                    connect(menu, SIGNAL(aboutToHide()), this, SLOT(clearHighlights()));
+                    menu->addAction(action);
+                }
+           }
+        }
     }
 
     if (!menu->isEmpty()) {
@@ -574,6 +616,7 @@ void WebView::loadFinished()
 
 void WebView::loadUrl(const QUrl &url, const QString &title)
 {
+    m_page->clearAllSSLErrors();
     if (url.scheme() == QLatin1String("javascript")) {
         QString scriptSource = QUrl::fromPercentEncoding(url.toString(Q_FLAGS(QUrl::TolerantMode|QUrl::RemoveScheme)).toAscii());
         QVariant result = page()->mainFrame()->evaluateJavaScript(scriptSource);
@@ -719,6 +762,7 @@ void WebView::keyPressEvent(QKeyEvent *event)
         event->accept();
         break;
     case Qt::Key_Refresh:
+        qobject_cast<WebPage*>(page())->clearAllSSLErrors();
         pageAction(WebPage::Reload)->trigger();
         event->accept();
         break;
@@ -900,6 +944,209 @@ void WebView::makeAccessKeyLabel(const QChar &accessKey, const QWebElement &elem
     label->move(point);
     m_accessKeyLabels.append(label);
     m_accessKeyNodes[accessKey] = element;
+}
+
+#endif
+
+#ifndef QT_NO_OPENSSL
+void WebView::displaySSLCertificateList(const QPoint &pos)
+{
+    QMenu menu;
+    QList<AroraSSLCertificate*> certificates;
+    certificates = allSSLCertificates();
+    QPoint loc = pos;
+  
+    if  (certificates.count() <= 1) {
+        displaySSLCertificate();
+        return;
+    }
+    for (int i = 0; i < certificates.count(); i++) {
+        AroraSSLCertificate *cert = certificates.at(i);
+        QSslCertificate peerCert = cert->sslConfiguration().peerCertificate();
+
+        QString url = QString(QLatin1String("%1 (%2)"))
+                      .arg(cert->url().host())
+                      .arg(peerCert.subjectInfo(QSslCertificate::Organization));
+        QIcon image;
+        image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
+                .arg(cert->icon(webPage()->certHasPollutedFrame(cert)))).scaled(QSize(16,16)));
+        QAction *action = new QAction(image, url, &menu);
+        QVariant var;
+        var.setValue(certificates.at(i));
+        action->setData(var);
+        connect(action, SIGNAL(triggered()), this, SLOT(displayChosenSSLCertificate()));
+        connect(&menu, SIGNAL(hovered(QAction*)), this, SLOT(highlightSSLResource(QAction*)));
+        connect(&menu, SIGNAL(aboutToHide()), this, SLOT(clearHighlights()));
+        menu.addAction(action);
+    }
+    menu.update();
+    loc.setX(loc.x() - menu.sizeHint().width());
+    menu.exec(loc);
+
+}
+
+void WebView::paintEvent(QPaintEvent *event) {
+
+    /*FIXME: We actually need to paint the frame just under the mainframe, I think.
+             Frames nested within frames, especially iframes, can't be painted sometimes. */
+    QWebView::paintEvent(event);
+
+    if (!m_highlightedcert)
+        return;
+
+    for (int i = 0; i < m_regions.count(); i++) {
+        QPainter p(this);
+        QListIterator<QWebFrame*> frames(m_highlightedcert->frames());
+        QWebFrame* frame;
+//         QWebFrame* renderframe;
+        while (frames.hasNext()) {
+            frame = frames.next();
+            if (!frame)
+                break;
+
+            QRect geometry = absoluteFrameGeometry(frame);
+            // FIXME: Handle iframes that locate themselves off the screen better than this
+            if (geometry.x() > page()->mainFrame()->geometry().width() ||
+                geometry.y() > page()->mainFrame()->geometry().height())
+                geometry = frame->parentFrame()->geometry();
+
+            //FIXME: bit of work required here to respect scrollposition when
+            //       highlighting elements in the page
+            QRect rect  = m_regions.at(i).boundingRect();
+/*            rect.setX(rect.x() - frame->scrollPosition().x());
+            rect.setY(rect.y() - frame->scrollPosition().y());
+            rect.setWidth(rect.width() - frame->scrollPosition().x());
+            rect.setHeight(rect.height() - frame->scrollPosition().y());*/
+            frame->render(&p, m_regions.at(i));
+            p.setBrush(m_highlightedcert->color(webPage()->frameIsPolluted(frame, m_highlightedcert)));
+            p.drawRect(rect);
+            if (geometry.contains(rect, true)) {
+                  QPoint point = QPoint(rect.x() + (rect.width()/2) - ((rect.width() < 16)?8:32),
+                                        rect.y() + (rect.height()/3) - ((rect.width() < 16)?8:32));
+                  p.drawPixmap(point,QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
+                                      .arg(m_highlightedcert->icon(webPage()->frameIsPolluted(frame, m_highlightedcert))))
+                                      .scaled(((rect.width() < 16)?16:64),((rect.width() < 16)?16:64)));
+            }
+/*            qDebug() << "certframe painted " << " is" << frame << endl;
+            qDebug() << "Parent of certframe " << frame << "is " << frame->parentFrame() << endl;
+            qDebug() << "Geometry of certframe is "<< frame->geometry() << endl;
+            qDebug() << "Rect is " << rect << endl;
+            qDebug() << "Resources for region is " << m_resourcesForRegion.value(frame) << endl;
+            qDebug() << "Frame name is " << frame->frameName() << endl;*/
+            m_highlightedcert->populateSSLText(p, geometry,
+                                               webPage()->frameIsPolluted(frame, m_highlightedcert),
+                                               m_resourcesForRegion.value(frame));
+
+        }
+        p.end();
+    }
+}
+
+QRect WebView::absoluteFrameGeometry(QWebFrame *frame)
+{
+    QList<QWebFrame*> frames;
+    frames.append(frame);
+    int x = 0, y = 0;
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        if (!f)
+          break;
+        x += f->geometry().x();
+        y += f->geometry().y();
+        frames += f->parentFrame();
+    }
+
+    return QRect(x,y, frame->geometry().width(), frame->geometry().height());
+}
+
+void WebView::highlightSSLResource(QAction *action)
+{
+    /*FIXME: handle situations where same ssl cert is used in multiple frames */
+    QVariant var;
+    bool resourcefound = false;
+    m_regions.clear();
+    update();
+    var = action->data();
+    AroraSSLCertificate *cert = var.value<AroraSSLCertificate*>();
+
+    if (!cert || cert->frames().isEmpty())
+        return;
+
+    m_highlightedcert = cert;
+
+    m_resourcesForRegion.clear();
+
+    QListIterator<QWebFrame*> frames(cert->frames());
+    QWebFrame* frame;
+    while (frames.hasNext()) {
+        QStringList resources;
+        frame = frames.next();
+        if (!frame)
+          break;
+        resourcefound = false;
+        QRect geometry = absoluteFrameGeometry(frame);
+        foreach (QWebElement element, frame->findAllElements(QLatin1String("[src*=https]"))) {
+            if (element.toOuterXml().contains(cert->url().host())) {
+                resources.append(cert->resourceDefinition(element.tagName()));
+                int x = geometry.x() + element.geometry().x();
+                int y = geometry.y() + element.geometry().y();
+                m_regions.append(QRegion(x, y,
+                                (element.geometry().width() < 20)?20:element.geometry().width(),
+                                (element.geometry().height() < 20)?20:element.geometry().height()));
+                resourcefound = true;
+            }
+        }
+
+        if (cert->url().host() == frame->url().host()) {
+            m_regions.append(QRegion(geometry.x(),
+                      geometry.y(),
+                      geometry.width(),
+                      geometry.height()));
+            resources.append(QLatin1String("Main Page"));
+        } else if (!resourcefound) {
+            m_regions.append(QRegion(0,0,0,0));
+            resources.append(QLatin1String("Probably Javascript"));
+        }
+
+        qDebug() << "certframe highlighted " << " is" << frame;
+        qDebug() << "Parent of certframe " << frame << "is " << frame->parentFrame();
+        qDebug() << "Geometry of certframe is "<< frame->geometry();
+        qDebug() << "Absolute Geometry of certframe is "<< geometry;
+        qDebug() << "Resources are " << resources << endl;
+
+        m_resourcesForRegion.insert(frame,resources);
+    }
+    update();
+}
+
+void WebView::displayChosenSSLCertificate()
+{
+    if (QAction *action = qobject_cast<QAction*>(sender())) {
+        QVariant var;
+        var = action->data();
+        AroraSSLCertificate *cert = var.value<AroraSSLCertificate*>();
+        SSLDialog *dialog = new SSLDialog(this, cert, cert->url());
+        dialog->show();
+        return;
+    }
+}
+
+void WebView::displaySSLCertificate()
+{
+    if (m_page->sslCertificates().isEmpty())
+        return;
+    SSLDialog *dialog = new SSLDialog(this, m_page->sslCertificates().first(), url());
+    dialog->show();
+    return;
+}
+
+QList<AroraSSLCertificate*> WebView::allSSLCertificates()
+{
+    QList<AroraSSLCertificate*> certificates;
+
+    certificates.append(webPage()->sslCertificates());
+
+    return certificates;
 }
 
 #endif
