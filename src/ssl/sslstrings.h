@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009, Benjamin C. Meyer  <ben@meyerhome.net>
+ * Copyright (c) 2009, Benjamin C. Meyer
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +26,44 @@
  * SUCH DAMAGE.
  */
 
-#ifndef NETWORKACCESSMANAGERPROXY_H
-#define NETWORKACCESSMANAGERPROXY_H
+#ifndef SSLSTRINGS_H
+#define SSLSTRINGS_H
 
-#include <qnetworkaccessmanager.h>
-#include <qsslconfiguration.h>
-#include "webview.h"
+#include <QString>
+#include <QStringList>
+#include <QPixmap>
+#include <QUrl>
+#include <qsslerror.h>
+#include <qsslcipher.h>
 
-class WebPageProxy;
-class NetworkAccessManagerProxy : public QNetworkAccessManager
+#define SECURITY_HIGH 2
+#define SECURITY_MEDIUM 1
+#define SECURITY_LOW 0
+
+class QSslErrorPrivate;
+class AroraSSLError;
+
+class SSLString
 {
-    Q_OBJECT
 
 public:
-    NetworkAccessManagerProxy(QObject *parent = 0);
+    SSLString(QStringList &strings, QPixmap &image);
+    ~SSLString();
 
-    void setPrimaryNetworkAccessManager(NetworkAccessManagerProxy *primaryManager);
-    NetworkAccessManagerProxy *primaryNetworkAccessManager() const { return m_primaryManager; }
-
-    void setWebPage(WebPageProxy *page);
-    WebPageProxy *webPage() const { return m_webPage; };
-
-protected:
-    QNetworkReply *createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData = 0);
-
+    QStringList strings() { return m_strings;}
+    QString string(int index) { return m_strings[index];}
+    QPixmap image() { return m_image;}
+    
 private:
-    friend class NetworkCookieJarProxy;
-    static NetworkAccessManagerProxy *m_primaryManager;
-    WebPageProxy *m_webPage;
-
+    QStringList m_strings;
+    QPixmap m_image;
 };
 
-#endif // NETWORKACCESSMANAGERPROXY_H
+SSLString *sslErrorString(AroraSSLError *error, int ref);
+QString sslErrorHtml(AroraSSLError *error);
+bool lowGradeEncryption(const QSslCipher &sessionCipher);
+bool weakProtocol(const QSslCipher &sessionCipher);
+bool weakCipher(const QSslCipher &sessionCipher);
+bool weakBitSecurity(const QSslCipher &sessionCipher);
 
+#endif

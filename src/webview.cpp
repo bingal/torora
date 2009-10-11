@@ -76,6 +76,8 @@
 #include "opensearchengine.h"
 #include "opensearchengineaction.h"
 #include "opensearchmanager.h"
+#include "ssldialog.h"
+#include "sslcert.h"
 #include "toolbarsearch.h"
 #include "webpage.h"
 
@@ -85,6 +87,8 @@
 #include <qmenubar.h>
 #include <qtimer.h>
 #include <qwebframe.h>
+#include <qsslconfiguration.h>
+#include <qsslerror.h>
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #if !defined(QTWEBKIT_VERSION) || QTWEBKIT_VERSION < 0x020000
@@ -146,6 +150,7 @@ WebView::WebView(QWidget *parent)
             this, SLOT(hideAccessKeys()));
 #endif
     loadSettings();
+    qRegisterMetaType<AroraSSLCertificate*>("AroraSSLCertificate*");
 }
 
 void WebView::loadSettings()
@@ -291,6 +296,42 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
         if (page()->settings()->testAttribute(QWebSettings::DeveloperExtrasEnabled))
             menu->addAction(pageAction(QWebPage::InspectElement));
     }
+
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    if (webPage()->frameHasSSLCerts(page()->currentFrame()) || webPage()->frameHasSSLErrors(page()->currentFrame())) {
+        menu->addSeparator();
+        QList<AroraSSLCertificate*> certificates;
+        certificates = allSSLCertificates();
+        for (int i = 0; i < certificates.count(); i++) {
+            AroraSSLCertificate *cert = certificates.at(i);
+            QListIterator<QWebFrame*> frames(cert->frames());
+            while (frames.hasNext()) {
+                QWebFrame* frame = frames.next();
+                if (!frame)
+                    break;
+                if (frame != page()->currentFrame() &&
+                    (frame->parentFrame() != page()->currentFrame()))
+                    continue;
+                QSslCertificate peerCert = cert->sslConfiguration().peerCertificate();
+
+                QString url = QString(QLatin1String("%1 (%2)"))
+                              .arg(cert->url().host())
+                              .arg(peerCert.subjectInfo(QSslCertificate::Organization));
+                QIcon image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
+                              .arg(cert->icon(webPage()->frameIsPolluted(frame, cert)))));
+                QAction *action = new QAction(image, url, menu);
+                QVariant var;
+                var.setValue(certificates.at(i));
+                action->setData(var);
+                action->setIconVisibleInMenu(true);
+                connect(action, SIGNAL(triggered()), this, SLOT(displayChosenSSLCertificate()));
+                menu->addAction(action);
+           }
+        }
+    }
+#endif
+#endif
 
     if (!menu->isEmpty()) {
         if (BrowserMainWindow::parentWindow(tabWidget())->menuBar()->isHidden()) {
@@ -490,7 +531,7 @@ void WebView::addSearchEngine()
     }
 
     QString engineName;
-    QWebElementCollection labels = formElement.findAll(QString(QLatin1String("label[for=\"%1\"]")).arg(elementName));
+    QList<QWebElement> labels = formElement.findAll(QString(QLatin1String("label[for=\"%1\"]")).arg(elementName)).toList();
     if (labels.count() > 0)
         engineName = labels.at(0).toPlainText();
 
@@ -829,7 +870,7 @@ void WebView::showAccessKeys()
     // Priority first goes to elements with accesskey attributes
     QList<QWebElement> alreadyLabeled;
     foreach (const QString &elementType, supportedElement) {
-        QList<QWebElement> result = page()->mainFrame()->findAllElements(elementType).toList();
+        QWebElementCollection result = page()->mainFrame()->findAllElements(elementType);
         foreach (const QWebElement &element, result) {
             const QRect geometry = element.geometry();
             if (geometry.size().isEmpty()
@@ -907,4 +948,79 @@ void WebView::makeAccessKeyLabel(const QChar &accessKey, const QWebElement &elem
     m_accessKeyNodes[accessKey] = element;
 }
 
+#endif
+
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+void WebView::displaySSLCertificateList(const QPoint &pos)
+{
+    QMenu menu;
+    QList<AroraSSLCertificate*> certificates;
+    certificates = allSSLCertificates();
+    QPoint loc = pos;
+
+    /* If there is just one certificate for the view, display it */
+    if  (certificates.count() <= 1) {
+        displaySSLCertificate();
+        return;
+    }
+
+    /* Otherwise display a drop-down list of the certificates on the page */
+    for (int i = 0; i < certificates.count(); i++) {
+        AroraSSLCertificate *cert = certificates.at(i);
+        QSslCertificate peerCert = cert->sslConfiguration().peerCertificate();
+
+        QString url = QString(QLatin1String("%1 (%2)"))
+                      .arg(cert->url().host())
+                      .arg(peerCert.subjectInfo(QSslCertificate::Organization));
+        QIcon image = QIcon(QString(QLatin1String(":graphics/ssl/%1"))
+                            .arg(cert->icon(webPage()->certHasPollutedFrame(cert))));
+        QAction *action = new QAction(image, url, &menu);
+        QVariant var;
+        var.setValue(certificates.at(i));
+        action->setData(var);
+        action->setIconVisibleInMenu(true);
+        connect(action, SIGNAL(triggered()), this, SLOT(displayChosenSSLCertificate()));
+        menu.addAction(action);
+    }
+    menu.update();
+    loc.setX(loc.x() - menu.sizeHint().width());
+    menu.exec(loc);
+
+}
+
+void WebView::displayChosenSSLCertificate()
+{
+    if (QAction *action = qobject_cast<QAction*>(sender())) {
+        QVariant var;
+        var = action->data();
+        AroraSSLCertificate *cert = var.value<AroraSSLCertificate*>();
+        bool polluted = m_page->certHasPollutedFrame(cert);
+        SSLDialog *dialog = new SSLDialog(this, cert, cert->url(), polluted);
+        dialog->show();
+        return;
+    }
+}
+
+void WebView::displaySSLCertificate()
+{
+    if (m_page->sslCertificates().isEmpty())
+        return;
+    AroraSSLCertificate *cert = m_page->sslCertificates().first();
+    bool polluted = m_page->certHasPollutedFrame(cert);
+    SSLDialog *dialog = new SSLDialog(this, cert, url(), polluted);
+    dialog->show();
+    return;
+}
+
+QList<AroraSSLCertificate*> WebView::allSSLCertificates()
+{
+    QList<AroraSSLCertificate*> certificates;
+
+    certificates.append(webPage()->sslCertificates());
+
+    return certificates;
+}
+
+#endif
 #endif

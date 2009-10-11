@@ -1,6 +1,5 @@
 CONFIG += qt warn_on
-contains(QT_BUILD_PARTS, tools): CONFIG += uitools
-else : DEFINES += QT_NO_UITOOLS
+CONFIG += uitools
 
 win32|os2 : Debug : CONFIG += console
 
@@ -98,6 +97,7 @@ include(opensearch/opensearch.pri)
 include(qwebplugins/qwebplugins.pri)
 include(utils/utils.pri)
 include(useragent/useragent.pri)
+include(ssl/ssl.pri)
 
 RESOURCES += \
     $$PWD/data/data.qrc \

@@ -21,11 +21,15 @@
 #include "webpage.h"
 
 #include "browserapplication.h"
+#include "browsermainwindow.h"
+#include "cookiejar.h"
 #include "downloadmanager.h"
 #include "historymanager.h"
 #include "networkaccessmanager.h"
 #include "opensearchengine.h"
 #include "opensearchmanager.h"
+#include "sslcert.h"
+#include "sslstrings.h"
 #include "tabwidget.h"
 #include "toolbarsearch.h"
 #include "webpluginfactory.h"
@@ -37,10 +41,15 @@
 #include <qnetworkreply.h>
 #include <qnetworkrequest.h>
 #include <qsettings.h>
+#include <qwebhistory.h>
 #include <qwebframe.h>
+
+#include <quiloader.h>
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
+#else
+#define QT_NO_UITOOLS
 #endif
 
 WebPluginFactory *WebPage::s_webPluginFactory = 0;
@@ -57,6 +66,7 @@ void JavaScriptExternalObject::AddSearchProvider(const QString &url)
 }
 
 Q_DECLARE_METATYPE(OpenSearchEngine*)
+Q_DECLARE_METATYPE(QWebFrame*)
 JavaScriptAroraObject::JavaScriptAroraObject(QObject *parent)
     : QObject(parent)
 {
@@ -106,6 +116,16 @@ WebPage::WebPage(QObject *parent)
     networkManagerProxy->setWebPage(this);
     networkManagerProxy->setPrimaryNetworkAccessManager(BrowserApplication::networkAccessManager());
     setNetworkAccessManager(networkManagerProxy);
+    networkManagerProxy->setCookieJar(BrowserApplication::instance()->cookieJar());
+    networkManagerProxy->cookieJar()->setParent(0); // Required for CookieJars shared by networkaccessmanagers
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
+    connect(networkManagerProxy, SIGNAL(sslErrors(QNetworkReply *, const QList<QSslError> &)),
+            this, SLOT(handleSSLError(QNetworkReply *, const QList<QSslError> &)));
+    connect(networkManagerProxy, SIGNAL(finished(QNetworkReply*)),
+            SLOT(setSSLConfiguration(QNetworkReply*)));
+#endif
+#endif
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
     connect(this, SIGNAL(frameCreated(QWebFrame *)),
@@ -302,8 +322,47 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
         emit aboutToLoadUrl(request.url());
     }
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    /*FIXME: There must be a better way of establishing that we need to
+             flush the certificates associated with a given frame */
+    if (accepted && isNewWebsite(frame, request.url()))
+        clearFrameSSLErrors(frame);
+#endif
+#endif
+
     return accepted;
 }
+
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
+{
+    QListIterator<AroraSSLCertificate*> certs(allCerts());
+    while (certs.hasNext()) {
+        AroraSSLCertificate *cert = certs.next();
+        if (cert->frames().contains(frame) || hasOverlappingMembers(cert->frames(), frame->childFrames())) {
+            if (!cert->url().isParentOf(url) && cert->url() != url)
+                return true;
+        }
+    }
+    return false;
+}
+
+bool WebPage::hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFrame *>childFrames)
+{
+    QList<QWebFrame*> frames;
+    frames.append(childFrames);
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        if (certFrames.contains(f))
+            return true;
+        frames += f->childFrames();
+    }
+    return false;
+}
+#endif
+#endif
 
 void WebPage::loadSettings()
 {
@@ -337,11 +396,40 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
     Q_UNUSED(paramNames);
     Q_UNUSED(paramValues);
 #if !defined(QT_NO_UITOOLS)
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    for (int i = 0; i < paramNames.count(); ++i) {
+        if (!paramValues[i].contains(QLatin1String("SSLProceedButton")) &&
+            !paramValues[i].contains(QLatin1String("SSLCancelButton")))
+            continue;
+        QUiLoader loader;
+        QObject *object;
+        object = loader.createWidget(classId, view());
+        QListIterator<AroraSSLCertificate*> certs(allCerts());
+        while (certs.hasNext()) {
+            AroraSSLCertificate *cert = certs.next();
+            if (!cert->hasError())
+                continue;
+            QListIterator<AroraSSLError*> errors(cert->errors());
+            while (errors.hasNext()) {
+                AroraSSLError *error = errors.next();
+                if (paramValues[i] == QString(QLatin1String("SSLProceedButton%1")).arg(error->errorid())) {
+                    connect (object, SIGNAL(clicked()), error, SLOT(loadFrame()));
+                    return object;
+                }
+                if (paramValues[i] == QString(QLatin1String("SSLCancelButton%1")).arg(error->errorid())) {
+                    connect (object, SIGNAL(clicked()), this, SLOT(sslCancel()));
+                    return object;
+                }
+            }
+        }
+    }
+#endif
+#endif
     QUiLoader loader;
     return loader.createWidget(classId, view());
-#else
-    return 0;
 #endif
+    return 0;
 }
 
 // The chromium guys have documented many examples of incompatibilities that
@@ -446,3 +534,283 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     BrowserApplication::instance()->historyManager()->removeHistoryEntry(replyUrl, notFoundFrame->title());
 }
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+void WebPage::handleSSLError(QNetworkReply *reply, const QList<QSslError> &error)
+{
+    if (error.count() <= 0)
+        return;
+
+    AroraSSLError *sslError;
+    sslError = new AroraSSLError(error, reply->url());
+	/*Do we need to check if we already have this SSL error for this frame? */
+    addSSLCert(reply->url(), reply, sslError);
+
+	/* We don't do this earlier because we want to display the error in the location
+	   bar, so we need to store the cert. */
+    if (BrowserApplication::instance()->m_sslwhitelist.contains(reply->url().host())) {
+        reply->ignoreSslErrors();
+        return;
+    }
+	handleSSLErrorPage(sslError, reply);
+}
+
+void WebPage::addSSLCert(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
+{
+    if (alreadyHasSSLCertForUrl(url, reply, sslError))
+        return;
+
+    AroraSSLCertificate *certificate = new AroraSSLCertificate(sslError, reply->sslConfiguration(), url);
+    QSslCipher sessionCipher = reply->sslConfiguration().sessionCipher();
+    bool lowGrade = lowGradeEncryption(sessionCipher);
+    m_sslLowGradeEncryption = lowGrade;
+    certificate->setLowGradeEncryption(lowGrade);
+
+    QWebFrame *certFrame = getFrame(reply->request());
+
+    if (!certFrame)
+        return;
+
+    if (sslError) {
+        sslError->setFrame(certFrame);
+        sslError->setUrl(certFrame->requestedUrl());
+    }
+    certificate->addFrame(certFrame);
+    addCertToFrame(certificate, certFrame);
+}
+
+void WebPage::addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame)
+{
+    AroraSSLCertificates certs;
+    if (m_frameSSLCertificates.contains(frame)) {
+        certs.append(m_frameSSLCertificates.value(frame));
+        m_frameSSLCertificates.remove(frame);
+    }
+    certs.append(certificate);
+    m_frameSSLCertificates.insert(frame, certs);
+}
+
+QList<AroraSSLCertificate*> WebPage::allCerts()
+{
+    AroraSSLCertificates certs;
+    QMapIterator<QWebFrame*, AroraSSLCertificates> i(m_frameSSLCertificates);
+    while (i.hasNext()) {
+        i.next();
+        certs.append(i.value());
+    }
+    return certs;
+}
+
+bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
+{
+
+    AroraSSLCertificates certs = allCerts();
+
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
+        if (cert->url().host() == url.host()) {
+            QWebFrame *replyframe = getFrame(reply->request());
+            cert->addFrame(replyframe);
+            if (sslError) {
+                sslError->setFrame(replyframe);
+                cert->addError(sslError);
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+void WebPage::markPollutedFrame(QWebFrame *replyframe)
+{
+    AroraSSLCertificates certs = allCerts();
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
+        if (cert->frames().contains(replyframe) &&
+            cert->url().host() == replyframe->url().host()) {
+            m_pollutedFrames.append(replyframe);
+            return;
+        }
+    }
+}
+
+bool WebPage::frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert)
+{
+    if (!containsFrame(frame))
+        return false;
+    if (m_pollutedFrames.contains(frame) &&
+        cert->url().host() == frame->url().host())
+        return true;
+    return false;
+}
+
+bool WebPage::certHasPollutedFrame(AroraSSLCertificate *cert)
+{
+    QListIterator<QWebFrame*> frames(cert->frames());
+    while (frames.hasNext()) {
+        QWebFrame *frame = frames.next();
+        if (frameIsPolluted(frame, cert))
+            return true;
+    }
+    return false;
+}
+
+void WebPage::handleSSLErrorPage(AroraSSLError *error, QNetworkReply* reply)
+{
+    QWebFrame *replyframe = getFrame(reply->request());
+	/* We don't ask the 'proceed/go back' question for SSL errors resulting from
+	   resources loaded from the body of a html document. We just display them
+	   as errors on the loaded page. */
+	if (reply->url() != replyframe->requestedUrl())
+		return;
+    QString html = sslErrorHtml(error);
+    replyframe->setHtml(html, replyframe->requestedUrl());
+}
+
+void WebPage::setSSLConfiguration(QNetworkReply *reply)
+{
+    QWebFrame *replyframe = getFrame(reply->request());
+    if (reply->url().scheme() == QLatin1String("http")) {
+        if (frameHasSSLCerts(replyframe))
+            markPollutedFrame(replyframe);
+        return;
+    }
+    if (reply->sslConfiguration().isNull())
+        return;
+    addSSLCert(reply->url(), reply, 0L);
+}
+
+int WebPage::sslSecurity()
+{
+    if (hasSSLErrors())
+        return SECURITY_LOW;
+    if (m_sslLowGradeEncryption || !m_pollutedFrames.isEmpty())
+        return SECURITY_MEDIUM;
+    return SECURITY_HIGH;
+}
+
+bool WebPage::hasSSLErrors()
+{
+    AroraSSLCertificates certs = allCerts();
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
+        if (cert->hasError())
+            return true;
+    }
+    return false;
+}
+
+bool WebPage::hasSSLCerts()
+{
+    if (allCerts().count() > 0)
+        return true;
+    return false;
+}
+
+bool WebPage::frameHasSSLErrors(QWebFrame *frame)
+{
+    AroraSSLCertificates certs = m_frameSSLCertificates.value(frame);
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
+        if (cert->hasError())
+            return true;
+    }
+    return false;
+}
+
+bool WebPage::frameHasSSLCerts(QWebFrame *frame)
+{
+    if (m_frameSSLCertificates.contains(frame))
+        return true;
+    return false;
+}
+
+void WebPage::clearFrameSSLErrors(QWebFrame *frame)
+{
+    if (!frame)
+        return;
+
+    if (frame == mainFrame()) {
+        m_frameSSLCertificates.clear();
+        return;
+    }
+
+    /* We could have frames within frames, each of which may have SSL certs.*/
+    QList<QWebFrame*> frames;
+    frames.append(frame);
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        handleDesignFlaw(f);
+        frames += f->childFrames();
+    }
+}
+
+void WebPage::handleDesignFlaw(QWebFrame *f)
+{
+    QListIterator<AroraSSLCertificate*> certs(m_frameSSLCertificates.value(f));
+    /*FIXME: This exercise is a result of the way we link certificates and frames.
+              We have to take each cert stored primarily by the frame and store
+              it with the first other frame we find that uses it.
+              For now it works, but it exposes a flawed design. */
+    while (certs.hasNext()) {
+        AroraSSLCertificate *cert = certs.next();
+        cert->removeFrame(f);
+        QListIterator<AroraSSLError*> errs(cert->errors());
+        while (errs.hasNext()) {
+            AroraSSLError *err = errs.next();
+            if (err->frame() == f)
+              cert->removeError(err);
+        }
+        if (!cert->frames().isEmpty())
+            addCertToFrame(cert, cert->frames().first());
+    }
+    m_frameSSLCertificates.remove(f);
+    /* It gets better: the frame may also use certs stored primarily in other
+      frames, so we have to delete references to those as well! */
+    certs = allCerts();
+    while (certs.hasNext()) {
+        AroraSSLCertificate *cert = certs.next();
+        if (cert->frames().contains(f)) {
+            cert->removeFrame(f);
+            QListIterator<AroraSSLError*> errs(cert->errors());
+            while (errs.hasNext()) {
+                AroraSSLError *err = errs.next();
+                if (err->frame() == f)
+                  cert->removeError(err);
+            }
+        }
+    }
+}
+
+bool WebPage::containsFrame(QWebFrame *frame)
+{
+    QList<QWebFrame*> frames;
+    frames.append(mainFrame());
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        if (f == frame)
+            return true;
+        frames += f->childFrames();
+    }
+    return false;
+}
+
+QWebFrame* WebPage::getFrame(const QNetworkRequest& request)
+{
+    QWebFrame *frame;
+    frame = static_cast<QWebFrame *>(request.originatingObject());
+    if (containsFrame(frame))
+        return frame;
+    return 0L;
+}
+
+void WebPage::sslCancel()
+{
+    BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
+    if (mainWindow->currentTab()->history()->backItems(1).empty())
+        return;
+    mainWindow->currentTab()->history()->goToItem(mainWindow->currentTab()->history()->backItems(1).first()); // back
+}
+
+#endif //#if QT_VERSION >= 0x040600
+#endif //#ifndef QT_NO_OPENSSL

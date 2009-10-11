@@ -29,10 +29,21 @@
 #include "networkaccessmanagerproxy.h"
 #include "networkaccessmanagerproxy_p.h"
 
+#include "browserapplication.h"
+#include "browsermainwindow.h"
 #include "webpageproxy.h"
+#include "locationbar.h"
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
+#include "sslindicator.h"
+#include "sslstrings.h"
+#endif
+#endif
 
 #include <qnetworkcookie.h>
 #include <qnetworkrequest.h>
+#include <qnetworkreply.h>
+#include <qwebhistory.h>
 
 NetworkAccessManagerProxy *NetworkAccessManagerProxy::m_primaryManager = 0;
 
@@ -64,9 +75,16 @@ void NetworkAccessManagerProxy::setPrimaryNetworkAccessManager(NetworkAccessMana
             m_primaryManager, SIGNAL(finished(QNetworkReply *)));
     connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
             m_primaryManager, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
             m_primaryManager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif
+/*#else
+#ifndef QT_NO_OPENSSL
+    connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
+            SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif*/
 #endif
 }
 
@@ -79,4 +97,3 @@ QNetworkReply *NetworkAccessManagerProxy::createRequest(QNetworkAccessManager::O
     }
     return QNetworkAccessManager::createRequest(op, request, outgoingData);
 }
-

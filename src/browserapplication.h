@@ -121,6 +121,7 @@ public:
 #if defined(Q_WS_MAC)
     bool event(QEvent *event);
 #endif
+    QList<QString> m_sslwhitelist;
 
 public slots:
     BrowserMainWindow *newMainWindow();

@@ -64,8 +64,12 @@
 #define NETWORKACCESSMANAGER_H
 
 #include <qnetworkaccessmanager.h>
-#include <qsslconfiguration.h>
 #include <qhash.h>
+#if QT_VERSION < 0x040600
+#ifndef QT_NO_OPENSSL
+#include <qsslconfiguration.h>
+#endif
+#endif
 #include "networkaccessmanagerproxy.h"
 
 class SchemeAccessHandler;
@@ -96,14 +100,18 @@ public slots:
 private slots:
     void authenticationRequired(QNetworkReply *reply, QAuthenticator *auth);
     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
+    void privacyChanged(bool isPrivate);
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     void sslErrors(QNetworkReply *reply, const QList<QSslError> &error);
 #endif
-    void privacyChanged(bool isPrivate);
+#endif
 
 private:
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     static QString certToFormattedString(QSslCertificate cert);
+#endif
 #endif
 
     QByteArray m_acceptLanguage;

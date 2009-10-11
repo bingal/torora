@@ -64,8 +64,10 @@
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
+#include <qsslerror.h>
 #include <qwebview.h>
 
+#include "sslcert.h"
 #include "tabwidget.h"
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
@@ -100,6 +102,8 @@ public:
     QString lastStatusBarText() const;
     inline int progress() const { return m_progress; }
     TabWidget *tabWidget() const;
+    void displaySSLCertificate();
+    void displaySSLCertificateList(const QPoint &pos);
 
 signals:
     void search(const QUrl &searchUrl, TabWidget::OpenUrlIn openIn);
@@ -123,6 +127,11 @@ protected:
 
 private:
     int levelForZoom(int zoom);
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
+    QList<AroraSSLCertificate*> allSSLCertificates();
+#endif
+#endif
 
 private slots:
     void setProgress(int progress);
@@ -145,6 +154,11 @@ private slots:
     void hideAccessKeys();
     void accessKeyShortcut();
 #endif
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
+   void displayChosenSSLCertificate();
+#endif
+#endif
 
 private:
     QString m_statusBarText;
@@ -153,6 +167,7 @@ private:
     int m_currentZoom;
     QList<int> m_zoomLevels;
     WebPage *m_page;
+    AroraSSLError *m_SSLError;
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     bool m_enableAccessKeys;

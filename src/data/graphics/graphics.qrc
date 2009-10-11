@@ -6,5 +6,8 @@
     <file>history.png</file>
     <file>loading.gif</file>
     <file>private.png</file>
+    <file>ssl/security-high.png</file>
+    <file>ssl/security-low.png</file>
+    <file>ssl/security-medium.png</file>
 </qresource>
 </RCC>

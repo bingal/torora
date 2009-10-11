@@ -76,6 +76,7 @@
 #include "networkdiskcache.h"
 #include "ui_passworddialog.h"
 #include "ui_proxy.h"
+#include "history.h"
 
 #include <qdialog.h>
 #include <qmessagebox.h>
@@ -87,6 +88,7 @@
 #include <qsslconfiguration.h>
 #include <qsslerror.h>
 #include <qdatetime.h>
+#include <qwebhistory.h>
 
 // #define NETWORKACCESSMANAGER_DEBUG
 
@@ -98,9 +100,11 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent)
             SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
     connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
             SLOT(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
             SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif
 #endif
     connect(BrowserApplication::instance(), SIGNAL(privacyChanged(bool)),
             this, SLOT(privacyChanged(bool)));
@@ -250,6 +254,7 @@ void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &prox
     }
 }
 
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
 QString NetworkAccessManager::certToFormattedString(QSslCertificate cert)
 {
@@ -341,7 +346,8 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
         reply->ignoreSslErrors();
     }
 }
-#endif
+#endif // QT_NO_OPENSSL
+#endif // QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 
 QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData)
 {

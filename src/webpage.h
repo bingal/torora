@@ -22,9 +22,11 @@
 
 #include "webpageproxy.h"
 #include "tabwidget.h"
+#include "sslcert.h"
 
 #include <qlist.h>
 #include <qnetworkrequest.h>
+#include <QSslConfiguration>
 
 class WebPageLinkedResource
 {
@@ -35,6 +37,7 @@ public:
     QString title;
 };
 
+class AroraSSLError;
 class OpenSearchEngine;
 class QNetworkReply;
 class WebPluginFactory;
@@ -83,6 +86,23 @@ public:
 
     static QString userAgent();
     static void setUserAgent(const QString &userAgent);
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    bool hasSSLErrors();
+    bool hasSSLCerts();
+    bool hasPollutedFrames() { return !m_pollutedFrames.isEmpty(); };
+    bool hasLowGradeEncryption() { return m_sslLowGradeEncryption; }
+    void setSSLConfiguration( const QSslConfiguration &config) { m_sslConfiguration = config; }
+    QSslConfiguration sslConfiguration(){ return m_sslConfiguration; }
+    QList<AroraSSLCertificate*> sslCertificates() { return allCerts(); }
+    int sslSecurity();
+    bool frameHasSSLErrors(QWebFrame *frame);
+    bool frameHasSSLCerts(QWebFrame *frame);
+    bool frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert);
+    bool certHasPollutedFrame(AroraSSLCertificate *cert);
+    bool containsFrame(QWebFrame *frame);
+#endif
+#endif
 
 protected:
     QString userAgentForUrl(const QUrl &url) const;
@@ -90,13 +110,38 @@ protected:
                                  NavigationType type);
     QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
     QWebPage *createWindow(QWebPage::WebWindowType type);
+    void populateNetworkRequest(QNetworkRequest &request);
+
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    void clearSSLErrors(QWebFrame *frame);
+    bool alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError=0L);
+    void markPollutedFrame(QWebFrame *replyframe);
+    QWebFrame* getFrame(const QNetworkRequest& request);
+    void addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame);
+    void clearFrameSSLErrors(QWebFrame *frame);
+    QList<AroraSSLCertificate*> allCerts();
+    bool isNewWebsite(QWebFrame *frame, QUrl url);
+    bool hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFrame *>childFrames);
+    void handleDesignFlaw(QWebFrame *f);
+    void addSSLCert(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError);
+#endif
+#endif
 
 protected slots:
     void handleUnsupportedContent(QNetworkReply *reply);
     void addExternalBinding(QWebFrame *frame = 0);
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    void handleSSLErrorPage(AroraSSLError *error, QNetworkReply *reply);
+    void setSSLConfiguration(QNetworkReply *reply);
+    void handleSSLError(QNetworkReply *reply, const QList<QSslError> &error);
+    void sslCancel();
+#endif
+#endif
+
 protected:
-    void populateNetworkRequest(QNetworkRequest &request);
     static QString s_userAgent;
     static WebPluginFactory *s_webPluginFactory;
     TabWidget::OpenUrlIn m_openTargetBlankLinksIn;
@@ -107,6 +152,17 @@ protected:
 private:
     QNetworkRequest lastRequest;
     QWebPage::NavigationType lastRequestType;
+
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
+    bool m_sslLowGradeEncryption;
+    bool m_aboutToDisplaySSLError;
+    QSslConfiguration m_sslConfiguration;
+    typedef QList<AroraSSLCertificate*> AroraSSLCertificates;
+    QMap<QWebFrame*, AroraSSLCertificates> m_frameSSLCertificates;
+    QList<QWebFrame*> m_pollutedFrames;
+#endif
+#endif
 
 };
 
