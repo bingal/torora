@@ -25,6 +25,7 @@
 #include <qstringlist.h>
 #include <qregexp.h>
 #include "torcontrol.h"
+#include <qsettings.h>
 
 #include <qtimer.h>
 #include <assert.h>
@@ -51,6 +52,12 @@ TorControl::TorControl( const QString &host, int port )
     connect( socket, SIGNAL(error(QAbstractSocket::SocketError)),
             SLOT(socketError(QAbstractSocket::SocketError)) );
 
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Tor"));
+    QString password = settings.value(QLatin1String("TorPassword"), QString()).toString();
+    if (!password.isEmpty())
+        m_password = password;
     reconnect();
 }
 
@@ -214,6 +221,25 @@ void TorControl::closeCircuit(const QString &circid)
     sendToServer(QString(QLatin1String("CLOSECIRCUIT %1")).arg(circid));
 }
 
+void TorControl::storePassword()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Tor"));
+    QString currentPassword = settings.value(QLatin1String("TorPassword"), QString()).toString();
+    if (m_password != currentPassword)
+        settings.setValue(QLatin1String("TorPassword"), m_password);
+}
+
+void TorControl::clearSavedPassword()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Tor"));
+    QString currentPassword = settings.value(QLatin1String("TorPassword"), QString()).toString();
+    if (m_password == currentPassword)
+        settings.setValue(QLatin1String("TorPassword"), QString());
+    m_password = QLatin1String("");
+}
+
 void TorControl::socketReadyRead()
 {
     while ( socket->canReadLine() ) {
@@ -225,6 +251,7 @@ void TorControl::socketReadyRead()
               case AUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state = AUTHENTICATED;
+                      storePassword();
                       getExitCountry();
                       checkForServer();
                       /* If the user had to enter a password then they're expecting to see the
@@ -236,6 +263,7 @@ void TorControl::socketReadyRead()
                   code = line.left(3);
                   /*Incorrect password*/
                   if (code == QLatin1String("515")){
+                      clearSavedPassword();
                       reconnect();
                       emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
                                               "Try entering it again or click 'Cancel' for help:</qt>"));

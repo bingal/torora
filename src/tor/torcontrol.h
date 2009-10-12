@@ -124,6 +124,8 @@ private:
     void checkForServer();
     void parseServerStatus(const QString &line);
     void parseExitNodes(const QString &line);
+    void clearSavedPassword();
+    void storePassword();
 
     QTcpSocket *socket;
     bool readCookie();
