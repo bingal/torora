@@ -3,8 +3,8 @@
 # This script requires the use of the macdeployqt tool that is found in Qt 4.5
 #
 
-APP="Arora"
-VERSION="0.9.0"
+APP="Mgeni"
+VERSION="0.0.1"
 #BACKGROUND="src/data/512x512/arora.png"
 
 DIR="bundle"
@@ -15,9 +15,9 @@ fi
 
 # build app with Qt libraries
 make distclean --quiet
-qmake -r -config release
+qmake -spec macx-g++ "DEFINES+=TORORA" -r -config release
 make --quiet
-$QTDIR/bin/macdeployqt $APP.app/
+macdeployqt $APP.app/
 
 # Create Bundle
 mkdir $DIR
