@@ -290,6 +290,7 @@ void TorManager::reportTorCheckResults(int page)
                 bulletfour = tr("<li>Check your configuration..</li>");
             } else {
                 //Mgeni doesn't need to be so strict, so just pretend we've passed.
+                setBrowsingEnabled(true);
                 reportTorCheckResults(USING_TOR);
                 return;
                 headline = tr("Mgeni May Be By-Passing Tor!");
@@ -299,6 +300,7 @@ void TorManager::reportTorCheckResults(int page)
             }
         } else {
             //Mgeni doesn't need to be so strict, so just pretend we've passed.
+            setBrowsingEnabled(true);
             reportTorCheckResults(USING_TOR);
             return;
             headline = tr("The Tor Check Website May Be Down!");
