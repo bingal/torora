@@ -57,7 +57,6 @@ public:
     void setGeoBrowsingLocation(int offset);
     Countries* countries(){ return m_countries; }
     bool readyToUse();
-    void authenticate();
 
 signals:
     void geoBrowsingUpdate(int offset);
@@ -80,6 +79,7 @@ public slots:
     void showGeoBrowsingMenu();
     void runServer();
     void enableRelay();
+    void authenticate();
     
 private:
     bool validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx);

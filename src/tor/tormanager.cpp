@@ -490,18 +490,24 @@ void TorManager::requestPassword(const QString &message)
 
 void TorManager::passwordHelp()
 {
+    QString proceedButton = QString(QLatin1String("<object type=\"application/x-qt-plugin\" classid=\"QPushButton\" name=\"DoneButton\" height=25 width=110></object>\n"
+                            "<script>\n"
+                            "document.DoneButton.text = 'Done';\n"
+                            "</script>\n"));
+
     QFile file(QLatin1String(":/passwordhelp.html"));
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open torcheck.html";
         return;
     }
     QString tororaIssues;
-    QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
+    QString title, headline, intro, bullettwo, bulletthree, bulletfour, bulletfive, img;
     headline = tr("To Enable Geo-Browsing You Need To Set Tor's Password.");
-    intro = tr("Open up the Vidalia 'Advanced' settings dialog.");
-    bullettwo = tr("Clear the 'Randomly Generate Password' check-box.");
-    bulletthree = tr("Type in a password of your choosing and click 'OK'.");
-    bulletfour = tr("Enter this password when Mgeni requests it.");
+    intro = tr("1. Right click the 'green onion' at the bottom right of your screen and choose 'Settings'.");
+    bullettwo = tr("2. Select 'Advanced' in the 'Settings' dialog.");
+    bulletthree = tr("3. Clear the 'Randomly Generate' check-box.");
+    bulletfour = tr("4. Type in a password of your choosing and click 'OK'.");
+    bulletfive = tr("5. Click 'Done' below and enter this password when Mgeni requests it.");
     img = QLatin1String(":graphics/vidalia-password.png");
 
     QString html = QString(QLatin1String(file.readAll()))
@@ -511,14 +517,40 @@ void TorManager::passwordHelp()
                         .arg(intro)
                         .arg(bullettwo)
                         .arg(bulletthree)
-                        .arg(bulletfour);
+                        .arg(bulletfour)
+                        .arg(bulletfive)
+                        .arg(proceedButton);
 
     QBuffer imageBuffer;
     imageBuffer.open(QBuffer::ReadWrite);
-    QIcon icon = QIcon(img);
-    QPixmap pixmap = icon.pixmap(QSize(546, 219));
+    QIcon icon = QIcon(QLatin1String(":graphics/vidalia-systray.png"));
+    QPixmap pixmap = icon.pixmap(QSize(183, 137));
     if (pixmap.save(&imageBuffer, "PNG")) {
-        html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
+        html.replace(QLatin1String("HELP_ONE_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":graphics/vidalia-advanced.png"));
+    pixmap = icon.pixmap(QSize(118, 97));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("HELP_TWO_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":graphics/vidalia-random.png"));
+    pixmap = icon.pixmap(QSize(149, 71));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("HELP_THREE_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":graphics/vidalia-pass.png"));
+    pixmap = icon.pixmap(QSize(166, 78));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("HELP_FOUR_DATA_HERE"),
                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
     }
 

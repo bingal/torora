@@ -322,6 +322,13 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
                 connect (object, SIGNAL(clicked()), BrowserApplication::instance()->torManager(), SLOT(enableRelay()));
                 return object;
             }
+            if (paramValues[i] == QString(QLatin1String("DoneButton"))) {
+                QUiLoader loader;
+                QObject *object;
+                object = loader.createWidget(classId, view());
+                connect (object, SIGNAL(clicked()), BrowserApplication::instance()->torManager(), SLOT(authenticate()));
+                return object;
+            }
             if (paramValues[i] == QString(QLatin1String("TryAgainButton"))) {
                 QUiLoader loader;
                 QObject *object;
