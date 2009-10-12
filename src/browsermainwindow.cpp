@@ -1706,5 +1706,5 @@ void BrowserMainWindow::showGeoBrowsingMenu()
     }
 
     QWidget *w = m_navigationBar->widgetForAction(m_geoBrowsingAction);
-    m_geoBrowsingMenu->exec(w->mapToGlobal(QPoint(0,w->height())));
+    m_geoBrowsingMenu->popup(w->mapToGlobal(QPoint(0,w->height())));
 }
