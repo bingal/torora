@@ -582,7 +582,7 @@ void TorManager::runServer()
     }
     QString tororaIssues;
     QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
-    headline = tr("You're Ready to Browse From %1!").arg(m_country);
+    headline = tr("You're Ready to Browse Services in %1!").arg(m_country);
     intro = tr("While browsing, you can join the Tor network and help improve its performance.");
     bullettwo = tr("Joining is safe and easy, your computer will only act as an internal relay.");
     bulletthree = tr("You can use Vidalia to manage your membership");
