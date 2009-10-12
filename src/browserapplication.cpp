@@ -172,13 +172,6 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     QTimer::singleShot(0, this, SLOT(postLaunch()));
 #endif
     languageManager();
-
-    //Torora 4.1: Set our timezone to UTC
-#ifdef Q_OS_WIN
-    SetEnvironmentVariable("TZ",":UTC");
-#else
-    setenv("TZ",":UTC",1);
-#endif
 }
 
 BrowserApplication::~BrowserApplication()
