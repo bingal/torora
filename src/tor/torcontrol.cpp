@@ -160,8 +160,8 @@ void TorControl::authenticate()
         if (!m_password.isEmpty())
             sendToServer(QString(QLatin1String("AUTHENTICATE \"%1\"")).arg(m_password));
         else {
-            emit requestPassword(tr("<qt>Tor Requires A Password for GeoBrowsing Access. <br>"
-                                    "Enter it or click 'Cancel' for help.</qt>"));
+            emit requestPassword(tr("<qt>Mgeni needs your Tor password. <br>"
+                                    "<b>If you don't know what this means, click 'Cancel' for help.<b></qt>"));
         }
     } else if (m_authMethods.contains(QLatin1String("COOKIE"))) {
         readCookie();
@@ -265,8 +265,8 @@ void TorControl::socketReadyRead()
                   if (code == QLatin1String("515")){
                       clearSavedPassword();
                       reconnect();
-                      emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
-                                              "Try entering it again or click 'Cancel' for help:</qt>"));
+                      emit requestPassword(tr("<qt>The password you entered was incorrect. Please try again.<br>"
+                                              "<b>If you don't know what this means, click 'Cancel' for help.<b></qt>"));
                   }
                   break;
               case AUTHENTICATED:

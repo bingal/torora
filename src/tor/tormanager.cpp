@@ -240,9 +240,9 @@ void TorManager::reportTorCheckResults(int page)
       case TOR_CHECK:
         if (m_checkTorSilently)
             return;
-        title = tr("Checking Tor..");
-        headline = tr("Checking Tor..");
-        bulletone = tr("Mgeni is checking https://check.torproject.org.");
+        title = tr("Wait a moment while I check you are using Tor..");
+        headline = tr("Wait a moment while I check you are using Tor..");
+        bulletone = tr("Mgeni is checking your installation.");
         bullettwo = tr("Once Mgeni is sure you are using Tor, browsing will be enabled.");
         bulletthree = tr("This check may take a few seconds, so please be patient.");
         img = QLatin1String(":graphics/tor-checking.png");
@@ -511,7 +511,7 @@ void TorManager::passwordHelp()
     }
     QString tororaIssues;
     QString title, headline, intro, bullettwo, bulletthree, bulletfour, bulletfive, img;
-    headline = tr("To Enable Geo-Browsing You Need To Set Tor's Password.");
+    headline = tr("To Use Mgeni You Need To Set Tor's Password.");
     intro = tr("1. Right click the 'green onion' at the bottom right of your screen and choose 'Settings'.");
     bullettwo = tr("2. Select 'Advanced' in the 'Settings' dialog.");
     bulletthree = tr("3. Clear the 'Randomly Generate' check-box.");
