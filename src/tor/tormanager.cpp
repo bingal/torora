@@ -214,6 +214,7 @@ void TorManager::setBrowsingEnabled(bool enabled)
 
 void TorManager::reportTorCheckResults(int page)
 {
+
     QString statusbar;
     QNetworkProxy proxy = BrowserApplication::instance()->networkAccessManager()->currentProxy();
 
@@ -265,7 +266,6 @@ void TorManager::reportTorCheckResults(int page)
         statusbar = QLatin1String("Tor Check Successful");
        break;
       default:
-        setBrowsingEnabled(false);
         /* Stop the periodic tor checks until we're back up */
         m_timer->stop();
         title = tr("Check Your Tor Installation");
@@ -289,12 +289,18 @@ void TorManager::reportTorCheckResults(int page)
                           .arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
                 bulletfour = tr("<li>Check your configuration..</li>");
             } else {
+                //Mgeni doesn't need to be so strict, so just pretend we've passed.
+                reportTorCheckResults(USING_TOR);
+                return;
                 headline = tr("Mgeni May Be By-Passing Tor!");
                 bullettwo = tr("Your set-up seems OK, Tor and %1 are running and seem to be correctly configured.").
                             arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
                 bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
             }
         } else {
+            //Mgeni doesn't need to be so strict, so just pretend we've passed.
+            reportTorCheckResults(USING_TOR);
+            return;
             headline = tr("The Tor Check Website May Be Down!");
             bulletone = tr("Check that https://check.torproject.org is available using another browser.");
             bullettwo = tr("There may be a temporary issue with the website.");
@@ -311,6 +317,7 @@ void TorManager::reportTorCheckResults(int page)
                                                       "document.TryAgainButton.text = 'Try Again';\n"
                                                       "</script>\n"
                                                       "</td>  <td></td></tr></table>\n"));
+        setBrowsingEnabled(false);
         break;
     }
     QString html = QString(QLatin1String(file.readAll()))
