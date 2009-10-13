@@ -259,9 +259,9 @@ void TorManager::reportTorCheckResults(int page)
         tororaIssues = QString(QLatin1String(issues.readAll()));
         title = tr("Mgeni Ready For Use..");
         headline = tr("Tor is Working Properly. You Are Ready to Browse from Another Country.");
-        bulletone = tr("You can confirm this yourself by visiting <a href='https://check.torproject.org'>https://check.torproject.org</a>");
-        bullettwo = tr("You can check Tor at any time by pressing F12 or clicking <b>Tools->Check Tor.</b>");
-        bulletthree = tr("Select the country you wish to browse from by following the illustration below:");
+        bulletone = tr("<b>To use a service restricted to a particular country, choose that country's flag.</b>");
+        bullettwo = tr("The illustration below shows you where to find the list of countries you can select.");
+        bulletthree = tr("The websites you visit with Mgeni will think you are from the selected country.");
         img = QLatin1String(":graphics/tor-on.png");
         statusbar = QLatin1String("Tor Check Successful");
        break;

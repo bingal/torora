@@ -5,6 +5,17 @@
     <img src="data:image/png;base64,WARNING_IMAGE_HERE" width="32" height="32"/>
     <h2>Do Not Use Mgeni For Anonymous Browsing</h2>
     <ul>
-     <li><a href='http://www.torproject.org/torbutton/design/#setpreservation'>Mgeni does not protect you from sites that attempt to track you.</a></li>
-     <li><b>Mgeni may leak information about you!</b> <a href='http://github.com/mwenge/torora/tree/master/doc'>Research and Specifications are not complete.</a></li>
+     <li>Mgeni is suitable only for accessing services that have geographic restrictions.</li>
+     <li>If you want to browse anonymously, you should use <a href='https://www.torproject.org/torbutton'>TorButton</a> or <a href='https://www.torora.net/'>Torora.</a></li>
+    </ul>
+    <h2></h2>
+    <img src="data:image/png;base64,INFO_IMAGE_HERE" width="32" height="32"/>
+    <h2>How Does This Work?</h2>
+    <ul>
+      <li>Mgeni routes your traffic through the Tor network.</li>
+      <li>When you select a country, Tor makes your traffic leave the Tor network in that country.</li>
+      <li>The Tor network is a network of computers that conceals the origin of traffic from the destination.</li>
+      <li>Only your browsing on Mgeni uses the Tor network, your other browsers are unaffected.</li>
+      <li><a href='https://www.torproject.org/'>More Information on Tor</a></li>
+      <li><a href='http://code.google.com/p/mgeni'>More Information on Mgeni</a></li>
     </ul>
