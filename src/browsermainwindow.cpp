@@ -388,14 +388,14 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
 
     if (size.isValid()) {
         resize(size);
-        /*Torora: Req 5.3*/
-        if (((size.height() / 50) != 0) &&
+        /*Torora: Req 5.3 - Unnecessary for mgeni */
+/*        if (((size.height() / 50) != 0) &&
           ((size.width() / 50) != 0)) {
           size.setHeight((int)(size.height() / 50) * 50);
           size.setWidth((int)(size.width() / 50) * 50);
           resize(size);
         }
-        setSizeIncrement(50,50);
+        setSizeIncrement(50,50);*/
     }
 
 #if defined(Q_WS_MAC)
