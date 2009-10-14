@@ -156,6 +156,9 @@ void TorControl::protocolInfo()
 
 void TorControl::authenticate()
 {
+    /* This may happen if we have wrongly guessed that Tor is running */
+    if (m_authMethods.isEmpty())
+        reconnect();
     if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD"))) {
         if (!m_password.isEmpty())
             sendToServer(QString(QLatin1String("AUTHENTICATE \"%1\"")).arg(m_password));
