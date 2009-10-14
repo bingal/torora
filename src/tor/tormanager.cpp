@@ -62,6 +62,9 @@ TorManager::TorManager()
     m_proxyConfigured = false;
     m_displayedAlready = false;
     m_timer = new QTimer(this);
+    m_torIsRunning = false;
+    m_privoxyIsRunning = false;
+    m_polipoIsRunning = false;
     connect(m_timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
 
 #ifndef Q_OS_WIN
