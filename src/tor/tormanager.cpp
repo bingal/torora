@@ -61,11 +61,9 @@ TorManager::TorManager()
     m_checkTorSilently = false;
     m_proxyConfigured = false;
     m_displayedAlready = false;
-    m_timer = new QTimer(this);
     m_torIsRunning = false;
     m_privoxyIsRunning = false;
     m_polipoIsRunning = false;
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(checkTorSilently()));
 
 #ifndef Q_OS_WIN
     privoxyConfigFiles << QLatin1String("/etc/privoxy/config");
@@ -269,8 +267,6 @@ void TorManager::reportTorCheckResults(int page)
         statusbar = QLatin1String("Tor Check Successful");
        break;
       default:
-        /* Stop the periodic tor checks until we're back up */
-        m_timer->stop();
         title = tr("Check Your Tor Installation");
         if (!m_torIsRunning) {
             headline = tr("Tor Is Not Running On Your Computer!");
