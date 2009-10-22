@@ -205,7 +205,7 @@ void TorControl::enableRelay()
        force Tor to build circuits obeying the new rules. */
     sendToServer(QLatin1String("SETCONF OrPort=9030"));
     sendToServer(QLatin1String("SETCONF NickName=MgeniUser"));
-    sendToServer(QLatin1String("SETCONF ExitPolicy=reject *:*"));
+    sendToServer(QLatin1String("SETCONF ExitPolicy=\"reject *:*\""));
     /* Tell Tor to use a new circuit for the next connection. */
     sendToServer(QLatin1String("saveconf"));
 }
