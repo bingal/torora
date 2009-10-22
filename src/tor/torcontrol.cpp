@@ -65,7 +65,7 @@ void TorControl::reconnect()
 {
     // connect to the server
     m_state = PREAUTHENTICATING;
-    socket->disconnectFromHost();
+    socket->abort();
     socket->connectToHost( m_host, m_port );
 
 }
