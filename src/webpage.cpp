@@ -46,6 +46,8 @@
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
+#else
+#define QT_NO_UITOOLS
 #endif
 
 WebPluginFactory *WebPage::s_webPluginFactory = 0;
@@ -126,6 +128,8 @@ WebPage::WebPage(QObject *parent)
             this, SLOT(addExternalBinding(QWebFrame *)));
     connect(this, SIGNAL(networkRequestStarted(QWebFrame *, QNetworkRequest *)),
             this, SLOT(bindRequestToFrame(QWebFrame *, QNetworkRequest *)));
+    connect(view(), SIGNAL(urlChanged(const QUrl &)),
+            this, SLOT(clearAllSSLErrors()));
     addExternalBinding(mainFrame());
     loadSettings();
 }
@@ -292,15 +296,8 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
         return false;
     }
 
-    /* If this frame has an SSLError in its page, and the url being requested
-       is not a child of the page's url, then clear the certificate and ssl
-       error associated with the page in this frame. */
-//     if (pageHasSSLErrors(frame) && isNewWebsite(frame, request.url()))
-//         clearSSLErrors(frame);
-
     bool accepted = QWebPage::acceptNavigationRequest(frame, request, type);
     if (accepted && frame == mainFrame()) {
-//         clearAllSSLErrors();
         m_requestedUrl = request.url();
         emit aboutToLoadUrl(request.url());
     }
@@ -473,8 +470,6 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     notFoundFrame->setHtml(html, replyUrl);
     // Don't put error pages to the history.
     BrowserApplication::instance()->historyManager()->removeHistoryEntry(replyUrl, notFoundFrame->title());
-    // FIXME: Not really the right place for this.
-    clearAllSSLErrors();
 }
 
 #ifndef QT_NO_OPENSSL
@@ -491,10 +486,10 @@ void WebPage::setSSLError(AroraSSLError *sslError, QNetworkReply *reply)
     replyframe = getFrame(reply->request());
     sslError->setFrame(replyframe);
     certificate->addFrame(replyframe);
-    qDebug() << "certframe(error) for "<< sslError->url().host() << " is" << replyframe;
+/*    qDebug() << "certframe(error) for "<< sslError->url().host() << " is" << replyframe;
     qDebug() << "Parent of certframe(error) " << replyframe << "is " << replyframe->parentFrame();
     qDebug() << "Geometry of certframe(error) is "<< replyframe->geometry() << endl;
-//    qDebug() << "sslerror: got frame" << replyframe << "for url " << sslError->url() << endl;
+    qDebug() << "sslerror: got frame" << replyframe << "for url " << sslError->url() << endl;*/
 }
 
 bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
@@ -531,6 +526,8 @@ void WebPage::markPollutedFrame(QNetworkReply *reply)
 
 bool WebPage::frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert)
 {
+    if (!containsFrame(frame))
+        return false;
     if (m_pollutedFrames.contains(frame) &&
         cert->url().host() == frame->url().host())
         return true;
@@ -552,7 +549,11 @@ void WebPage::handleSSLErrorPage(AroraSSLError *error, QNetworkReply* reply)
 {
     QString html = sslErrorHtml(error);
     QWebFrame *replyframe = getFrame(reply->request());
+    disconnect(view(), SIGNAL(urlChanged(const QUrl &)),
+               this, SLOT(clearAllSSLErrors()));
     replyframe->setHtml(html, error->url());
+    connect(view(), SIGNAL(urlChanged(const QUrl &)),
+               this, SLOT(clearAllSSLErrors()));
 }
 
 void WebPage::setSSLConfiguration(QNetworkReply *reply)
@@ -667,25 +668,6 @@ bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
         }
     }
     return false;
-}
-
-void WebPage::clearSSLErrors(QWebFrame *frame)
-{
-    if (frame == mainFrame()) {
-        m_AroraSSLCertificates.clear();
-        m_pollutedFrames.clear();
-        return;
-    }
-
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
-        QListIterator<AroraSSLError*> errors(cert->errors());
-        while (errors.hasNext()) {
-            AroraSSLError *error = errors.next();
-            if (error->frame() == frame)
-              m_AroraSSLCertificates.removeAt(i);
-        }
-    }
 }
 
 void WebPage::clearAllSSLErrors()

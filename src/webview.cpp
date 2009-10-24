@@ -616,7 +616,6 @@ void WebView::loadFinished()
 
 void WebView::loadUrl(const QUrl &url, const QString &title)
 {
-    m_page->clearAllSSLErrors();
     if (url.scheme() == QLatin1String("javascript")) {
         QString scriptSource = QUrl::fromPercentEncoding(url.toString(Q_FLAGS(QUrl::TolerantMode|QUrl::RemoveScheme)).toAscii());
         QVariant result = page()->mainFrame()->evaluateJavaScript(scriptSource);
@@ -762,7 +761,6 @@ void WebView::keyPressEvent(QKeyEvent *event)
         event->accept();
         break;
     case Qt::Key_Refresh:
-        qobject_cast<WebPage*>(page())->clearAllSSLErrors();
         pageAction(WebPage::Reload)->trigger();
         event->accept();
         break;
@@ -1081,13 +1079,14 @@ void WebView::highlightSSLResource(QAction *action)
     while (frames.hasNext()) {
         QStringList resources;
         frame = frames.next();
-        if (!frame)
+        if (!frame || !m_page->containsFrame(frame))
           break;
         resourcefound = false;
         QRect geometry = absoluteFrameGeometry(frame);
         foreach (QWebElement element, frame->findAllElements(QLatin1String("[src*=https]"))) {
             if (element.toOuterXml().contains(cert->url().host())) {
-                resources.append(cert->resourceDefinition(element.tagName()));
+                if (!resources.contains(cert->resourceDefinition(element.tagName())))
+                    resources.append(cert->resourceDefinition(element.tagName()));
                 int x = geometry.x() + element.geometry().x();
                 int y = geometry.y() + element.geometry().y();
                 m_regions.append(QRegion(x, y,

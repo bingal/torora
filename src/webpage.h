@@ -75,6 +75,9 @@ class WebPage : public WebPageProxy
 signals:
     void aboutToLoadUrl(const QUrl &url);
 
+public slots:
+    void clearAllSSLErrors();
+
 public:
     WebPage(QObject *parent = 0);
     ~WebPage();
@@ -87,7 +90,6 @@ public:
     bool hasSSLErrors();
     bool hasSSLCerts();
     bool hasLowGradeEncryption() { return m_sslLowGradeEncryption; }
-    void clearAllSSLErrors();
     void setSSLConfiguration( const QSslConfiguration &config) { m_sslConfiguration = config; }
     QSslConfiguration sslConfiguration(){ return m_sslConfiguration; }
     QList<AroraSSLCertificate*> sslCertificates() { return m_AroraSSLCertificates; }
@@ -96,6 +98,7 @@ public:
     bool pageHasSSLCerts(QWebFrame *frame);
     bool frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert);
     bool certHasPollutedFrame(AroraSSLCertificate *cert);
+    bool containsFrame(QWebFrame *frame);
 
 protected:
     QString userAgentForUrl(const QUrl &url) const;
@@ -126,7 +129,6 @@ protected:
     QUrl m_requestedUrl;
     JavaScriptExternalObject *m_javaScriptExternalObject;
     JavaScriptAroraObject *m_javaScriptAroraObject;
-    bool containsFrame(QWebFrame *frame);
     QWebFrame* getFrame(const QNetworkRequest& request);
 
 private:
