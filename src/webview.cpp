@@ -292,7 +292,7 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
             menu->addAction(pageAction(QWebPage::InspectElement));
     }
 
-    if (webPage()->pageHasSSLCerts(page()->currentFrame()) || webPage()->pageHasSSLErrors(page()->currentFrame())) {
+    if (webPage()->frameHasSSLCerts(page()->currentFrame()) || webPage()->frameHasSSLErrors(page()->currentFrame())) {
         menu->addSeparator();
         QList<AroraSSLCertificate*> certificates;
         certificates = allSSLCertificates();
@@ -996,7 +996,6 @@ void WebView::paintEvent(QPaintEvent *event) {
         QPainter p(this);
         QListIterator<QWebFrame*> frames(m_highlightedcert->frames());
         QWebFrame* frame;
-//         QWebFrame* renderframe;
         while (frames.hasNext()) {
             frame = frames.next();
             if (!frame)
@@ -1011,10 +1010,6 @@ void WebView::paintEvent(QPaintEvent *event) {
             //FIXME: bit of work required here to respect scrollposition when
             //       highlighting elements in the page
             QRect rect  = m_regions.at(i).boundingRect();
-/*            rect.setX(rect.x() - frame->scrollPosition().x());
-            rect.setY(rect.y() - frame->scrollPosition().y());
-            rect.setWidth(rect.width() - frame->scrollPosition().x());
-            rect.setHeight(rect.height() - frame->scrollPosition().y());*/
             frame->render(&p, m_regions.at(i));
             p.setBrush(m_highlightedcert->color(webPage()->frameIsPolluted(frame, m_highlightedcert)));
             p.drawRect(rect);
@@ -1025,12 +1020,6 @@ void WebView::paintEvent(QPaintEvent *event) {
                                       .arg(m_highlightedcert->icon(webPage()->frameIsPolluted(frame, m_highlightedcert))))
                                       .scaled(((rect.width() < 16)?16:64),((rect.width() < 16)?16:64)));
             }
-/*            qDebug() << "certframe painted " << " is" << frame << endl;
-            qDebug() << "Parent of certframe " << frame << "is " << frame->parentFrame() << endl;
-            qDebug() << "Geometry of certframe is "<< frame->geometry() << endl;
-            qDebug() << "Rect is " << rect << endl;
-            qDebug() << "Resources for region is " << m_resourcesForRegion.value(frame) << endl;
-            qDebug() << "Frame name is " << frame->frameName() << endl;*/
             m_highlightedcert->populateSSLText(p, geometry,
                                                webPage()->frameIsPolluted(frame, m_highlightedcert),
                                                m_resourcesForRegion.value(frame));
@@ -1059,7 +1048,6 @@ QRect WebView::absoluteFrameGeometry(QWebFrame *frame)
 
 void WebView::highlightSSLResource(QAction *action)
 {
-    /*FIXME: handle situations where same ssl cert is used in multiple frames */
     QVariant var;
     bool resourcefound = false;
     m_regions.clear();
@@ -1106,12 +1094,6 @@ void WebView::highlightSSLResource(QAction *action)
             m_regions.append(QRegion(0,0,0,0));
             resources.append(QLatin1String("Probably Javascript"));
         }
-
-//         qDebug() << "certframe highlighted " << " is" << frame;
-//         qDebug() << "Parent of certframe " << frame << "is " << frame->parentFrame();
-//         qDebug() << "Geometry of certframe is "<< frame->geometry();
-//         qDebug() << "Absolute Geometry of certframe is "<< geometry;
-//         qDebug() << "Resources are " << resources << endl;
 
         m_resourcesForRegion.insert(frame,resources);
     }

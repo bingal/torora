@@ -94,8 +94,8 @@ public:
     QSslConfiguration sslConfiguration(){ return m_sslConfiguration; }
     QList<AroraSSLCertificate*> sslCertificates() { return m_AroraSSLCertificates; }
     int sslSecurity();
-    bool pageHasSSLErrors(QWebFrame *frame);
-    bool pageHasSSLCerts(QWebFrame *frame);
+    bool frameHasSSLErrors(QWebFrame *frame);
+    bool frameHasSSLCerts(QWebFrame *frame);
     bool frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert);
     bool certHasPollutedFrame(AroraSSLCertificate *cert);
     bool containsFrame(QWebFrame *frame);
@@ -107,7 +107,6 @@ protected:
     QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
     QWebPage *createWindow(QWebPage::WebWindowType type);
 
-    bool isNewWebsite(QWebFrame *frame, QUrl url);
     void clearSSLErrors(QWebFrame *frame);
     bool alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError=0L);
     void markPollutedFrame(QNetworkReply *reply);

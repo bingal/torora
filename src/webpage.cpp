@@ -485,10 +485,6 @@ void WebPage::setSSLError(AroraSSLError *sslError, QNetworkReply *reply)
     replyframe = getFrame(reply->request());
     sslError->setFrame(replyframe);
     certificate->addFrame(replyframe);
-/*    qDebug() << "certframe(error) for "<< sslError->url().host() << " is" << replyframe;
-    qDebug() << "Parent of certframe(error) " << replyframe << "is " << replyframe->parentFrame();
-    qDebug() << "Geometry of certframe(error) is "<< replyframe->geometry() << endl;
-    qDebug() << "sslerror: got frame" << replyframe << "for url " << sslError->url() << endl;*/
 }
 
 bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
@@ -516,7 +512,6 @@ void WebPage::markPollutedFrame(QNetworkReply *reply)
         AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
         if (cert->frames().contains(replyframe) &&
             cert->url().host() == replyframe->url().host()) {
-//            qDebug() << reply->url().host() << "polluting frame  " << replyframe->url().host();
             m_pollutedFrames.append(replyframe);
             return;
         }
@@ -588,9 +583,6 @@ void WebPage::setSSLConfiguration(QNetworkReply *reply)
 
 
     if (certFrame) {
-/*        qDebug() << "certframe for "<< reply->url().host() << " is" << certFrame;
-        qDebug() << "Parent of certframe " << certFrame << "is " << certFrame->parentFrame();
-        qDebug() << "Geometry of certframe is "<< certFrame->geometry() << endl;*/
         certificate->addFrame(certFrame);
     }
 
@@ -622,7 +614,7 @@ bool WebPage::hasSSLCerts()
     return false;
 }
 
-bool WebPage::pageHasSSLErrors(QWebFrame *frame)
+bool WebPage::frameHasSSLErrors(QWebFrame *frame)
 {
     for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
         AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
@@ -636,34 +628,12 @@ bool WebPage::pageHasSSLErrors(QWebFrame *frame)
     return false;
 }
 
-bool WebPage::pageHasSSLCerts(QWebFrame *frame)
+bool WebPage::frameHasSSLCerts(QWebFrame *frame)
 {
     for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
         AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
         if (cert->frames().contains(frame)) {
             return true;
-        }
-    }
-    return false;
-}
-
-bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
-{
-    /* A frame's page can have multiple SSL errors from multiple different
-       SSL connections in it. Here we depend on the fact that the
-       first SSL error associated with a frame is the one that all the others
-       associated with it depend on. So if we're jumping away from the url
-       that has the first SSL error we no longer have to alert the user to the
-       error. */
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
-        QListIterator<AroraSSLError*> errors(cert->errors());
-        while (errors.hasNext()) {
-            AroraSSLError *error = errors.next();
-            if (error->frame() == frame) {
-                if (!error->url().isParentOf(url) && error->url() != url)
-                    return true;
-            }
         }
     }
     return false;
@@ -679,8 +649,6 @@ void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)
     if (!frame)
         return;
     QVariant var;
-/*    qDebug() << request->url();
-    qDebug() << frame;*/
     var.setValue(frame);
     request->setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200), var);
 }
@@ -704,8 +672,6 @@ QWebFrame* WebPage::getFrame(const QNetworkRequest& request)
     QWebFrame *frame;
     v = request.attribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200));
     frame = v.value<QWebFrame*>();
-/*    qDebug() << request.url();
-    qDebug() << frame;*/
     if (containsFrame(frame))
         return frame;
     return 0L;
