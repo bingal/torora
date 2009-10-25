@@ -53,7 +53,7 @@ SSLDialog::SSLDialog(QWidget *parent, AroraSSLCertificate *cert, QUrl url)
     AroraSSLError *error = (!cert->errors().isEmpty())?cert->errors().first():0L;
     QSslConfiguration sslCfg = cert->sslConfiguration();
     if (error) {
-        m_sslErrors = error->error();
+        m_sslErrors = error->errors();
 //         qDebug() << (int)m_sslErrors.at(0).error() << endl;
         setWindowTitle(QLatin1String("The Certificate Is Not Valid"));
         for (int i = 0; i < m_sslErrors.count(); ++i) {

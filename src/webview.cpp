@@ -1107,11 +1107,11 @@ void WebView::highlightSSLResource(QAction *action)
             resources.append(QLatin1String("Probably Javascript"));
         }
 
-        qDebug() << "certframe highlighted " << " is" << frame;
-        qDebug() << "Parent of certframe " << frame << "is " << frame->parentFrame();
-        qDebug() << "Geometry of certframe is "<< frame->geometry();
-        qDebug() << "Absolute Geometry of certframe is "<< geometry;
-        qDebug() << "Resources are " << resources << endl;
+//         qDebug() << "certframe highlighted " << " is" << frame;
+//         qDebug() << "Parent of certframe " << frame << "is " << frame->parentFrame();
+//         qDebug() << "Geometry of certframe is "<< frame->geometry();
+//         qDebug() << "Absolute Geometry of certframe is "<< geometry;
+//         qDebug() << "Resources are " << resources << endl;
 
         m_resourcesForRegion.insert(frame,resources);
     }

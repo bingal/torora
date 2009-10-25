@@ -344,7 +344,6 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
               QUiLoader loader;
               QObject *object;
               object = loader.createWidget(classId, view());
-              qDebug() << "m_AroraSSLCertificates" << m_AroraSSLCertificates;
               QListIterator<AroraSSLCertificate*> certs(m_AroraSSLCertificates);
               while (certs.hasNext()) {
                   AroraSSLCertificate *cert = certs.next();
@@ -589,9 +588,9 @@ void WebPage::setSSLConfiguration(QNetworkReply *reply)
 
 
     if (certFrame) {
-        qDebug() << "certframe for "<< reply->url().host() << " is" << certFrame;
+/*        qDebug() << "certframe for "<< reply->url().host() << " is" << certFrame;
         qDebug() << "Parent of certframe " << certFrame << "is " << certFrame->parentFrame();
-        qDebug() << "Geometry of certframe is "<< certFrame->geometry() << endl;
+        qDebug() << "Geometry of certframe is "<< certFrame->geometry() << endl;*/
         certificate->addFrame(certFrame);
     }
 
@@ -680,8 +679,8 @@ void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)
     if (!frame)
         return;
     QVariant var;
-    qDebug() << request->url();
-    qDebug() << frame;
+/*    qDebug() << request->url();
+    qDebug() << frame;*/
     var.setValue(frame);
     request->setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200), var);
 }
@@ -705,8 +704,8 @@ QWebFrame* WebPage::getFrame(const QNetworkRequest& request)
     QWebFrame *frame;
     v = request.attribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200));
     frame = v.value<QWebFrame*>();
-    qDebug() << request.url();
-    qDebug() << frame;
+/*    qDebug() << request.url();
+    qDebug() << frame;*/
     if (containsFrame(frame))
         return frame;
     return 0L;

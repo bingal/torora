@@ -82,16 +82,16 @@
 #include <wincrypt.h>
 #endif
 
-AroraSSLError::AroraSSLError(const QList<QSslError> &error, const QUrl url)
+AroraSSLError::AroraSSLError(const QList<QSslError> &errors, const QUrl url)
 {
     m_errorid = crypto_rand_string(16);
-    m_error = error;
+    m_errors = errors;
     m_url = url;
 }
 
 void AroraSSLError::clear()
 {
-    m_error.clear();
+    m_errors.clear();
     m_url.clear();
     m_errorid.clear();
 }
@@ -107,7 +107,7 @@ AroraSSLCertificate::AroraSSLCertificate(AroraSSLError *error, const QSslConfigu
     initSSLDefinitions();
     m_sslCfg = sslCfg;
     if (error)
-        m_errors.append(error);
+        m_errorFrames.append(error);
     m_url = url;
     m_LowGradeEncryption = false;
     m_frames << QList<QWebFrame*>();
@@ -115,18 +115,18 @@ AroraSSLCertificate::AroraSSLCertificate(AroraSSLError *error, const QSslConfigu
 
 void AroraSSLCertificate::addError(AroraSSLError *error)
 {
-    QListIterator<AroraSSLError*> errs(m_errors);
+    QListIterator<AroraSSLError*> errs(m_errorFrames);
     while (errs.hasNext()) {
         AroraSSLError *err = errs.next();
-        if (err->error() == error->error())
+        if (err->errors() == error->errors() && err->frame() == error->frame())
           return;
     }
-    m_errors.append(error);
+    m_errorFrames.append(error);
 }
 
 void AroraSSLCertificate::clear()
 {
-    m_errors.clear();
+    m_errorFrames.clear();
     m_url.clear();
     m_frames.clear();
     m_LowGradeEncryption = false;
@@ -302,10 +302,13 @@ void AroraSSLCertificate::miniSSLText(QPainter &p, QRect rect)
     int startx = certrect.x();
 
     if (hasError()) {
-        for (errors = 0; errors < m_errors.count(); ++errors) {
+        /* FIXME: m_errorFrames is a list of frames and frame metadata that use this cert
+                 with its associated errors, that's why we only need to iterate through
+                 the errors of m_errorFrames->first(). Need a less confusing name! */
+        for (errors = 0; errors < m_errorFrames.first()->errors().count(); ++errors) {
             if (errors > 2)
                 break;
-            SSLString *errorString = sslErrorString(m_errors[errors], 0);
+            SSLString *errorString = sslErrorString(m_errorFrames.first(), errors);
             QString error = errorString->string(6);
             p.setFont(boldfont);
             certrect.setX(startx);
@@ -389,10 +392,13 @@ void AroraSSLCertificate::fullSSLText(QPainter &p, QRect rect)
     certrect.setY(certrect.y() + 64);
 
     if (hasError()) {
-        for (errors = 0; errors < m_errors.count(); ++errors) {
+        /* FIXME: m_errorFrames is a list of frames and frame metadata that use this cert
+                 with its associated errors, that's why we only need to iterate through
+                 the errors of m_errorFrames->first(). Need a less confusing name! */
+        for (errors = 0; errors < m_errorFrames.first()->errors().count(); ++errors) {
             if (errors > 2)
                 break;
-            SSLString *errorString = sslErrorString(m_errors[errors], 0);
+            SSLString *errorString = sslErrorString(m_errorFrames.first(), errors);
             QString title = errorString->string(0).replace(QLatin1String("<b>"),QLatin1String(""))
                                                   .replace(QLatin1String("</b>"),QLatin1String(""));
             QString text = errorString->string(1).replace(QLatin1String("<b>"),QLatin1String(""))

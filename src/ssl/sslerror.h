@@ -50,13 +50,13 @@ class AroraSSLError: public QObject
 {
     Q_OBJECT
 public:
-    AroraSSLError(const QList<QSslError> &error, const QUrl url);
+    AroraSSLError(const QList<QSslError> &errors, const QUrl url);
 
     QUrl url() { return m_url;}
     QString errorid() { return m_errorid;}
-    QList<QSslError> error() { return m_error;}
+    QList<QSslError> errors() { return m_errors;}
     void clear();
-    bool isNull() { return m_error.isEmpty(); }
+    bool isNull() { return m_errors.isEmpty(); }
     void setFrame(QWebFrame *frame) { m_frame = frame; }
     QWebFrame* frame(){ return m_frame; }
 
@@ -64,7 +64,7 @@ protected slots:
     void loadFrame();
 
 private:
-    QList<QSslError> m_error;
+    QList<QSslError> m_errors;
     QString m_errorid;
     QUrl m_url;
     QWebFrame *m_frame;
@@ -81,11 +81,11 @@ public:
     void setLowGradeEncryption(bool low){ m_LowGradeEncryption = low; }
     bool lowGradeEncryption(){ return m_LowGradeEncryption; }
     void clear();
-    bool hasError() { return (!m_errors.isEmpty()); }
+    bool hasError() { return (!m_errorFrames.isEmpty()); }
     void addFrame(QWebFrame *frame) { if (!m_frames.contains(frame)) { m_frames.append(frame);} }
     void addError(AroraSSLError *error);
     QList<QWebFrame*> frames(){ return m_frames; }
-    QList<AroraSSLError*> errors(){ return m_errors; };
+    QList<AroraSSLError*> errors(){ return m_errorFrames; };
     QString icon(bool polluted);
     QColor color(bool polluted);
     QString subject();
@@ -107,7 +107,7 @@ private:
     void miniSSLText(QPainter &p, QRect rect);
     void fullSSLText(QPainter &p, QRect rect);
 
-    QList<AroraSSLError*> m_errors;
+    QList<AroraSSLError*> m_errorFrames;
     QSslConfiguration m_sslCfg;
     QUrl m_url;
     bool m_LowGradeEncryption;

@@ -54,11 +54,11 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
     QStringList errStr;
     QPixmap image;
 
-    QString subject = error->error().at(ref).certificate().subjectInfo(QSslCertificate::CommonName);
-    QString issuerinfo = error->error().at(ref).certificate().issuerInfo(QSslCertificate::CommonName);
+    QString subject = error->errors().at(ref).certificate().subjectInfo(QSslCertificate::CommonName);
+    QString issuerinfo = error->errors().at(ref).certificate().issuerInfo(QSslCertificate::CommonName);
     QString surl = error->url().host();
-    QString effectiveDate = error->error().at(ref).certificate().effectiveDate().toString();
-    QString expiryDate = error->error().at(ref).certificate().expiryDate().toString();
+    QString effectiveDate = error->errors().at(ref).certificate().effectiveDate().toString();
+    QString expiryDate = error->errors().at(ref).certificate().expiryDate().toString();
     QString proceedButton = QString(QLatin1String("<object type=\"application/x-qt-plugin\" classid=\"QPushButton\" name=\"SSLProceedButton%1\" height=25 width=110></object>\n"
                             "<script>\n"
                             "document.SSLProceedButton%2.text = 'Proceed Anyway';\n"
@@ -68,7 +68,7 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
                             "document.SSLCancelButton%2.text = 'Go Back';\n"
                             "</script>\n")).arg(error->errorid()).arg(error->errorid());
 
-    switch (error->error().at(ref).error()) {
+    switch (error->errors().at(ref).error()) {
         case QSslError::NoError:
             errStr << QObject::tr("No error");
             errStr << QObject::tr("No error");
