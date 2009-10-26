@@ -114,32 +114,30 @@ void LocationBar::paintEvent(QPaintEvent *event)
     QColor backgroundColor = defaultBaseColor;
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
-    if (m_webView && m_webView->webPage()->hasSSLCerts())
-        m_SSLIndicator->displayPadlock(m_webView->webPage()->sslSecurity());
-    else
-        m_SSLIndicator->setVisible(false);
-
-    if (m_webView && m_webView->webPage()
-        && (m_webView->webPage()->hasSSLErrors() ||
-            (m_webView->url().scheme() == QLatin1String("https")
-             && !m_webView->webPage()->hasSSLCerts()))
-        && p.color(QPalette::Text).value() < 128) {
-        QColor lightYellow(248, 248, 210);
-        if (m_defaultBaseColor.value() < 128) {
-            lightYellow.setHsv(0, 70, m_defaultBaseColor.value()+30);
+    if (m_webView && m_webView->webPage()) {
+        if (m_webView->webPage()->hasSSLCerts()) {
+            m_SSLIndicator->displayPadlock(m_webView->webPage()->sslSecurity());
+            QColor lightYellow;
+            if (m_webView->webPage()->hasSSLErrors()) {
+                lightYellow.setRgb(248, 248, 210);
+                if (m_defaultBaseColor.value() < 128) {
+                    lightYellow.setHsv(0, 70, m_defaultBaseColor.value()+30);
+                } else {
+                    lightYellow.setHsv(0, 60, m_defaultBaseColor.value());
+                }
+            } else if (m_webView->webPage()->hasPollutedFrames() ) {
+                lightYellow.setRgb(248, 248, 210);
+            } else {
+                if (m_defaultBaseColor.value() < 128) {
+                    lightYellow.setHsv(90, 70, m_defaultBaseColor.value()+30);
+                } else {
+                    lightYellow.setHsv(90, 60, m_defaultBaseColor.value());
+                }
+            }
+            backgroundColor = lightYellow;
         } else {
-            lightYellow.setHsv(0, 60, m_defaultBaseColor.value());
+            m_SSLIndicator->setVisible(false);
         }
-        backgroundColor = lightYellow;
-    }else if (m_webView && m_webView->url().scheme() == QLatin1String("https")
-              && text().startsWith(QLatin1String("https"))) {
-        QColor lightYellow;
-        if (m_defaultBaseColor.value() < 128) {
-            lightYellow.setHsv(90, 70, m_defaultBaseColor.value()+30);
-        } else {
-            lightYellow.setHsv(90, 60, m_defaultBaseColor.value());
-        }
-        backgroundColor = lightYellow;
     }
 #else
     if (m_webView && m_webView->url().scheme() == QLatin1String("https")
