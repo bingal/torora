@@ -641,6 +641,9 @@ bool WebPage::frameHasSSLCerts(QWebFrame *frame)
 
 void WebPage::clearAllSSLErrors()
 {
+    /*FIXME: we call this on urlChanged(). This works fine in all cases
+             except when using 'Open Frame' from the context menu in a
+             framed page. */
     m_AroraSSLCertificates.clear();
 }
 

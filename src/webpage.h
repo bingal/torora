@@ -89,6 +89,7 @@ public:
 
     bool hasSSLErrors();
     bool hasSSLCerts();
+    bool hasPollutedFrames() { return !m_pollutedFrames.isEmpty(); };
     bool hasLowGradeEncryption() { return m_sslLowGradeEncryption; }
     void setSSLConfiguration( const QSslConfiguration &config) { m_sslConfiguration = config; }
     QSslConfiguration sslConfiguration(){ return m_sslConfiguration; }
