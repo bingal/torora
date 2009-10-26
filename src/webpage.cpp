@@ -128,8 +128,8 @@ WebPage::WebPage(QObject *parent)
             this, SLOT(addExternalBinding(QWebFrame *)));
     connect(this, SIGNAL(networkRequestStarted(QWebFrame *, QNetworkRequest *)),
             this, SLOT(bindRequestToFrame(QWebFrame *, QNetworkRequest *)));
-    connect(view(), SIGNAL(urlChanged(const QUrl &)),
-            this, SLOT(clearAllSSLErrors()));
+/*    connect(view(), SIGNAL(urlChanged(const QUrl &)),
+            this, SLOT(clearAllSSLErrors()));*/
     addExternalBinding(mainFrame());
     loadSettings();
 }
@@ -344,7 +344,7 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
               QUiLoader loader;
               QObject *object;
               object = loader.createWidget(classId, view());
-              QListIterator<AroraSSLCertificate*> certs(m_AroraSSLCertificates);
+              QListIterator<AroraSSLCertificate*> certs(allCerts());
               while (certs.hasNext()) {
                   AroraSSLCertificate *cert = certs.next();
                   if (!cert->hasError())
@@ -478,19 +478,44 @@ void WebPage::setSSLError(AroraSSLError *sslError, QNetworkReply *reply)
         return;
 
     AroraSSLCertificate *certificate = new AroraSSLCertificate(sslError, reply->sslConfiguration(), sslError->url());
-    m_AroraSSLCertificates.append(certificate);
 
     QVariant var;
-    QWebFrame *replyframe;
-    replyframe = getFrame(reply->request());
-    sslError->setFrame(replyframe);
-    certificate->addFrame(replyframe);
+    QWebFrame *frame;
+    frame = getFrame(reply->request());
+    sslError->setFrame(frame);
+    certificate->addFrame(frame);
+    addCertToFrame(certificate, frame);
+}
+
+void WebPage::addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame)
+{
+    AroraSSLCertificates certs;
+    if (m_frameSSLCertificates.contains(frame)) {
+        certs.append(m_frameSSLCertificates.value(frame));
+        m_frameSSLCertificates.remove(frame);
+    }
+    certs.append(certificate);
+    m_frameSSLCertificates.insert(frame, certs);
+}
+
+QList<AroraSSLCertificate*> WebPage::allCerts()
+{
+    AroraSSLCertificates certs;
+    QMapIterator<QWebFrame*, AroraSSLCertificates> i(m_frameSSLCertificates);
+    while (i.hasNext()) {
+        i.next();
+        certs.append(i.value());
+    }
+    return certs;
 }
 
 bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
 {
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+
+    AroraSSLCertificates certs = allCerts();
+
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
         if (cert->url().host() == url.host()) {
             QVariant var;
             QWebFrame *replyframe = getFrame(reply->request());
@@ -507,9 +532,10 @@ bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, Aror
 
 void WebPage::markPollutedFrame(QNetworkReply *reply)
 {
+    AroraSSLCertificates certs = allCerts();
     QWebFrame *replyframe = getFrame(reply->request());
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
         if (cert->frames().contains(replyframe) &&
             cert->url().host() == replyframe->url().host()) {
             m_pollutedFrames.append(replyframe);
@@ -565,7 +591,6 @@ void WebPage::setSSLConfiguration(QNetworkReply *reply)
     bool lowGrade = lowGradeEncryption(sessionCipher);
     m_sslLowGradeEncryption = lowGrade;
     certificate->setLowGradeEncryption(lowGrade);
-    m_AroraSSLCertificates.append(certificate);
 
     /* Associate the cert with it's frame */
     /* FIXME: Remove the duplication of code with sslerror */
@@ -581,11 +606,10 @@ void WebPage::setSSLConfiguration(QNetworkReply *reply)
         frames += frame->childFrames();
     }
 
-
     if (certFrame) {
         certificate->addFrame(certFrame);
+        addCertToFrame(certificate, certFrame);
     }
-
 }
 
 int WebPage::sslSecurity()
@@ -599,8 +623,9 @@ int WebPage::sslSecurity()
 
 bool WebPage::hasSSLErrors()
 {
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
+    AroraSSLCertificates certs = allCerts();
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
         if (cert->hasError())
             return true;
     }
@@ -609,33 +634,26 @@ bool WebPage::hasSSLErrors()
 
 bool WebPage::hasSSLCerts()
 {
-    if (m_AroraSSLCertificates.count() > 0)
+    if (allCerts().count() > 0)
         return true;
     return false;
 }
 
 bool WebPage::frameHasSSLErrors(QWebFrame *frame)
 {
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
-        QListIterator<AroraSSLError*> errors(cert->errors());
-        while (errors.hasNext()) {
-            AroraSSLError *error = errors.next();
-            if (error->frame() == frame)
-                return true;
-        }
+    AroraSSLCertificates certs = m_frameSSLCertificates.value(frame);
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
+        if (cert->hasError())
+            return true;
     }
     return false;
 }
 
 bool WebPage::frameHasSSLCerts(QWebFrame *frame)
 {
-    for (int i = 0; i < m_AroraSSLCertificates.count(); ++i) {
-        AroraSSLCertificate *cert = m_AroraSSLCertificates.at(i);
-        if (cert->frames().contains(frame)) {
-            return true;
-        }
-    }
+    if (m_frameSSLCertificates.contains(frame));
+        return true;
     return false;
 }
 
@@ -644,13 +662,14 @@ void WebPage::clearAllSSLErrors()
     /*FIXME: we call this on urlChanged(). This works fine in all cases
              except when using 'Open Frame' from the context menu in a
              framed page. */
-    m_AroraSSLCertificates.clear();
+    m_frameSSLCertificates.clear();
 }
 
 void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)
 {
     if (!frame)
         return;
+
     QVariant var;
     var.setValue(frame);
     request->setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200), var);

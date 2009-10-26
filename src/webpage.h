@@ -93,7 +93,7 @@ public:
     bool hasLowGradeEncryption() { return m_sslLowGradeEncryption; }
     void setSSLConfiguration( const QSslConfiguration &config) { m_sslConfiguration = config; }
     QSslConfiguration sslConfiguration(){ return m_sslConfiguration; }
-    QList<AroraSSLCertificate*> sslCertificates() { return m_AroraSSLCertificates; }
+    QList<AroraSSLCertificate*> sslCertificates() { return allCerts(); }
     int sslSecurity();
     bool frameHasSSLErrors(QWebFrame *frame);
     bool frameHasSSLCerts(QWebFrame *frame);
@@ -130,6 +130,8 @@ protected:
     JavaScriptExternalObject *m_javaScriptExternalObject;
     JavaScriptAroraObject *m_javaScriptAroraObject;
     QWebFrame* getFrame(const QNetworkRequest& request);
+    void addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame);
+    QList<AroraSSLCertificate*> allCerts();
 
 private:
     QNetworkRequest lastRequest;
@@ -138,8 +140,9 @@ private:
     bool m_sslLowGradeEncryption;
     QSslConfiguration m_sslConfiguration;
     typedef QList<AroraSSLCertificate*> AroraSSLCertificates;
-    AroraSSLCertificates m_AroraSSLCertificates;
+    QMap<QWebFrame*, AroraSSLCertificates> m_frameSSLCertificates;
     QList<QWebFrame*> m_pollutedFrames;
+
 
 };
 
