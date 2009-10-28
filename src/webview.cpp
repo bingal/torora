@@ -954,10 +954,10 @@ void WebView::displaySSLCertificateList(const QPoint &pos)
     certificates = allSSLCertificates();
     QPoint loc = pos;
   
-    if  (certificates.count() <= 1) {
+/*    if  (certificates.count() <= 1) {
         displaySSLCertificate();
         return;
-    }
+    }*/
     for (int i = 0; i < certificates.count(); i++) {
         AroraSSLCertificate *cert = certificates.at(i);
         QSslCertificate peerCert = cert->sslConfiguration().peerCertificate();
