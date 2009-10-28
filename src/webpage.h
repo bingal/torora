@@ -75,9 +75,6 @@ class WebPage : public WebPageProxy
 signals:
     void aboutToLoadUrl(const QUrl &url);
 
-public slots:
-    void clearAllSSLErrors();
-
 public:
     WebPage(QObject *parent = 0);
     ~WebPage();
@@ -118,6 +115,7 @@ protected:
     QList<AroraSSLCertificate*> allCerts();
     bool isNewWebsite(QWebFrame *frame, QUrl url);
     bool hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFrame *>childFrames);
+    void handleDesignFlaw(QWebFrame *f);
 
 protected slots:
     void handleUnsupportedContent(QNetworkReply *reply);

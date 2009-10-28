@@ -682,30 +682,61 @@ bool WebPage::frameHasSSLCerts(QWebFrame *frame)
     return false;
 }
 
-void WebPage::clearAllSSLErrors()
-{
-    /*FIXME: we call this on urlChanged(). This works fine in all cases
-             except when using 'Open Frame' from the context menu in a
-             framed page. */
-    m_frameSSLCertificates.clear();
-}
-
 void WebPage::clearFrameSSLErrors(QWebFrame *frame)
 {
     if (!frame)
         return;
+
     if (frame == mainFrame()) {
         m_frameSSLCertificates.clear();
         return;
     }
+
+    /* We could have frames within frames, each of which may have SSL certs.*/
     QList<QWebFrame*> frames;
     frames.append(frame);
     while (!frames.isEmpty()) {
         QWebFrame *f = frames.takeFirst();
-        m_frameSSLCertificates.remove(f);
+        handleDesignFlaw(f);
         frames += f->childFrames();
     }
+}
 
+void WebPage::handleDesignFlaw(QWebFrame *f)
+{
+    QListIterator<AroraSSLCertificate*> certs(m_frameSSLCertificates.value(f));
+    /*FIXME: This exercise is a result of the way we link certificates and frames.
+              We have to take each cert stored primarily by the frame and store
+              it with the first other frame we find that uses it.
+              For now it works, but it exposes a flawed design. */
+    while (certs.hasNext()) {
+        AroraSSLCertificate *cert = certs.next();
+        cert->removeFrame(f);
+        QListIterator<AroraSSLError*> errs(cert->errors());
+        while (errs.hasNext()) {
+            AroraSSLError *err = errs.next();
+            if (err->frame() == f)
+              cert->removeError(err);
+        }
+        if (!cert->frames().isEmpty())
+            addCertToFrame(cert, cert->frames().first());
+    }
+    m_frameSSLCertificates.remove(f);
+    /* It gets better: the frame may also use certs stored primarily in other
+      frames, so we have to delete references to those as well! */
+    certs = allCerts();
+    while (certs.hasNext()) {
+        AroraSSLCertificate *cert = certs.next();
+        if (cert->frames().contains(f)) {
+            cert->removeFrame(f);
+            QListIterator<AroraSSLError*> errs(cert->errors());
+            while (errs.hasNext()) {
+                AroraSSLError *err = errs.next();
+                if (err->frame() == f)
+                  cert->removeError(err);
+            }
+        }
+    }
 }
 
 void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)

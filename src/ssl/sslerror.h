@@ -85,6 +85,8 @@ public:
     void addFrame(QWebFrame *frame) { if (!m_frames.contains(frame)) { m_frames.append(frame);} }
     void addError(AroraSSLError *error);
     QList<QWebFrame*> frames(){ return m_frames; }
+    void removeFrame(QWebFrame *frame) { m_frames.removeAll(frame); }
+    void removeError(AroraSSLError *error) { m_errorFrames.removeAll(error); }
     QList<AroraSSLError*> errors(){ return m_errorFrames; };
     QString icon(bool polluted);
     QColor color(bool polluted);
