@@ -111,6 +111,12 @@ protected:
     void clearSSLErrors(QWebFrame *frame);
     bool alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError=0L);
     void markPollutedFrame(QNetworkReply *reply);
+    void populateNetworkRequest(QNetworkRequest &request);
+    QWebFrame* getFrame(const QNetworkRequest& request);
+    void addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame);
+    void clearFrameSSLErrors(QWebFrame *frame);
+    QList<AroraSSLCertificate*> allCerts();
+    bool isNewWebsite(QWebFrame *frame, QUrl url);
 
 protected slots:
     void handleUnsupportedContent(QNetworkReply *reply);
@@ -122,16 +128,12 @@ protected slots:
     void setSSLConfiguration(QNetworkReply *reply);
 
 protected:
-    void populateNetworkRequest(QNetworkRequest &request);
     static QString s_userAgent;
     static WebPluginFactory *s_webPluginFactory;
     TabWidget::OpenUrlIn m_openTargetBlankLinksIn;
     QUrl m_requestedUrl;
     JavaScriptExternalObject *m_javaScriptExternalObject;
     JavaScriptAroraObject *m_javaScriptAroraObject;
-    QWebFrame* getFrame(const QNetworkRequest& request);
-    void addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame);
-    QList<AroraSSLCertificate*> allCerts();
 
 private:
     QNetworkRequest lastRequest;

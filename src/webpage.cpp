@@ -128,8 +128,6 @@ WebPage::WebPage(QObject *parent)
             this, SLOT(addExternalBinding(QWebFrame *)));
     connect(this, SIGNAL(networkRequestStarted(QWebFrame *, QNetworkRequest *)),
             this, SLOT(bindRequestToFrame(QWebFrame *, QNetworkRequest *)));
-/*    connect(view(), SIGNAL(urlChanged(const QUrl &)),
-            this, SLOT(clearAllSSLErrors()));*/
     addExternalBinding(mainFrame());
     loadSettings();
 }
@@ -302,7 +300,25 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
         emit aboutToLoadUrl(request.url());
     }
 
+    /*FIXME: There must be a better way of establishing that we need to
+             flush the certificates associated with a given frame */
+    if (accepted && isNewWebsite(frame, request.url()))
+        clearFrameSSLErrors(frame);
+
     return accepted;
+}
+
+bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
+{
+    QListIterator<AroraSSLCertificate*> certs(allCerts());
+    while (certs.hasNext()) {
+        AroraSSLCertificate *cert = certs.next();
+        if (cert->frames().contains(frame)) {
+            if (!cert->url().isParentOf(url) && cert->url() != url)
+                return true;
+        }
+    }
+    return false;
 }
 
 void WebPage::loadSettings()
@@ -569,11 +585,7 @@ void WebPage::handleSSLErrorPage(AroraSSLError *error, QNetworkReply* reply)
 {
     QString html = sslErrorHtml(error);
     QWebFrame *replyframe = getFrame(reply->request());
-    disconnect(view(), SIGNAL(urlChanged(const QUrl &)),
-               this, SLOT(clearAllSSLErrors()));
     replyframe->setHtml(html, error->url());
-    connect(view(), SIGNAL(urlChanged(const QUrl &)),
-               this, SLOT(clearAllSSLErrors()));
 }
 
 void WebPage::setSSLConfiguration(QNetworkReply *reply)
@@ -663,6 +675,20 @@ void WebPage::clearAllSSLErrors()
              except when using 'Open Frame' from the context menu in a
              framed page. */
     m_frameSSLCertificates.clear();
+}
+
+void WebPage::clearFrameSSLErrors(QWebFrame *frame)
+{
+    if (!frame)
+        return;
+    QList<QWebFrame*> frames;
+    frames.append(frame);
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        m_frameSSLCertificates.remove(f);
+        frames += f->childFrames();
+    }
+
 }
 
 void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)
