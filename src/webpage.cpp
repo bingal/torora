@@ -313,10 +313,23 @@ bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
     QListIterator<AroraSSLCertificate*> certs(allCerts());
     while (certs.hasNext()) {
         AroraSSLCertificate *cert = certs.next();
-        if (cert->frames().contains(frame)) {
+        if (cert->frames().contains(frame) || hasOverlappingMembers(cert->frames(), frame->childFrames())) {
             if (!cert->url().isParentOf(url) && cert->url() != url)
                 return true;
         }
+    }
+    return false;
+}
+
+bool WebPage::hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFrame *>childFrames)
+{
+    QList<QWebFrame*> frames;
+    frames.append(childFrames);
+    while (!frames.isEmpty()) {
+        QWebFrame *f = frames.takeFirst();
+        if (certFrames.contains(f))
+            return true;
+        frames += f->childFrames();
     }
     return false;
 }
@@ -681,6 +694,10 @@ void WebPage::clearFrameSSLErrors(QWebFrame *frame)
 {
     if (!frame)
         return;
+    if (frame == mainFrame()) {
+        m_frameSSLCertificates.clear();
+        return;
+    }
     QList<QWebFrame*> frames;
     frames.append(frame);
     while (!frames.isEmpty()) {

@@ -117,6 +117,7 @@ protected:
     void clearFrameSSLErrors(QWebFrame *frame);
     QList<AroraSSLCertificate*> allCerts();
     bool isNewWebsite(QWebFrame *frame, QUrl url);
+    bool hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFrame *>childFrames);
 
 protected slots:
     void handleUnsupportedContent(QNetworkReply *reply);
