@@ -27,7 +27,7 @@
 #include "networkaccessmanager.h"
 #include "opensearchengine.h"
 #include "opensearchmanager.h"
-#include "sslerror.h"
+#include "sslcert.h"
 #include "sslstrings.h"
 #include "tabwidget.h"
 #include "toolbarsearch.h"
@@ -518,22 +518,16 @@ void WebPage::handleSSLError( const QList<QSslError> &error, QNetworkReply *repl
 
     AroraSSLError *sslError;
     sslError = new AroraSSLError(error, reply->url());
-
-    QWebFrame *frame = getFrame(reply->request());
-    /*If this frame already has an SSL error we are either already displaying it or
-      have whitelisted it (and returned aboved) */
-//     if (frameHasThisSSLError(frame, reply->url()))
-//         return;
-
+	/*Do we need to check if we already this SSL error for this frame? */
     addSSLCert(reply->url(), reply, sslError);
 
+	/* We don't do this earlier because we want to display the error in the location
+	   bar, so we need to store the cert. */
     if (BrowserApplication::instance()->m_sslwhitelist.contains(reply->url().host())) {
         reply->ignoreSslErrors();
         return;
     }
-
 	handleSSLErrorPage(sslError, reply);
-
 }
 
 void WebPage::addSSLCert(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)

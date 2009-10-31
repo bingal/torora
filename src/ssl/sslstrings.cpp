@@ -29,7 +29,7 @@
 #include "sslstrings.h"
 #include "browsermainwindow.h"
 #include "browserapplication.h"
-#include "sslerror.h"
+#include "sslcert.h"
 
 #include <qbuffer.h>
 #include <qdesktopservices.h>

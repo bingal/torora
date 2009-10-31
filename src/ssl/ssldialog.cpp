@@ -21,7 +21,7 @@
 #include "ssldialog.h"
 #include "browserapplication.h"
 #include "sslstrings.h"
-#include "sslerror.h"
+#include "sslcert.h"
 
 #include <qdebug.h>
 #include <qdatetime.h>

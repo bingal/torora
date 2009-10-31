@@ -22,7 +22,7 @@
 
 #include "webpageproxy.h"
 #include "tabwidget.h"
-#include "sslerror.h"
+#include "sslcert.h"
 
 #include <qlist.h>
 #include <qnetworkrequest.h>

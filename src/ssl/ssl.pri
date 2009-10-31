@@ -3,13 +3,13 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
   sslstrings.h \
-  sslerror.h \
+  sslcert.h \
   ssldialog.h \
   crypto.h
 
 SOURCES += \
   sslstrings.cpp \
-  sslerror.cpp \
+  sslcert.cpp \
   crypto.cpp  \
   ssldialog.cpp
 

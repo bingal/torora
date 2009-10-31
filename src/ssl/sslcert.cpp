@@ -26,7 +26,7 @@
  * SUCH DAMAGE.
  */
 
-#include "sslerror.h"
+#include "sslcert.h"
 #include "crypto.h"
 #include "browserapplication.h"
 #include "sslstrings.h"

@@ -77,7 +77,7 @@
 #include "opensearchengineaction.h"
 #include "opensearchmanager.h"
 #include "ssldialog.h"
-#include "sslerror.h"
+#include "sslcert.h"
 #include "toolbarsearch.h"
 #include "webpage.h"
 

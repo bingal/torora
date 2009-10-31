@@ -67,7 +67,7 @@
 #include <qsslerror.h>
 #include <qwebview.h>
 
-#include "sslerror.h"
+#include "sslcert.h"
 #include "tabwidget.h"
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
