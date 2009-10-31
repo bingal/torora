@@ -177,7 +177,7 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             errStr << QObject::tr("The issuer certificate of a locally looked up certificate could not be found");
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
-            errStr << QString();
+            errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Broken Configuration!");
             break;

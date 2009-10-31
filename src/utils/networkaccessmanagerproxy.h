@@ -41,7 +41,7 @@ class NetworkAccessManagerProxy : public QNetworkAccessManager
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #ifndef QT_NO_OPENSSL
 signals:
-    void setSSLError(AroraSSLError *error, QNetworkReply *reply);
+    void setSSLError( const QList<QSslError> &error, QNetworkReply *reply);
     void sslErrorPage(AroraSSLError *error, QNetworkReply *reply);
 #endif
 #endif

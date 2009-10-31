@@ -102,20 +102,7 @@ QNetworkReply *NetworkAccessManagerProxy::createRequest(QNetworkAccessManager::O
 #ifndef QT_NO_OPENSSL
 void NetworkAccessManagerProxy::sslErrors(QNetworkReply *reply, const QList<QSslError> &error)
 {
-    AroraSSLError *sslError;
-
-    if (error.count() > 0) {
-        sslError = new AroraSSLError(error, reply->url());
-        emit setSSLError(sslError, reply);
-    }
-
-    if (BrowserApplication::instance()->m_sslwhitelist.contains(reply->url().host())) {
-        reply->ignoreSslErrors();
-        return;
-    }
-
-    if (error.count() > 0)
-        emit sslErrorPage(sslError, reply);
+    emit setSSLError(error, reply);
 }
 
 void NetworkAccessManagerProxy::sslCancel()

@@ -53,6 +53,7 @@ public:
     AroraSSLError(const QList<QSslError> &errors, const QUrl url);
 
     QUrl url() { return m_url;}
+    void setUrl(const QUrl url) { m_url = url; };
     QString errorid() { return m_errorid;}
     QList<QSslError> errors() { return m_errors;}
     void clear();

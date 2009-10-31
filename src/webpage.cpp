@@ -116,8 +116,8 @@ WebPage::WebPage(QObject *parent)
     setNetworkAccessManager(networkManagerProxy);
     networkManagerProxy->setCookieJar(BrowserApplication::instance()->cookieJar());
     networkManagerProxy->cookieJar()->setParent(0); // Required for CookieJars shared by networkaccessmanagers
-    connect(networkManagerProxy, SIGNAL(setSSLError(AroraSSLError *, QNetworkReply *)),
-            this, SLOT(setSSLError(AroraSSLError *, QNetworkReply *)));
+    connect(networkManagerProxy, SIGNAL(setSSLError(const QList<QSslError> &, QNetworkReply *)),
+            this, SLOT(handleSSLError(const QList<QSslError> &, QNetworkReply *)));
     connect(networkManagerProxy, SIGNAL(sslErrorPage(AroraSSLError *, QNetworkReply*)),
             this, SLOT(handleSSLErrorPage(AroraSSLError *, QNetworkReply*)));
     connect(networkManagerProxy, SIGNAL(finished(QNetworkReply*)),
@@ -253,6 +253,11 @@ QString WebPage::userAgentForUrl(const QUrl &url) const
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request,
                                       NavigationType type)
 {
+    /* If we ask for https://x.com, get redirected to http://x.com, which contains resources
+       at https://y.com with SSL errors and we attempt to load the error page, WebKit will
+       bring us here. Since we are displaying an error page, we don't want to go any further */
+    qDebug() << request.url();
+
     lastRequest = request;
     lastRequestType = type;
 
@@ -302,6 +307,11 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
 
     /*FIXME: There must be a better way of establishing that we need to
              flush the certificates associated with a given frame */
+    /* m_aboutToDisplaySSLError needs to work per frame so that we don't mess up
+       redirects in other frames */
+	qDebug() << "frame url" << frame->url();
+	qDebug() << "frame requested url" << frame->requestedUrl();
+	qDebug() << "request url" << request.url();
     if (accepted && isNewWebsite(frame, request.url()))
         clearFrameSSLErrors(frame);
 
@@ -501,19 +511,52 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 }
 
 #ifndef QT_NO_OPENSSL
-void WebPage::setSSLError(AroraSSLError *sslError, QNetworkReply *reply)
+void WebPage::handleSSLError( const QList<QSslError> &error, QNetworkReply *reply)
 {
-    if (alreadyHasSSLCertForUrl(sslError->url(), reply, sslError))
+    if (error.count() <= 0)
         return;
 
-    AroraSSLCertificate *certificate = new AroraSSLCertificate(sslError, reply->sslConfiguration(), sslError->url());
+    AroraSSLError *sslError;
+    sslError = new AroraSSLError(error, reply->url());
 
-    QVariant var;
-    QWebFrame *frame;
-    frame = getFrame(reply->request());
-    sslError->setFrame(frame);
-    certificate->addFrame(frame);
-    addCertToFrame(certificate, frame);
+    QWebFrame *frame = getFrame(reply->request());
+    /*If this frame already has an SSL error we are either already displaying it or
+      have whitelisted it (and returned aboved) */
+//     if (frameHasThisSSLError(frame, reply->url()))
+//         return;
+
+    addSSLCert(reply->url(), reply, sslError);
+
+    if (BrowserApplication::instance()->m_sslwhitelist.contains(reply->url().host())) {
+        reply->ignoreSslErrors();
+        return;
+    }
+
+	handleSSLErrorPage(sslError, reply);
+
+}
+
+void WebPage::addSSLCert(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError)
+{
+    if (alreadyHasSSLCertForUrl(url, reply, sslError))
+        return;
+
+    AroraSSLCertificate *certificate = new AroraSSLCertificate(sslError, reply->sslConfiguration(), url);
+    QSslCipher sessionCipher = reply->sslConfiguration().sessionCipher();
+    bool lowGrade = lowGradeEncryption(sessionCipher);
+    m_sslLowGradeEncryption = lowGrade;
+    certificate->setLowGradeEncryption(lowGrade);
+
+    QWebFrame *certFrame = getFrame(reply->request());
+
+    if (certFrame) {
+        if (sslError) {
+            sslError->setFrame(certFrame);
+            sslError->setUrl(certFrame->requestedUrl());
+        }
+        certificate->addFrame(certFrame);
+        addCertToFrame(certificate, certFrame);
+    }
 }
 
 void WebPage::addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame)
@@ -546,7 +589,6 @@ bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, Aror
     for (int i = 0; i < certs.count(); ++i) {
         AroraSSLCertificate *cert = certs.at(i);
         if (cert->url().host() == url.host()) {
-            QVariant var;
             QWebFrame *replyframe = getFrame(reply->request());
             cert->addFrame(replyframe);
             if (sslError) {
@@ -596,9 +638,14 @@ bool WebPage::certHasPollutedFrame(AroraSSLCertificate *cert)
 
 void WebPage::handleSSLErrorPage(AroraSSLError *error, QNetworkReply* reply)
 {
-    QString html = sslErrorHtml(error);
     QWebFrame *replyframe = getFrame(reply->request());
-    replyframe->setHtml(html, error->url());
+	/* We don't ask the 'proceed/go back' question for SSL errors resulting from
+	   resources loaded from the body of a html document. We just display them
+	   as errors on the loaded page. */
+	if (reply->url() != replyframe->requestedUrl())
+		return;
+    QString html = sslErrorHtml(error);
+    replyframe->setHtml(html, replyframe->requestedUrl());
 }
 
 void WebPage::setSSLConfiguration(QNetworkReply *reply)
@@ -607,34 +654,7 @@ void WebPage::setSSLConfiguration(QNetworkReply *reply)
         markPollutedFrame(reply);
         return;
     }
-
-    if (alreadyHasSSLCertForUrl(reply->url(), reply))
-        return;
-
-    AroraSSLCertificate *certificate = new AroraSSLCertificate(0L, reply->sslConfiguration(), reply->url());
-    QSslCipher sessionCipher = reply->sslConfiguration().sessionCipher();
-    bool lowGrade = lowGradeEncryption(sessionCipher);
-    m_sslLowGradeEncryption = lowGrade;
-    certificate->setLowGradeEncryption(lowGrade);
-
-    /* Associate the cert with it's frame */
-    /* FIXME: Remove the duplication of code with sslerror */
-    QWebFrame *certFrame = 0;
-    QList<QWebFrame*> frames;
-    frames.append(mainFrame());
-    while (!frames.isEmpty()) {
-        QWebFrame *frame = frames.takeFirst();
-        if (getFrame(reply->request()) == frame) {
-            certFrame = frame;
-            break;
-        }
-        frames += frame->childFrames();
-    }
-
-    if (certFrame) {
-        certificate->addFrame(certFrame);
-        addCertToFrame(certificate, certFrame);
-    }
+    addSSLCert(reply->url(), reply, 0L);
 }
 
 int WebPage::sslSecurity()
@@ -670,6 +690,17 @@ bool WebPage::frameHasSSLErrors(QWebFrame *frame)
     for (int i = 0; i < certs.count(); ++i) {
         AroraSSLCertificate *cert = certs.at(i);
         if (cert->hasError())
+            return true;
+    }
+    return false;
+}
+
+bool WebPage::frameHasThisSSLError(QWebFrame *frame, const QUrl url)
+{
+    AroraSSLCertificates certs = m_frameSSLCertificates.value(frame);
+    for (int i = 0; i < certs.count(); ++i) {
+        AroraSSLCertificate *cert = certs.at(i);
+        if (cert->hasError() && cert->url().host() == url.host())
             return true;
     }
     return false;

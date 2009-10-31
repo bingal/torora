@@ -116,15 +116,17 @@ protected:
     bool isNewWebsite(QWebFrame *frame, QUrl url);
     bool hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFrame *>childFrames);
     void handleDesignFlaw(QWebFrame *f);
+    bool frameHasThisSSLError(QWebFrame *frame, const QUrl url);
+    void addSSLCert(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError);
 
 protected slots:
     void handleUnsupportedContent(QNetworkReply *reply);
     void addExternalBinding(QWebFrame *frame = 0);
 
     void bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request);
-    void setSSLError(AroraSSLError *error, QNetworkReply *reply);
     void handleSSLErrorPage(AroraSSLError *error, QNetworkReply *reply);
     void setSSLConfiguration(QNetworkReply *reply);
+    void handleSSLError( const QList<QSslError> &error, QNetworkReply *reply);
 
 protected:
     static QString s_userAgent;
@@ -139,6 +141,7 @@ private:
     QWebPage::NavigationType lastRequestType;
 
     bool m_sslLowGradeEncryption;
+    bool m_aboutToDisplaySSLError;
     QSslConfiguration m_sslConfiguration;
     typedef QList<AroraSSLCertificate*> AroraSSLCertificates;
     QMap<QWebFrame*, AroraSSLCertificates> m_frameSSLCertificates;
