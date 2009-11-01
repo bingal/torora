@@ -304,10 +304,7 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
                 if (!frame)
                     break;
                 if (frame == page()->currentFrame() ||
-                    (frame->parentFrame() == page()->currentFrame()))
-/*                    || (cert->error() &&
-                        (cert->error()->frame() == page()->currentFrame() ||
-                        cert->error()->frame()->parentFrame() == page()->currentFrame())))*/ {
+                    (frame->parentFrame() == page()->currentFrame())) {
                     QSslCertificate peerCert = cert->sslConfiguration().peerCertificate();
 
                     QString url = QString(QLatin1String("%1 (%2)"))
@@ -1018,7 +1015,7 @@ void WebView::paintEvent(QPaintEvent *event) {
                                         rect.y() + (rect.height()/3) - ((rect.width() < 16)?8:32));
                   p.drawPixmap(point,QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
                                       .arg(m_highlightedcert->icon(webPage()->frameIsPolluted(frame, m_highlightedcert))))
-                                      .scaled(((rect.width() < 16)?16:64),((rect.width() < 16)?16:64)));
+                                      .scaled(((rect.width() < 16)?16:32),((rect.width() < 16)?16:32)));
             }
             m_highlightedcert->populateSSLText(p, geometry,
                                                webPage()->frameIsPolluted(frame, m_highlightedcert),
@@ -1078,8 +1075,10 @@ void WebView::highlightSSLResource(QAction *action)
                 int x = geometry.x() + element.geometry().x();
                 int y = geometry.y() + element.geometry().y();
                 m_regions.append(QRegion(x, y,
-                                (element.geometry().width() < 20)?20:element.geometry().width(),
-                                (element.geometry().height() < 20)?20:element.geometry().height()));
+                                (element.geometry().width() < 20 &&
+                                 element.geometry().width() > 0) ? 20 : element.geometry().width(),
+                                (element.geometry().height() < 20 &&
+                                 element.geometry().width() > 0) ? 20 : element.geometry().height()));
                 resourcefound = true;
             }
         }
