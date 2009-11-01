@@ -257,11 +257,6 @@ QString WebPage::userAgentForUrl(const QUrl &url) const
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request,
                                       NavigationType type)
 {
-    /* If we ask for https://x.com, get redirected to http://x.com, which contains resources
-       at https://y.com with SSL errors and we attempt to load the error page, WebKit will
-       bring us here. Since we are displaying an error page, we don't want to go any further */
-    qDebug() << request.url();
-
     lastRequest = request;
     lastRequestType = type;
 
@@ -311,11 +306,6 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
 
     /*FIXME: There must be a better way of establishing that we need to
              flush the certificates associated with a given frame */
-    /* m_aboutToDisplaySSLError needs to work per frame so that we don't mess up
-       redirects in other frames */
-	qDebug() << "frame url" << frame->url();
-	qDebug() << "frame requested url" << frame->requestedUrl();
-	qDebug() << "request url" << request.url();
     if (accepted && isNewWebsite(frame, request.url()))
         clearFrameSSLErrors(frame);
 
@@ -599,10 +589,9 @@ bool WebPage::alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, Aror
     return false;
 }
 
-void WebPage::markPollutedFrame(QNetworkReply *reply)
+void WebPage::markPollutedFrame(QWebFrame *replyframe)
 {
     AroraSSLCertificates certs = allCerts();
-    QWebFrame *replyframe = getFrame(reply->request());
     for (int i = 0; i < certs.count(); ++i) {
         AroraSSLCertificate *cert = certs.at(i);
         if (cert->frames().contains(replyframe) &&
@@ -648,10 +637,15 @@ void WebPage::handleSSLErrorPage(AroraSSLError *error, QNetworkReply* reply)
 
 void WebPage::setSSLConfiguration(QNetworkReply *reply)
 {
-    if (reply->sslConfiguration().sessionCipher().isNull()) {
-        markPollutedFrame(reply);
+    QWebFrame *replyframe = getFrame(reply->request());
+    if (reply->url().scheme() == QLatin1String("http")) {
+        if (frameHasSSLCerts(replyframe)) {
+            markPollutedFrame(replyframe);
+        }
         return;
     }
+    if (reply->sslConfiguration().isNull())
+        return;
     addSSLCert(reply->url(), reply, 0L);
 }
 

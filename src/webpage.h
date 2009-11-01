@@ -107,7 +107,7 @@ protected:
 
     void clearSSLErrors(QWebFrame *frame);
     bool alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError=0L);
-    void markPollutedFrame(QNetworkReply *reply);
+    void markPollutedFrame(QWebFrame *replyframe);
     void populateNetworkRequest(QNetworkRequest &request);
     QWebFrame* getFrame(const QNetworkRequest& request);
     void addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame);
