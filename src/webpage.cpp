@@ -21,6 +21,7 @@
 #include "webpage.h"
 
 #include "browserapplication.h"
+#include "browsermainwindow.h"
 #include "cookiejar.h"
 #include "downloadmanager.h"
 #include "historymanager.h"
@@ -40,6 +41,7 @@
 #include <qnetworkreply.h>
 #include <qnetworkrequest.h>
 #include <qsettings.h>
+#include <qwebhistory.h>
 #include <qwebframe.h>
 
 #include <quiloader.h>
@@ -116,12 +118,14 @@ WebPage::WebPage(QObject *parent)
     setNetworkAccessManager(networkManagerProxy);
     networkManagerProxy->setCookieJar(BrowserApplication::instance()->cookieJar());
     networkManagerProxy->cookieJar()->setParent(0); // Required for CookieJars shared by networkaccessmanagers
-    connect(networkManagerProxy, SIGNAL(setSSLError(const QList<QSslError> &, QNetworkReply *)),
-            this, SLOT(handleSSLError(const QList<QSslError> &, QNetworkReply *)));
-    connect(networkManagerProxy, SIGNAL(sslErrorPage(AroraSSLError *, QNetworkReply*)),
-            this, SLOT(handleSSLErrorPage(AroraSSLError *, QNetworkReply*)));
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#ifndef QT_NO_OPENSSL
+    connect(networkManagerProxy, SIGNAL(sslErrors(QNetworkReply *, const QList<QSslError> &)),
+            this, SLOT(handleSSLError(QNetworkReply *, const QList<QSslError> &)));
     connect(networkManagerProxy, SIGNAL(finished(QNetworkReply*)),
             SLOT(setSSLConfiguration(QNetworkReply*)));
+#endif
+#endif
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
     connect(this, SIGNAL(frameCreated(QWebFrame *)),
@@ -396,7 +400,7 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
                           return object;
                       }
                       if (paramValues[i] == QString(QLatin1String("SSLCancelButton%1")).arg(error->errorid())) {
-                          connect (object, SIGNAL(clicked()), networkAccessManager(), SLOT(sslCancel()));
+                          connect (object, SIGNAL(clicked()), this, SLOT(sslCancel()));
                           return object;
                       }
                   }
@@ -511,7 +515,7 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 }
 
 #ifndef QT_NO_OPENSSL
-void WebPage::handleSSLError( const QList<QSslError> &error, QNetworkReply *reply)
+void WebPage::handleSSLError(QNetworkReply *reply, const QList<QSslError> &error)
 {
     if (error.count() <= 0)
         return;
@@ -796,6 +800,14 @@ QWebFrame* WebPage::getFrame(const QNetworkRequest& request)
     if (containsFrame(frame))
         return frame;
     return 0L;
+}
+
+void WebPage::sslCancel()
+{
+    BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
+    if (mainWindow->currentTab()->history()->backItems(1).empty())
+        return;
+    mainWindow->currentTab()->history()->goToItem(mainWindow->currentTab()->history()->backItems(1).first()); // back
 }
 
 #endif

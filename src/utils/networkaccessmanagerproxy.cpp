@@ -80,11 +80,11 @@ void NetworkAccessManagerProxy::setPrimaryNetworkAccessManager(NetworkAccessMana
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
             m_primaryManager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
 #endif
-#else
+/*#else
 #ifndef QT_NO_OPENSSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
-            SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
-#endif
+            SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif*/
 #endif
 }
 
@@ -97,21 +97,3 @@ QNetworkReply *NetworkAccessManagerProxy::createRequest(QNetworkAccessManager::O
     }
     return QNetworkAccessManager::createRequest(op, request, outgoingData);
 }
-
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
-#ifndef QT_NO_OPENSSL
-void NetworkAccessManagerProxy::sslErrors(QNetworkReply *reply, const QList<QSslError> &error)
-{
-    emit setSSLError(error, reply);
-}
-
-void NetworkAccessManagerProxy::sslCancel()
-{
-    BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
-    if (mainWindow->currentTab()->history()->backItems(1).empty())
-        return;
-    mainWindow->currentTab()->history()->goToItem(mainWindow->currentTab()->history()->backItems(1).first()); // back
-}
-
-#endif
-#endif

@@ -126,7 +126,8 @@ protected slots:
     void bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request);
     void handleSSLErrorPage(AroraSSLError *error, QNetworkReply *reply);
     void setSSLConfiguration(QNetworkReply *reply);
-    void handleSSLError( const QList<QSslError> &error, QNetworkReply *reply);
+    void handleSSLError(QNetworkReply *reply, const QList<QSslError> &error);
+    void sslCancel();
 
 protected:
     static QString s_userAgent;

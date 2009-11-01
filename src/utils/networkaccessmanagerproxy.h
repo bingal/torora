@@ -38,14 +38,6 @@ class NetworkAccessManagerProxy : public QNetworkAccessManager
 {
     Q_OBJECT
 
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
-#ifndef QT_NO_OPENSSL
-signals:
-    void setSSLError( const QList<QSslError> &error, QNetworkReply *reply);
-    void sslErrorPage(AroraSSLError *error, QNetworkReply *reply);
-#endif
-#endif
-
 public:
     NetworkAccessManagerProxy(QObject *parent = 0);
 
@@ -55,22 +47,8 @@ public:
     void setWebPage(WebPageProxy *page);
     WebPageProxy *webPage() const { return m_webPage; };
 
-public slots:
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
-#ifndef QT_NO_OPENSSL
-    void sslCancel();
-#endif
-#endif
-
 protected:
     QNetworkReply *createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData = 0);
-
-private slots:
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
-#ifndef QT_NO_OPENSSL
-    void sslErrors(QNetworkReply *reply, const QList<QSslError> &error);
-#endif
-#endif
 
 private:
     friend class NetworkCookieJarProxy;
