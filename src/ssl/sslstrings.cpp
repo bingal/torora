@@ -164,9 +164,9 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             break;
         case QSslError:: SelfSignedCertificateInChain:
             errStr << QObject::tr("This Site is Using a Home-Made Certificate.");
-            errStr << QObject::tr("The root certificate of the certificate chain is self-signed, and untrusted");
+            errStr << QObject::tr("The root certificate of the certificate chain is self-signed, and untrusted.");
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is pretending to be %1 and has rolled their own certificate to imitate them.").arg(surl);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> Arora does not recognize <b>%1</b> as a trusted vendor.").arg(issuerinfo);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Home-made Certificate!");
