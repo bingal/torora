@@ -43,7 +43,7 @@ class LanguageManager : public QObject
 
 signals:
     void languageChanged(const QString &language);
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
 
 public:
     LanguageManager(QObject *parent = 0);

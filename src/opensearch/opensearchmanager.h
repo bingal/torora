@@ -42,7 +42,7 @@ class OpenSearchManager : public QObject
     Q_OBJECT
 
 signals:
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
     void changed();
     void currentEngineChanged();
 

@@ -72,7 +72,7 @@ class SettingsDialog : public QDialog, public Ui_Settings
     Q_OBJECT
 
 signals:
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
 
 public:
     SettingsDialog(QWidget *parent = 0);

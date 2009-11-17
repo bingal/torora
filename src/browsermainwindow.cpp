@@ -1586,7 +1586,7 @@ void BrowserMainWindow::geometryChangeRequested(const QRect &geometry)
     setGeometry(geometry);
 }
 
-void BrowserMainWindow::displayNotification(const QString &message, BrowserApplication::Notification type, QObject *object)
+void BrowserMainWindow::displayNotification(const QString &message, NotificationItem::Notification type, QObject *object)
 {
     NotificationsBar *bar = tabWidget()->webViewNotification(m_tabWidget->currentIndex());
     bar->queueItem(message, type, object);

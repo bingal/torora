@@ -42,7 +42,7 @@ class AutoFillManager : public QObject
 
 signals:
     void autoFillChanged();
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
 
 public:
     typedef QPair<QString, QString> Element;

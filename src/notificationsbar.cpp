@@ -41,6 +41,7 @@ NotificationsBar::NotificationsBar(QWidget *parent)
 //    setMinimumHeight(m_widget->minimumHeight());
     m_widget->setGeometry(0, -1 * m_widget->height(),
                           m_widget->width(), m_widget->height());
+    m_widget->setObjectName(QLatin1String("bar"));
 
     // we start off hidden
     setMaximumHeight(0);
@@ -66,60 +67,66 @@ void NotificationsBar::setNotifyingObject(QObject *object)
     m_object = object;
 }
 
-void NotificationsBar::message(const QString &message, BrowserApplication::Notification type)
+void NotificationsBar::message(const QString &message, NotificationItem::Notification type)
 {
     QPalette pal = palette();
-    QColor color;
 
     int interval = 10 * 1000;
     QPixmap icon;
     switch (type) {
-        case BrowserApplication::Success:
+        case NotificationItem::Success:
+            //green
+            setStyleSheet(QLatin1String("QWidget#bar{ background: qlineargradient(x1:0, y1:0, x2:1, y2:1, "
+                                        "stop:0 rgba(0,191,255,175), stop: 0.4 rgba(135,206,250,175), stop:1 rgba(173,216,230,175))}"));
             icon = style()->standardIcon(QStyle::SP_MessageBoxInformation, 0, this).pixmap(m_widget->height() - 5, m_widget->height() - 5);
             ui.buttonBox->clear();
             ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok);
-            color = Qt::red;
         break;
-        case BrowserApplication::Information:
+        case NotificationItem::Information:
+            //blue
+            setStyleSheet(QLatin1String("QWidget#bar{ background: qlineargradient(x1:0, y1:0, x2:1, y2:1, "
+                                        "stop:0 rgba(0,191,255,175), stop: 0.4 rgba(135,206,250,175), stop:1 rgba(173,216,230,175))}"));
             icon = style()->standardIcon(QStyle::SP_MessageBoxInformation, 0, this).pixmap(m_widget->height() - 5, m_widget->height() - 5);
             ui.buttonBox->clear();
             ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok);
-            color = Qt::blue;
         break;
-        case BrowserApplication::Warning:
+        case NotificationItem::Warning:
+            //yellow
+            setStyleSheet(QLatin1String("QWidget#bar{ background: qlineargradient(x1:0, y1:0, x2:1, y2:1, "
+                                        "stop:0 rgba(255,255,0,175), stop: 0.4 rgba(255,215,0,175), stop:1 rgba(255,140,0,175))}"));
             icon = style()->standardIcon(QStyle::SP_MessageBoxWarning, 0, this).pixmap(m_widget->height() - 5, m_widget->height() - 5);
             ui.buttonBox->clear();
             ui.buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
-            color = Qt::yellow;
         break;
-        case BrowserApplication::Error:
+        case NotificationItem::Error:
+            //red
+            setStyleSheet(QLatin1String("QWidget#bar{ background: qlineargradient(x1:0, y1:0, x2:1, y2:1, "
+                                        "stop:0 rgba(255,0,0,175), stop: 0.4 rgba(255,99,71,175), stop:1 rgba(250,128,114,175))}"));
             icon = style()->standardIcon(QStyle::SP_MessageBoxCritical, 0, this).pixmap(m_widget->height() - 5, m_widget->height() - 5);
             ui.buttonBox->clear();
             ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok);
-            color = Qt::red;
         break;
-        case BrowserApplication::Password:
+        case NotificationItem::Password:
+            //yellow
+            setStyleSheet(QLatin1String("QWidget#bar{ background: qlineargradient(x1:0, y1:0, x2:1, y2:1, "
+                                        "stop:0 rgba(255,255,0,175), stop: 0.8 rgba(255,215,0,175), stop:1 rgba(255,140,0,175))}"));
             icon = style()->standardIcon(QStyle::SP_MessageBoxInformation, 0, this).pixmap(m_widget->height() - 5, m_widget->height() - 5);
             ui.buttonBox->clear();
             ui.buttonBox->addButton(tr("Save Password"), QDialogButtonBox::AcceptRole);
             ui.buttonBox->addButton(tr("Never For This Site"), QDialogButtonBox::RejectRole);
-            color = Qt::yellow;
             connect(ui.buttonBox, SIGNAL(accepted()), m_object, SLOT(notifyAccept()));
             connect(ui.buttonBox, SIGNAL(rejected()), m_object, SLOT(notifyReject()));
             connect(this, SIGNAL(decline()), m_object, SLOT(notifyDecline()));
             interval = 20 * 1000;
         break;
     }
-    color = color.lighter(150);
-    color.setAlpha(175);
-    pal.setColor(QPalette::Window, color);
-    setPalette(pal);
 
     animateShow();
     ui.messageLabel->setText(message);
     ui.iconLabel->setPixmap(icon);
     m_timer->setInterval(interval);
     m_timer->start();
+
 }
 
 void NotificationsBar::animateShow()
@@ -149,7 +156,7 @@ void NotificationsBar::readyForNext()
 {
     hide();
     if (!m_notificationQueue.isEmpty()) {
-        if (m_notificationQueue.first()->m_type == BrowserApplication::Password) {
+        if (m_notificationQueue.first()->m_type == NotificationItem::Password) {
             disconnect(ui.buttonBox, SIGNAL(accepted()), m_object, SLOT(notifyAccept()));
             disconnect(ui.buttonBox, SIGNAL(rejected()), m_object, SLOT(notifyReject()));
             disconnect(this, SIGNAL(decline()), m_object, SLOT(notifyDecline()));
@@ -177,7 +184,7 @@ void NotificationsBar::frameChanged(int frame)
     setMaximumHeight(height);
 }
 
-void NotificationsBar::queueItem(const QString &message, BrowserApplication::Notification type, QObject *object)
+void NotificationsBar::queueItem(const QString &message, NotificationItem::Notification type, QObject *object)
 {
     NotificationItem *item = new NotificationItem(message, type, object);
     m_notificationQueue.append(item);

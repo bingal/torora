@@ -34,7 +34,7 @@ class OpenSearchDialog : public QDialog, public Ui_OpenSearchDialog
     Q_OBJECT
 
 signals:
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
 
 public:
     OpenSearchDialog(QWidget *parent = 0);

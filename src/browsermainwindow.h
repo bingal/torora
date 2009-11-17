@@ -104,7 +104,7 @@ public:
     QAction *searchManagerAction() const { return m_toolsSearchManagerAction; }
 
 public slots:
-    void displayNotification(const QString &, BrowserApplication::Notification, QObject *object);
+    void displayNotification(const QString &, NotificationItem::Notification, QObject *object);
 
     void goHome();
     void privacyChanged(bool isPrivate);

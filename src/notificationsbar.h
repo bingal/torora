@@ -22,7 +22,7 @@
 
 #include <qwidget.h>
 
-#include "browserapplication.h"
+//#include "browserapplication.h"
 
 #include "ui_notificationsbanner.h"
 
@@ -33,7 +33,15 @@ QT_END_NAMESPACE
 class NotificationItem
 {
 public:
-    NotificationItem(const QString &message, BrowserApplication::Notification type, QObject *object)
+    enum Notification {
+      Success,
+      Information,
+      Warning,
+      Error,
+      Password
+    };
+
+    NotificationItem(const QString &message, NotificationItem::Notification type, QObject *object)
     {
         m_object = object;
         m_message = message;
@@ -41,24 +49,26 @@ public:
     }
     QObject *m_object;
     QString m_message;
-    BrowserApplication::Notification m_type;
+    Notification m_type;
 };
 
 
 class NotificationsBar : public QWidget
 {
     Q_OBJECT
+
 signals:
     void decline();
+
 public:
     NotificationsBar(QWidget *parent = 0);
     void registerNotifier(QObject *object);
-    void queueItem(const QString &message, BrowserApplication::Notification type, QObject *object);
+    void queueItem(const QString &message, NotificationItem::Notification type, QObject *object);
 
 public slots:
     void animateShow();
     void animateHide();
-    void message(const QString &message, BrowserApplication::Notification type);
+    void message(const QString &message, NotificationItem::Notification type);
     void setNotifyingObject(QObject *object);
 protected:
     void resizeEvent(QResizeEvent *event);

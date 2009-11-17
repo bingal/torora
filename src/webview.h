@@ -104,7 +104,7 @@ public:
 
 signals:
     void search(const QUrl &searchUrl, TabWidget::OpenUrlIn openIn);
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
 
 public slots:
     void zoomIn();

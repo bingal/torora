@@ -64,6 +64,7 @@
 #define BROWSERAPPLICATION_H
 
 #include "singleapplication.h"
+#include "notificationsbar.h"
 
 #include <qpointer.h>
 #include <qurl.h>
@@ -83,13 +84,6 @@ class BrowserApplication : public SingleApplication
     Q_OBJECT
 
 public:
-    enum Notification {
-        Success,
-        Information,
-        Warning,
-        Error,
-        Password
-    };
 
     BrowserApplication(int &argc, char **argv);
     ~BrowserApplication();
@@ -149,7 +143,7 @@ private slots:
     void messageReceived(QLocalSocket *socket);
     void postLaunch();
     void openUrl(const QUrl &url);
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
 
 signals:
     void zoomTextOnlyChanged(bool textOnly);

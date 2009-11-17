@@ -92,13 +92,13 @@ WebViewWithSearch::WebViewWithSearch(WebView *webView, QWidget *parent)
     QWidget *strip = new QWidget(this);
     strip->setMinimumWidth(webView->minimumWidth());
     strip->setMaximumWidth(webView->maximumWidth());
-    strip->setMaximumHeight(3);
-    strip->setMinimumHeight(3);
+    strip->setMaximumHeight(1);
+    strip->setMinimumHeight(2);
 
     layout->addWidget(m_notificationsBar);
     layout->addWidget(strip);
-    layout->addWidget(m_webView);
     layout->addWidget(m_webViewSearch);
+    layout->addWidget(m_webView);
     setLayout(layout);
 }
 

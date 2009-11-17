@@ -28,6 +28,7 @@
  */
 
 #include "languagemanager.h"
+#include "browserapplication.h"
 
 #include <qapplication.h>
 #include <qdir.h>
@@ -237,7 +238,7 @@ void LanguageManager::chooseNewLanguage()
 #endif
     loadAvailableLanguages();
     if (m_languages.isEmpty()) {
-        emit notify(tr("No translation files are installed."), BrowserApplication::Warning);
+        emit notify(tr("No translation files are installed."), NotificationItem::Warning);
         return;
     }
 

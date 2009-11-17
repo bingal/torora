@@ -444,7 +444,7 @@ void SettingsDialog::accept()
     if (QLatin1String(qVersion()) <= QLatin1String("4.5.1") && networkCache->isChecked() != m_cacheEnabled) {
         emit notify(tr("The network cache configuration has changed. "
                     "So that it can be taken into account, the browser has to be restarted."),
-                    BrowserApplication::Information);
+                    NotificationItem::Information);
     }
     QDialog::accept();
 }

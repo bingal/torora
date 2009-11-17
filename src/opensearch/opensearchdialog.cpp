@@ -67,7 +67,7 @@ void OpenSearchDialog::addButtonClicked()
     foreach (const QString &fileName, fileNames) {
         if (!ToolbarSearch::openSearchManager()->addEngine(fileName)) {
             emit notify(tr("%1 is not a valid OpenSearch 1.1 description or is already "
-                           "on your list.").arg(fileName), BrowserApplication::Error);
+                           "on your list.").arg(fileName), NotificationItem::Error);
         }
     }
 }
@@ -76,7 +76,7 @@ void OpenSearchDialog::deleteButtonClicked()
 {
     if (m_tableView->model()->rowCount() == 1) {
         emit notify(tr("You must have at least one search engine in here."),
-                    BrowserApplication::Error);
+                    NotificationItem::Error);
         return;
     }
 

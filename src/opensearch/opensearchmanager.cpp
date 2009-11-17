@@ -327,7 +327,7 @@ void OpenSearchManager::engineFromUrlAvailable()
         return;
 
     if (reply->error() != QNetworkReply::NoError) {
-        emit notify(tr("%1 request failed.").arg(reply->url().toString()), BrowserApplication::Error);
+        emit notify(tr("%1 request failed.").arg(reply->url().toString()), NotificationItem::Error);
         reply->close();
         reply->deleteLater();
         return;
@@ -340,13 +340,13 @@ void OpenSearchManager::engineFromUrlAvailable()
     reply->deleteLater();
 
     if (!engine->isValid()) {
-        emit notify(tr("%1 is not a valid OpenSearch engine.").arg(reply->url().toString()), BrowserApplication::Error);
+        emit notify(tr("%1 is not a valid OpenSearch engine.").arg(reply->url().toString()), NotificationItem::Error);
         delete engine;
         return;
     }
 
     if (engineExists(engine->name())) {
-        emit notify(tr("%1 engine already exists.").arg(engine->name()), BrowserApplication::Error);
+        emit notify(tr("%1 engine already exists.").arg(engine->name()), NotificationItem::Error);
         delete engine;
         return;
     }
@@ -361,7 +361,7 @@ void OpenSearchManager::engineFromUrlAvailable()
         return;
     }
 
-    emit notify(tr("%1 engine has been successfully added to the collection.").arg(engine->name()), BrowserApplication::Success);
+    emit notify(tr("%1 engine has been successfully added to the collection.").arg(engine->name()), NotificationItem::Success);
 }
 
 QUrl OpenSearchManager::convertKeywordSearchToUrl(const QString &string)

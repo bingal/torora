@@ -212,7 +212,7 @@ void AutoFillManager::post(const QNetworkRequest &request, const QByteArray &out
        }*/
         emit notify(tr("<b>Would you like to save this password?</b> "
                         "To review passwords you have saved, open the AutoFill panel of preferences."),
-                        BrowserApplication::Password);
+                        NotificationItem::Password);
         m_formsPendingDecision.append(form);
         m_urlsPendingDecision.append(url);
         return;

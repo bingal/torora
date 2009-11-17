@@ -35,7 +35,7 @@ class BookmarksManager : public QObject
     Q_OBJECT
 
 signals:
-    void notify(const QString &message, BrowserApplication::Notification type);
+    void notify(const QString &message, NotificationItem::Notification type);
     void entryAdded(BookmarkNode *item);
     void entryRemoved(BookmarkNode *parent, int row, BookmarkNode *item);
     void entryChanged(BookmarkNode *item);
