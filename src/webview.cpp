@@ -524,8 +524,8 @@ void WebView::addSearchEngine()
     }
 
     QString engineName;
-    QWebElementCollection labels = formElement.findAll(QString(QLatin1String("label[for=\"%1\"]")).arg(elementName));
-    if (!labels.count())
+    QList<QWebElement> labels = formElement.findAll(QString(QLatin1String("label[for=\"%1\"]")).arg(elementName)).toList();
+    if (labels.count() > 0)
         engineName = labels.at(0).toPlainText();
 
     engineName = QInputDialog::getText(this, tr("Engine name"), tr("Type in a name for the engine"),
