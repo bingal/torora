@@ -161,7 +161,7 @@ void WebView::loadSettings()
     m_page->loadSettings();
 }
 
-#if !(QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK))
+#if !(QT_VERSION >= 0x040600)
 #include <qdir.h>
 // DO NOT CHANGE ANYTHING IN THIS FUNCTION
 // You want to change TabWidget::guessUrlFromString()
@@ -525,7 +525,7 @@ void WebView::addSearchEngine()
 
     QString engineName;
     QWebElementCollection labels = formElement.findAll(QString(QLatin1String("label[for=\"%1\"]")).arg(elementName));
-    if (labels.count() > 0)
+    if (!labels.count())
         engineName = labels.at(0).toPlainText();
 
     engineName = QInputDialog::getText(this, tr("Engine name"), tr("Type in a name for the engine"),
@@ -863,7 +863,7 @@ void WebView::showAccessKeys()
     // Priority first goes to elements with accesskey attributes
     QList<QWebElement> alreadyLabeled;
     foreach (const QString &elementType, supportedElement) {
-        QList<QWebElement> result = page()->mainFrame()->findAllElements(elementType).toList();
+        QWebElementCollection result = page()->mainFrame()->findAllElements(elementType);
         foreach (const QWebElement &element, result) {
             const QRect geometry = element.geometry();
             if (geometry.size().isEmpty()
