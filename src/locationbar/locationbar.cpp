@@ -120,18 +120,18 @@ void LocationBar::paintEvent(QPaintEvent *event)
             QColor lightYellow;
             if (m_webView->webPage()->hasSSLErrors()) {
                 lightYellow.setRgb(248, 248, 210);
-                if (m_defaultBaseColor.value() < 128) {
-                    lightYellow.setHsv(0, 70, m_defaultBaseColor.value()+30);
+                if (defaultBaseColor.value() < 128) {
+                    lightYellow.setHsv(0, 70, defaultBaseColor.value()+30);
                 } else {
-                    lightYellow.setHsv(0, 60, m_defaultBaseColor.value());
+                    lightYellow.setHsv(0, 60, defaultBaseColor.value());
                 }
             } else if (m_webView->webPage()->hasPollutedFrames() ) {
                 lightYellow.setRgb(248, 248, 210);
             } else {
-                if (m_defaultBaseColor.value() < 128) {
-                    lightYellow.setHsv(90, 70, m_defaultBaseColor.value()+30);
+                if (defaultBaseColor.value() < 128) {
+                    lightYellow.setHsv(90, 70, defaultBaseColor.value()+30);
                 } else {
-                    lightYellow.setHsv(90, 60, m_defaultBaseColor.value());
+                    lightYellow.setHsv(90, 60, defaultBaseColor.value());
                 }
             }
             backgroundColor = lightYellow;
