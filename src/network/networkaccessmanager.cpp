@@ -100,7 +100,7 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent)
             SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
     connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
             SLOT(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
-#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
             SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
@@ -253,7 +253,7 @@ void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &prox
     }
 }
 
-#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
 QString NetworkAccessManager::certToFormattedString(QSslCertificate cert)
 {

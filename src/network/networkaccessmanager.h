@@ -65,7 +65,7 @@
 
 #include <qnetworkaccessmanager.h>
 #include <qhash.h>
-#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
 #include <qsslconfiguration.h>
 #endif
@@ -101,14 +101,14 @@ private slots:
     void authenticationRequired(QNetworkReply *reply, QAuthenticator *auth);
     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
     void privacyChanged(bool isPrivate);
-#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     void sslErrors(QNetworkReply *reply, const QList<QSslError> &error);
 #endif
 #endif
 
 private:
-#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     static QString certToFormattedString(QSslCertificate cert);
 #endif

@@ -292,6 +292,8 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
             menu->addAction(pageAction(QWebPage::InspectElement));
     }
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     if (webPage()->frameHasSSLCerts(page()->currentFrame()) || webPage()->frameHasSSLErrors(page()->currentFrame())) {
         menu->addSeparator();
         QList<AroraSSLCertificate*> certificates;
@@ -310,9 +312,8 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
                     QString url = QString(QLatin1String("%1 (%2)"))
                                   .arg(cert->url().host())
                                   .arg(peerCert.subjectInfo(QSslCertificate::Organization));
-                    QIcon image;
-                    image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
-                                  .arg(cert->icon(webPage()->frameIsPolluted(frame, cert)))).scaled(QSize(16,16)));
+                    QIcon image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
+                                  .arg(cert->icon(webPage()->frameIsPolluted(frame, cert)))));
                     QAction *action = new QAction(image, url, menu);
                     QVariant var;
                     var.setValue(certificates.at(i));
@@ -325,6 +326,8 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
            }
         }
     }
+#endif
+#endif
 
     if (!menu->isEmpty()) {
         if (BrowserMainWindow::parentWindow(tabWidget())->menuBar()->isHidden()) {
@@ -944,6 +947,7 @@ void WebView::makeAccessKeyLabel(const QChar &accessKey, const QWebElement &elem
 #endif
 
 #ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
 void WebView::displaySSLCertificateList(const QPoint &pos)
 {
     QMenu menu;
@@ -962,9 +966,8 @@ void WebView::displaySSLCertificateList(const QPoint &pos)
         QString url = QString(QLatin1String("%1 (%2)"))
                       .arg(cert->url().host())
                       .arg(peerCert.subjectInfo(QSslCertificate::Organization));
-        QIcon image;
-        image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
-                .arg(cert->icon(webPage()->certHasPollutedFrame(cert)))).scaled(QSize(16,16)));
+        QIcon image = QIcon(QPixmap(QString(QLatin1String(":graphics/ssl/%1"))
+                .arg(cert->icon(webPage()->certHasPollutedFrame(cert)))));
         QAction *action = new QAction(image, url, &menu);
         QVariant var;
         var.setValue(certificates.at(i));
@@ -1129,4 +1132,5 @@ QList<AroraSSLCertificate*> WebView::allSSLCertificates()
     return certificates;
 }
 
+#endif
 #endif

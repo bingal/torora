@@ -54,11 +54,15 @@ LocationBar::LocationBar(QWidget *parent)
     m_privacyIndicator = new PrivacyIndicator(this);
     addWidget(m_privacyIndicator, RightSide);
 
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
     // ssl indicator at rightmost position
     m_SSLIndicator = new SSLIndicator(this);
     connect(m_SSLIndicator, SIGNAL(clicked()),
             this, SLOT(displaySSL()));
     addWidget(m_SSLIndicator, RightSide);
+#endif
+#endif
 
     // clear button on the right
     ClearButton *m_clearButton = new ClearButton(this);
@@ -83,6 +87,8 @@ void LocationBar::setWebView(WebView *webView)
             this, SLOT(update()));
 }
 
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
 void LocationBar::displaySSL()
 {
     QWidget *parent = this->parentWidget();
@@ -93,6 +99,8 @@ void LocationBar::displaySSL()
 
     m_webView->displaySSLCertificateList(pos);
 }
+#endif
+#endif
 
 WebView *LocationBar::webView() const
 {
@@ -113,7 +121,7 @@ void LocationBar::paintEvent(QPaintEvent *event)
     QColor defaultBaseColor = QApplication::palette().color(QPalette::Base);
     QColor backgroundColor = defaultBaseColor;
 
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#if QT_VERSION >= 0x040600
     if (m_webView && m_webView->webPage()) {
         if (m_webView->webPage()->hasSSLCerts()) {
             m_SSLIndicator->displayPadlock(m_webView->webPage()->sslSecurity());

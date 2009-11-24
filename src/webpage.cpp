@@ -118,7 +118,7 @@ WebPage::WebPage(QObject *parent)
     setNetworkAccessManager(networkManagerProxy);
     networkManagerProxy->setCookieJar(BrowserApplication::instance()->cookieJar());
     networkManagerProxy->cookieJar()->setParent(0); // Required for CookieJars shared by networkaccessmanagers
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#if QT_VERSION >= 0x040600
 #ifndef QT_NO_OPENSSL
     connect(networkManagerProxy, SIGNAL(sslErrors(QNetworkReply *, const QList<QSslError> &)),
             this, SLOT(handleSSLError(QNetworkReply *, const QList<QSslError> &)));
@@ -130,8 +130,6 @@ WebPage::WebPage(QObject *parent)
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
     connect(this, SIGNAL(frameCreated(QWebFrame *)),
             this, SLOT(addExternalBinding(QWebFrame *)));
-    connect(this, SIGNAL(networkRequestStarted(QWebFrame *, QNetworkRequest *)),
-            this, SLOT(bindRequestToFrame(QWebFrame *, QNetworkRequest *)));
     addExternalBinding(mainFrame());
     loadSettings();
 }
@@ -304,14 +302,20 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
         emit aboutToLoadUrl(request.url());
     }
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     /*FIXME: There must be a better way of establishing that we need to
              flush the certificates associated with a given frame */
     if (accepted && isNewWebsite(frame, request.url()))
         clearFrameSSLErrors(frame);
+#endif
+#endif
 
     return accepted;
 }
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
 bool WebPage::isNewWebsite(QWebFrame *frame, QUrl url)
 {
     QListIterator<AroraSSLCertificate*> certs(allCerts());
@@ -337,6 +341,8 @@ bool WebPage::hasOverlappingMembers(QList<QWebFrame *>certFrames, QList<QWebFram
     }
     return false;
 }
+#endif
+#endif
 
 void WebPage::loadSettings()
 {
@@ -370,6 +376,8 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
     Q_UNUSED(paramNames);
     Q_UNUSED(paramValues);
 #if !defined(QT_NO_UITOOLS)
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     if (classId == QLatin1String("QPushButton")) {
         for (int i = 0; i < paramNames.count(); ++i) {
             if (paramValues[i].contains(QLatin1String("SSLProceedButton")) ||
@@ -398,6 +406,8 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
             }
         }
     }
+#endif
+#endif
 #endif
     return 0;
 }
@@ -505,6 +515,7 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 }
 
 #ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
 void WebPage::handleSSLError(QNetworkReply *reply, const QList<QSslError> &error)
 {
     if (error.count() <= 0)
@@ -700,7 +711,7 @@ bool WebPage::frameHasThisSSLError(QWebFrame *frame, const QUrl url)
 
 bool WebPage::frameHasSSLCerts(QWebFrame *frame)
 {
-    if (m_frameSSLCertificates.contains(frame));
+    if (m_frameSSLCertificates.contains(frame))
         return true;
     return false;
 }
@@ -762,16 +773,6 @@ void WebPage::handleDesignFlaw(QWebFrame *f)
     }
 }
 
-void WebPage::bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request)
-{
-    if (!frame)
-        return;
-
-    QVariant var;
-    var.setValue(frame);
-    request->setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200), var);
-}
-
 bool WebPage::containsFrame(QWebFrame *frame)
 {
     QList<QWebFrame*> frames;
@@ -787,10 +788,8 @@ bool WebPage::containsFrame(QWebFrame *frame)
 
 QWebFrame* WebPage::getFrame(const QNetworkRequest& request)
 {
-    QVariant v;
     QWebFrame *frame;
-    v = request.attribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 200));
-    frame = v.value<QWebFrame*>();
+    frame = static_cast<QWebFrame *>(request.originatingObject());
     if (containsFrame(frame))
         return frame;
     return 0L;
@@ -804,4 +803,5 @@ void WebPage::sslCancel()
     mainWindow->currentTab()->history()->goToItem(mainWindow->currentTab()->history()->backItems(1).first()); // back
 }
 
-#endif
+#endif //#if QT_VERSION >= 0x040600
+#endif //#ifndef QT_NO_OPENSSL

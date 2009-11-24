@@ -127,9 +127,13 @@ protected:
 
 private:
     int levelForZoom(int zoom);
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
     QList<AroraSSLCertificate*> allSSLCertificates();
     void paintEvent(QPaintEvent *event);
     QRect absoluteFrameGeometry(QWebFrame *frame);
+#endif
+#endif
 
 private slots:
     void setProgress(int progress);
@@ -152,9 +156,13 @@ private slots:
     void hideAccessKeys();
     void accessKeyShortcut();
 #endif
-    void displayChosenSSLCertificate();
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
+   void displayChosenSSLCertificate();
     void highlightSSLResource(QAction *action);
     void clearHighlights() { m_regions.clear(); update(); }
+#endif
+#endif
 
 private:
     QString m_statusBarText;

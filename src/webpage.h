@@ -84,6 +84,8 @@ public:
     static WebPluginFactory *webPluginFactory();
     QList<WebPageLinkedResource> linkedResources(const QString &relation = QString());
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     bool hasSSLErrors();
     bool hasSSLCerts();
     bool hasPollutedFrames() { return !m_pollutedFrames.isEmpty(); };
@@ -97,6 +99,8 @@ public:
     bool frameIsPolluted(QWebFrame *frame, AroraSSLCertificate *cert);
     bool certHasPollutedFrame(AroraSSLCertificate *cert);
     bool containsFrame(QWebFrame *frame);
+#endif
+#endif
 
 protected:
     QString userAgentForUrl(const QUrl &url) const;
@@ -104,11 +108,13 @@ protected:
                                  NavigationType type);
     QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
     QWebPage *createWindow(QWebPage::WebWindowType type);
+    void populateNetworkRequest(QNetworkRequest &request);
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     void clearSSLErrors(QWebFrame *frame);
     bool alreadyHasSSLCertForUrl(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError=0L);
     void markPollutedFrame(QWebFrame *replyframe);
-    void populateNetworkRequest(QNetworkRequest &request);
     QWebFrame* getFrame(const QNetworkRequest& request);
     void addCertToFrame(AroraSSLCertificate *certificate, QWebFrame *frame);
     void clearFrameSSLErrors(QWebFrame *frame);
@@ -118,16 +124,21 @@ protected:
     void handleDesignFlaw(QWebFrame *f);
     bool frameHasThisSSLError(QWebFrame *frame, const QUrl url);
     void addSSLCert(const QUrl url, QNetworkReply *reply, AroraSSLError *sslError);
+#endif
+#endif
 
 protected slots:
     void handleUnsupportedContent(QNetworkReply *reply);
     void addExternalBinding(QWebFrame *frame = 0);
 
-    void bindRequestToFrame(QWebFrame *frame, QNetworkRequest *request);
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     void handleSSLErrorPage(AroraSSLError *error, QNetworkReply *reply);
     void setSSLConfiguration(QNetworkReply *reply);
     void handleSSLError(QNetworkReply *reply, const QList<QSslError> &error);
     void sslCancel();
+#endif
+#endif
 
 protected:
     static QString s_userAgent;
@@ -141,13 +152,16 @@ private:
     QNetworkRequest lastRequest;
     QWebPage::NavigationType lastRequestType;
 
+#ifndef QT_NO_OPENSSL
+#if QT_VERSION >= 0x040600
     bool m_sslLowGradeEncryption;
     bool m_aboutToDisplaySSLError;
     QSslConfiguration m_sslConfiguration;
     typedef QList<AroraSSLCertificate*> AroraSSLCertificates;
     QMap<QWebFrame*, AroraSSLCertificates> m_frameSSLCertificates;
     QList<QWebFrame*> m_pollutedFrames;
-
+#endif
+#endif
 
 };
 

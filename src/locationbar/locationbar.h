@@ -49,7 +49,11 @@ protected:
 
 private slots:
     void webViewUrlChanged(const QUrl &url);
+#if QT_VERSION >= 0x040600
+#ifndef QT_NO_OPENSSL
     void displaySSL();
+#endif
+#endif
 
 private:
     QPointer<WebView> m_webView;

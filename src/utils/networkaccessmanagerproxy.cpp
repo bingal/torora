@@ -33,7 +33,7 @@
 #include "browsermainwindow.h"
 #include "webpageproxy.h"
 #include "locationbar.h"
-#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#if QT_VERSION >= 0x040600
 #ifndef QT_NO_OPENSSL
 #include "sslindicator.h"
 #include "sslstrings.h"
@@ -75,7 +75,7 @@ void NetworkAccessManagerProxy::setPrimaryNetworkAccessManager(NetworkAccessMana
             m_primaryManager, SIGNAL(finished(QNetworkReply *)));
     connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
             m_primaryManager, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
-#if QT_VERSION < 0x040600 && !defined(WEBKIT_TRUNK)
+#if QT_VERSION < 0x040600
 #ifndef QT_NO_OPENSSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
             m_primaryManager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
