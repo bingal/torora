@@ -212,8 +212,6 @@ void AroraSSLCertificate::microSSLText(QPainter &p, QRect rect)
 
     boldfont.setBold(true);
 
-    int startx = certrect.x();
-    int starty = certrect.y();
     certrect.setX(certrect.x() + skipline);
 
     //Issuer Info
@@ -252,7 +250,6 @@ void AroraSSLCertificate::miniSSLText(QPainter &p, QRect rect)
 
 
     certrect.setY(certrect.y() + 64);
-    int starty = certrect.y();
     certrect.setX(certrect.x() + skipline);
     int startx = certrect.x();
 
@@ -283,7 +280,7 @@ void AroraSSLCertificate::miniSSLText(QPainter &p, QRect rect)
         p.drawText(certrect, QObject::tr("Warning: "));
         certrect.setX(certrect.x() + fn.width(QObject::tr("Warning: ")) + 10);
         p.setFont(normalfont);
-        p.drawText(certrect, QObject::tr("Some Items Unencrypted"));
+        p.drawText(certrect, QObject::tr("Unencrypted Items"));
     }
 
     if (errors == 0) {
@@ -314,7 +311,7 @@ void AroraSSLCertificate::miniSSLText(QPainter &p, QRect rect)
         p.drawText(certrect, QLatin1String("Encryption: "));
         certrect.setX(certrect.x() + fn.width(QLatin1String("Encryption: ") + 5));
         p.setFont(normalfont);
-        p.drawText(certrect, (sslDefinition(enc).isEmpty())?QLatin1String("<Cipher Not Specified>"):sslDefinition(enc));
+        p.drawText(certrect, (enc.isEmpty())?QLatin1String("<Null>"):enc);
     }
 }
 
@@ -340,9 +337,6 @@ void AroraSSLCertificate::fullSSLText(QPainter &p, QRect rect)
 
     boldfont.setBold(true);
 
-
-    int startx = certrect.x();
-    int starty = certrect.y();
     certrect.setX(certrect.x() + skipline);
     certrect.setY(certrect.y() + 64);
 
@@ -350,6 +344,7 @@ void AroraSSLCertificate::fullSSLText(QPainter &p, QRect rect)
         /* FIXME: m_errorFrames is a list of frames and frame metadata that use this cert
                  with its associated errors, that's why we only need to iterate through
                  the errors of m_errorFrames->first(). Need a less confusing name! */
+        int sline = skipline;
         for (errors = 0; errors < m_errorFrames.first()->errors().count(); ++errors) {
             if (errors > 2)
                 break;
@@ -359,14 +354,18 @@ void AroraSSLCertificate::fullSSLText(QPainter &p, QRect rect)
             QString text = errorString->string(1).replace(QLatin1String("<b>"),QLatin1String(""))
                                                  .replace(QLatin1String("</b>"),QLatin1String(""));
             p.setFont(boldfont);
-            certrect.setY(certrect.y() + skipline);
+            certrect.setY(certrect.y() + sline);
             p.drawText(certrect, title);
             certrect.setY(certrect.y() + skipline);
             p.setFont(normalfont);
             p.drawText(certrect, text);
+            if (fn.width(text) > certrect.width())
+              sline = skipline * ((fn.width(text) / certrect.width()) + 1);
+            else
+              sline = skipline;
         }
     }
-
+    
     if (m_polluted) {
         p.setFont(boldfont);
         certrect.setY(certrect.y() + (skipline * (errors + 1)));
@@ -411,7 +410,6 @@ void AroraSSLCertificate::fullSSLText(QPainter &p, QRect rect)
 void AroraSSLCertificate::populateSSLText(QPainter &p, QRect rect, bool polluted, const QStringList &resources)
 {
     int width = rect.width();
-    int height = rect.height();
 
     //check for polluted frame
     m_polluted = polluted;

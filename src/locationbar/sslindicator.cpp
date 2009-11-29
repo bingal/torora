@@ -29,7 +29,7 @@ SSLIndicator::SSLIndicator(QWidget *parent)
     m_sslIcons.insert(2, QPixmap(QLatin1String(":graphics/ssl/security-high.png")));
 
     setCursor(Qt::ArrowCursor);
-    setToolTip(tr("Clear"));
+    setToolTip(tr("Security Information"));
     setFocusPolicy(Qt::NoFocus);
     setMinimumSize(16, 16);
     setIcon(QPixmap(QLatin1String(":graphics/ssl/security-high.png")));

@@ -39,6 +39,7 @@ SSLDialog::SSLDialog(QWidget *parent, AroraSSLCertificate *cert, QUrl url)
     : QDialog(parent),
     errors()
 {
+    Q_UNUSED(url);
     QStringList sslErrorTitle;
     QStringList sslErrorText;
 

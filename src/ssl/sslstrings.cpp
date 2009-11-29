@@ -27,7 +27,6 @@
  */
 
 #include "sslstrings.h"
-#include "browsermainwindow.h"
 #include "browserapplication.h"
 #include "sslcert.h"
 
@@ -49,7 +48,6 @@ SSLString::SSLString(QStringList &strings, QPixmap &image)
 
 SSLString *sslErrorString(AroraSSLError *error, int ref)
 {
-    BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
 
     QStringList errStr;
     QPixmap image;
@@ -76,42 +74,43 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             errStr << cancelButton;
             break;
         case QSslError:: UnableToGetIssuerCertificate:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("They're telling us that their security certificate is available"
-                                  "from %1, but it is not.").arg(issuerinfo);
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
+            errStr << QObject::tr("Certificate From %1 Not Found!")
+                                .arg(issuerinfo);
+            errStr << QObject::tr("The website is telling us that their security is certified by "
+                                  "%1, but they haven't given us the certificate that proves this.").arg(issuerinfo);
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity, but is unable to prove it.").arg(surl).arg(issuerinfo);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have messed up their security configuration somehow.").arg(surl);
             errStr << QString();
             errStr << cancelButton;
-            errStr << QObject::tr("Broken Security Configuration!");
+            errStr << QObject::tr("Certificate Not Found!");
             break;
         case QSslError:: UnableToDecryptCertificateSignature:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("The certificate signature could not be decrypted");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
+            errStr << QObject::tr("Can't Decrypt Certificate Signature!");
+            errStr << QObject::tr("The certificate signature could not be decrypted.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent us proving its identity.").arg(surl).arg(issuerinfo);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have messed up their security configuration somehow.").arg(surl);
             errStr << QString();
             errStr << cancelButton;
             errStr << QObject::tr("Corrupt Certificate!");
             break;
         case QSslError:: UnableToDecodeIssuerPublicKey:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("The public key in the certificate could not be read");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and has made a clumsy attempt to forge their security certificate.").arg(surl);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> There was an undetected internal error in Arora.");
+            errStr << QObject::tr("Can't Read Certificate Public Key!");
+            errStr << QObject::tr("The public key in the certificate could not be read.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent us proving its identity.").arg(surl).arg(issuerinfo);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have messed up their security configuration somehow.").arg(surl);
             errStr << QString();
             errStr << cancelButton;
             errStr << QObject::tr("Corrupt Certificate!");
             break;
         case QSslError:: CertificateSignatureFailed:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("The signature of the certificate is invalid");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and has made a clumsy attempt to forge their security certificate.").arg(surl);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> There was an undetected internal error in Arora.");
+            errStr << QObject::tr("Certificate Signature is Not Valid!");
+            errStr << QObject::tr("The signature of the certificate is invalid.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent you proving its identity.").arg(surl).arg(issuerinfo);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have messed up their security configuration somehow.").arg(surl);
             errStr << QString();
             errStr << cancelButton;
             errStr << QObject::tr("Invalid Signature!");
@@ -127,8 +126,8 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             break;
         case QSslError:: CertificateExpired:
             errStr << QObject::tr("This Certificate is Out of Date.").arg(expiryDate);
-            errStr << QObject::tr("The security certificate %1 has given us is expired on %2.").arg(surl).arg(expiryDate);
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> This security certificate is compromised and you may end up being redirected to a malicious website.").arg(surl);
+            errStr << QObject::tr("The security certificate from %1 expired on %2.").arg(surl).arg(expiryDate);
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and has made a clumsy attempt to forge their security certificate.").arg(surl);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of %1 have forgotten to update their security certificate.");
             errStr << proceedButton;
             errStr << cancelButton;
@@ -136,18 +135,18 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             break;
         case QSslError:: InvalidNotBeforeField:
             errStr << QObject::tr("Invalid Date");
-            errStr << QObject::tr("The certificate's notBefore field contains an invalid time");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> There was an undetected internal error in Arora.");
+            errStr << QObject::tr("The certificate's notBefore field contains an invalid time.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and has made a clumsy attempt to forge their security certificate.").arg(surl);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have messed up their security configuration somehow.").arg(surl);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Invalid Date!");
             break;
         case QSslError:: InvalidNotAfterField:
             errStr << QObject::tr("Invalid Date");
-            errStr << QObject::tr("The certificate's notAfter field contains an invalid time");
+            errStr << QObject::tr("The certificate's notAfter field contains an invalid time.");
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> There was an undetected internal error in Arora.");
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have messed up their security configuration somehow.").arg(surl);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Invalid!");
@@ -172,77 +171,83 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             errStr << QObject::tr("Home-made Certificate!");
             break;
         case QSslError:: UnableToGetLocalIssuerCertificate:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("The issuer certificate of a locally looked up certificate could not be found");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
+            errStr << QObject::tr("Cannot Find Issuer of Certificate!");
+            errStr << QObject::tr("The issuer certificate of a locally looked up certificate could not be found.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent you proving its identity.").arg(surl).arg(issuerinfo);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Broken Configuration!");
             break;
         case QSslError:: UnableToVerifyFirstCertificate:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("No certificates could be verified");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
+            errStr << QObject::tr("Can't Verify Any Certificates!");
+            errStr << QObject::tr("No certificates could be verified.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent you proving its identity.").arg(surl).arg(issuerinfo);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
-            errStr << QString();
+            errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Broken Configuration!");
             break;
         case QSslError:: InvalidCaCertificate:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("One of the CA certificates is invalid");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
-            errStr << QString();
+            errStr << QObject::tr("Authority Certificate is Invalid!");
+            errStr << QObject::tr("One of the CA certificates is invalid.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent you proving its identity.").arg(surl).arg(issuerinfo);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
+            errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Invalid CA Cert!");
             break;
         case QSslError:: PathLengthExceeded:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
+            errStr << QObject::tr("Certificate Has A Broken Parameter!")
                                 .arg(surl);
-            errStr << QObject::tr("The basicConstraints pathlength parameter has been exceeded");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
-            errStr << QString();
+            errStr << QObject::tr("The basicConstraints pathlength parameter has been exceeded.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity and has scrambled the certificate to prevent you proving its identity.").arg(surl).arg(issuerinfo);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
+            errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Broken Configuration!");
             break;
         case QSslError:: InvalidPurpose:
-            errStr << QObject::tr("No error");
-            errStr << QObject::tr("The supplied certificate is unsuited for this purpose");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
+            errStr << QObject::tr("Inappropriate Certificate");
+            errStr << QObject::tr("The supplied certificate is unsuited for this purpose.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> Your communication with <b>%1</b> has been intercepted and you are getting redirected to a fake site which is pretending that <b>%2</b> "
+                                  "has certified its identity. The fake site has got hold of a genuine certificate for %3 but one that does not prove its identity as a web server.").arg(surl).arg(issuerinfo).arg(surl);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> have muddled their security configuration.").arg(surl);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Unsuitable Cert!");
             break;
         case QSslError:: CertificateUntrusted:
-            errStr << QObject::tr("No error");
-            errStr << QObject::tr("The root CA certificate is not trusted for this purpose");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
+            errStr << QObject::tr("Untrusted Certificate");
+            errStr << QObject::tr("The site wants to secure the session with a certificate issued to them by someone we don't know.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> The issuer of the certificate (in this case %1) is some false organization invented for the purpose of compromising your security. "
+                                  "Your communication with %2 has been intercepted and you are getting redirected to a fake site which is using a certificate supposedly "
+                                  "issued to %3 by %4 in an attempt to prove its authenticity.").arg(issuerinfo).arg(surl).arg(issuerinfo).arg(surl);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> Arora doesn't recognize %1 as a trusted issuer of certificates. They may be perfectly legitimate, but Arora has no way of telling.").arg(issuerinfo);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Not Trusted!");
             break;
         case QSslError:: CertificateRejected:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
+            errStr << QObject::tr("Certificate Rejected by Root Authority!")
                                 .arg(surl);
-            errStr << QObject::tr("The root CA certificate is marked to reject the specified purpose");
-            errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
-            errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
+            errStr << QObject::tr("The root CA certificate is marked to reject the specified purpose.");
+            errStr << QObject::tr("<b>Worst Case Scenario:</b> The issuer of the certificate (in this case %1) is some false organization invented for the purpose of compromising your security. "
+                                  "Your communication with %2 has been intercepted and you are getting redirected to a fake site which is using a certificate supposedly "
+                                  "issued to %3 by %4 in an attempt to prove its authenticity.").arg(issuerinfo).arg(surl).arg(issuerinfo).arg(surl);
+            errStr << QObject::tr("<b>Best Case Scenario:</b> Arora doesn't recognize %1 as a trusted issuer of certificates. They may be perfectly legitimate, but Arora has no way of telling.").arg(issuerinfo);
             errStr << proceedButton;
             errStr << cancelButton;
             errStr << QObject::tr("Rejected by CA!");
             break;
         case QSslError:: SubjectIssuerMismatch: // hostname mismatch
-            errStr << QObject::tr("No error");
+            errStr << QObject::tr("Subject/Issuer Name Mismatch");
             errStr << QObject::tr("The current candidate issuer certificate was rejected because its"
-                        " subject name did not match the issuer name of the current certificate");
+                        " subject name did not match the issuer name of the current certificate.");
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
             errStr << proceedButton;
@@ -250,10 +255,10 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             errStr << QObject::tr("Rejected by CA!");
             break;
         case QSslError:: AuthorityIssuerSerialNumberMismatch:
-            errStr << QObject::tr("No error");
+            errStr << QObject::tr("Serial Number Mismatch");
             errStr << QObject::tr("The current candidate issuer certificate was rejected because"
                                                   " its issuer name and serial number was present and did not match the"
-                                                  " authority key identifier of the current certificate");
+                                                  " authority key identifier of the current certificate.");
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
             errStr << proceedButton;
@@ -261,9 +266,8 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
             errStr << QObject::tr("Rejected by CA!");
             break;
         case QSslError:: NoPeerCertificate:
-            errStr << QObject::tr("<b>%1</b> Has A Broken Security Configuration!")
-                                .arg(surl);
-            errStr << QObject::tr("The peer did not present any certificate");
+            errStr << QObject::tr("Website Didn't Present a Certificate!");
+            errStr << QObject::tr("The peer did not present any certificate.");
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
             errStr << QString();
@@ -273,7 +277,7 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
         case QSslError:: HostNameMismatch:
             errStr << QObject::tr("Mmm.. This may not be <b>%1</b>")
                                 .arg(surl);
-            errStr << QObject::tr("You asked for <b>%1</b> but the site certificate gives its name as <b>%2</b>")
+            errStr << QObject::tr("You asked for <b>%1</b> but the site certificate gives its name as <b>%2</b>.")
                                 .arg(surl).arg(subject);
             errStr << QObject::tr("<b>Worst Case Scenario:</b> Someone is intercepting your communications to %1 and re-directing you to %2.").arg(surl).arg(subject);
             errStr << QObject::tr("<b>Best Case Scenario:</b> The owners of <b>%1</b> and <b>%2</b> are the same, and have used the same security certificate for both.").arg(surl).arg(subject);
@@ -284,7 +288,7 @@ SSLString *sslErrorString(AroraSSLError *error, int ref)
         case QSslError:: NoSslSupport:
             break;
         default:
-            errStr << QObject::tr("No error");
+            errStr << QObject::tr("Unknown error");
             errStr << QObject::tr("Unknown error");
             break;
     }
