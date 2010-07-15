@@ -1,6 +1,6 @@
 CONFIG += qt warn_on
 CONFIG += uitools
-win32 : Debug : CONFIG += console
+win32|os2 : Debug : CONFIG += console
 
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
