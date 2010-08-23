@@ -385,6 +385,11 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
               QUiLoader loader;
               QObject *object;
               object = loader.createWidget(classId, view());
+//               QWidget *w = qobject_cast< QWidget* >(object);
+//               w->setAttribute(Qt::WA_OpaquePaintEvent,true);
+//              w->setBackgroundRole(QPalette::NoRole);
+/*              w->setBackgroundRole(QPalette::NoRole);
+              w->setForegroundRole(QPalette::NoRole);*/
               QListIterator<AroraSSLCertificate*> certs(allCerts());
               while (certs.hasNext()) {
                   AroraSSLCertificate *cert = certs.next();

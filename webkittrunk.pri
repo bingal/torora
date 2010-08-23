@@ -24,7 +24,7 @@ webkit_trunk {
     # because webkit only has release or debug libs fall back to the other one
     CONFIG(debug) {
         exists($$OUTPUT_DIR/Debug) {
-            OUTPUT_DIR = $$OUTPUT_DIR/svn/master/Debug
+            OUTPUT_DIR = $$OUTPUT_DIR/Debug
         } else {
             OUTPUT_DIR = $$OUTPUT_DIR/Release
         }

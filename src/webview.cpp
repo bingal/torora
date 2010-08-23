@@ -987,12 +987,28 @@ void WebView::paintEvent(QPaintEvent *event) {
 
     /*FIXME: We actually need to paint the frame just under the mainframe, I think.
              Frames nested within frames, especially iframes, can't be painted sometimes. */
+
+
     QWebView::paintEvent(event);
+    const QObjectList & children = this->children();
+    foreach (QObject* child, children) {
+        if (!strcmp(child->metaObject()->className(), "QPushButton")) {
+            QWidget* w = qobject_cast< QWidget* >(child);
+            w->show();
+        }
+    }
 
     if (!m_highlightedcert)
-        return;
+      return;
+
 
     for (int i = 0; i < m_regions.count(); i++) {
+        foreach (QObject* child, children) {
+            if (!strcmp(child->metaObject()->className(), "QPushButton")) {
+                QWidget* w = qobject_cast< QWidget* >(child);
+                w->hide();
+            }
+        }
         QPainter p(this);
         QListIterator<QWebFrame*> frames(m_highlightedcert->frames());
         QWebFrame* frame;
@@ -1010,7 +1026,6 @@ void WebView::paintEvent(QPaintEvent *event) {
             //FIXME: bit of work required here to respect scrollposition when
             //       highlighting elements in the page
             QRect rect  = m_regions.at(i).boundingRect();
-            frame->render(&p, m_regions.at(i));
             p.setBrush(m_highlightedcert->color(webPage()->frameIsPolluted(frame, m_highlightedcert)));
             p.drawRect(rect);
             if (geometry.contains(rect, true)) {
@@ -1023,7 +1038,6 @@ void WebView::paintEvent(QPaintEvent *event) {
             m_highlightedcert->populateSSLText(p, geometry,
                                                webPage()->frameIsPolluted(frame, m_highlightedcert),
                                                m_resourcesForRegion.value(frame));
-
         }
         p.end();
     }
