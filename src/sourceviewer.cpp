@@ -1,5 +1,6 @@
 /*
  * Copyright 2008 Christian Franke <cfchris6@ts2server.com>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 #include <qnetworkrequest.h>
 #include <qplaintextedit.h>
 #include <qshortcut.h>
+#include <qsettings.h>
 #include <qwebframe.h>
 #include <qwebpage.h>
 
@@ -34,8 +36,8 @@
 #include "plaintexteditsearch.h"
 #include "sourcehighlighter.h"
 
-SourceViewer::SourceViewer(const QString &source,
-        const QString &title, const QUrl &url, QWidget *parent)
+SourceViewer::SourceViewer(const QString &source, const QString &title,
+                           const QUrl &url, QWidget *parent)
     : QDialog(parent)
     , m_edit(new QPlainTextEdit(tr("Loading..."), this))
     , m_highlighter(new SourceHighlighter(m_edit->document()))
@@ -44,15 +46,16 @@ SourceViewer::SourceViewer(const QString &source,
     , m_menuBar(new QMenuBar(this))
     , m_editMenu(new QMenu(tr("&Edit"), m_menuBar))
     , m_findAction(new QAction(tr("&Find"), m_editMenu))
-    , m_viewMenu(new QMenu(tr("&View"), m_menuBar))
-    , m_setWrappingAction(new QAction(tr("&Wrap lines"), m_viewMenu))
+    , m_source(source)
 {
     setWindowTitle(tr("Source of Page %1").arg(title));
-    resize(640, 480);
 
-    m_source = new QString(source);
+    QSettings settings;
+    settings.beginGroup(QLatin1String("SourceViewer"));
+    QSize size = settings.value(QLatin1String("size"), QSize(640, 480)).toSize();
+    resize(size);
 
-    m_edit->setLineWrapMode(QPlainTextEdit::NoWrap);
+    m_edit->setLineWrapMode(QPlainTextEdit::WidgetWidth);
     m_edit->setReadOnly(true);
     QFont font = m_edit->font();
     font.setFamily(QLatin1String("Monospace"));
@@ -66,13 +69,6 @@ SourceViewer::SourceViewer(const QString &source,
     connect(m_findAction, SIGNAL(triggered()),
             m_plainTextEditSearch, SLOT(showFind()));
 
-    m_menuBar->addMenu(m_viewMenu);
-    m_viewMenu->addAction(m_setWrappingAction);
-    m_setWrappingAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
-    m_setWrappingAction->setCheckable(true);
-    connect(m_setWrappingAction, SIGNAL(triggered(bool)),
-            this, SLOT(setWrapping(bool)));
-
     m_layout->setSpacing(0);
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_menuBar);
@@ -80,43 +76,40 @@ SourceViewer::SourceViewer(const QString &source,
     m_layout->addWidget(m_edit);
     setLayout(m_layout);
 
-    m_request = new QNetworkRequest(url);
+    QNetworkRequest request(url);
 
     /*Torora: Req 3.5*/
     if (BrowserApplication::instance()->isTor())
-      m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+      request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,
               QNetworkRequest::AlwaysNetwork);
     else
-      m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+      request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,
               QNetworkRequest::PreferCache);
 
-    m_reply = BrowserApplication::networkAccessManager()->get(*m_request);
+    m_reply = BrowserApplication::networkAccessManager()->get(request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(loadingFinished()));
     m_reply->setParent(this);
+}
+
+SourceViewer::~SourceViewer()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("SourceViewer"));
+    settings.setValue(QLatin1String("size"), size());
 }
 
 void SourceViewer::loadingFinished()
 {
     QWebPage page;
     QByteArray response = m_reply->readAll();
-    page.mainFrame()->setContent(response, QString(), m_request->url());
+    page.mainFrame()->setContent(response, QString(), m_reply->request().url());
 
     /* If original request was POST or a different problem is there, fall
        back to modified version of QWebFrame.toHtml() */
-    if (page.mainFrame()->toHtml() != *m_source)
-        m_edit->setPlainText(*m_source);
+    if (page.mainFrame()->toHtml() != m_source)
+        m_edit->setPlainText(m_source);
     else
         m_edit->setPlainText(QLatin1String(response));
 
     m_reply->close();
-    delete m_request;
-    delete m_source;
-}
-
-void SourceViewer::setWrapping(bool wrap)
-{
-    if (wrap)
-        m_edit->setLineWrapMode(QPlainTextEdit::WidgetWidth);
-    else
-        m_edit->setLineWrapMode(QPlainTextEdit::NoWrap);
 }

@@ -46,13 +46,16 @@ protected:
     void paintEvent(QPaintEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 
 private slots:
     void webViewUrlChanged(const QUrl &url);
 
 private:
     QPointer<WebView> m_webView;
-    QColor m_defaultBaseColor;
+
     LocationBarSiteIcon *m_siteIcon;
     PrivacyIndicator *m_privacyIndicator;
     TorIndicator *m_torIndicator;

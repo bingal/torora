@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,8 @@
 
 #include "browserapplication.h"
 
+#include "autosaver.h"
+#include "autofillmanager.h"
 #include "bookmarksmanager.h"
 #include "browsermainwindow.h"
 #include "cookiejar.h"
@@ -80,6 +82,7 @@
 #include <qevent.h>
 #include <qglobal.h>
 #include <qlibraryinfo.h>
+#include <qlocalsocket.h>
 #include <qmessagebox.h>
 #include <qsettings.h>
 #include <qstatusbar.h>
@@ -88,10 +91,12 @@
 #include <QShortcut>
 #include <qdebug.h>
 
-
 #ifdef Q_OS_WIN
 #include <time.h>
+#include <windows.h>
 #endif
+
+// #define BROWSERAPPLICATION_DEBUG
 
 DownloadManager *BrowserApplication::s_downloadManager = 0;
 HistoryManager *BrowserApplication::s_historyManager = 0;
@@ -99,6 +104,7 @@ NetworkAccessManager *BrowserApplication::s_networkAccessManager = 0;
 BookmarksManager *BrowserApplication::s_bookmarksManager = 0;
 LanguageManager *BrowserApplication::s_languageManager = 0;
 TorManager *BrowserApplication::s_torManager = 0;
+AutoFillManager *BrowserApplication::s_autoFillManager = 0;
 
 BrowserApplication::BrowserApplication(int &argc, char **argv)
     : SingleApplication(argc, argv)
@@ -106,19 +112,29 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
     QCoreApplication::setApplicationName(QLatin1String("Torora"));
-    QString version = QLatin1String("0.1");
+    QCoreApplication::setApplicationVersion(QLatin1String("0.1"));
 
-    QCoreApplication::setApplicationVersion(version);
 #ifndef AUTOTESTS
+    connect(this, SIGNAL(messageReceived(QLocalSocket *)),
+            this, SLOT(messageReceived(QLocalSocket *)));
+
     QStringList args = QCoreApplication::arguments();
-    QString message = (args.count() > 1) ? args.last() : QString();
-    if (sendMessage(message))
+    if (args.count() > 1) {
+        QString message = parseArgumentUrl(args.last());
+        sendMessage(message.toUtf8());
+    }
+    // If we could connect to another Arora then exit
+    QString message = QString(QLatin1String("aroramessage://getwinid"));
+    if (sendMessage(message.toUtf8(), 500))
         return;
+
+#ifdef BROWSERAPPLICATION_DEBUG
+    qDebug() << "BrowserApplication::" << __FUNCTION__ << "I am the only arora";
+#endif
+
     // not sure what else to do...
     if (!startSingleServer())
         return;
-    connect(this, SIGNAL(messageReceived(const QString &)),
-            this, SLOT(messageReceived(const QString &)));
 #endif
 
 #if defined(Q_WS_MAC)
@@ -175,6 +191,9 @@ BrowserApplication::~BrowserApplication()
     delete s_networkAccessManager;
     delete s_bookmarksManager;
     delete s_torManager;
+    delete s_languageManager;
+    delete s_historyManager;
+    delete s_autoFillManager;
 }
 
 #if defined(Q_WS_MAC)
@@ -198,17 +217,74 @@ void BrowserApplication::retranslate()
     networkAccessManager()->loadSettings();
 }
 
-void BrowserApplication::messageReceived(const QString &message)
+// The only special property of an argument url is that the file's
+// can be local, they don't have to be absolute.
+QString BrowserApplication::parseArgumentUrl(const QString &string) const
 {
-    if (!message.isEmpty()) {
+    if (QFile::exists(string)) {
+        QFileInfo info(string);
+        return info.canonicalFilePath();
+    }
+    return string;
+}
+
+void BrowserApplication::messageReceived(QLocalSocket *socket)
+{
+    QString message;
+    QTextStream stream(socket);
+    stream >> message;
+#ifdef BROWSERAPPLICATION_DEBUG
+    qDebug() << "BrowserApplication::" << __FUNCTION__ << message;
+#endif
+    if (message.isEmpty())
+        return;
+
+    // Got a normal url
+    if (!message.startsWith(QLatin1String("aroramessage://"))) {
         QSettings settings;
         settings.beginGroup(QLatin1String("tabs"));
         TabWidget::OpenUrlIn tab = TabWidget::OpenUrlIn(settings.value(QLatin1String("openLinksFromAppsIn"), TabWidget::NewSelectedTab).toInt());
         settings.endGroup();
+        if (QUrl(message) == m_lastAskedUrl
+                && m_lastAskedUrlDateTime.addSecs(10) > QDateTime::currentDateTime()) {
+            qWarning() << "Possible recursive openUrl called, ignoring url:" << m_lastAskedUrl;
+            return;
+        }
         mainWindow()->tabWidget()->loadString(message, tab);
+        return;
     }
-    mainWindow()->raise();
-    mainWindow()->activateWindow();
+
+    if (message.startsWith(QLatin1String("aroramessage://getwinid"))) {
+#ifdef Q_OS_WIN
+        QString winid = QString(QLatin1String("%1")).arg((qlonglong)mainWindow()->winId());
+#else
+        mainWindow()->show();
+        mainWindow()->setFocus();
+        mainWindow()->raise();
+        mainWindow()->activateWindow();
+        alert(mainWindow());
+        QString winid;
+#endif
+#ifdef BROWSERAPPLICATION_DEBUG
+        qDebug() << "BrowserApplication::" << __FUNCTION__ << "sending win id" << winid << mainWindow()->winId();
+#endif
+        QString message = QLatin1String("aroramessage://winid/") + winid;
+        socket->write(message.toUtf8());
+        socket->waitForBytesWritten();
+        return;
+    }
+
+    if (message.startsWith(QLatin1String("aroramessage://winid"))) {
+        QString winid = message.mid(21);
+#ifdef BROWSERAPPLICATION_DEBUG
+        qDebug() << "BrowserApplication::" << __FUNCTION__ << "got win id:" << winid;
+#endif
+#ifdef Q_OS_WIN
+        WId wid = (WId)winid.toLongLong();
+        SetForegroundWindow(wid);
+#endif
+        return;
+    }
 }
 
 void BrowserApplication::quitBrowser()
@@ -224,7 +300,9 @@ void BrowserApplication::quitBrowser()
         }
 
         if (tabCount > 1) {
-            int ret = QMessageBox::warning(mainWindow(), QString(),
+            QWidget *widget = mainWindow();
+            QApplication::alert(widget);
+            int ret = QMessageBox::warning(widget, QString(),
                                tr("There are %1 windows and %2 tabs open\n"
                                   "Do you want to quit anyway?").arg(m_mainWindows.count()).arg(tabCount),
                                QMessageBox::Yes | QMessageBox::No,
@@ -245,11 +323,7 @@ void BrowserApplication::quitBrowser()
 void BrowserApplication::postLaunch()
 {
     QDesktopServices::StandardLocation location;
-#if QT_VERSION >= 0x040500
     location = QDesktopServices::CacheLocation;
-#else
-    location = QDesktopServices::DataLocation;
-#endif
     QString directory = QDesktopServices::storageLocation(location);
     if (directory.isEmpty())
         directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
@@ -272,14 +346,15 @@ void BrowserApplication::postLaunch()
         QStringList args = QCoreApplication::arguments();
 
         if (args.count() > 1) {
+            QString argumentUrl = parseArgumentUrl(args.last());
             switch (startup) {
             case 2: {
                 restoreLastSession();
-                mainWindow()->tabWidget()->loadString(args.last(), TabWidget::NewSelectedTab);
+                mainWindow()->tabWidget()->loadString(argumentUrl, TabWidget::NewSelectedTab);
                 break;
             }
             default:
-                mainWindow()->tabWidget()->loadString(args.last());
+                mainWindow()->tabWidget()->loadString(argumentUrl);
                 break;
             }
         } else {
@@ -337,6 +412,9 @@ void BrowserApplication::loadSettings()
     }
     defaultSettings->setAttribute(QWebSettings::AutoLoadImages, settings.value(QLatin1String("enableImages"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, settings.value(QLatin1String("enableInspector"), false).toBool());
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    defaultSettings->setAttribute(QWebSettings::DnsPrefetchEnabled, true);
+#endif
 
     QUrl url = settings.value(QLatin1String("userStyleSheet")).toUrl();
     defaultSettings->setUserStyleSheetUrl(url);
@@ -346,6 +424,9 @@ void BrowserApplication::loadSettings()
     defaultSettings->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, false);
     defaultSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
 #endif
+
+    int maximumPagesInCache = settings.value(QLatin1String("maximumPagesInCache"), 3).toInt();
+    QWebSettings::globalSettings()->setMaximumPagesInCache(maximumPagesInCache);
 
     settings.endGroup();
 }
@@ -357,6 +438,18 @@ QList<BrowserMainWindow*> BrowserApplication::mainWindows()
     for (int i = 0; i < m_mainWindows.count(); ++i)
         list.append(m_mainWindows.at(i));
     return list;
+}
+
+bool BrowserApplication::allowToCloseWindow(BrowserMainWindow *window)
+{
+    Q_UNUSED(window)
+    if (mainWindows().count() > 1)
+        return true;
+
+    if (s_downloadManager)
+        return downloadManager()->allowQuit();
+
+    return true;
 }
 
 void BrowserApplication::clean()
@@ -414,9 +507,10 @@ bool BrowserApplication::restoreLastSession()
         QSettings settings;
         settings.beginGroup(QLatin1String("MainWindow"));
         if (settings.value(QLatin1String("restoring"), false).toBool()) {
-            QMessageBox::information(0, tr("Restore failed"),
-                tr("The saved session will not be restored because Torora crashed while trying to restore this session."));
-            return false;
+            QMessageBox::StandardButton result = QMessageBox::question(0, tr("Restore failed"),
+                tr("Torora crashed while trying to restore this session.  Should I try again?"), QMessageBox::Yes | QMessageBox::No);
+            if (result == QMessageBox::No)
+                return false;
         }
         // saveSession will be called by an AutoSaver timer from the set tabs
         // and in saveSession we will reset this flag back to false
@@ -481,6 +575,13 @@ bool BrowserApplication::event(QEvent *event)
 }
 #endif
 
+void BrowserApplication::askDesktopToOpenUrl(const QUrl &url)
+{
+    m_lastAskedUrl = url;
+    m_lastAskedUrlDateTime = QDateTime::currentDateTime();
+    QDesktopServices::openUrl(url);
+}
+
 void BrowserApplication::openUrl(const QUrl &url)
 {
     setEventMouseButtons(mouseButtons());
@@ -490,6 +591,8 @@ void BrowserApplication::openUrl(const QUrl &url)
 
 BrowserMainWindow *BrowserApplication::newMainWindow()
 {
+    if (!m_mainWindows.isEmpty())
+        mainWindow()->m_autoSaver->saveIfNeccessary();
     BrowserMainWindow *browser = new BrowserMainWindow();
     m_mainWindows.prepend(browser);
     connect(this, SIGNAL(privacyChanged(bool)),
@@ -531,10 +634,8 @@ DownloadManager *BrowserApplication::downloadManager()
 
 NetworkAccessManager *BrowserApplication::networkAccessManager()
 {
-    if (!s_networkAccessManager) {
+    if (!s_networkAccessManager)
         s_networkAccessManager = new NetworkAccessManager();
-        s_networkAccessManager->setCookieJar(new CookieJar);
-    }
     return s_networkAccessManager;
 }
 
@@ -555,7 +656,11 @@ BookmarksManager *BrowserApplication::bookmarksManager()
 LanguageManager *BrowserApplication::languageManager()
 {
     if (!s_languageManager) {
-        s_languageManager = new LanguageManager;
+        s_languageManager = new LanguageManager();
+        s_languageManager->addLocaleDirectory(dataFilePath(QLatin1String("locale")));
+        s_languageManager->addLocaleDirectory(qApp->applicationDirPath() + QLatin1String("/src/.qm/locale"));
+        s_languageManager->addLocaleDirectory(installedDataDirectory() + QLatin1String("/locale"));
+        s_languageManager->loadLanguageFromSettings();
         connect(s_languageManager, SIGNAL(languageChanged(const QString &)),
                 qApp, SLOT(retranslate()));
     }
@@ -568,6 +673,15 @@ TorManager *BrowserApplication::torManager()
         s_torManager = new TorManager();
     }
     return s_torManager;
+
+}
+
+AutoFillManager *BrowserApplication::autoFillManager()
+{
+    if (!s_autoFillManager) {
+        s_autoFillManager = new AutoFillManager;
+    }
+    return s_autoFillManager;
 }
 
 QIcon BrowserApplication::icon(const QUrl &url)
@@ -586,7 +700,7 @@ QIcon BrowserApplication::icon(const QUrl &url)
     return icon;
 }
 
-QString BrowserApplication::dataDirectory()
+QString BrowserApplication::installedDataDirectory()
 {
 #if defined(Q_WS_X11)
     return QLatin1String(PKGDATADIR);
@@ -595,7 +709,18 @@ QString BrowserApplication::dataDirectory()
 #endif
 }
 
-#if QT_VERSION >= 0x040500
+QString BrowserApplication::dataFilePath(const QString &fileName)
+{
+    QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    if (directory.isEmpty())
+        directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
+    if (!QFile::exists(directory)) {
+        QDir dir;
+        dir.mkpath(directory);
+    }
+    return directory + QLatin1String("/") + fileName;
+}
+
 bool BrowserApplication::zoomTextOnly()
 {
     return QWebSettings::globalSettings()->testAttribute(QWebSettings::ZoomTextOnly);
@@ -606,7 +731,6 @@ void BrowserApplication::setZoomTextOnly(bool textOnly)
     QWebSettings::globalSettings()->setAttribute(QWebSettings::ZoomTextOnly, textOnly);
     emit instance()->zoomTextOnlyChanged(textOnly);
 }
-#endif
 
 bool BrowserApplication::isPrivate()
 {

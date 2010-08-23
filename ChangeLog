@@ -1,3 +1,213 @@
+0.10.2
+The major issues:
+    - When compiling with Qt 4.6 Arora had been using some API that changes
+    shortly before the release of Qt 4.6.0 after an API review was done for
+    the new API in QtWebKit.  This release changes the code to build with the
+    final API that is found in Qt 4.6.0
+    - A segfault that could occur when opening a URL on a new window from the command-line.
+
+
+0.10.1
+The major issues:
+    Issue: 666 Sites were showing a "SSL handshake failure". With the new NetworkAccessManagerProxy the signals were being sent to the proxy and not the primary networkaccessmanager.
+    Issue: 683: Arora crashes when using privacy mode.
+	When switching to private mode the primary networkaccessmanagers swaps cookiejar's which caused a segfault. Introduce a CookieJarProxy class which will pass the cookie requests to the primary networkaccessmanager's cookiejar.
+
+Translations:
+    Add Portuguese translation from Américo Monteiro <a_monteiro@netcabo.pt>
+    Updated Turkish translation from Mehmet Nur Olcay <mnurolcay@gmail.com>
+    Issue: 682,677 Fix several FR spelling mistakes.
+
+Fixed Issues:
+    Issue: 79 Only tab down the completer when the popup is visible.
+    Issue: 221 When using Qt 4.6 hardcode a webpage to have a white background even when using a dark theme.
+    Issue: 472 Set the url on the location bar that matches the webview that we are loading the url in, not in the current location bar which might not be the correct one.
+    Issue: 637 Startup Crash with Qt 4.5.0 (not with any other version)
+    Issue: 679 Selecting Show only one close button instead of one for each tab requires an application restart to be applied.
+    Issue: 676 Fix openstreetmap.org's login saving and improve the Wallet password dialog when finding the login name.
+	Rather than using the document.form[0].name use document.form[0].elements["name"] this allows the name to contain things such as []'s without causing a problem.
+
+Other issues / changes
+    Add support for the home, favorites, search, and openurl multimedia keys found on some keyboards
+    Turn on AutoFill by default
+    Remove the accidental 100MB limit on the disk cache size in the settings dialog.
+    Make source viewer remember the window size and not block access to the main window
+
+0.10.0
+Interface
+- Issue #24: Add support for AdBlock
+- Issue #40: Support several common modifiers in the location bar for modifying the typed in url.
+    ctrl-enter       - append .com
+    ctrl-shift-enter - append .org
+    shift-enter      - append .net
+- Issue #79: Trap tab key to cycle through potential URLs in the location bar.
+- Issue #85: Alt+Enter on the location bar opens the url in a new tab.
+- Issue #119: Add Password Management / AutoFill
+- Issue #411: Save and restore the tab back/forward history
+- Issue #630: Limit download progress updates to 5 per second to reduces CPU use from 18% to 3% when downloading.
+- Issue #650: Save the toolbar location allowing the toolbars to be next to each other
+- Add ctrl-z shortcut to undo the closing of the last tab.
+- Behave better when access keys are enabled by adding a slight delay to make sure that the ctrl is actually for access keys and not for another shortcut such as ctrl-tab or ctrl-a
+- When arora crashed on the previous startup give the user a way to bypass the failsafe and restore their session if they really want.
+- Add the ability to set the length of a session cookie
+- Enable DNS prefetching and WebKit version in the about dialog when building against Qt 4.6.
+- Remember what tab you were on when you close the settings dialog
+- Add a browse button next to the style sheet line edit to help users find files and automatically translate them into url's.
+- Add icons to the menu actions on freedesktop systems.
+- Show the configure search engines action in the tools menu
+- Change default bookmarks to only have a link to htpp://arora-browser.org
+    Removed all of Qt development type entries
+    From discussion on http://arorabrowser.blogspot.com/2009/08/arora-090.html and also the Kubuntu guys strip the bookmarks in their release so it make sense.
+- Move the Preferences menu item to Tools|Options
+- Set placeholder text for the start page search box
+- Add a checkbox to hide/show hidden files in the directory listing.
+- Change the about dialog text so it can be selected with a mouse so users can copy the application version.
+- Allow urls to be dropped on the bookmark bar and bookmark menu
+
+Behind the scenes
+- Force the history completer to be LTR: same as the url line.
+- Create a new stills class, NetworkAcessManagerProxy that is useful for tracking what QWebPage a QWebReply came from.
+- Load QWebView settings when the View is created so m_enableAccessKeys will be read from settings
+- Rename lineedit -> locationbar functions & variables
+- Enhance SingleApplication so that the host can send messages back to the second application.
+    On Windows this is used to send the window id back to the application that was just started
+    so it can raise the arora window to the front.
+- Fix some old MSVC compile warnings
+- Make it possible to retranslate the bookmarks toolbar title
+- Set the maximumPagesInCache to 3 (default is 0) and provide a way for users to set this value through QSettings.
+- Add a path from the users directory to the locale search path
+- Added RTL support for the start page
+- Add support for multiple directories to LanguageManager.
+- Fix the naming of the QAction m_toolsEnableInspector to m_toolsEnableInspectorAction to be consistent with the rest of the code
+- Add new TreeSortFilterProxyModel class to utils that will only filter child nodes in a QAbstractItemModel. (under the BSD license)
+- Rename getConfigFile to dataFilePath
+- Rename dataDirectory to installedDataDirectory to give a much better description of what it does
+- Add missing drop functionality to the ModelMenu class. The implementation is symetric to the ModelToolBar class.
+- ModelMenu can now accept drops (both moving and copying) and can apply them to the underlying model.
+- Refactor BookmarksToolBar by making it inherit from ModelToolBar.
+- Add new ModelToolBar class, that is a subclass of QToolBar and an equivalent of ModelMenu for toolbars. It can be used to populate a toolbar with actions based on a given model.
+- Fix character encoding in directory listing.
+- Clean up the private browsing message box to make it easier to translate.
+
+Build system
+- Allow building against a shadow-built WebKit trunk
+- Ignore more misc generated build files on windows
+- Add Git hook to check commits for the proper copyright year
+- Ignore the doc directory which is generated by doxygen
+- Check for spaces at the start and end of an expression
+- Re-enable sharing the temporary compilation objects for all subprojects. Use the 'ordered' configuration to make sure that we walk through the subdirectories one by one and not all simultaneously when building in parallel.
+
+
+0.9.0
+Drop support for Qt 4.4.
+
+Interface
+FEATURES:
+- Add support for search keywords in the location bar.
+- POST support for OpenSearch suggestion requests.
+- Add WebKit version to the About dialog [WebKit trunk only].
+- Use HTTP pipelining for all network requests [Qt 4.6 only].
+
+IMPROVEMENTS:
+- Remember last used save directory.
+- Added file dialog to download location settings.
+- Restrict drag and drop to the same page unless a QWebView accepts it.
+- Open an URL dropped on the tab bar as new tab or replace existing tab.
+- Allow url to be dropped on the tab bar from other applications.
+- Add a Select All action.
+- Rather than not allowing setting or getting of any cookies in private mode create a blank cookie jar.
+- Significantly speed up the cookie dialog by keeping a cached copy of all the cookies.
+- Enhance the language manager to fallback to the country file if the country_language file doesn't exists.
+- Add drag support for downloaded item in the download manager.
+- Add Planet Qt to the default set of bookmarks.
+- Remove the text wrapping option from the source viewer's menu and instead enable it by default.
+
+BUGFIXES:
+- Avoid duplicated and contradictory rules on the cookie rule list.
+- Change the shortcut for showing the bookmark toolbar as it was conflicting with the show bookmark dialog shortcut.
+- Encode the user input before inserting it into an URL template.
+- Fix a crash when cloning a blank tab.
+- When the widget losses focus hide the access keys.
+- Fix detection of flash on various websites when ClickToFlash is used.
+- Avoid an infinite recursion when asking the desktop to open an URL.
+- When the download manager prevents the application from closing add a new tab when there are none.
+- Only show the url completer if the user is typing a url.
+- Always add the Inspect Element Action to the context menu when the developer extra tools are enabled.
+- Bookmarklets were not working properly.
+- Work around for a segfault in Qt 4.5.2 where you go into privacy mode while a QNetworkReply is still working.
+- Clarify the networkdisk cache behavior in the messagebox.
+- Start page: Reduce the top margin to 100px from so it fits on a netbook screen.
+- Hide the bookmarks toolbar by default.
+- Turn off cookie tracking filtering by default because it breaks sites like StackOverflow.com.
+- Before clearing the cookie jar, load it so the exceptions and other settings are loaded.
+- When removing cookies from the cookie jar via the cookie dialog notify the autosaver.
+- When receiving a drop event on a bookmark folder, make sure that we don't drop a child bookmark.
+- Avoid overwriting the user agent string in the WebPage autotest.
+- Fix non-ASCII characters displayed garbled for Authors.
+
+Behind the scenes
+- Merge two blocks of code that deals with oneCloseButton policy.
+- Make parentWindow() prettier.
+- Simplify updates of actions in view menu.
+- Save the window state when toggling the menu bar.
+- Save UI changes in the active window before creating a new one.
+- Move all network related files into one directory.
+
+Build system
+- When building on osx use qmake -r.
+- Ignore generated files built on windows.
+
+
+0.8.0
+Interface
+FEATURES:
+- When the ctrl key is pressed show keyboard accelerators on the screen. [Qt 4.6 only].
+- Location bar: implement full text search and more accurate sorting.
+- Add a simple start page with a search box pointing at the active search engine.
+- Allow to create new open search engines from any input forms displayed in websites [Qt 4.6 only].
+- Add a menu to set the default text encoding for all rendering [Qt 4.6 only].
+- Implement directory listing when accessing file:/// URLs that point to directories.
+- When a POST request is about to be resent, warn user about that fact to make sure that the operation is intended.
+- Add a checkable push button to the search bar that allows to highlight a specific string in a website [Qt 4.6 only].
+- Add a setting that specifies if the url supplied by the user should be forwarded to the default search engine if it isn't valid.
+
+IMPROVEMENTS:
+- Show a more verbose message when the htmlToXBel tool is not installed.
+- Show the complete tab title as tool tip to improve GUI usability for long website titles.
+- Download manager: Create the download directory as needed.
+- Location bar: If escape is pressed on location bar revert to the original URL, this emulates the firefox behaviour.
+- Add Google "I'm Feeling Lucky" search engine to the default set.
+- Drag & Drop: Add the ability to drop an url on the tab bar which will open it in a new tab.
+- Drag & Drop: Allow dropping URLs on the location bar.
+- When creating new windows, use the startup setting to decide if the homepage should be loaded.
+- Remove the network monitor tool as the current Inspector now lets you see request headers and response headers.
+
+BUGFIXES:
+- Fix several memory leaks: set the Qt::WA_DeleteOnClose flag on dialogs that are executed asynchronously.
+- Download manager: Fix displaying file size when downloading huge files.
+- Download manager: Give correct name to downloaded files with no suffix.
+- Location bar: Fix background color when using Oxygen style.
+- Bookmarks manager: Don't allow to edit the url in any nodes but normal bookmarks.
+- Private browsing now disables the disk cache.
+
+Behind the scenes
+- Added custom network scheme handlers, i.e. a single one for listing local directories.
+- Add a setting so the user can swap the location of the new and close tab buttons.
+- Add the ability for a user to specify the userAgent through QSettings.
+- Split up the bookmarks classes into separate files.
+- Remake the bookmarks toolbar.
+- Clean up the AddBookmarkDialog class.
+- OpenSearch: Implement the Referrer extension.
+- Implement the WebPage::linkedResources() method using the DOM API.
+- Tweak the certToFormattedString() function.
+- OpenSearch: localization improvements.
+
+Build system
+- Include an additional XML file in the installation, which will make Arora appear in Gnome Control Center on the list of available web browsers that can be set as default.
+- Add man pages for the tools.
+- webkit.pri now supports building QtWebKit as a framework on mac.
+
+
 0.7.1
 Fix Windows build.
 Fix building in parallel (make -jX).

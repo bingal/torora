@@ -47,6 +47,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>WebKit version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AcceptLanguage</name>
@@ -76,6 +80,74 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AdBlockBlockedNetworkReply</name>
+    <message>
+        <source>Blocked by AdBlockRule: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockDialog</name>
+    <message>
+        <source>Add Custom Rule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more about writing rules...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse Subscriptions...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AdBlock Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable AdBlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockManager</name>
+    <message>
+        <source>Custom Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockModel</name>
+    <message>
+        <source>Rule</source>
+        <translation type="unfinished">Peraturan</translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockSchemeAccessHandler</name>
+    <message>
+        <source>Subscribe?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to this AdBlock subscription?
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddBookmarkDialog</name>
     <message>
         <source>Add Bookmark</source>
@@ -96,6 +168,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Folder</source>
         <translation>Tambah Folder</translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillDialog</name>
+    <message>
+        <source>Form Passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Buang</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillManager</name>
+    <message>
+        <source>&lt;b&gt;Would you like to save this password?&lt;/b&gt;&lt;br&gt;         To review passwords you have saved and remove them, open the AutoFill pane of preferences.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never for this site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not now</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillModel</name>
+    <message>
+        <source>WebSite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -159,7 +272,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>XBEL (*.xbel *.xml)</source>
-        <translation>XBEL (*.xbel *.xml)</translation>
+        <translation type="obsolete">XBEL (*.xbel *.xml)</translation>
     </message>
     <message>
         <source>Imported %1</source>
@@ -212,12 +325,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
-        <translation>Ralat semasa memuatkan tandabuku html: %1
+        <translation type="obsolete">Ralat semasa memuatkan tandabuku html: %1
 </translation>
-    </message>
-    <message>
-        <source>XBEL</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Name Change</source>
@@ -228,6 +337,31 @@ p, li { white-space: pre-wrap; }
         <source>Address Change</source>
         <comment>Undo bookmark url change</comment>
         <translation type="unfinished">Alamat Berubah</translation>
+    </message>
+    <message>
+        <source>XBEL bookmarks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTML Netscape bookmarks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool, which is shipped with Arora and is needed to import HTML bookmarks, is not installed or not available in the search paths.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading Bookmark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error when loading HTML bookmarks: %1
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -252,7 +386,7 @@ p, li { white-space: pre-wrap; }
     <name>BookmarksToolBar</name>
     <message>
         <source>Bookmark</source>
-        <translation>Tandabuku</translation>
+        <translation type="obsolete">Tandabuku</translation>
     </message>
     <message>
         <source>Open</source>
@@ -274,12 +408,16 @@ p, li { white-space: pre-wrap; }
         <source>Add Folder...</source>
         <translation>Tambah Folder...</translation>
     </message>
+    <message>
+        <source>Bookmarks</source>
+        <translation type="obsolete">Tandabuku</translation>
+    </message>
 </context>
 <context>
     <name>BrowserApplication</name>
     <message>
         <source> (Change: %1 %2)</source>
-        <translation> (Ubah: %1 %2)</translation>
+        <translation type="obsolete"> (Ubah: %1 %2)</translation>
     </message>
     <message>
         <source>There are %1 windows and %2 tabs open
@@ -293,7 +431,11 @@ Teruskan untuk keluar?</translation>
     </message>
     <message>
         <source>The saved session will not be restored because Arora crashed while trying to restore this session.</source>
-        <translation>Arora gagal berfungsi semasa cuba mengembalikan sessi yang disimpan. Sessi berkenaan tidak akan dikembalikan.</translation>
+        <translation type="obsolete">Arora gagal berfungsi semasa cuba mengembalikan sessi yang disimpan. Sessi berkenaan tidak akan dikembalikan.</translation>
+    </message>
+    <message>
+        <source>Arora crashed while trying to restore this session.  Should I try again?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -380,7 +522,7 @@ Teruskan untuk keluar?</translation>
     </message>
     <message>
         <source>Prefere&amp;nces...</source>
-        <translation>Opsye&amp;n...</translation>
+        <translation type="obsolete">Opsye&amp;n...</translation>
     </message>
     <message>
         <source>Ctrl+,</source>
@@ -400,7 +542,7 @@ Teruskan untuk keluar?</translation>
     </message>
     <message>
         <source>Shift+Ctrl+B</source>
-        <translation>Shift+Ctrl+B</translation>
+        <translation type="obsolete">Shift+Ctrl+B</translation>
     </message>
     <message>
         <source>Ctrl+/</source>
@@ -606,7 +748,7 @@ Anda mahu memuatsemula kesemua laman?</translation>
     </message>
     <message>
         <source>Show &amp;Network Monitor</source>
-        <translation>Papar Penyelia Rangkaia&amp;n</translation>
+        <translation type="obsolete">Papar Penyelia Rangkaia&amp;n</translation>
     </message>
     <message>
         <source>Are you sure you want to close the window?  There are %1 tabs open</source>
@@ -648,13 +790,81 @@ Anda mahu memuatsemula kesemua laman?</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Apabila lungsuran privasi dipasang, sebahagian tindakan melibatkan privasi akan di lumpuhkan:&lt;ul&gt;&lt;li&gt; Laman web tidak disimpan di dalam sejarah.&lt;/li&gt;&lt;li&gt; Senarai muaturun akan dikeluarkan dari tetingkap Muaturun.&lt;/li&gt;&lt;li&gt; Cookies baru tidak akan disimpan dan cookies semasa tidak dapat digunakan.&lt;/li&gt;&lt;li&gt; Ikon laman web tidak disimpan, sessi tidak disimpan.&lt;/li&gt;&lt;li&gt; Carian tidak ditambah pada menu popup di kekotak carian.&lt;/li&gt;&lt;/ul&gt;Sebelum anda menutup tetingkap, anda masih boleh menggunakan butang Undur dan Maju untuk kembali ke laman web yang pernah di buka.</translation>
+        <translation type="obsolete">&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Apabila lungsuran privasi dipasang, sebahagian tindakan melibatkan privasi akan di lumpuhkan:&lt;ul&gt;&lt;li&gt; Laman web tidak disimpan di dalam sejarah.&lt;/li&gt;&lt;li&gt; Senarai muaturun akan dikeluarkan dari tetingkap Muaturun.&lt;/li&gt;&lt;li&gt; Cookies baru tidak akan disimpan dan cookies semasa tidak dapat digunakan.&lt;/li&gt;&lt;li&gt; Ikon laman web tidak disimpan, sessi tidak disimpan.&lt;/li&gt;&lt;li&gt; Carian tidak ditambah pada menu popup di kekotak carian.&lt;/li&gt;&lt;/ul&gt;Sebelum anda menutup tetingkap, anda masih boleh menggunakan butang Undur dan Maju untuk kembali ke laman web yang pernah di buka.</translation>
     </message>
     <message>
         <source>Ctrl+Y</source>
         <comment>Download Manager</comment>
         <translatorcomment>Pengurus Muaturun</translatorcomment>
         <translation>Ctrl+Y</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished">Lalai</translation>
+    </message>
+    <message>
+        <source>Text Encoding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Ctrl+B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ad Block...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When private browsing is turned on, some actions concerning your privacy will be disabled:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webpages are not added to the history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Items are automatically removed from the Downloads window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New cookies are not stored, current cookies can&apos;t be accessed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site icons won&apos;t be stored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Session won&apos;t be saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searches are not added to the pop-up menu in the search box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No new network cache is written to disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private Browsing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -884,7 +1094,7 @@ Anda mahu memuatsemula kesemua laman?</translation>
     <name>DownloadItem</name>
     <message>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="obsolete">Form</translation>
     </message>
     <message>
         <source>Ico</source>
@@ -972,6 +1182,10 @@ Anda mahu memuatsemula kesemua laman?</translation>
         <source>%1 of %2 (%3/sec) - %4</source>
         <translation>%1 dari %2 (%3/saat) - %4</translation>
     </message>
+    <message>
+        <source>Download directory (%1) couldn&apos;t be created.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DownloadManager</name>
@@ -1013,6 +1227,33 @@ Anda masih ingin keluar?</translation>
     <message>
         <source>MB</source>
         <translation>MB</translation>
+    </message>
+    <message>
+        <source>GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FileAccessReply</name>
+    <message>
+        <source>No Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening: %1: No such file or directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to read %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contents of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 KB</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1087,6 +1328,29 @@ Anda masih ingin keluar?</translation>
     </message>
 </context>
 <context>
+    <name>JavaScriptAroraObject</name>
+    <message>
+        <source>Welcome to Arora!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arora Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search results provided by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About Arora</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LanguageManager</name>
     <message>
         <source>System locale (%1) %2</source>
@@ -1106,7 +1370,11 @@ Anda masih ingin keluar?</translation>
     </message>
     <message>
         <source>No translation files are installed.</source>
-        <translation>Fail terjemahan tidak dipasang.</translation>
+        <translation type="obsolete">Fail terjemahan tidak dipasang.</translation>
+    </message>
+    <message>
+        <source>No translation files are installed at %1.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1159,43 +1427,59 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
         <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Issuer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not valid before: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valid until: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alternate Names:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NetworkMonitor</name>
     <message>
         <source>Name</source>
-        <translation>Nama</translation>
+        <translation type="obsolete">Nama</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation>Nilai</translation>
+        <translation type="obsolete">Nilai</translation>
     </message>
 </context>
 <context>
     <name>NetworkMonitorDialog</name>
     <message>
         <source>Network Monitor</source>
-        <translation>Penyelia Rangkaian</translation>
+        <translation type="obsolete">Penyelia Rangkaian</translation>
     </message>
     <message>
         <source>Network Requests</source>
-        <translation>Permintaan Rangkaian</translation>
+        <translation type="obsolete">Permintaan Rangkaian</translation>
     </message>
     <message>
         <source>Request Headers</source>
-        <translation>Pengepala Permintaan</translation>
+        <translation type="obsolete">Pengepala Permintaan</translation>
     </message>
     <message>
         <source>Response Headers</source>
-        <translation>Pengepala Balasan</translation>
+        <translation type="obsolete">Pengepala Balasan</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation>&amp;Buang</translation>
+        <translation type="obsolete">&amp;Buang</translation>
     </message>
     <message>
         <source>Remove &amp;All Requests</source>
-        <translation>Buang Semu&amp;a Permintaan</translation>
+        <translation type="obsolete">Buang Semu&amp;a Permintaan</translation>
     </message>
 </context>
 <context>
@@ -1249,6 +1533,18 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comma-separated list of keywords that may be entered in the location barfollowed by search terms to search with this engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nama</translation>
+    </message>
+    <message>
+        <source>Keywords</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1331,38 +1627,38 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
     <name>RequestModel</name>
     <message>
         <source>Redirect: %1</source>
-        <translation>Lencongan %1</translation>
+        <translation type="obsolete">Lencongan %1</translation>
     </message>
     <message>
         <source>Method</source>
-        <translation>Kaedah</translation>
+        <translation type="obsolete">Kaedah</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation>Alamat</translation>
+        <translation type="obsolete">Alamat</translation>
     </message>
     <message>
         <source>Response</source>
-        <translation>Balasan</translation>
+        <translation type="obsolete">Balasan</translation>
     </message>
     <message>
         <source>Length</source>
-        <translation>Panjang</translation>
+        <translation type="obsolete">Panjang</translation>
     </message>
     <message>
         <source>Content Type</source>
-        <translation>Jenis Kandungan</translation>
+        <translation type="obsolete">Jenis Kandungan</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Maklumat</translation>
+        <translation type="obsolete">Maklumat</translation>
     </message>
 </context>
 <context>
     <name>SearchBanner</name>
     <message>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="obsolete">Form</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -1379,6 +1675,10 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
     <message>
         <source>Done</source>
         <translation>Sudah</translation>
+    </message>
+    <message>
+        <source>Highlight All</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1690,6 +1990,62 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
         <source> MB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use the default search engine as fallback when the URL given by the user is invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Directory...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A cookie session ends:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When I exit the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>7 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>30 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill web forms:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User names and passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsDialog</name>
@@ -1699,6 +2055,14 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose CSS File</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1718,15 +2082,19 @@ Anda ingin abaikan ralat ini?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Source of Page </source>
-        <translation>Sumber Laman</translation>
+        <translation type="obsolete">Sumber Laman</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Lihat</translation>
+        <translation type="obsolete">&amp;Lihat</translation>
     </message>
     <message>
         <source>&amp;Wrap lines</source>
-        <translation>&amp;Wrap barisan</translation>
+        <translation type="obsolete">&amp;Wrap barisan</translation>
+    </message>
+    <message>
+        <source>Source of Page %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1857,10 +2225,6 @@ Anda benar-benar mahu teruskan dengan menutup laman ini?
         <source>Add &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Configure Search Engines...</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>WebPage</name>
@@ -1887,6 +2251,14 @@ Anda benar-benar mahu teruskan dengan menutup laman ini?
     <message>
         <source>If the address is correct, try checking the network connection.</source>
         <translation>Jika alamat betul, cuba periksa sambungan rangkaian.</translation>
+    </message>
+    <message>
+        <source>Resending POST request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In order to display the site, the request along with all the data must be sent once again, which may lead to some unexpected behaviour of the site e.g. the same action might be performed once again. Do you want to continue anyway?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1937,6 +2309,38 @@ Anda benar-benar mahu teruskan dengan menutup laman ini?
     </message>
     <message>
         <source>Search with...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to the toolbar search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Method not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 method is not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose the desired search engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Engine name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type in a name for the engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Block Image</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

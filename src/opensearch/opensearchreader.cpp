@@ -21,14 +21,51 @@
 
 #include "opensearchengine.h"
 
-#include <qdebug.h>
 #include <qiodevice.h>
 
+/*!
+    \class OpenSearchReader
+    \brief A class reading a search engine description from an external source
+
+    OpenSearchReader is a class that can be used to read search engine descriptions
+    formed using the OpenSearch format.
+
+    It inherits QXmlStreamReader and thus provides additional functions, such as
+    QXmlStreamReader::error(), QXmlStreamReader::hasError() that can be used to make sure
+    the reading procedure succeeded.
+
+    For more information see:
+    http://www.opensearch.org/Specifications/OpenSearch/1.1/Draft_4#OpenSearch_description_document
+
+    \sa OpenSearchEngine, OpenSearchWriter
+*/
+
+/*!
+    Constructs a new reader.
+
+    \note One instance can be used to read multiple files, one by one.
+*/
 OpenSearchReader::OpenSearchReader()
     : QXmlStreamReader()
 {
 }
 
+/*!
+    Reads an OpenSearch engine from the \a device and returns an OpenSearchEngine object,
+    filled in with all the data that has been retrieved from the document.
+
+    If the \a device is closed, it will be opened.
+
+    To make sure if the procedure succeeded, check QXmlStreamReader::error().
+
+    \return a new constructed OpenSearchEngine object
+
+    \note The function returns an object of the OpenSearchEngine class even if the document
+          is bad formed or doesn't conform to the specification. It needs to be manually
+          deleted afterwards, if intended.
+    \note The lifetime of the returned OpenSearchEngine object is up to the user.
+          The object should be deleted once it is not used anymore to avoid memory leaks.
+*/
 OpenSearchEngine *OpenSearchReader::read(QIODevice *device)
 {
     clear();
@@ -53,7 +90,7 @@ OpenSearchEngine *OpenSearchReader::read()
         return engine;
     }
 
-    while (!(isEndElement() && name() == QLatin1String("OpenSearchDescription")) && !atEnd()) {
+    while (!atEnd()) {
         readNext();
 
         if (!isStartElement())
@@ -67,6 +104,17 @@ OpenSearchEngine *OpenSearchReader::read()
 
             QString type = attributes().value(QLatin1String("type")).toString();
             QString url = attributes().value(QLatin1String("template")).toString();
+            QString method = attributes().value(QLatin1String("method")).toString();
+
+            if (type == QLatin1String("application/x-suggestions+json")
+                && !engine->suggestionsUrlTemplate().isEmpty())
+                continue;
+
+            if ((type.isEmpty()
+                || type == QLatin1String("text/html")
+                || type == QLatin1String("application/xhtml+xml"))
+                && !engine->searchUrlTemplate().isEmpty())
+                continue;
 
             if (url.isEmpty())
                 continue;
@@ -75,8 +123,7 @@ OpenSearchEngine *OpenSearchReader::read()
 
             readNext();
 
-            while (!(isEndElement() && name() == QLatin1String("Url")))
-            {
+            while (!(isEndElement() && name() == QLatin1String("Url"))) {
                 if (!isStartElement() || (name() != QLatin1String("Param") && name() != QLatin1String("Parameter"))) {
                     readNext();
                     continue;
@@ -95,9 +142,11 @@ OpenSearchEngine *OpenSearchReader::read()
             if (type == QLatin1String("application/x-suggestions+json")) {
                 engine->setSuggestionsUrlTemplate(url);
                 engine->setSuggestionsParameters(parameters);
-            } else {
+                engine->setSuggestionsMethod(method);
+            } else if (type.isEmpty() || type == QLatin1String("text/html") || type == QLatin1String("application/xhtml+xml")) {
                 engine->setSearchUrlTemplate(url);
                 engine->setSearchParameters(parameters);
+                engine->setSearchMethod(method);
             }
 
         } else if (name() == QLatin1String("Image")) {

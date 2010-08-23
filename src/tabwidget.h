@@ -81,6 +81,7 @@ class TabBar;
 class WebView;
 class WebActionMapper;
 class WebViewSearch;
+class QToolButton;
 
 /*!
     TabWidget that contains WebViews and a stack widget of associated line edits.
@@ -132,12 +133,12 @@ public:
     QAction *nextTabAction() const;
     QAction *previousTabAction() const;
 
-    QWidget *lineEditStack() const;
-    QLineEdit *currentLineEdit() const;
+    QWidget *locationBarStack() const;
+    QLineEdit *currentLocationBar() const;
     WebView *currentWebView() const;
     WebView *webView(int index) const;
     WebViewSearch *webViewSearch(int index) const;
-    QLineEdit *lineEdit(int index) const;
+    QLineEdit *locationBar(int index) const;
     int webViewIndex(WebView *webView) const;
     WebView *makeNewTab(bool makeCurrent = false);
 
@@ -149,19 +150,14 @@ public:
 
     void setLocationBarEnabled(int enabled);
 
-#if QT_VERSION < 0x040500
 protected:
-    void contextMenuEvent(QContextMenuEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
-#endif
     void changeEvent(QEvent *event);
 
 public slots:
     void loadString(const QString &string, OpenUrlIn tab = CurrentTab);
     void loadUrlFromUser(const QUrl &url, const QString &title = QString());
     void loadUrl(const QUrl &url, TabWidget::OpenUrlIn tab = CurrentTab, const QString &title = QString());
+    void createTab(const QByteArray &historyState, TabWidget::OpenUrlIn tab = CurrentTab);
     void newTab();
     void cloneTab(int index = -1);
     void closeTab(int index = -1);
@@ -207,12 +203,14 @@ private:
     QMenu *m_recentlyClosedTabsMenu;
     static const int m_recentlyClosedTabsSize = 10;
     QList<QUrl> m_recentlyClosedTabs;
+    QList<QByteArray> m_recentlyClosedTabsHistory;
     QList<WebActionMapper*> m_actions;
-    bool m_swappedDelayedWidget;
 
     QCompleter *m_lineEditCompleter;
-    QStackedWidget *m_lineEdits;
+    QStackedWidget *m_locationBars;
     TabBar *m_tabBar;
+    QToolButton *addTabButton;
+    QToolButton *closeTabButton;
 };
 
 #endif // TABWIDGET_H

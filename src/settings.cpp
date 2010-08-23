@@ -63,6 +63,8 @@
 #include "settings.h"
 
 #include "acceptlanguagedialog.h"
+#include "autofilldialog.h"
+#include "autofillmanager.h"
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "cookiedialog.h"
@@ -82,12 +84,11 @@
 #include <qmetaobject.h>
 #include <qmessagebox.h>
 #include <qsettings.h>
+#include <qfiledialog.h>
 
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
-#if QT_VERSION >= 0x040500
     , m_cacheEnabled(false)
-#endif
 {
     /* Privoxy */
     proxies << 8118;
@@ -102,15 +103,15 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     connect(fixedFontButton, SIGNAL(clicked()), this, SLOT(chooseFixedFont()));
     connect(languageButton, SIGNAL(clicked()), this, SLOT(chooseAcceptLanguage()));
     connect(proxyName, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProxyPort(int)));
+    connect(downloadDirectoryButton, SIGNAL(clicked()), this, SLOT(chooseDownloadDirectory()));
+    connect(externalDownloadBrowse, SIGNAL(clicked()), this, SLOT(chooseDownloadProgram()));
+    connect(styleSheetBrowseButton, SIGNAL(clicked()), this, SLOT(chooseStyleSheet()));
 
-#if QT_VERSION < 0x040500
-    oneCloseButton->setVisible(false); // no other mode than one close button with qt <4.5
-    networkCache->setVisible(false);
-#else
+    connect(editAutoFillUserButton, SIGNAL(clicked()), this, SLOT(editAutoFillUser()));
+
     // As network cache has too many bugs in 4.5.1, do not allow to enable it.
     if (QLatin1String(qVersion()) == QLatin1String("4.5.1"))
         networkCache->setVisible(false);
-#endif
 
     /*Torora: Req 2.2*/
     if (!BrowserApplication::isTor()) {
@@ -153,12 +154,21 @@ void SettingsDialog::loadDefaults()
     }
     enableImages->setChecked(defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
     clickToFlash->setChecked(false);
-    filterTrackingCookiesCheckbox->setChecked(true);
+    cookieSessionCombo->setCurrentIndex(0);
+    filterTrackingCookiesCheckbox->setChecked(false);
+
+    autoFillPasswordFormsCheckBox->setChecked(false);
+    minimFontSizeCheckBox->setChecked(false);
+    minimumFontSizeSpinBox->setValue(9);
 }
 
 void SettingsDialog::loadFromSettings()
 {
     QSettings settings;
+    settings.beginGroup(QLatin1String("Settings"));
+    tabWidget->setCurrentIndex(settings.value(QLatin1String("currentTab"), 0).toInt());
+    settings.endGroup();
+
     settings.beginGroup(QLatin1String("MainWindow"));
     QString defaultHome = QLatin1String("http://www.torora.net");
     homeLineEdit->setText(settings.value(QLatin1String("home"), defaultHome).toString());
@@ -189,12 +199,18 @@ void SettingsDialog::loadFromSettings()
     }
     settings.endGroup();
 
+    settings.beginGroup(QLatin1String("urlloading"));
+    bool search = settings.value(QLatin1String("searchEngineFallback"), false).toBool();
+    searchEngineFallback->setChecked(search);
+    settings.endGroup();
+
     settings.beginGroup(QLatin1String("downloadmanager"));
     bool alwaysPromptForFileName = settings.value(QLatin1String("alwaysPromptForFileName"), false).toBool();
-    if (alwaysPromptForFileName)
-        downloadAsk->setChecked(true);
+    downloadAsk->setChecked(alwaysPromptForFileName);
     QString downloadDirectory = settings.value(QLatin1String("downloadDirectory"), downloadsLocation->text()).toString();
     downloadsLocation->setText(downloadDirectory);
+    externalDownloadButton->setChecked(settings.value(QLatin1String("external"), false).toBool());
+    externalDownloadPath->setText(settings.value(QLatin1String("externalPath")).toString());
     settings.endGroup();
 
     // Appearance
@@ -223,14 +239,17 @@ void SettingsDialog::loadFromSettings()
     enableImages->setChecked(settings.value(QLatin1String("enableImages"), enableImages->isChecked()).toBool());
     userStyleSheet->setText(QString::fromUtf8(settings.value(QLatin1String("userStyleSheet")).toUrl().toEncoded()));
     clickToFlash->setChecked(settings.value(QLatin1String("enableClickToFlash"), clickToFlash->isChecked()).toBool());
+    int minimumFontSize = settings.value(QLatin1String("minimumFontSize"), 0).toInt();
+    minimFontSizeCheckBox->setChecked(minimumFontSize != 0);
+    if (minimumFontSize != 0)
+        minimumFontSizeSpinBox->setValue(minimumFontSize);
     settings.endGroup();
 
     // Privacy
     settings.beginGroup(QLatin1String("cookies"));
 
-    CookieJar *jar = BrowserApplication::cookieJar();
     QByteArray value = settings.value(QLatin1String("acceptCookies"), QLatin1String("AcceptOnlyFromSitesNavigatedTo")).toByteArray();
-    QMetaEnum acceptPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("AcceptPolicy"));
+    QMetaEnum acceptPolicyEnum = CookieJar::staticMetaObject.enumerator(CookieJar::staticMetaObject.indexOfEnumerator("AcceptPolicy"));
     /*Torora: Req 3.2*/
     if (BrowserApplication::isTor()) {
         acceptCombo->setCurrentIndex(2);
@@ -252,7 +271,7 @@ void SettingsDialog::loadFromSettings()
       }
     }
     value = settings.value(QLatin1String("keepCookiesUntil"), QLatin1String("Expire")).toByteArray();
-    QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
+    QMetaEnum keepPolicyEnum = CookieJar::staticMetaObject.enumerator(CookieJar::staticMetaObject.indexOfEnumerator("KeepPolicy"));
     /*Torora: Req 3.2*/
     if (BrowserApplication::isTor()) {
         keepUntilCombo->setCurrentIndex(1);
@@ -273,17 +292,25 @@ void SettingsDialog::loadFromSettings()
           break;
       }
     }
-    filterTrackingCookiesCheckbox->setChecked(settings.value(QLatin1String("filterTrackingCookies"), true).toBool());
+    int sessionLength = settings.value(QLatin1String("sessionLength"), -1).toInt();
+    switch (sessionLength) {
+    case 1: cookieSessionCombo->setCurrentIndex(1); break;
+    case 2: cookieSessionCombo->setCurrentIndex(2); break;
+    case 3: cookieSessionCombo->setCurrentIndex(3); break;
+    case 7: cookieSessionCombo->setCurrentIndex(4); break;
+    case 30: cookieSessionCombo->setCurrentIndex(5); break;
+    default:
+    case 0: cookieSessionCombo->setCurrentIndex(0); break;
+    }
+    filterTrackingCookiesCheckbox->setChecked(settings.value(QLatin1String("filterTrackingCookies"), false).toBool());
     settings.endGroup();
 
-#if QT_VERSION >= 0x040500
     // Network
     settings.beginGroup(QLatin1String("network"));
     m_cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
     networkCache->setChecked(m_cacheEnabled);
     networkCacheMaximumSizeSpinBox->setValue(settings.value(QLatin1String("maximumCacheSize"), 50).toInt());
     settings.endGroup();
-#endif
 
     // Proxy
     settings.beginGroup(QLatin1String("proxy"));
@@ -308,18 +335,32 @@ void SettingsDialog::loadFromSettings()
     settings.beginGroup(QLatin1String("tabs"));
     selectTabsWhenCreated->setChecked(settings.value(QLatin1String("selectNewTabs"), false).toBool());
     confirmClosingMultipleTabs->setChecked(settings.value(QLatin1String("confirmClosingMultipleTabs"), true).toBool());
-#if QT_VERSION >= 0x040500
     oneCloseButton->setChecked(settings.value(QLatin1String("oneCloseButton"),false).toBool());
-#endif
     quitAsLastTabClosed->setChecked(settings.value(QLatin1String("quitAsLastTabClosed"), true).toBool());
     openTargetBlankLinksIn->setCurrentIndex(settings.value(QLatin1String("openTargetBlankLinksIn"), TabWidget::NewSelectedTab).toInt());
     openLinksFromAppsIn->setCurrentIndex(settings.value(QLatin1String("openLinksFromAppsIn"), TabWidget::NewSelectedTab).toInt());
+    settings.endGroup();
+
+    // Accessibility
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    settings.beginGroup(QLatin1String("WebView"));
+    enableAccessKeys->setChecked(settings.value(QLatin1String("enableAccessKeys"), true).toBool());
+#else
+    enableAccessKeys->setEnabled(false);
+#endif
+
+    settings.beginGroup(QLatin1String("autofill"));
+    autoFillPasswordFormsCheckBox->setChecked(settings.value(QLatin1String("passwordForms"), true).toBool());
     settings.endGroup();
 }
 
 void SettingsDialog::saveToSettings()
 {
     QSettings settings;
+    settings.beginGroup(QLatin1String("Settings"));
+    settings.setValue(QLatin1String("currentTab"), tabWidget->currentIndex());
+    settings.endGroup();
+
     settings.beginGroup(QLatin1String("MainWindow"));
     settings.setValue(QLatin1String("home"), homeLineEdit->text());
     settings.setValue(QLatin1String("startupBehavior"), startupBehavior->currentIndex());
@@ -328,6 +369,8 @@ void SettingsDialog::saveToSettings()
     settings.beginGroup(QLatin1String("downloadmanager"));
     settings.setValue(QLatin1String("alwaysPromptForFileName"), downloadAsk->isChecked());
     settings.setValue(QLatin1String("downloadDirectory"), downloadsLocation->text());
+    settings.setValue(QLatin1String("external"), externalDownloadButton->isChecked());
+    settings.setValue(QLatin1String("externalPath"), externalDownloadPath->text());
     settings.endGroup();
 
     /* For 'Tor Browsing' we do not alter the user's normal settings. Tor settings
@@ -349,6 +392,11 @@ void SettingsDialog::saveToSettings()
       settings.setValue(QLatin1String("historyLimit"), idx);
       settings.endGroup();
     }
+
+    settings.beginGroup(QLatin1String("urlloading"));
+    settings.setValue(QLatin1String("searchEngineFallback"), searchEngineFallback->isChecked());
+    settings.endGroup();
+
     // Appearance
     settings.beginGroup(QLatin1String("websettings"));
     settings.setValue(QLatin1String("fixedFont"), m_fixedFont);
@@ -369,6 +417,11 @@ void SettingsDialog::saveToSettings()
     else
         settings.setValue(QLatin1String("userStyleSheet"), QUrl::fromEncoded(userStyleSheetString.toUtf8()));
     settings.setValue(QLatin1String("enableClickToFlash"), clickToFlash->isChecked());
+
+    if (minimFontSizeCheckBox->isChecked())
+        settings.setValue(QLatin1String("minimumFontSize"), minimumFontSizeSpinBox->value());
+    else
+        settings.setValue(QLatin1String("minimumFontSize"), 0);
     settings.endGroup();
 
     //Privacy
@@ -407,18 +460,26 @@ void SettingsDialog::saveToSettings()
       }
       QMetaEnum keepPolicyEnum = jar->staticMetaObject.enumerator(jar->staticMetaObject.indexOfEnumerator("KeepPolicy"));
       settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(keepPolicy)));
+      int sessionLength = cookieSessionCombo->currentIndex();
+      switch (sessionLength) {
+      case 1: sessionLength = 1; break;
+      case 2: sessionLength = 2; break;
+      case 3: sessionLength = 3; break;
+      case 4: sessionLength = 7; break;
+      case 5: sessionLength = 30; break;
+      default:
+      case 0: sessionLength = -1; break;
+      }
+      settings.setValue(QLatin1String("sessionLength"), sessionLength);
       settings.setValue(QLatin1String("filterTrackingCookies"), filterTrackingCookiesCheckbox->isChecked());
       settings.endGroup();
     }
 
-
-#if QT_VERSION >= 0x040500
     // Network
     settings.beginGroup(QLatin1String("network"));
     settings.setValue(QLatin1String("cacheEnabled"), networkCache->isChecked());
     settings.setValue(QLatin1String("maximumCacheSize"), networkCacheMaximumSizeSpinBox->value());
     settings.endGroup();
-#endif
 
     // proxy
     settings.beginGroup(QLatin1String("proxy"));
@@ -439,19 +500,29 @@ void SettingsDialog::saveToSettings()
     settings.beginGroup(QLatin1String("tabs"));
     settings.setValue(QLatin1String("selectNewTabs"), selectTabsWhenCreated->isChecked());
     settings.setValue(QLatin1String("confirmClosingMultipleTabs"), confirmClosingMultipleTabs->isChecked());
-#if QT_VERSION >= 0x040500
     settings.setValue(QLatin1String("oneCloseButton"), oneCloseButton->isChecked());
-#endif
     settings.setValue(QLatin1String("quitAsLastTabClosed"), quitAsLastTabClosed->isChecked());
     settings.setValue(QLatin1String("openTargetBlankLinksIn"), openTargetBlankLinksIn->currentIndex());
     settings.setValue(QLatin1String("openLinksFromAppsIn"), openLinksFromAppsIn->currentIndex());
     settings.endGroup();
+
+    settings.beginGroup(QLatin1String("autofill"));
+    settings.setValue(QLatin1String("passwordForms"), autoFillPasswordFormsCheckBox->isChecked());
+    settings.endGroup();
+
+    // Accessibility
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    settings.beginGroup(QLatin1String("WebView"));
+    settings.setValue(QLatin1String("enableAccessKeys"), enableAccessKeys->isChecked());
+    settings.endGroup();
+#endif
 
     BrowserApplication::instance()->loadSettings();
     BrowserApplication::networkAccessManager()->loadSettings();
     /*Torora: Req 3.2*/
     BrowserApplication::cookieJar()->loadSettings(BrowserApplication::isTor());
     BrowserApplication::historyManager()->loadSettings();
+    BrowserApplication::autoFillManager()->loadSettings();
 
     WebPage::webPluginFactory()->refreshPlugins();
 
@@ -465,27 +536,39 @@ void SettingsDialog::accept()
 {
     saveToSettings();
     BrowserApplication::instance()->torManager()->checkTorInstallation(false);
-#if QT_VERSION >= 0x040500
     // Due to a bug in Qt <= 4.5.1, enabling/disabling cache requires the browser to be restarted.
     if (QLatin1String(qVersion()) <= QLatin1String("4.5.1") && networkCache->isChecked() != m_cacheEnabled) {
         QMessageBox::information(this, tr("Restart required"),
                                  tr("The network cache configuration has changed. "
                                     "So that it can be taken into account, the browser has to be restarted."));
     }
-#endif
     QDialog::accept();
 }
 
 void SettingsDialog::showCookies()
 {
-    CookieDialog *dialog = new CookieDialog(BrowserApplication::cookieJar(), this);
-    dialog->exec();
+    CookieDialog dialog(BrowserApplication::cookieJar(), this);
+    dialog.exec();
 }
 
 void SettingsDialog::showExceptions()
 {
-    CookieExceptionsDialog *dialog = new CookieExceptionsDialog(BrowserApplication::cookieJar(), this);
-    dialog->exec();
+    CookieExceptionsDialog dialog(BrowserApplication::cookieJar(), this);
+    dialog.exec();
+}
+
+void SettingsDialog::chooseDownloadDirectory()
+{
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Choose Directory"), downloadsLocation->text());
+    downloadsLocation->setText(fileName);
+}
+
+void SettingsDialog::chooseDownloadProgram()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose Program"), externalDownloadPath->text());
+    if (fileName.contains(QLatin1Char(' ')))
+        fileName = QString(QLatin1String("\"%1\"")).arg(fileName);
+    externalDownloadPath->setText(fileName);
 }
 
 void SettingsDialog::chooseFont()
@@ -524,5 +607,18 @@ void SettingsDialog::updateProxyPort(int index)
 void SettingsDialog::chooseAcceptLanguage()
 {
     AcceptLanguageDialog dialog;
+    dialog.exec();
+}
+
+void SettingsDialog::chooseStyleSheet()
+{
+    QUrl url = QUrl::fromEncoded(userStyleSheet->text().toUtf8());
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose CSS File"), url.toLocalFile());
+    userStyleSheet->setText(QString::fromUtf8(QUrl::fromLocalFile(fileName).toEncoded()));
+}
+
+void SettingsDialog::editAutoFillUser()
+{
+    AutoFillDialog dialog;
     dialog.exec();
 }

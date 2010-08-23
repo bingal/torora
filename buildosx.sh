@@ -4,7 +4,7 @@
 #
 
 APP="Arora"
-VERSION="0.7.1"
+VERSION="0.10.2"
 #BACKGROUND="src/data/512x512/arora.png"
 
 DIR="bundle"
@@ -15,7 +15,7 @@ fi
 
 # build app with Qt libraries
 make distclean --quiet
-qmake -config release
+qmake -r -config release
 make --quiet
 $QTDIR/bin/macdeployqt $APP.app/
 
@@ -28,4 +28,5 @@ hdiutil internet-enable -yes "$APP.dmg"
 rm -rf $DIR
 
 DATE=`date +"%m-%d-%Y"`
-mv $APP.dmg "$APP Snapshot ($DATE) Intel-qt4.5.dmg"
+QTVERSION=`qmake --version | grep Qt | sed -e s/.*4/4/g -e 's/\/.*//g'`
+mv $APP.dmg "$APP Snapshot ($DATE) Intel-Qt$QTVERSION.dmg"

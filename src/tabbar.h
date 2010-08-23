@@ -81,9 +81,6 @@ signals:
     void closeOtherTabs(int index);
     void reloadTab(int index);
     void reloadAllTabs();
-#if QT_VERSION < 0x040500
-    void tabMoveRequested(int fromIndex, int toIndex);
-#endif
     void loadUrl(const QUrl &url, TabWidget::OpenUrlIn tab);
 
 public:
@@ -92,19 +89,15 @@ public:
     bool showTabBarWhenOneTab() const;
     void setShowTabBarWhenOneTab(bool enabled);
     QAction *viewTabBarAction() const;
-#if QT_VERSION >= 0x040500
     QTabBar::ButtonPosition freeSide();
-#endif
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-#if QT_VERSION < 0x040500
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
-#endif
     QSize tabSizeHint(int index) const;
     void tabInserted(int position);
     void tabRemoved(int position);

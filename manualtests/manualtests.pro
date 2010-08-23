@@ -1,12 +1,13 @@
 TEMPLATE      = subdirs
-SUBDIRS = bookmarks \
-          downloadmanager \
-          editview \
-          history \
-          lineedit \
-          locationbar \
-          modelmenu \
-          searchlineedit \
-          singleapplication \
-          squeezelabel \
-          webviewsearch
+SUBDIRS = \
+    adblock \
+    bookmarks \
+    downloadmanager \
+    history \
+    locationbar \
+    modelmenu \
+    searchlineedit \
+    utils \
+    webviewsearch
+
+CONFIG += ordered

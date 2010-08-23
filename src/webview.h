@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Benjamin C. Meyer <ben@meyerhome.net>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  * Copyright 2008 Ariya Hidayat <ariya.hidayat@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,6 +68,11 @@
 
 #include "tabwidget.h"
 
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+#include <qwebelement.h>
+class QLabel;
+#endif
+
 class BrowserMainWindow;
 class TabWidget;
 class WebPage;
@@ -79,8 +84,14 @@ public:
     WebView(QWidget *parent = 0);
     WebPage *webPage() const { return m_page; }
 
-#if 1 // soon to be #if QT_VERSION <= 0x040600
+#if !(QT_VERSION >= 0x040600)
     static QUrl guessUrlFromString(const QString &url);
+#endif
+    void loadSettings();
+
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    void keyReleaseEvent(QKeyEvent *event);
+    void focusOutEvent(QFocusEvent *event);
 #endif
 
     void loadUrl(const QUrl &url, const QString &title = QString());
@@ -126,10 +137,13 @@ private slots:
     void downloadImageToDisk();
     void copyImageToClipboard();
     void copyImageLocationToClipboard();
+    void blockImage();
     void bookmarkLink();
     void searchRequested(QAction *action);
-#ifdef WEBKIT_TRUNK
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     void addSearchEngine();
+    void hideAccessKeys();
+    void accessKeyShortcut();
 #endif
 
 private:
@@ -139,6 +153,16 @@ private:
     int m_currentZoom;
     QList<int> m_zoomLevels;
     WebPage *m_page;
+
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    bool m_enableAccessKeys;
+    bool checkForAccessKey(QKeyEvent *event);
+    void showAccessKeys();
+    void makeAccessKeyLabel(const QChar &accessKey, const QWebElement &element);
+    QList<QLabel*> m_accessKeyLabels;
+    QHash<QChar, QWebElement> m_accessKeyNodes;
+    bool m_accessKeysPressed;
+#endif
 };
 
 #endif

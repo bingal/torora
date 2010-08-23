@@ -39,6 +39,10 @@ p, li { white-space: pre-wrap; }
         <source>Close</source>
         <translation>Bezárás</translation>
     </message>
+    <message>
+        <source>WebKit version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AcceptLanguage</name>
@@ -68,6 +72,74 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AdBlockBlockedNetworkReply</name>
+    <message>
+        <source>Blocked by AdBlockRule: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockDialog</name>
+    <message>
+        <source>Add Custom Rule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more about writing rules...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse Subscriptions...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AdBlock Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable AdBlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockManager</name>
+    <message>
+        <source>Custom Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockModel</name>
+    <message>
+        <source>Rule</source>
+        <translation type="unfinished">Szabály</translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockSchemeAccessHandler</name>
+    <message>
+        <source>Subscribe?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to this AdBlock subscription?
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddBookmarkDialog</name>
     <message>
         <source>Add Bookmark</source>
@@ -88,6 +160,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Folder</source>
         <translation>Új könyvjelzőmappa</translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillDialog</name>
+    <message>
+        <source>Form Passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillManager</name>
+    <message>
+        <source>&lt;b&gt;Would you like to save this password?&lt;/b&gt;&lt;br&gt;         To review passwords you have saved and remove them, open the AutoFill pane of preferences.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never for this site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not now</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillModel</name>
+    <message>
+        <source>WebSite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -159,12 +272,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>XBEL</source>
-        <translation>XBEL</translation>
+        <translation type="obsolete">XBEL</translation>
     </message>
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
-        <translation>Hiba a html könyvjelzők betöltése közben: %1
+        <translation type="obsolete">Hiba a html könyvjelzők betöltése közben: %1
 </translation>
     </message>
     <message>
@@ -181,7 +294,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>XBEL (*.xbel *.xml)</source>
-        <translation>lupdate ../src/src.pro</translation>
+        <translation type="obsolete">lupdate ../src/src.pro</translation>
     </message>
     <message>
         <source>Export error</source>
@@ -209,6 +322,32 @@ p, li { white-space: pre-wrap; }
         <comment>Undo bookmark url change</comment>
         <translation>Hivatkozás megváltoztatása</translation>
     </message>
+    <message>
+        <source>XBEL bookmarks</source>
+        <translation>XBEL könyvjelzők</translation>
+    </message>
+    <message>
+        <source>HTML Netscape bookmarks</source>
+        <translation>HTML Netscape könyvjelzők</translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool required</source>
+        <translation>htmlToXBel eszköz szükséges</translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool, which is shipped with Arora and is needed to import HTML bookmarks, is not installed or not available in the search paths.</source>
+        <translation>A HTML könyvjelzők importálására szolgáló, az Arora részeként szállított htmlToXBel eszköz nincs telepítve, vagy nem érhető el a keresési útvonalon.</translation>
+    </message>
+    <message>
+        <source>Loading Bookmark</source>
+        <translation>Könyvjelző betöltése</translation>
+    </message>
+    <message>
+        <source>Error when loading HTML bookmarks: %1
+</source>
+        <translation>Hiba a HTML könyvjelzők betöltése közben: %1
+</translation>
+    </message>
 </context>
 <context>
     <name>BookmarksMenu</name>
@@ -232,7 +371,7 @@ p, li { white-space: pre-wrap; }
     <name>BookmarksToolBar</name>
     <message>
         <source>Bookmark</source>
-        <translation>Könyvjelző</translation>
+        <translation type="obsolete">Könyvjelző</translation>
     </message>
     <message>
         <source>Open</source>
@@ -254,12 +393,16 @@ p, li { white-space: pre-wrap; }
         <source>Add Folder...</source>
         <translation>Könyvjelzőmappa hozzáadása...</translation>
     </message>
+    <message>
+        <source>Bookmarks</source>
+        <translation type="obsolete">Könyvjelzők</translation>
+    </message>
 </context>
 <context>
     <name>BrowserApplication</name>
     <message>
         <source> (Change: %1 %2)</source>
-        <translation> (Verzió: %1 %2)</translation>
+        <translation type="obsolete"> (Verzió: %1 %2)</translation>
     </message>
     <message>
         <source>There are %1 windows and %2 tabs open
@@ -273,7 +416,11 @@ Biztosan ki akar lépni?</translation>
     </message>
     <message>
         <source>The saved session will not be restored because Arora crashed while trying to restore this session.</source>
-        <translation>Az elmentett munkamenet nem kerül visszaállításra, mert az Arora összeomlott a művelet közben.</translation>
+        <translation type="obsolete">Az elmentett munkamenet nem kerül visszaállításra, mert az Arora összeomlott a művelet közben.</translation>
+    </message>
+    <message>
+        <source>Arora crashed while trying to restore this session.  Should I try again?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -364,7 +511,7 @@ Biztosan ki akar lépni?</translation>
     </message>
     <message>
         <source>Prefere&amp;nces...</source>
-        <translation>&amp;Beállítások...</translation>
+        <translation type="obsolete">&amp;Beállítások...</translation>
     </message>
     <message>
         <source>Ctrl+,</source>
@@ -380,7 +527,7 @@ Biztosan ki akar lépni?</translation>
     </message>
     <message>
         <source>Shift+Ctrl+B</source>
-        <translation>Shift+Ctrl+B</translation>
+        <translation type="obsolete">Shift+Ctrl+B</translation>
     </message>
     <message>
         <source>Ctrl+/</source>
@@ -428,7 +575,7 @@ Biztosan ki akar lépni?</translation>
     </message>
     <message>
         <source>Hi&amp;story</source>
-        <translation>&amp;Előzmények</translation>
+        <translation>Elő&amp;zmények</translation>
     </message>
     <message>
         <source>Back</source>
@@ -490,7 +637,7 @@ Biztosan ki akar lépni?</translation>
     </message>
     <message>
         <source>Show &amp;Network Monitor</source>
-        <translation>&amp;Hálózatfigyelő megjelenítése</translation>
+        <translation type="obsolete">&amp;Hálózatfigyelő megjelenítése</translation>
     </message>
     <message>
         <source>Enable Web &amp;Inspector</source>
@@ -564,7 +711,7 @@ Biztosan ki akar lépni?</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Ha a privát böngészés be van kapcsolva, akkor néhány személyes adatokat érintő művelet tiltásra kerül:&lt;ul&gt;&lt;li&gt; A meglátogatott oldalak nem kerülnek hozzáadásra az előzményekhez.&lt;/li&gt;&lt;li&gt; Az új elemek automatikusan eltávolításra kerülnek a letöltések listájáról.&lt;/li&gt;&lt;li&gt; Az új sütik nem kerülnek eltárolásra, a korábban tárolt sütik pedig nem érhetőek el.&lt;/li&gt;&lt;li&gt; Az oldalak ikonjai és a munkamenetek nem kerülnek mentésre.&lt;/li&gt;&lt;li&gt; A keresések nem kerülnek hozzáadásra a keresőmező listájához.&lt;/li&gt;&lt;/ul&gt;A böngészőablak bezárásáig a Vissza és Előre gombokkal navigálhatunk a megnyitott oldalak között.</translation>
+        <translation type="obsolete">&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Ha a privát böngészés be van kapcsolva, akkor néhány személyes adatokat érintő művelet tiltásra kerül:&lt;ul&gt;&lt;li&gt; A meglátogatott oldalak nem kerülnek hozzáadásra az előzményekhez.&lt;/li&gt;&lt;li&gt; Az új elemek automatikusan eltávolításra kerülnek a letöltések listájáról.&lt;/li&gt;&lt;li&gt; Az új sütik nem kerülnek eltárolásra, a korábban tárolt sütik pedig nem érhetőek el.&lt;/li&gt;&lt;li&gt; Az oldalak ikonjai és a munkamenetek nem kerülnek mentésre.&lt;/li&gt;&lt;li&gt; A keresések nem kerülnek hozzáadásra a keresőmező listájához.&lt;/li&gt;&lt;/ul&gt;A böngészőablak bezárásáig a Vissza és Előre gombokkal navigálhatunk a megnyitott oldalak között.</translation>
     </message>
     <message>
         <source>Are you sure you want to close the window?  There are %1 tabs open</source>
@@ -596,6 +743,74 @@ Do you want to reload all pages?</source>
         <source>Ctrl+Y</source>
         <comment>Download Manager</comment>
         <translation>Ctrl+Y</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Alapértelmezett</translation>
+    </message>
+    <message>
+        <source>Text Encoding</source>
+        <translation>Szövegkódolás</translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Ctrl+B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation type="unfinished">Keresőmotorok beállítása...</translation>
+    </message>
+    <message>
+        <source>&amp;Ad Block...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When private browsing is turned on, some actions concerning your privacy will be disabled:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webpages are not added to the history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Items are automatically removed from the Downloads window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New cookies are not stored, current cookies can&apos;t be accessed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site icons won&apos;t be stored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Session won&apos;t be saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searches are not added to the pop-up menu in the search box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No new network cache is written to disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private Browsing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -821,7 +1036,7 @@ Do you want to reload all pages?</source>
     <name>DownloadItem</name>
     <message>
         <source>Form</source>
-        <translation>Letöltés</translation>
+        <translation type="obsolete">Letöltés</translation>
     </message>
     <message>
         <source>Ico</source>
@@ -875,6 +1090,10 @@ Do you want to reload all pages?</source>
         <source>%1 of %2 - Stopped</source>
         <translation>%1 / %2 - Megállítva</translation>
     </message>
+    <message>
+        <source>Download directory (%1) couldn&apos;t be created.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DownloadManager</name>
@@ -913,6 +1132,33 @@ Biztosan ki akar lépni?</translation>
     <message>
         <source>MB</source>
         <translation>MB</translation>
+    </message>
+    <message>
+        <source>GB</source>
+        <translation>GB</translation>
+    </message>
+</context>
+<context>
+    <name>FileAccessReply</name>
+    <message>
+        <source>No Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening: %1: No such file or directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to read %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contents of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 KB</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -986,10 +1232,33 @@ Biztosan ki akar lépni?</translation>
     </message>
 </context>
 <context>
+    <name>JavaScriptAroraObject</name>
+    <message>
+        <source>Welcome to Arora!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arora Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search results provided by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About Arora</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LanguageManager</name>
     <message>
         <source>No translation files are installed.</source>
-        <translation>Nincs telepített fordítási fájl.</translation>
+        <translation type="obsolete">Nincs telepített fordítási fájl.</translation>
     </message>
     <message>
         <source>Choose language</source>
@@ -998,6 +1267,10 @@ Biztosan ki akar lépni?</translation>
     <message>
         <source>&lt;p&gt;You can run with a different language than&lt;br&gt;the operating system default.&lt;/p&gt;&lt;p&gt;Please choose the language which should be used&lt;/p&gt;</source>
         <translation>&lt;b&gt;Az operációs rendszer alapértelmezett nyelvén kívül választható további nyelv is.&lt;/p&gt;&lt;p&gt;Válassza ki a használni kívánt nyelvet!&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>No translation files are installed at %1.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1026,43 +1299,59 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
         <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
         <translation>&lt;qt&gt;Tanúsítványok:&lt;br/&gt;%1&lt;br/&gt;El akarja fogadni ezeket a tanúsítványokat?&lt;/qt&gt;</translation>
     </message>
+    <message>
+        <source>Issuer: %1</source>
+        <translation>Kibocsátó: %1</translation>
+    </message>
+    <message>
+        <source>Not valid before: %1</source>
+        <translation>Nem érvényes ezelőtt: %1</translation>
+    </message>
+    <message>
+        <source>Valid until: %1</source>
+        <translation>Érvényes eddig: %1</translation>
+    </message>
+    <message>
+        <source>Alternate Names:</source>
+        <translation>Alternatív nevek:</translation>
+    </message>
 </context>
 <context>
     <name>NetworkMonitor</name>
     <message>
         <source>Name</source>
-        <translation>Név</translation>
+        <translation type="obsolete">Név</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation>Érték</translation>
+        <translation type="obsolete">Érték</translation>
     </message>
 </context>
 <context>
     <name>NetworkMonitorDialog</name>
     <message>
         <source>Network Monitor</source>
-        <translation>Hálózatfigyelő</translation>
+        <translation type="obsolete">Hálózatfigyelő</translation>
     </message>
     <message>
         <source>Network Requests</source>
-        <translation>Hálózati kérések</translation>
+        <translation type="obsolete">Hálózati kérések</translation>
     </message>
     <message>
         <source>Request Headers</source>
-        <translation>Kérés fejlécek</translation>
+        <translation type="obsolete">Kérés fejlécek</translation>
     </message>
     <message>
         <source>Response Headers</source>
-        <translation>Válasz fejlécek</translation>
+        <translation type="obsolete">Válasz fejlécek</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation>&amp;Eltávolítás</translation>
+        <translation type="obsolete">&amp;Eltávolítás</translation>
     </message>
     <message>
         <source>Remove &amp;All Requests</source>
-        <translation>&amp;Összes kérés eltávolítása</translation>
+        <translation type="obsolete">&amp;Összes kérés eltávolítása</translation>
     </message>
 </context>
 <context>
@@ -1117,6 +1406,18 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
     <message>
         <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Javaslatokat szolgáltat&lt;/strong&gt;</translation>
+    </message>
+    <message>
+        <source>Comma-separated list of keywords that may be entered in the location barfollowed by search terms to search with this engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Név</translation>
+    </message>
+    <message>
+        <source>Keywords</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1194,42 +1495,50 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
     <name>RequestModel</name>
     <message>
         <source>Redirect: %1</source>
-        <translation>Átirányítás: %1</translation>
+        <translation type="obsolete">Átirányítás: %1</translation>
     </message>
     <message>
         <source>Method</source>
-        <translation>Típus</translation>
+        <translation type="obsolete">Típus</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation>Cím</translation>
+        <translation type="obsolete">Cím</translation>
     </message>
     <message>
         <source>Response</source>
-        <translation>Válasz</translation>
+        <translation type="obsolete">Válasz</translation>
     </message>
     <message>
         <source>Length</source>
-        <translation>Hossz</translation>
+        <translation type="obsolete">Hossz</translation>
     </message>
     <message>
         <source>Content Type</source>
-        <translation>Tartalom típusa</translation>
+        <translation type="obsolete">Tartalom típusa</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Információ</translation>
+        <translation type="obsolete">Információ</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="obsolete">Ismeretlen</translation>
     </message>
 </context>
 <context>
     <name>SearchBanner</name>
     <message>
         <source>Form</source>
-        <translation>Keresés</translation>
+        <translation type="obsolete">Keresés</translation>
     </message>
     <message>
         <source>Done</source>
         <translation>Bezárás</translation>
+    </message>
+    <message>
+        <source>Highlight All</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1263,7 +1572,7 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Restore windows and tabs from last time</source>
-        <translation>Legutóbbi ablakok és fülek visszaállítása</translation>
+        <translation>Legutóbbi ablakok és lapok visszaállítása</translation>
     </message>
     <message>
         <source>Home Page:</source>
@@ -1431,7 +1740,7 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>Quit the application when last tab is closed</source>
-        <translation>Kilépés az alkalmazásból az utolsó fül bezárásakor</translation>
+        <translation>Kilépés az alkalmazásból az utolsó lap bezárásakor</translation>
     </message>
     <message>
         <source>Opening links</source>
@@ -1521,6 +1830,62 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
         <source> MB</source>
         <translation> MB</translation>
     </message>
+    <message>
+        <source>Use the default search engine as fallback when the URL given by the user is invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Directory...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A cookie session ends:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When I exit the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>7 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>30 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill web forms:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User names and passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsDialog</name>
@@ -1531,6 +1896,14 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
     <message>
         <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
         <translation>A hálózati gyorstárazás beállításai megváltoztak. A módosítások használatához a böngésző újraindítása szükséges.</translation>
+    </message>
+    <message>
+        <source>Choose Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose CSS File</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1549,15 +1922,19 @@ Figyelmen kívül akarja hagyni ezeket a hibákat?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Nézet</translation>
+        <translation type="obsolete">&amp;Nézet</translation>
     </message>
     <message>
         <source>&amp;Wrap lines</source>
-        <translation>&amp;Sorok tördelése</translation>
+        <translation type="obsolete">&amp;Sorok tördelése</translation>
     </message>
     <message>
         <source>Source of Page </source>
-        <translation>Oldal forrása</translation>
+        <translation type="obsolete">Oldal forrása</translation>
+    </message>
+    <message>
+        <source>Source of Page %1</source>
+        <translation>%1 oldal forrása</translation>
     </message>
 </context>
 <context>
@@ -1659,7 +2036,7 @@ Biztosan be akarja zárni ezt az oldalt?
     </message>
     <message>
         <source>Bookmark All Tabs</source>
-        <translation>Összes fül felvétele a könyvjelzők közé</translation>
+        <translation>Összes lap felvétele a könyvjelzők közé</translation>
     </message>
 </context>
 <context>
@@ -1674,7 +2051,7 @@ Biztosan be akarja zárni ezt az oldalt?
     </message>
     <message>
         <source>Configure Search Engines...</source>
-        <translation>Keresőmotorok beállítása...</translation>
+        <translation type="obsolete">Keresőmotorok beállítása...</translation>
     </message>
     <message>
         <source>Clear Recent Searches</source>
@@ -1710,6 +2087,14 @@ Biztosan be akarja zárni ezt az oldalt?
     <message>
         <source>If your computer or network is protected by a firewall or proxy, make sure that the browser is permitted to access the network.</source>
         <translation>Ha a számítógép vagy a hálózat tűzfal, illetve proxy mögött van, a hálózat eléréséhez megfelelő hozzáférési jogosultság szükséges.</translation>
+    </message>
+    <message>
+        <source>Resending POST request</source>
+        <translation>POST kérés újraküldése</translation>
+    </message>
+    <message>
+        <source>In order to display the site, the request along with all the data must be sent once again, which may lead to some unexpected behaviour of the site e.g. the same action might be performed once again. Do you want to continue anyway?</source>
+        <translation>Az oldal megjelenítéséhez az űrlapot minden adattal együtt újra el kell küldeni. A kétszer végrehajtott megegyező művelet az oldalon nem várt komplikációkkal járhat. Biztosan folytatni szeretné?</translation>
     </message>
 </context>
 <context>
@@ -1761,6 +2146,38 @@ Biztosan be akarja zárni ezt az oldalt?
     <message>
         <source>Loading...</source>
         <translation>Töltés...</translation>
+    </message>
+    <message>
+        <source>Add to the toolbar search</source>
+        <translation>Hozzáadás az eszköztár keresőmezőjéhez</translation>
+    </message>
+    <message>
+        <source>Method not supported</source>
+        <translation>Az eljárás nem támogatott</translation>
+    </message>
+    <message>
+        <source>%1 method is not supported.</source>
+        <translation>%1 eljárás nem támogatott.</translation>
+    </message>
+    <message>
+        <source>Search engine</source>
+        <translation>Keresőmotor</translation>
+    </message>
+    <message>
+        <source>Choose the desired search engine</source>
+        <translation>Válassza ki a kívánt keresőmotort</translation>
+    </message>
+    <message>
+        <source>Engine name</source>
+        <translation>Motor neve</translation>
+    </message>
+    <message>
+        <source>Type in a name for the engine</source>
+        <translation>Adjon meg egy nevet a motornak</translation>
+    </message>
+    <message>
+        <source>Block Image</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -214,7 +214,7 @@ void ModelTest::index()
     Q_ASSERT(model->index(rows, columns) == QModelIndex());
     Q_ASSERT(model->index(0, 0).isValid() == true);
 
-    // Make sure that the same index is *always* returned
+    // Make sure that the same index is _always_ returned
     QModelIndex a = model->index(0, 0);
     QModelIndex b = model->index(0, 0);
     Q_ASSERT(a == b);
@@ -357,7 +357,7 @@ void ModelTest::checkChildren(const QModelIndex &parent, int currentDepth)
             Q_ASSERT(model->parent(index) == parent);
 
             // recursively go down the children
-            if (model->hasChildren(index) && currentDepth < 10 ) {
+            if (model->hasChildren(index) && currentDepth < 10) {
                 //qDebug() << r << c << "has children" << model->rowCount(index);
                 checkChildren(index, ++currentDepth);
             }/* else { if (currentDepth >= 10) qDebug() << "checked 10 deep"; };*/

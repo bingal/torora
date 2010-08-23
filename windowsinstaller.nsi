@@ -7,7 +7,7 @@ SetCompressor /SOLID /FINAL lzma
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\torora.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define QTDIR "C:\Qt\qt-all-opensource-src-4.5.0"
+!define QTDIR "C:\Qt\qt-all-opensource-src-4.5.3"
 
 !include "MUI.nsh"
 !define MUI_ABORTWARNING
@@ -50,6 +50,10 @@ Section "Main Components"
 
   SetOutPath "$INSTDIR\locale"
   File "src\.qm\locale\*.qm"
+  File "${QTDIR}\translations\qt*.qm"
+
+  SetOutPath "$INSTDIR\plugins\sqldrivers"
+  File "${QTDIR}\plugins\sqldrivers\qsqlite4.dll"
 
   SetOutPath "$INSTDIR\imageformats"
   File "C:\Qt\2009.01\qt\plugins\imageformats\qtiff4.dll"

@@ -24,19 +24,47 @@
 #include <qdebug.h>
 #include <qiodevice.h>
 
+/*!
+    \class OpenSearchWriter
+    \brief A class writing a search engine description to an external source
+
+    OpenSearchReader is a class that can be used to write search engine descriptions
+    using the OpenSearch format.
+
+    For more information see:
+    http://www.opensearch.org/Specifications/OpenSearch/1.1/Draft_4#OpenSearch_description_document
+
+    \sa OpenSearchEngine, OpenSearchReader
+*/
+
+/*!
+    Constructs a new writer.
+
+    \note One instance can be used to write multiple search engine descriptions, one by one.
+*/
 OpenSearchWriter::OpenSearchWriter()
     : QXmlStreamWriter()
 {
     setAutoFormatting(true);
 }
 
+/*!
+    Writes an OpenSearch engine description to the \a device, filling the output document
+    with all the necessary data.
+
+    If the \a device is closed, it will be opened.
+
+    \return true on success and false on failure.
+*/
 bool OpenSearchWriter::write(QIODevice *device, OpenSearchEngine *engine)
 {
     if (!engine)
         return false;
 
-    if (!device->isOpen())
-        device->open(QIODevice::WriteOnly);
+    if (!device->isOpen()) {
+        if (!device->open(QIODevice::WriteOnly))
+            return false;
+    }
 
     setDevice(device);
     write(engine);
@@ -57,7 +85,8 @@ void OpenSearchWriter::write(OpenSearchEngine *engine)
 
     if (!engine->searchUrlTemplate().isEmpty()) {
         writeStartElement(QLatin1String("Url"));
-        writeAttribute(QLatin1String("method"), QLatin1String("get"));
+        writeAttribute(QLatin1String("method"), engine->searchMethod());
+        writeAttribute(QLatin1String("type"), QLatin1String("text/html"));
         writeAttribute(QLatin1String("template"), engine->searchUrlTemplate());
 
         if (!engine->searchParameters().empty()) {
@@ -78,7 +107,7 @@ void OpenSearchWriter::write(OpenSearchEngine *engine)
 
     if (!engine->suggestionsUrlTemplate().isEmpty()) {
         writeStartElement(QLatin1String("Url"));
-        writeAttribute(QLatin1String("method"), QLatin1String("get"));
+        writeAttribute(QLatin1String("method"), engine->suggestionsMethod());
         writeAttribute(QLatin1String("type"), QLatin1String("application/x-suggestions+json"));
         writeAttribute(QLatin1String("template"), engine->suggestionsUrlTemplate());
 

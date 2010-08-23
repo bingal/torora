@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
-    <height>400</height>
+    <width>677</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -23,10 +23,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -72,9 +72,9 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="2" >
-        <widget class="QLineEdit" name="homeLineEdit" >
-         <property name="layoutDirection" >
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="homeLineEdit">
+         <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
         </widget>
@@ -109,11 +109,8 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1" colspan="2" >
-        <widget class="QComboBox" name="expireHistory" >
-         <property name="enabled" >
-          <bool>true</bool>
-         </property>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="expireHistory">
          <item>
           <property name="text" >
            <string>After one day</string>
@@ -151,12 +148,29 @@
          </item>
         </widget>
        </item>
-       <item row="5" column="0" colspan="3" >
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
+       <item row="4" column="0" colspan="3">
+        <widget class="QCheckBox" name="searchEngineFallback">
+         <property name="text">
+          <string>Use the default search engine as fallback when the URL given by the user is invalid</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="3">
+        <widget class="QCheckBox" name="enableAccessKeys">
+         <property name="text">
+          <string>Enable access keys</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
           <string>Downloads</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4" >
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QRadioButton" name="downloadAsk" >
             <property name="text" >
@@ -183,23 +197,51 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QPushButton" name="downloadDirectoryButton">
+              <property name="text">
+               <string>Choose Directory...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QCheckBox" name="externalDownloadButton">
+              <property name="text">
+               <string>Use this external download program:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="externalDownloadPath"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="externalDownloadBrowse">
+              <property name="text">
+               <string>Choose Program...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>608</width>
+              <height>15</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
-       </item>
-       <item row="6" column="0" colspan="3" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>391</width>
-           <height>262</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -218,10 +260,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="standardLabel" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <item row="0" column="1" colspan="2">
+        <widget class="QLabel" name="standardLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -237,9 +279,9 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3" >
-        <widget class="QPushButton" name="standardFontButton" >
-         <property name="text" >
+       <item row="0" column="4">
+        <widget class="QPushButton" name="standardFontButton">
+         <property name="text">
           <string>Select...</string>
          </property>
         </widget>
@@ -254,9 +296,9 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
-        <widget class="QLabel" name="fixedLabel" >
-         <property name="frameShape" >
+       <item row="1" column="1" colspan="2">
+        <widget class="QLabel" name="fixedLabel">
+         <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="text" >
@@ -267,9 +309,9 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="3" >
-        <widget class="QPushButton" name="fixedFontButton" >
-         <property name="text" >
+       <item row="1" column="4">
+        <widget class="QPushButton" name="fixedFontButton">
+         <property name="text">
           <string>Select...</string>
          </property>
         </widget>
@@ -281,16 +323,23 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="3" >
-        <widget class="QPushButton" name="languageButton" >
-         <property name="text" >
+       <item row="2" column="4">
+        <widget class="QPushButton" name="languageButton">
+         <property name="text">
           <string>Select...</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2" >
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="minimFontSizeCheckBox">
+         <property name="text">
+          <string>Minimum Font size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0" >
@@ -300,6 +349,19 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="minimumFontSizeSpinBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>9</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -361,7 +423,10 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="toolTip">
+             <string>If you enable this option, no flash objects will be loaded by default. Instead, each will be replaced by a button, allowing you to control which objects to load, and which not. </string>
+            </property>
+            <property name="text">
              <string>Use ClickToFlash on flash plugins</string>
             </property>
             <property name="checked" >
@@ -470,7 +535,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -483,11 +548,55 @@
             </property>
            </spacer>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="filterTrackingCookiesCheckbox">
             <property name="text">
              <string>Filter Tracking Cookies</string>
             </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="cookieSessionLabel">
+            <property name="text">
+             <string>A cookie session ends:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="cookieSessionCombo">
+            <item>
+             <property name="text">
+              <string>When I exit the application</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1 day</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2 days</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>3 days</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>7 days</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>30 days</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -814,8 +923,68 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_5" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab_7">
+      <attribute name="title">
+       <string>AutoFill</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>AutoFill web forms:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="autoFillPasswordFormsCheckBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>User names and passwords</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="editAutoFillUserButton">
+         <property name="text">
+          <string>Edit...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>244</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="3">
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
        <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2" >
@@ -826,14 +995,21 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QLineEdit" name="userStyleSheet" >
-         <property name="layoutDirection" >
+       <item row="0" column="2">
+        <widget class="QLineEdit" name="userStyleSheet">
+         <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="0" column="3">
+        <widget class="QPushButton" name="styleSheetBrowseButton">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="4">
         <widget class="QGroupBox" name="networkCache">
          <property name="title">
           <string>Enable network cache</string>
@@ -854,21 +1030,34 @@
           </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="networkCacheMaximumSizeSpinBox">
+            <property name="suffix">
+             <string> MB</string>
+            </property>
             <property name="minimum">
              <number>0</number>
             </property>
             <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="suffix">
-             <string> MB</string>
+             <number>9999999</number>
             </property>
            </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="2" column="2">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -888,26 +1077,31 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>startupBehavior</tabstop>
   <tabstop>homeLineEdit</tabstop>
   <tabstop>setHomeToCurrentPageButton</tabstop>
   <tabstop>expireHistory</tabstop>
+  <tabstop>searchEngineFallback</tabstop>
   <tabstop>downloadAsk</tabstop>
   <tabstop>downloadDestination</tabstop>
-  <tabstop>downloadsLocation</tabstop>
+  <tabstop>downloadDirectoryButton</tabstop>
   <tabstop>standardFontButton</tabstop>
   <tabstop>fixedFontButton</tabstop>
+  <tabstop>languageButton</tabstop>
+  <tabstop>blockPopupWindows</tabstop>
   <tabstop>enablePlugins</tabstop>
+  <tabstop>clickToFlash</tabstop>
   <tabstop>enableJavascript</tabstop>
   <tabstop>enableImages</tabstop>
   <tabstop>acceptCombo</tabstop>
   <tabstop>exceptionsButton</tabstop>
   <tabstop>keepUntilCombo</tabstop>
   <tabstop>cookiesButton</tabstop>
+  <tabstop>filterTrackingCookiesCheckbox</tabstop>
   <tabstop>selectTabsWhenCreated</tabstop>
   <tabstop>confirmClosingMultipleTabs</tabstop>
   <tabstop>oneCloseButton</tabstop>
+  <tabstop>quitAsLastTabClosed</tabstop>
   <tabstop>openLinksFromAppsIn</tabstop>
   <tabstop>openTargetBlankLinksIn</tabstop>
   <tabstop>proxySupport</tabstop>
@@ -917,6 +1111,7 @@
   <tabstop>proxyUserName</tabstop>
   <tabstop>proxyPassword</tabstop>
   <tabstop>userStyleSheet</tabstop>
+  <tabstop>networkCache</tabstop>
   <tabstop>networkCacheMaximumSizeSpinBox</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
@@ -928,9 +1123,9 @@
    <receiver>Settings</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>260</x>
-     <y>395</y>
+    <hint type="sourcelabel">
+     <x>269</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -944,9 +1139,9 @@
    <receiver>Settings</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>328</x>
-     <y>395</y>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
@@ -960,13 +1155,13 @@
    <receiver>downloadsLocation</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>50</x>
-     <y>223</y>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>289</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>348</x>
-     <y>223</y>
+    <hint type="destinationlabel">
+     <x>280</x>
+     <y>291</y>
     </hint>
    </hints>
   </connection>
@@ -976,13 +1171,141 @@
    <receiver>clickToFlash</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>129</x>
-     <y>98</y>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>125</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>149</x>
-     <y>122</y>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>minimFontSizeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>minimumFontSizeSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>31</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>189</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>downloadDestination</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>downloadDirectoryButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>externalDownloadButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>externalDownloadPath</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>315</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>388</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>externalDownloadButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>externalDownloadBrowse</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>315</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>554</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>externalDownloadButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>downloadAsk</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>externalDownloadButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>downloadsLocation</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>315</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>externalDownloadButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>downloadDestination</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>169</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>externalDownloadButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>downloadDirectoryButton</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>569</x>
+     <y>276</y>
     </hint>
    </hints>
   </connection>

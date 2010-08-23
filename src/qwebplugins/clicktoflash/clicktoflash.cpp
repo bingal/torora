@@ -33,7 +33,7 @@
 #include <qwebframe.h>
 #include <qwebview.h>
 
-#ifdef WEBKIT_TRUNK
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
 #endif
 
@@ -104,7 +104,7 @@ void ClickToFlash::load(bool loadAll)
     if (!view)
         return;
 
-#ifdef WEBKIT_TRUNK
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     const QString selector = QLatin1String("%1[type=\"application/x-shockwave-flash\"]");
     const QString mime = QLatin1String("application/futuresplash");
 
@@ -116,14 +116,14 @@ void ClickToFlash::load(bool loadAll)
         QWebFrame *frame = frames.takeFirst();
         QWebElement docElement = frame->documentElement();
 
-        QList<QWebElement> elements;
+        QWebElementCollection elements;
         elements.append(docElement.findAll(selector.arg(QLatin1String("object"))));
         elements.append(docElement.findAll(selector.arg(QLatin1String("embed"))));
 
         QWebElement element;
         foreach (element, elements) {
             if (!loadAll) {
-                if (!element.scriptableProperty(QLatin1String("swapping")).toBool())
+                if (!element.evaluateJavaScript(QLatin1String("this.swapping")).toBool())
                     continue;
             }
 

@@ -1,6 +1,5 @@
 /*
  * Copyright 2009 Jakub Wieczorek <faw217@gmail.com>
- * Copyright 2009 Christian Franke <cfchris6@ts2server.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +22,15 @@
 
 #include <qpair.h>
 #include <qimage.h>
+#include <qmap.h>
+#include <qnetworkaccessmanager.h>
 #include <qstring.h>
 #include <qurl.h>
 
-class QNetworkAccessManager;
 class QNetworkReply;
 class QScriptEngine;
 
+class OpenSearchEngineDelegate;
 class OpenSearchEngine : public QObject
 {
     Q_OBJECT
@@ -40,6 +41,20 @@ signals:
 
 public:
     typedef QPair<QString, QString> Parameter;
+    typedef QList<Parameter> Parameters;
+
+    Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString description READ description WRITE setDescription)
+    Q_PROPERTY(QString searchUrlTemplate READ searchUrlTemplate WRITE setSearchUrlTemplate)
+    Q_PROPERTY(Parameters searchParameters READ searchParameters WRITE setSearchParameters)
+    Q_PROPERTY(QString searchMethod READ searchMethod WRITE setSearchMethod)
+    Q_PROPERTY(QString suggestionsUrlTemplate READ suggestionsUrlTemplate WRITE setSuggestionsUrlTemplate)
+    Q_PROPERTY(Parameters suggestionsParameters READ suggestionsParameters WRITE setSuggestionsParameters)
+    Q_PROPERTY(QString suggestionsMethod READ suggestionsMethod WRITE setSuggestionsMethod)
+    Q_PROPERTY(bool providesSuggestions READ providesSuggestions)
+    Q_PROPERTY(QString imageUrl READ imageUrl WRITE setImageUrl)
+    Q_PROPERTY(bool valid READ isValid)
+    Q_PROPERTY(QNetworkAccessManager *networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
 
     OpenSearchEngine(QObject *parent = 0);
     ~OpenSearchEngine();
@@ -60,11 +75,17 @@ public:
     void setSuggestionsUrlTemplate(const QString &suggestionsUrl);
     QUrl suggestionsUrl(const QString &searchTerm) const;
 
-    QList<Parameter> searchParameters() const;
-    void setSearchParameters(const QList<Parameter> &searchParameters);
+    Parameters searchParameters() const;
+    void setSearchParameters(const Parameters &searchParameters);
 
-    QList<Parameter> suggestionsParameters() const;
-    void setSuggestionsParameters(const QList<Parameter> &suggestionsParameters);
+    Parameters suggestionsParameters() const;
+    void setSuggestionsParameters(const Parameters &suggestionsParameters);
+
+    QString searchMethod() const;
+    void setSearchMethod(const QString &method);
+
+    QString suggestionsMethod() const;
+    void setSuggestionsMethod(const QString &method);
 
     QString imageUrl() const;
     void setImageUrl(const QString &url);
@@ -74,15 +95,21 @@ public:
 
     bool isValid() const;
 
+    QNetworkAccessManager *networkAccessManager() const;
+    void setNetworkAccessManager(QNetworkAccessManager *networkAccessManager);
+
+    OpenSearchEngineDelegate *delegate() const;
+    void setDelegate(OpenSearchEngineDelegate *delegate);
+
     bool operator==(const OpenSearchEngine &other) const;
     bool operator<(const OpenSearchEngine &other) const;
 
 public slots:
     void requestSuggestions(const QString &searchTerm);
+    void requestSearchResults(const QString &searchTerm);
 
 protected:
     static QString parseTemplate(const QString &searchTerm, const QString &searchTemplate);
-    static QNetworkAccessManager *networkAccessManager();
     void loadImage() const;
 
 private slots:
@@ -98,13 +125,20 @@ private:
 
     QString m_searchUrlTemplate;
     QString m_suggestionsUrlTemplate;
-    QList<Parameter> m_searchParameters;
-    QList<Parameter> m_suggestionsParameters;
+    Parameters m_searchParameters;
+    Parameters m_suggestionsParameters;
+    QString m_searchMethod;
+    QString m_suggestionsMethod;
 
+    QMap<QString, QNetworkAccessManager::Operation> m_requestMethods;
+
+    QNetworkAccessManager *m_networkAccessManager;
     QNetworkReply *m_suggestionsReply;
 
     QScriptEngine *m_scriptEngine;
+
+    OpenSearchEngineDelegate *m_delegate;
 };
 
-#endif //OPENSEARCHENGINE_H
+#endif // OPENSEARCHENGINE_H
 

@@ -41,6 +41,7 @@
 #include "toolbarsearch.h"
 #include "webview.h"
 #include "networkaccessmanager.h"
+#include "networkproxyfactory.h"
 
 #define TOR_CHECK 1
 #define USING_TOR 2

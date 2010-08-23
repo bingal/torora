@@ -39,6 +39,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2007-2009 Benjamin C. Meyer &amp;lt;&lt;a href=&quot;mailto:ben@meyerhome.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;ben@meyerhome.net&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>WebKit version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AcceptLanguage</name>
@@ -68,6 +72,74 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AdBlockBlockedNetworkReply</name>
+    <message>
+        <source>Blocked by AdBlockRule: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockDialog</name>
+    <message>
+        <source>Add Custom Rule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more about writing rules...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse Subscriptions...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AdBlock Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable AdBlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockManager</name>
+    <message>
+        <source>Custom Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockModel</name>
+    <message>
+        <source>Rule</source>
+        <translation type="unfinished">Sääntö</translation>
+    </message>
+</context>
+<context>
+    <name>AdBlockSchemeAccessHandler</name>
+    <message>
+        <source>Subscribe?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to this AdBlock subscription?
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddBookmarkDialog</name>
     <message>
         <source>Add Bookmark</source>
@@ -88,6 +160,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Folder</source>
         <translation>Lisää kansio</translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillDialog</name>
+    <message>
+        <source>Form Passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Poista</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillManager</name>
+    <message>
+        <source>&lt;b&gt;Would you like to save this password?&lt;/b&gt;&lt;br&gt;         To review passwords you have saved and remove them, open the AutoFill pane of preferences.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never for this site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not now</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AutoFillModel</name>
+    <message>
+        <source>WebSite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -158,10 +271,6 @@ p, li { white-space: pre-wrap; }
         <translation>Avaa tiedosto</translation>
     </message>
     <message>
-        <source>XBEL (*.xbel *.xml)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Imported %1</source>
         <translation>Tuotu %1</translation>
     </message>
@@ -200,12 +309,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error when loading html bookmarks: %1
 </source>
-        <translation>Virhe ladattaessa html kirjanmerkkejä: %1
+        <translation type="obsolete">Virhe ladattaessa html kirjanmerkkejä: %1
 </translation>
-    </message>
-    <message>
-        <source>XBEL</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Name Change</source>
@@ -216,6 +321,31 @@ p, li { white-space: pre-wrap; }
         <source>Address Change</source>
         <comment>Undo bookmark url change</comment>
         <translation type="unfinished">Osoitteen muutos</translation>
+    </message>
+    <message>
+        <source>XBEL bookmarks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTML Netscape bookmarks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>htmlToXBel tool, which is shipped with Arora and is needed to import HTML bookmarks, is not installed or not available in the search paths.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading Bookmark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error when loading HTML bookmarks: %1
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -240,7 +370,7 @@ p, li { white-space: pre-wrap; }
     <name>BookmarksToolBar</name>
     <message>
         <source>Bookmark</source>
-        <translation>Kirjanmerkkipalkki</translation>
+        <translation type="obsolete">Kirjanmerkkipalkki</translation>
     </message>
     <message>
         <source>Open</source>
@@ -262,12 +392,16 @@ p, li { white-space: pre-wrap; }
         <source>Add Folder...</source>
         <translation>Lisää kansio...</translation>
     </message>
+    <message>
+        <source>Bookmarks</source>
+        <translation type="obsolete">Kirjanmerkit</translation>
+    </message>
 </context>
 <context>
     <name>BrowserApplication</name>
     <message>
         <source> (Change: %1 %2)</source>
-        <translation> (Muuta: %1 %2)</translation>
+        <translation type="obsolete"> (Muuta: %1 %2)</translation>
     </message>
     <message>
         <source>There are %1 windows and %2 tabs open
@@ -281,7 +415,11 @@ Haluatko lopettaa siitä huolimatta?</translation>
     </message>
     <message>
         <source>The saved session will not be restored because Arora crashed while trying to restore this session.</source>
-        <translation>Tallennettua istuntoa ei palautettu koska Arora kaatui yrittäessään palauttaa tätä istuntoa.</translation>
+        <translation type="obsolete">Tallennettua istuntoa ei palautettu koska Arora kaatui yrittäessään palauttaa tätä istuntoa.</translation>
+    </message>
+    <message>
+        <source>Arora crashed while trying to restore this session.  Should I try again?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -372,7 +510,7 @@ Haluatko lopettaa siitä huolimatta?</translation>
     </message>
     <message>
         <source>Prefere&amp;nces...</source>
-        <translation>Asetu&amp;kset...</translation>
+        <translation type="obsolete">Asetu&amp;kset...</translation>
     </message>
     <message>
         <source>Ctrl+,</source>
@@ -384,10 +522,6 @@ Haluatko lopettaa siitä huolimatta?</translation>
     </message>
     <message>
         <source>Ctrl+|</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Shift+Ctrl+B</source>
         <translation></translation>
     </message>
     <message>
@@ -498,7 +632,7 @@ Haluatko lopettaa siitä huolimatta?</translation>
     </message>
     <message>
         <source>Show &amp;Network Monitor</source>
-        <translation>Näytä &amp;verkkomonitori</translation>
+        <translation type="obsolete">Näytä &amp;verkkomonitori</translation>
     </message>
     <message>
         <source>Enable Web &amp;Inspector</source>
@@ -572,7 +706,7 @@ Haluatko lopettaa siitä huolimatta?</translation>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;When private browsing is turned on, some actions concerning your privacy will be disabled:&lt;ul&gt;&lt;li&gt; Webpages are not added to the history.&lt;/li&gt;&lt;li&gt; Items are automatically removed from the Downloads window.&lt;/li&gt;&lt;li&gt; New cookies are not stored, current cookies can&apos;t be accessed.&lt;/li&gt;&lt;li&gt; Site icons won&apos;t be stored, session won&apos;t be saved.&lt;/li&gt;&lt;li&gt; Searches are not added to the pop-up menu in the search box.&lt;/li&gt;&lt;/ul&gt;Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Kun yksityinen selailu on päällä, jotkut toiminnot liittyen yksityisyyteesi ovat pois päältä:&lt;ul&gt;&lt;li&gt; Verkkosivuja ei lisätä sivuhistoriaan.&lt;/li&gt;&lt;li&gt;Tiedostot poistetaan automaattisesti Lataukset ikkunasta&lt;/li&gt;&lt;li&gt;Uusia evästeitä ei lisätä, eikä nykyisiin evästeisiin pääse käsiksi.&lt;/li&gt;&lt;li&gt;Sivujen kuvakkeita ei tallenneta, istuntoja ei tallenneta.&lt;/li&gt;&lt;li&gt;Hakuja ei lisätä ponnahdusikkuna-valikkoon hakulaatikossa.&lt;/li&gt;&lt;/ul&gt;Kunnes suljet ikkunan, vois yhä napsauttaa Edellinen ja Seuraava painikkeita palataksesi verkkosivulle minkä olet avannut.</translation>
+        <translation type="obsolete">&lt;b&gt;%1&lt;/b&gt;&lt;br&gt;&lt;br&gt;Kun yksityinen selailu on päällä, jotkut toiminnot liittyen yksityisyyteesi ovat pois päältä:&lt;ul&gt;&lt;li&gt; Verkkosivuja ei lisätä sivuhistoriaan.&lt;/li&gt;&lt;li&gt;Tiedostot poistetaan automaattisesti Lataukset ikkunasta&lt;/li&gt;&lt;li&gt;Uusia evästeitä ei lisätä, eikä nykyisiin evästeisiin pääse käsiksi.&lt;/li&gt;&lt;li&gt;Sivujen kuvakkeita ei tallenneta, istuntoja ei tallenneta.&lt;/li&gt;&lt;li&gt;Hakuja ei lisätä ponnahdusikkuna-valikkoon hakulaatikossa.&lt;/li&gt;&lt;/ul&gt;Kunnes suljet ikkunan, vois yhä napsauttaa Edellinen ja Seuraava painikkeita palataksesi verkkosivulle minkä olet avannut.</translation>
     </message>
     <message>
         <source>Are you sure you want to close the window?  There are %1 tabs open</source>
@@ -604,6 +738,74 @@ Haluatko päivittää kaikki sivut?</translation>
         <source>Ctrl+Y</source>
         <comment>Download Manager</comment>
         <translation></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Encoding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Ctrl+B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configure Search Engines...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ad Block...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When private browsing is turned on, some actions concerning your privacy will be disabled:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webpages are not added to the history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Items are automatically removed from the Downloads window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New cookies are not stored, current cookies can&apos;t be accessed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site icons won&apos;t be stored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Session won&apos;t be saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searches are not added to the pop-up menu in the search box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No new network cache is written to disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Until you close the window, you can still click the Back and Forward buttons to return to the webpages you have opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private Browsing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -829,7 +1031,7 @@ Haluatko päivittää kaikki sivut?</translation>
     <name>DownloadItem</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation type="obsolete">Lomake</translation>
     </message>
     <message>
         <source>Ico</source>
@@ -917,6 +1119,10 @@ Haluatko päivittää kaikki sivut?</translation>
         <source>%1 of %2 (%3/sec) - %4</source>
         <translation>%1/%2 (%3/sek) %4</translation>
     </message>
+    <message>
+        <source>Download directory (%1) couldn&apos;t be created.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DownloadManager</name>
@@ -958,6 +1164,33 @@ Haluatko lopettaa siitä huolimatta?</translation>
     <message>
         <source>MB</source>
         <translation>Mt</translation>
+    </message>
+    <message>
+        <source>GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FileAccessReply</name>
+    <message>
+        <source>No Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening: %1: No such file or directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to read %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contents of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 KB</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1032,10 +1265,33 @@ Haluatko lopettaa siitä huolimatta?</translation>
     </message>
 </context>
 <context>
+    <name>JavaScriptAroraObject</name>
+    <message>
+        <source>Welcome to Arora!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arora Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search results provided by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About Arora</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LanguageManager</name>
     <message>
         <source>No translation files are installed.</source>
-        <translation>Yhtään käännöstä ei ole asennettu.</translation>
+        <translation type="obsolete">Yhtään käännöstä ei ole asennettu.</translation>
     </message>
     <message>
         <source>Choose language</source>
@@ -1044,6 +1300,10 @@ Haluatko lopettaa siitä huolimatta?</translation>
     <message>
         <source>&lt;p&gt;You can run with a different language than&lt;br&gt;the operating system default.&lt;/p&gt;&lt;p&gt;Please choose the language which should be used&lt;/p&gt;</source>
         <translation>&lt;p&gt;Voit käyttää eri kieltä&lt;br&gt;kuin käyttöjärjestelmän oletus.&lt;/p&gt;&lt;p&gt;Ole hyvä ja valitse kieli mitä käytetään&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>No translation files are installed at %1.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1076,43 +1336,59 @@ Haluatko sivuuttaa nämä virheet?&lt;/qt&gt;</translation>
         <source>&lt;qt&gt;Certificates:&lt;br/&gt;%1&lt;br/&gt;Do you want to accept all these certificates?&lt;/qt&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Issuer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not valid before: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valid until: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alternate Names:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NetworkMonitor</name>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation type="obsolete">Nimi</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation>Arvo</translation>
+        <translation type="obsolete">Arvo</translation>
     </message>
 </context>
 <context>
     <name>NetworkMonitorDialog</name>
     <message>
         <source>Network Monitor</source>
-        <translation>Verkkomonitori</translation>
+        <translation type="obsolete">Verkkomonitori</translation>
     </message>
     <message>
         <source>Network Requests</source>
-        <translation>Verkon pyynnöt</translation>
+        <translation type="obsolete">Verkon pyynnöt</translation>
     </message>
     <message>
         <source>Request Headers</source>
-        <translation>Pyynnön otsakkeet</translation>
+        <translation type="obsolete">Pyynnön otsakkeet</translation>
     </message>
     <message>
         <source>Response Headers</source>
-        <translation>Vastauksen otsakkeet</translation>
+        <translation type="obsolete">Vastauksen otsakkeet</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation>&amp;Poista</translation>
+        <translation type="obsolete">&amp;Poista</translation>
     </message>
     <message>
         <source>Remove &amp;All Requests</source>
-        <translation>Poista &amp;kaikki pyynnöt</translation>
+        <translation type="obsolete">Poista &amp;kaikki pyynnöt</translation>
     </message>
 </context>
 <context>
@@ -1166,6 +1442,18 @@ Haluatko sivuuttaa nämä virheet?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Provides contextual suggestions&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comma-separated list of keywords that may be entered in the location barfollowed by search terms to search with this engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nimi</translation>
+    </message>
+    <message>
+        <source>Keywords</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1244,42 +1532,46 @@ Haluatko sivuuttaa nämä virheet?&lt;/qt&gt;</translation>
     <name>RequestModel</name>
     <message>
         <source>Redirect: %1</source>
-        <translation>Uudelleenohjaus: %1</translation>
+        <translation type="obsolete">Uudelleenohjaus: %1</translation>
     </message>
     <message>
         <source>Method</source>
-        <translation>Menetelmä</translation>
+        <translation type="obsolete">Menetelmä</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation>Osoite</translation>
+        <translation type="obsolete">Osoite</translation>
     </message>
     <message>
         <source>Response</source>
-        <translation>Vastaus</translation>
+        <translation type="obsolete">Vastaus</translation>
     </message>
     <message>
         <source>Length</source>
-        <translation>Pituus</translation>
+        <translation type="obsolete">Pituus</translation>
     </message>
     <message>
         <source>Content Type</source>
-        <translation>Sisältötyyppi</translation>
+        <translation type="obsolete">Sisältötyyppi</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Tietoja</translation>
+        <translation type="obsolete">Tietoja</translation>
     </message>
 </context>
 <context>
     <name>SearchBanner</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation type="obsolete">Lomake</translation>
     </message>
     <message>
         <source>Done</source>
         <translation>Valmis</translation>
+    </message>
+    <message>
+        <source>Highlight All</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1575,6 +1867,62 @@ Haluatko sivuuttaa nämä virheet?&lt;/qt&gt;</translation>
         <source> MB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use the default search engine as fallback when the URL given by the user is invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Directory...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A cookie session ends:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When I exit the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>7 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>30 days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoFill web forms:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User names and passwords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsDialog</name>
@@ -1584,6 +1932,14 @@ Haluatko sivuuttaa nämä virheet?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>The network cache configuration has changed. So that it can be taken into account, the browser has to be restarted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose CSS File</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1603,15 +1959,19 @@ Haluatko sivuuttaa nämä virheet?&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Katso</translation>
+        <translation type="obsolete">&amp;Katso</translation>
     </message>
     <message>
         <source>&amp;Wrap lines</source>
-        <translation>&amp;Rivitys</translation>
+        <translation type="obsolete">&amp;Rivitys</translation>
     </message>
     <message>
         <source>Source of Page </source>
-        <translation>Sivun lähdekoodi</translation>
+        <translation type="obsolete">Sivun lähdekoodi</translation>
+    </message>
+    <message>
+        <source>Source of Page %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1738,10 +2098,6 @@ Haluatko varmasti sulkea tämän sivun?
         <source>Add &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Configure Search Engines...</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>WebPage</name>
@@ -1764,6 +2120,14 @@ Haluatko varmasti sulkea tämän sivun?
     <message>
         <source>If your computer or network is protected by a firewall or proxy, make sure that the browser is permitted to access the network.</source>
         <translation>Jos tietokoneesi tai verkkosi on suojattu palomuurilla tai välityspalvelimella, tarkista että selaimella on pääsy verkkoon.</translation>
+    </message>
+    <message>
+        <source>Resending POST request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In order to display the site, the request along with all the data must be sent once again, which may lead to some unexpected behaviour of the site e.g. the same action might be performed once again. Do you want to continue anyway?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1814,6 +2178,38 @@ Haluatko varmasti sulkea tämän sivun?
     </message>
     <message>
         <source>Search with...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to the toolbar search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Method not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 method is not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose the desired search engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Engine name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type in a name for the engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Block Image</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

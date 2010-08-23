@@ -67,7 +67,6 @@
 #include "browserapplication.h"
 #include "browsermainwindow.h"
 #include "networkaccessmanager.h"
-#include "opensearchdialog.h"
 #include "opensearchengine.h"
 #include "opensearchengineaction.h"
 #include "opensearchmanager.h"
@@ -131,6 +130,11 @@ OpenSearchManager *ToolbarSearch::openSearchManager()
 
 void ToolbarSearch::currentEngineChanged()
 {
+    OpenSearchEngine *newEngine = openSearchManager()->currentEngine();
+    Q_ASSERT(newEngine);
+    if (!newEngine)
+        return;
+
     if (m_suggestionsEnabled) {
         if (openSearchManager()->engineExists(m_currentEngine)) {
             OpenSearchEngine *oldEngine = openSearchManager()->engine(m_currentEngine);
@@ -138,13 +142,12 @@ void ToolbarSearch::currentEngineChanged()
                        this, SLOT(newSuggestions(const QStringList &)));
         }
 
-        OpenSearchEngine *newEngine = openSearchManager()->currentEngine();
         connect(newEngine, SIGNAL(suggestions(const QStringList &)),
                 this, SLOT(newSuggestions(const QStringList &)));
     }
 
-    setInactiveText(openSearchManager()->currentEngineName());
-    m_currentEngine = openSearchManager()->currentEngineName();
+    setInactiveText(newEngine->name());
+    m_currentEngine = newEngine->name();
     m_suggestions.clear();
     setupList();
 }
@@ -231,27 +234,44 @@ void ToolbarSearch::textEdited(const QString &text)
 
 void ToolbarSearch::getSuggestions()
 {
-    openSearchManager()->currentEngine()->requestSuggestions(text());
+    OpenSearchEngine *engine = openSearchManager()->currentEngine();
+    Q_ASSERT(engine);
+    if (!engine)
+        return;
+
+    if (!engine->networkAccessManager())
+        engine->setNetworkAccessManager(BrowserApplication::networkAccessManager());
+
+    engine->requestSuggestions(text());
 }
 
 void ToolbarSearch::searchNow()
 {
+    OpenSearchEngine *engine = openSearchManager()->currentEngine();
+    Q_ASSERT(engine);
+    if (!engine)
+        return;
+
     QString searchText = text();
-    QStringList newList = m_recentSearches;
-    if (newList.contains(searchText))
-        newList.removeAt(newList.indexOf(searchText));
-    newList.prepend(searchText);
-    if (newList.size() >= m_maxSavedSearches)
-        newList.removeLast();
 
     QWebSettings *globalSettings = QWebSettings::globalSettings();
     if (!globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled)) {
+        QStringList newList = m_recentSearches;
+        if (newList.contains(searchText))
+            newList.removeAt(newList.indexOf(searchText));
+        newList.prepend(searchText);
+        if (newList.size() >= m_maxSavedSearches)
+            newList.removeLast();
+
         m_recentSearches = newList;
         m_autosaver->changeOccurred();
     }
 
-    QUrl searchUrl = openSearchManager()->currentEngine()->searchUrl(searchText);
-    emit search(searchUrl);
+    QUrl searchUrl = engine->searchUrl(searchText);
+    TabWidget::OpenUrlIn tab = TabWidget::CurrentTab;
+    if (qApp->keyboardModifiers() == Qt::AltModifier)
+        tab = TabWidget::NewSelectedTab;
+    emit search(searchUrl, tab);
 }
 
 void ToolbarSearch::newSuggestions(const QStringList &suggestions)
@@ -304,10 +324,10 @@ void ToolbarSearch::showEnginesMenu()
     if (!engines.empty())
         menu.addSeparator();
 
-    for (int i = 0; i < engines.count(); i++) {
+    for (int i = 0; i < engines.count(); ++i) {
         WebPageLinkedResource engine = engines.at(i);
 
-        QUrl url = QUrl(engine.href);
+        QUrl url = engine.href;
         QString title = engine.title;
         QString mimetype = engine.type;
 
@@ -315,9 +335,6 @@ void ToolbarSearch::showEnginesMenu()
             continue;
         if (url.isEmpty())
             continue;
-
-        if (url.isRelative())
-            url = webView->url().resolved(url);
 
         if (title.isEmpty())
             title = webView->title().isEmpty() ? url.host() : webView->title();
@@ -328,9 +345,8 @@ void ToolbarSearch::showEnginesMenu()
     }
 
     menu.addSeparator();
-    QAction *showManager = menu.addAction(tr("Configure Search Engines..."));
-    connect(showManager, SIGNAL(triggered()),
-            this, SLOT(showDialog()));
+    if (BrowserMainWindow *window = BrowserMainWindow::parentWindow(this))
+        menu.addAction(window->searchManagerAction());
 
     if (!m_recentSearches.empty())
         menu.addAction(tr("Clear Recent Searches"), this, SLOT(clear()));
@@ -359,17 +375,6 @@ void ToolbarSearch::addEngineFromUrl()
     openSearchManager()->addEngine(url);
 }
 
-void ToolbarSearch::showDialog()
-{
-    BrowserMainWindow *window = BrowserMainWindow::parentWindow(this);
-
-    if (!window)
-        return;
-
-    OpenSearchDialog dialog(window);
-    dialog.exec();
-}
-
 void ToolbarSearch::setupList()
 {
     if (m_suggestions.isEmpty()
@@ -378,7 +383,7 @@ void ToolbarSearch::setupList()
         m_model->clear();
         m_suggestionsItem = 0;
     } else {
-        m_model->removeRows(1, m_model->rowCount() -1 );
+        m_model->removeRows(1, m_model->rowCount() - 1);
     }
 
     QFont lightFont;

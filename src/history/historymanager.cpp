@@ -63,6 +63,7 @@
 #include "historymanager.h"
 
 #include "autosaver.h"
+#include "browserapplication.h"
 #include "history.h"
 
 #include <qbuffer.h>
@@ -101,6 +102,9 @@ HistoryManager::HistoryManager(QObject *parent)
     m_expiredTimer.setSingleShot(true);
     connect(&m_expiredTimer, SIGNAL(timeout()),
             this, SLOT(checkForExpired()));
+    m_frecencyTimer.setSingleShot(true);
+    connect(&m_frecencyTimer, SIGNAL(timeout()),
+            this, SLOT(refreshFrecencies()));
     connect(this, SIGNAL(entryAdded(const HistoryEntry &)),
             m_saveTimer, SLOT(changeOccurred()));
     connect(this, SIGNAL(entryRemoved(const HistoryEntry &)),
@@ -113,6 +117,7 @@ HistoryManager::HistoryManager(QObject *parent)
 
     // QWebHistoryInterface will delete the history manager
     QWebHistoryInterface::setDefaultInterface(this);
+    startFrecencyTimer();
 }
 
 HistoryManager::~HistoryManager()
@@ -286,8 +291,8 @@ void HistoryManager::load()
 {
     loadSettings();
 
-    QFile historyFile(QDesktopServices::storageLocation(QDesktopServices::DataLocation)
-                      + QLatin1String("/history"));
+    QFile historyFile(BrowserApplication::dataFilePath(QLatin1String("history")));
+
     if (!historyFile.exists())
         return;
     if (!historyFile.open(QFile::ReadOnly)) {
@@ -377,15 +382,8 @@ void HistoryManager::save()
     if (first == m_history.count() - 1)
         saveAll = true;
 
-    QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-    if (directory.isEmpty())
-        directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
-    if (!QFile::exists(directory)) {
-        QDir dir;
-        dir.mkpath(directory);
-    }
+    QFile historyFile(BrowserApplication::dataFilePath(QLatin1String("history")));
 
-    QFile historyFile(directory + QLatin1String("/history"));
     // When saving everything use a temporary file to prevent possible data loss.
     QTemporaryFile tempFile;
     tempFile.setAutoRemove(false);
@@ -421,4 +419,15 @@ void HistoryManager::save()
     m_lastSavedUrl = m_history.value(0).url;
 }
 
+void HistoryManager::refreshFrecencies()
+{
+    m_historyFilterModel->recalculateFrecencies();
+    startFrecencyTimer();
+}
 
+void HistoryManager::startFrecencyTimer()
+{
+    // schedule us to recalculate the frecencies once per day, at 3:00 am (aka 03h00)
+    QDateTime tomorrow(QDate::currentDate().addDays(1), QTime(3, 00));
+    m_frecencyTimer.start(QDateTime::currentDateTime().secsTo(tomorrow)*1000);
+}
