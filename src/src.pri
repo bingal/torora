@@ -42,6 +42,7 @@ HEADERS += \
     clearprivatedata.h \
     clearbutton.h \
     downloadmanager.h \
+    jsobjects/jsobjects.h \
     modelmenu.h \
     modeltoolbar.h \
     plaintexteditsearch.h \

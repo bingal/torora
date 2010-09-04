@@ -102,6 +102,8 @@ WebPage::WebPage(QObject *parent)
     , m_openTargetBlankLinksIn(TabWidget::NewWindow)
     , m_javaScriptExternalObject(0)
     , m_javaScriptAroraObject(0)
+    , m_tororaScreenObject(0)
+    , m_tororaNavigatorObject(0)
 {
     setPluginFactory(webPluginFactory());
     NetworkAccessManagerProxy *networkManagerProxy = new NetworkAccessManagerProxy(this);
@@ -209,9 +211,16 @@ void WebPage::addExternalBinding(QWebFrame *frame)
     if (!m_javaScriptExternalObject)
         m_javaScriptExternalObject = new JavaScriptExternalObject(this);
 
+    if (!m_tororaScreenObject)
+        m_tororaScreenObject = new TororaScreenObject(this);
+
+    if (!m_tororaNavigatorObject)
+        m_tororaNavigatorObject = new TororaNavigatorObject(this);
+
     if (frame == 0) { // called from QWebFrame::javaScriptWindowObjectCleared
         frame = qobject_cast<QWebFrame*>(sender());
 
+        frame->addToJavaScriptWindowObject(QLatin1String("arora"), m_javaScriptAroraObject);
         if (frame->url().scheme() == QLatin1String("qrc")
             && frame->url().path() == QLatin1String("/startpage.html")) {
 
@@ -224,6 +233,8 @@ void WebPage::addExternalBinding(QWebFrame *frame)
         connect(frame, SIGNAL(javaScriptWindowObjectCleared()),
                 this, SLOT(addExternalBinding()));
     }
+    frame->addToJavaScriptWindowObject(QLatin1String("navigator"), m_tororaNavigatorObject);
+    frame->addToJavaScriptWindowObject(QLatin1String("screen"), m_tororaScreenObject);
     frame->addToJavaScriptWindowObject(QLatin1String("external"), m_javaScriptExternalObject);
 }
 

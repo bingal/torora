@@ -141,12 +141,7 @@ void SettingsDialog::loadDefaults()
     blockPopupWindows->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
     /*Torora: Req 5.1 to 5.5*/
     if (BrowserApplication::isTor()) {
-#if defined(TORORA_WEBKIT_BUILD)
       enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
-      defaultSettings->setAttribute(QWebSettings::PreventUserProfiling, true);
-#else
-      enableJavascript->setChecked(false);
-#endif
       enablePlugins->setChecked(false);
     } else {
       enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));

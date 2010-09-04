@@ -22,6 +22,7 @@
 
 #include "webpageproxy.h"
 #include "tabwidget.h"
+#include "jsobjects/jsobjects.h"
 
 #include <qlist.h>
 #include <qnetworkrequest.h>
@@ -38,6 +39,7 @@ public:
 class OpenSearchEngine;
 class QNetworkReply;
 class WebPluginFactory;
+
 // See https://developer.mozilla.org/en/adding_search_engines_from_web_pages
 class JavaScriptExternalObject : public QObject
 {
@@ -103,6 +105,8 @@ protected:
     QUrl m_requestedUrl;
     JavaScriptExternalObject *m_javaScriptExternalObject;
     JavaScriptAroraObject *m_javaScriptAroraObject;
+    TororaScreenObject *m_tororaScreenObject;
+    TororaNavigatorObject *m_tororaNavigatorObject;
 
 private:
     QNetworkRequest lastRequest;

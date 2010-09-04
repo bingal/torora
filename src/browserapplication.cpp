@@ -400,16 +400,11 @@ void BrowserApplication::loadSettings()
     defaultSettings->setAttribute(QWebSettings::JavascriptCanOpenWindows, !(settings.value(QLatin1String("blockPopupWindows"), true).toBool()));
     /*Torora: Req 5.1 to 5.5*/
     if (isTor()) {
-#if defined(TORORA_WEBKIT_BUILD)
-      defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
-#else
-      defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, false);
-#endif
       defaultSettings->setAttribute(QWebSettings::PluginsEnabled, false);
     } else {
-      defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
       defaultSettings->setAttribute(QWebSettings::PluginsEnabled, settings.value(QLatin1String("enablePlugins"), true).toBool());
     }
+    defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::AutoLoadImages, settings.value(QLatin1String("enableImages"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, settings.value(QLatin1String("enableInspector"), false).toBool());
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
@@ -419,11 +414,8 @@ void BrowserApplication::loadSettings()
     QUrl url = settings.value(QLatin1String("userStyleSheet")).toUrl();
     defaultSettings->setUserStyleSheetUrl(url);
 
-#if defined(TORORA_WEBKIT_BUILD)
-    defaultSettings->setAttribute(QWebSettings::PreventUserProfiling, true);
     defaultSettings->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, false);
     defaultSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
-#endif
 
     int maximumPagesInCache = settings.value(QLatin1String("maximumPagesInCache"), 3).toInt();
     QWebSettings::globalSettings()->setMaximumPagesInCache(maximumPagesInCache);
