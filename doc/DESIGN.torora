@@ -1,5 +1,4 @@
 TODO: Investigate use of navigator.plugins
-      Investigate 'Accept-Language' header
 
 Torora Requirements and Specification
 -------------------------------------
@@ -198,10 +197,6 @@ These considerations leave us with the following requirements for Torora:
 
         3. Patch WebKit to modify the values returned by the language, locale and
            charset properties of the DOM.
-           Setting: QWebSettings::MaskPlatform
-           Files altered: WebCore/page/Navigator.cpp
-                         WebCore/page/NavigatorBase.cpp
-                         JavaScriptCore/runtime/DateMath.cpp
 
            Strategy: Same approach as Torbutton.
                      Language Object
@@ -209,7 +204,9 @@ These considerations leave us with the following requirements for Torora:
                        language = 'en-us, en'
                        locale = 'en-US'
 
-        4. If built without a patched WebKit, disable Javascript completely.
+        4.Accept-Language header always gives 'en-us'.
+
+        5. If built without a patched WebKit, disable Javascript completely.
            Files altered: torora/src/settings.cpp, torora/src/browserapplication.cpp
 
 

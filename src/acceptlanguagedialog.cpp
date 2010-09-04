@@ -24,6 +24,7 @@
 
 #include <qlistview.h>
 #include <qsettings.h>
+#include <qdebug.h>
 
 AcceptLanguageDialog::AcceptLanguageDialog(QWidget *parent, Qt::WindowFlags flags)
     : QDialog(parent, flags)
@@ -112,6 +113,7 @@ void AcceptLanguageDialog::save()
 /*
     Return a ByteArray that can be sent along with the Accept-Language http header
 
+    Amended to mimic Firefox
     See RFC 2616 section 14.4
  */
 QByteArray AcceptLanguageDialog::httpString(const QStringList &list)
@@ -125,10 +127,11 @@ QByteArray AcceptLanguageDialog::httpString(const QStringList &list)
         if (processed.isEmpty()) {
             processed << tag;
         } else {
-            processed << QString(QLatin1String("%1; %2")).arg(tag).arg(QString::number(qvalue, 'f', 1));
+            processed << QString(QLatin1String("%1; q=%2")).arg(tag).arg(QString::number(qvalue, 'f', 1));
         }
+        qDebug() << list.length();
         if (qvalue > .1)
-            qvalue -= .1;
+            qvalue -= (qreal)(1.0 / list.length());
     }
     return processed.join(QLatin1String(", ")).toLatin1();
 }

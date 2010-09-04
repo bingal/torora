@@ -216,6 +216,12 @@ void NetworkAccessManager::loadSettings()
     settings.beginGroup(QLatin1String("network"));
     QStringList acceptList = settings.value(QLatin1String("acceptLanguages"),
             AcceptLanguageDialog::defaultAcceptList()).toStringList();
+
+    /*Torora Req 4.4 */
+    if (BrowserApplication::instance()->isTor()) {
+        acceptList.clear();
+        acceptList << QLatin1String("[en-us]");
+    }
     m_acceptLanguage = AcceptLanguageDialog::httpString(acceptList);
 
     bool cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
