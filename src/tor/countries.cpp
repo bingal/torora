@@ -26,6 +26,7 @@ Countries::Countries()
 {
     QStringList ccs;
     QStringList names;
+    QStringList friendlyNames;
 
     countries.clear();
 
@@ -35,9 +36,14 @@ Countries::Countries()
     names << QLatin1String("United States") << QLatin1String("United Kingdom")
           << QLatin1String("Germany") << QLatin1String("China")
           << QLatin1String("France") << QLatin1String("Sweden")
-          << QLatin1String("Anonymous");
+          << QLatin1String("Random");
+    friendlyNames << QLatin1String("the United States") << QLatin1String("the United Kingdom")
+          << QLatin1String("Germany") << QLatin1String("China")
+          << QLatin1String("France") << QLatin1String("Sweden")
+          << QLatin1String("a Random Country");
+
     for ( int i = 0; i != ccs.count(); ++i ) {
-        Country *country = new Country(ccs[i],names[i]);
+        Country *country = new Country(ccs[i],names[i],friendlyNames[i]);
         countries.append(country);
     }
     m_countrycodes = ccs;
@@ -47,7 +53,7 @@ Countries::~Countries()
 {
 }
 
-Country::Country(const QString &cc, const QString &name )
+Country::Country(const QString &cc, const QString &name, const QString &friendlyName )
 {
     if (!cc.isEmpty())
         m_icon = QPixmap(QString(QLatin1String(":graphics/flags/%1.png")).arg(cc));
@@ -55,6 +61,7 @@ Country::Country(const QString &cc, const QString &name )
         m_icon = QPixmap(QString(QLatin1String(":graphics/tor.png")));
     m_name = name;
     m_cc = cc;
+    m_friendlyName = friendlyName;
 }
 
 Country::~Country()

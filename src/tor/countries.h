@@ -30,17 +30,19 @@ class QPixmap;
 class Country
 {
 public:
-    Country( const QString &cc, const QString &name );
+    Country( const QString &cc, const QString &name, const QString &friendlyNname );
     Country( );
     virtual ~Country();
 
     QPixmap icon() {return m_icon;};
     QString name() {return m_name;};
+    QString friendlyName() {return m_friendlyName;};
     QString cc() {return m_cc;};
 private:
     QString m_cc;
     QPixmap m_icon;
     QString m_name;
+    QString m_friendlyName;
 };
 
 class Countries

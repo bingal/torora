@@ -59,6 +59,7 @@ public:
     bool readyToUse(){return (m_state > AUTHENTICATING)?true:false;}
     bool geoBrowsingCapable();
     void setCountries(const QStringList &countrycodes) { m_countrycodes = countrycodes; }
+    bool runningServer() { return m_serverRunning; }
 signals:
 
     void fatalError();
@@ -76,6 +77,7 @@ public slots:
     void authenticateWithPassword(const QString &password);
     void setExitCountry(const QString &cc );
     void strictExitNodes( bool strict );
+    void enableRelay();
 
 private slots:
     void closeConnection()
@@ -118,11 +120,16 @@ private:
     void protocolInfo();
     void closeCircuit(const QString &circid);
     void getExitCountry();
+    void checkForServer();
+    void parseServerStatus(const QString &line);
     void parseExitNodes(const QString &line);
+    void clearSavedPassword();
+    void storePassword();
 
     QTcpSocket *socket;
     bool readCookie();
     bool m_controllerWorking;
+    bool m_serverRunning;
     QString m_host;
     int m_port;
     QString m_password;

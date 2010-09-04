@@ -57,7 +57,6 @@ public:
     void setGeoBrowsingLocation(int offset);
     Countries* countries(){ return m_countries; }
     bool readyToUse();
-    void authenticate();
 
 signals:
     void geoBrowsingUpdate(int offset);
@@ -78,11 +77,15 @@ public slots:
     void checkTorExplicitly();
     void requestPassword(const QString &);
     void showGeoBrowsingMenu();
+    void runServer();
+    void enableRelay();
+    void authenticate();
 private:
     bool validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx);
     void setBrowsingEnabled(bool enabled);
     void passwordHelp();
     void connectToTor();
+    void serverRunning();
 
     AppCheck *tor;
     AppCheck *privoxy;
@@ -100,6 +103,8 @@ private:
     QStringList polipoConfigFiles;
     Countries *m_countries;
     QTimer *m_timer;
+    bool m_displayedAlready;
+    QString m_country;
 };
 
 #endif //

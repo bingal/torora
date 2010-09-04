@@ -129,7 +129,6 @@ QByteArray AcceptLanguageDialog::httpString(const QStringList &list)
         } else {
             processed << QString(QLatin1String("%1; q=%2")).arg(tag).arg(QString::number(qvalue, 'f', 1));
         }
-        qDebug() << list.length();
         if (qvalue > .1)
             qvalue -= (qreal)(1.0 / list.length());
     }

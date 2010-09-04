@@ -25,6 +25,7 @@
 #include <qstringlist.h>
 #include <qregexp.h>
 #include "torcontrol.h"
+#include <qsettings.h>
 
 #include <qtimer.h>
 #include <assert.h>
@@ -38,6 +39,7 @@ TorControl::TorControl( const QString &host, int port )
     m_port = port;
     m_password = QString();
     m_authMethods = QStringList();
+    m_serverRunning = false;
 
     // create the socket and connect various of its signals
     socket = new QTcpSocket( this );
@@ -50,6 +52,12 @@ TorControl::TorControl( const QString &host, int port )
     connect( socket, SIGNAL(error(QAbstractSocket::SocketError)),
             SLOT(socketError(QAbstractSocket::SocketError)) );
 
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Tor"));
+    QString password = settings.value(QLatin1String("TorPassword"), QString()).toString();
+    if (!password.isEmpty())
+        m_password = password;
+
     reconnect();
 }
 
@@ -57,7 +65,7 @@ void TorControl::reconnect()
 {
     // connect to the server
     m_state = PREAUTHENTICATING;
-    socket->disconnectFromHost();
+    socket->abort();
     socket->connectToHost( m_host, m_port );
 
 }
@@ -83,10 +91,18 @@ void TorControl::getExitCountry()
     sendToServer(QString(QLatin1String("GETCONF ExitNodes")));
 }
 
+void TorControl::checkForServer()
+{
+    if (m_state != AUTHENTICATED) {
+        return;
+    }
+    sendToServer(QString(QLatin1String("GETCONF OrPort")));
+}
+
 bool TorControl::geoBrowsingCapable()
 {
     /* If Tor version < 0.2.1.X then not supported */
-//    qDebug() << m_versionTor << endl;
+    qDebug() << m_versionTor << endl;
     if ((m_versionTor.mid(0,1).toInt() < 1) &&
        (m_versionTor.mid(2,1).toInt() < 3) &&
        (m_versionTor.mid(4,1).toInt() < 1))
@@ -117,6 +133,15 @@ void TorControl::parseExitNodes(const QString &line)
         emit geoBrowsingUpdate(m_countrycodes.indexOf(countriesInUse.first()));
 }
 
+void TorControl::parseServerStatus(const QString &line)
+{
+    if (line.toInt() > 0) {
+        m_serverRunning = true;
+    } else {
+        m_serverRunning = false;
+    }
+}
+
 void TorControl::authenticateWithPassword(const QString &password)
 {
     m_password = password;
@@ -131,6 +156,10 @@ void TorControl::protocolInfo()
 
 void TorControl::authenticate()
 {
+    /* This may happen if we have wrongly guessed that Tor is running */
+    if (m_state != AUTHENTICATING)
+        reconnect();
+
     if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD"))) {
         if (!m_password.isEmpty())
             sendToServer(QString(QLatin1String("AUTHENTICATE \"%1\"")).arg(m_password));
@@ -171,6 +200,17 @@ bool TorControl::readCookie()
     return false;
 }
 
+void TorControl::enableRelay()
+{
+    /* Get the list of open circuits and close them. This will
+       force Tor to build circuits obeying the new rules. */
+    sendToServer(QLatin1String("SETCONF OrPort=9030"));
+    sendToServer(QLatin1String("SETCONF NickName=TororaUser"));
+    sendToServer(QLatin1String("SETCONF ExitPolicy=\"reject *:*\""));
+    /* Tell Tor to use a new circuit for the next connection. */
+    sendToServer(QLatin1String("saveconf"));
+}
+
 void TorControl::newIdentity()
 {
     /* Get the list of open circuits and close them. This will
@@ -178,6 +218,25 @@ void TorControl::newIdentity()
     sendToServer(QLatin1String("GETINFO circuit-status"));
     /* Tell Tor to use a new circuit for the next connection. */
     sendToServer(QLatin1String("signal newnym"));
+}
+
+void TorControl::storePassword()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Tor"));
+    QString currentPassword = settings.value(QLatin1String("TorPassword"), QString()).toString();
+    if (m_password != currentPassword)
+        settings.setValue(QLatin1String("TorPassword"), m_password);
+}
+
+void TorControl::clearSavedPassword()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("Tor"));
+    QString currentPassword = settings.value(QLatin1String("TorPassword"), QString()).toString();
+    if (m_password == currentPassword)
+        settings.setValue(QLatin1String("TorPassword"), QString());
+    m_password = QLatin1String("");
 }
 
 void TorControl::closeCircuit(const QString &circid)
@@ -196,7 +255,9 @@ void TorControl::socketReadyRead()
               case AUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state = AUTHENTICATED;
+                      storePassword();
                       getExitCountry();
+                      checkForServer();
                       /* If the user had to enter a password then they're expecting to see the
                          geobrowsing menu pop up. */
                       if (m_authMethods.contains(QLatin1String("HASHEDPASSWORD")))
@@ -206,6 +267,7 @@ void TorControl::socketReadyRead()
                   code = line.left(3);
                   /*Incorrect password*/
                   if (code == QLatin1String("515")){
+                      clearSavedPassword();
                       reconnect();
                       emit requestPassword(tr("<qt>The password you entered was incorrect. <br>"
                                               "Try entering it again or click 'Cancel' for help:</qt>"));
@@ -222,6 +284,13 @@ void TorControl::socketReadyRead()
                           parseExitNodes(line);
                       continue;
                   }
+                  if (line.contains(QLatin1String("250 ORPort="))){
+                      line.remove(QLatin1String("250 ORPort="));
+                      m_serverRunning = false;
+                      if (!line.isEmpty())
+                          parseServerStatus(line);
+                      continue;
+                  }
                   break;
               case LISTING_CIRCUITS:
                   if (line.contains(QLatin1String("250 OK"))){
@@ -235,6 +304,11 @@ void TorControl::socketReadyRead()
               case PREAUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state=AUTHENTICATING;
+                      /* If there's no auth method we can just make the control
+                         session ready for use now. Otherwise, we wait until it's
+                         required and prompt for a password then.*/
+                      if (m_authMethods.contains(QLatin1String("NULL")))
+                          authenticate();
                       continue;
                   }
                   if (line.contains(QLatin1String("250-VERSION Tor="))){
@@ -245,11 +319,6 @@ void TorControl::socketReadyRead()
                   if (line.contains(QLatin1String("250-AUTH METHODS="))){
                       line.remove(QLatin1String("250-AUTH METHODS="));
                       m_authMethods = line.split(QLatin1String(","));
-                      /* If there's no auth method we can just make the control
-                         session ready for use now. Otherwise, we wait until it's
-                         required and prompt for a password then.*/
-                      if (m_authMethods.contains(QLatin1String("NULL")))
-                          authenticate();
                   }
                   break;
           }

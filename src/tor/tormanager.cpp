@@ -307,6 +307,15 @@ void TorManager::reportTorCheckResults(int page)
         bulletthree = tr("Press F12 or <b>Tools->Check Tor</b> to test Tor again.");
         img = QLatin1String(":graphics/tor-off.png");
         statusbar = QLatin1String("Tor Check Failed");
+
+        tororaIssues = QString(QLatin1String("<table align='center'><tr><td></td> <td>"
+                                                      "<object type=\"application/x-qt-plugin\" classid=\"QPushButton\" "
+                                                      "name=\"TryAgainButton\" height=25 width=110></object>\n"
+                                                      "<script>\n"
+                                                      "document.TryAgainButton.text = 'Try Again';\n"
+                                                      "</script>\n"
+                                                      "</td>  <td></td></tr></table>\n"));
+        setBrowsingEnabled(false);
         break;
     }
     QString html = QString(QLatin1String(file.readAll()))
@@ -389,11 +398,15 @@ void TorManager::checkTorInstallation(bool checkTorSilently)
 
 void TorManager::checkTorSilently()
 {
+    if (torcontrol)
+        torcontrol->newIdentity();
     checkTorInstallation(true);
 }
 
 void TorManager::checkTorExplicitly()
 {
+    if (torcontrol)
+        torcontrol->newIdentity();
     checkTorInstallation(false);
 }
 
@@ -438,14 +451,13 @@ void TorManager::setGeoBrowsingLocation(int offset)
         return;
     }
     torcontrol->setExitCountry(m_countries->country(offset)->cc());
+    m_country = m_countries->country(offset)->friendlyName();
     emit geoBrowsingUpdate(offset);
 }
 
 void TorManager::showGeoBrowsingMenu()
 {
-    BrowserApplication::instance()->mainWindow()->geoBrowsingMenu()->hide();
-    BrowserApplication::instance()->mainWindow()->aboutToShowGeoBrowsingMenu();
-    BrowserApplication::instance()->mainWindow()->geoBrowsingMenu()->show();
+    BrowserApplication::instance()->mainWindow()->showGeoBrowsingMenu();
 }
 
 void TorManager::requestPassword(const QString &message)
@@ -475,18 +487,24 @@ void TorManager::requestPassword(const QString &message)
 
 void TorManager::passwordHelp()
 {
+    QString proceedButton = QString(QLatin1String("<object type=\"application/x-qt-plugin\" classid=\"QPushButton\" name=\"DoneButton\" height=25 width=110></object>\n"
+                            "<script>\n"
+                            "document.DoneButton.text = 'Done';\n"
+                            "</script>\n"));
+
     QFile file(QLatin1String(":/passwordhelp.html"));
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open torcheck.html";
         return;
     }
     QString tororaIssues;
-    QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
-    headline = tr("To Enable Geo-Browsing You Need To Set Tor's Password.");
-    intro = tr("Open up the Vidalia 'Advanced' settings dialog.");
-    bullettwo = tr("Clear the 'Randomly Generate Password' check-box.");
-    bulletthree = tr("Type in a password of your choosing and click 'OK'.");
-    bulletfour = tr("Enter this password when Torora requests it.");
+    QString title, headline, intro, bullettwo, bulletthree, bulletfour, bulletfive, img;
+    headline = tr("To Use Mgeni You Need To Set Tor's Password.");
+    intro = tr("1. Right click the 'green onion' at the bottom right of your screen and choose 'Settings'.");
+    bullettwo = tr("2. Select 'Advanced' in the 'Settings' dialog.");
+    bulletthree = tr("3. Clear the 'Randomly Generate' check-box.");
+    bulletfour = tr("4. Type in a password of your choosing and click 'OK'.");
+    bulletfive = tr("5. Click 'Done' below and enter this password when Mgeni requests it.");
     img = QLatin1String(":graphics/vidalia-password.png");
 
     QString html = QString(QLatin1String(file.readAll()))
@@ -496,14 +514,40 @@ void TorManager::passwordHelp()
                         .arg(intro)
                         .arg(bullettwo)
                         .arg(bulletthree)
-                        .arg(bulletfour);
+                        .arg(bulletfour)
+                        .arg(bulletfive)
+                        .arg(proceedButton);
 
     QBuffer imageBuffer;
     imageBuffer.open(QBuffer::ReadWrite);
-    QIcon icon = QIcon(img);
-    QPixmap pixmap = icon.pixmap(QSize(546, 219));
+    QIcon icon = QIcon(QLatin1String(":graphics/vidalia-systray.png"));
+    QPixmap pixmap = icon.pixmap(QSize(183, 137));
     if (pixmap.save(&imageBuffer, "PNG")) {
-        html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
+        html.replace(QLatin1String("HELP_ONE_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":graphics/vidalia-advanced.png"));
+    pixmap = icon.pixmap(QSize(118, 97));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("HELP_TWO_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":graphics/vidalia-random.png"));
+    pixmap = icon.pixmap(QSize(149, 71));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("HELP_THREE_DATA_HERE"),
+                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    imageBuffer.open(QBuffer::ReadWrite);
+    icon = QIcon(QLatin1String(":graphics/vidalia-pass.png"));
+    pixmap = icon.pixmap(QSize(166, 78));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("HELP_FOUR_DATA_HERE"),
                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
     }
 
@@ -517,4 +561,104 @@ void TorManager::passwordHelp()
 
     BrowserApplication::instance()->mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
 
+}
+
+
+void TorManager::runServer()
+{
+    if (m_displayedAlready || (torcontrol && torcontrol->runningServer()))
+        return;
+    m_displayedAlready = true;
+    QString proceedButton = QString(QLatin1String("<object type=\"application/x-qt-plugin\" classid=\"QPushButton\" name=\"RunServerButton\" height=25 width=110></object>\n"
+                            "<script>\n"
+                            "document.RunServerButton.text = 'Run Server';\n"
+                            "</script>\n"));
+    QFile file(QLatin1String(":/runserver.html"));
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open runserver.html";
+        return;
+    }
+    QString tororaIssues;
+    QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
+    headline = tr("You're Ready to Browse Services in %1!").arg(m_country);
+    intro = tr("While browsing, you can join the Tor network and help improve its performance.");
+    bullettwo = tr("Joining is safe and easy, your computer will only act as an internal relay.");
+    bulletthree = tr("You can use Vidalia to manage your membership");
+    bulletfour = tr("Click the button below to join.");
+    img = QLatin1String(":graphics/vidalia-password.png");
+
+    QString html = QString(QLatin1String(file.readAll()))
+                        .arg(title)
+                        .arg(QString())
+                        .arg(headline)
+                        .arg(intro)
+                        .arg(bullettwo)
+                        .arg(bulletthree)
+                        .arg(bulletfour)
+                        .arg(proceedButton);
+
+    QBuffer imageBuffer;
+    imageBuffer.open(QBuffer::ReadWrite);
+    QIcon icon = QIcon(QLatin1String(":graphics/info.png"));
+    QPixmap pixmap = icon.pixmap(QSize(32, 32));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("INFO_BINARY_DATA_HERE"),
+                    QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    BrowserApplication::instance()->mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
+
+}
+
+void TorManager::serverRunning()
+{
+    QFile file(QLatin1String(":/serverunning.html"));
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open serverunning.html";
+        return;
+    }
+    QString tororaIssues;
+    QString title, headline, intro, bullettwo, bulletthree, bulletfour, img;
+    headline = tr("You've joined the Tor network!");
+    intro = tr("You've now added to the capacity of the Tor network for other users by running a Tor server.");
+    bullettwo = tr("Running a server helps improve Tor's speed both for you and other users.");
+    bulletthree = tr("Your Tor server will only handle traffic passing through the Tor network.");
+    bulletfour = tr("You can manage your Tor server's configuration using the 'Setup Relaying' option in the Vidalia control panel.");
+    img = QLatin1String(":graphics/vidalia-panel.png");
+
+    QString html = QString(QLatin1String(file.readAll()))
+                        .arg(title)
+                        .arg(QString())
+                        .arg(headline)
+                        .arg(intro)
+                        .arg(bullettwo)
+                        .arg(bulletthree)
+                        .arg(bulletfour);
+
+//     QBuffer imageBuffer;
+//     imageBuffer.open(QBuffer::ReadWrite);
+//     QIcon icon = QIcon(img);
+//     QPixmap pixmap = icon.pixmap(QSize(546, 219));
+//     if (pixmap.save(&imageBuffer, "PNG")) {
+//         html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
+//                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
+//     }
+
+    QBuffer imageBuffer;
+    imageBuffer.open(QBuffer::ReadWrite);
+    QIcon icon = QIcon(QLatin1String(":graphics/info.png"));
+    QPixmap pixmap = icon.pixmap(QSize(32, 32));
+    if (pixmap.save(&imageBuffer, "PNG")) {
+        html.replace(QLatin1String("INFO_BINARY_DATA_HERE"),
+                    QString(QLatin1String(imageBuffer.buffer().toBase64())));
+    }
+
+    BrowserApplication::instance()->mainWindow()->currentTab()->page()->mainFrame()->setHtml(html, QUrl());
+
+}
+
+void TorManager::enableRelay()
+{
+    torcontrol->enableRelay();
+    serverRunning();
 }
