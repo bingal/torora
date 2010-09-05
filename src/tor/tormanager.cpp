@@ -206,7 +206,7 @@ void TorManager::setBrowsingEnabled(bool enabled)
     BrowserApplication::instance()->mainWindow()->tabWidget()->setLocationBarEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->enableBookmarksToolbar(enabled);
-    BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(enabled);
+    //BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->geoBrowsingAction()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->stopReloadAction()->setEnabled(enabled);
 }
@@ -315,6 +315,9 @@ void TorManager::reportTorCheckResults(int page)
                                                       "document.TryAgainButton.text = 'Try Again';\n"
                                                       "</script>\n"
                                                       "</td>  <td></td></tr></table>\n"));
+        /* Create a new circuit for the next test, just in case we used an exit that isn't listed yet */
+        if (torcontrol)
+            torcontrol->newIdentity();
         setBrowsingEnabled(false);
         break;
     }
@@ -398,15 +401,11 @@ void TorManager::checkTorInstallation(bool checkTorSilently)
 
 void TorManager::checkTorSilently()
 {
-    if (torcontrol)
-        torcontrol->newIdentity();
     checkTorInstallation(true);
 }
 
 void TorManager::checkTorExplicitly()
 {
-    if (torcontrol)
-        torcontrol->newIdentity();
     checkTorInstallation(false);
 }
 
