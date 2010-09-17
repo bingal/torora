@@ -85,6 +85,7 @@
 #include <qmessagebox.h>
 #include <qsettings.h>
 #include <qfiledialog.h>
+#include <qwebkitversion.h>
 
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
@@ -219,12 +220,13 @@ void SettingsDialog::loadFromSettings()
     blockPopupWindows->setChecked(settings.value(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked()).toBool());
     /*Torora: Req 5.1 to 5.5*/
     if (BrowserApplication::isTor()) {
-#if defined(TORORA_WEBKIT_BUILD)
-      enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
-#else
-      enableJavascript->setChecked(false);
-      enableJavascript->setEnabled(false);
-#endif
+      // Overriding of screen and navigator objects was introduced in 534.8
+      if (qWebKitMajorVersion() > 534 || (qWebKitMajorVersion() >= 534 && qWebKitMinorVersion() >= 8))
+        enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
+      else {
+        enableJavascript->setChecked(false);
+        enableJavascript->setEnabled(false);
+      }
       enablePlugins->setChecked(false);
       enablePlugins->setEnabled(false);
     } else {
