@@ -51,6 +51,11 @@ class TororaNavigatorObject : public QObject
     Q_PROPERTY(QString productSub READ productSub)
     Q_PROPERTY(QString vendor READ vendor)
     Q_PROPERTY(QString oscpu READ oscpu)
+    Q_PROPERTY(QString useragent READ useragent)
+    Q_PROPERTY(QString userAgent READ userAgent)
+    Q_PROPERTY(QString useragent_vendorSub READ useragent_vendorSub)
+    Q_PROPERTY(QString buildID READ buildID)
+    Q_PROPERTY(QString language READ language)
 public:
     TororaNavigatorObject(QObject* parent = 0)
         : QObject(parent) { }
