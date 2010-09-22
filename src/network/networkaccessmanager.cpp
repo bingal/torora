@@ -228,6 +228,10 @@ void NetworkAccessManager::loadSettings()
     if (QLatin1String(qVersion()) == QLatin1String("4.5.1"))
         cacheEnabled = false;
 
+    /*Torora Req 3.5 */
+    if (BrowserApplication::instance()->isTor())
+        cacheEnabled = false;
+
     if (cacheEnabled) {
         NetworkDiskCache *diskCache;
         if (cache())

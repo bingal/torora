@@ -304,9 +304,18 @@ void SettingsDialog::loadFromSettings()
 
     // Network
     settings.beginGroup(QLatin1String("network"));
-    m_cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
-    networkCache->setChecked(m_cacheEnabled);
-    networkCacheMaximumSizeSpinBox->setValue(settings.value(QLatin1String("maximumCacheSize"), 50).toInt());
+    /*Torora: Req 3.5*/
+    if (BrowserApplication::instance()->isTor()) {
+      m_cacheEnabled = false;
+      networkCache->setEnabled(false);
+      networkCache->setChecked(false);
+      networkCacheMaximumSizeSpinBox-> setEnabled(false);
+    } else {
+      m_cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
+      networkCache->setChecked(m_cacheEnabled);
+      networkCacheMaximumSizeSpinBox->setValue(settings.value(QLatin1String("maximumCacheSize"), 50).toInt());
+    }
+
     settings.endGroup();
 
     // Proxy
@@ -474,7 +483,10 @@ void SettingsDialog::saveToSettings()
 
     // Network
     settings.beginGroup(QLatin1String("network"));
-    settings.setValue(QLatin1String("cacheEnabled"), networkCache->isChecked());
+    if (BrowserApplication::isTor())
+        settings.setValue(QLatin1String("cacheEnabled"), false);
+    else
+        settings.setValue(QLatin1String("cacheEnabled"), networkCache->isChecked());
     settings.setValue(QLatin1String("maximumCacheSize"), networkCacheMaximumSizeSpinBox->value());
     settings.endGroup();
 

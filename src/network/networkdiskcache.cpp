@@ -60,6 +60,8 @@ void NetworkDiskCache::privacyChanged(bool isPrivate)
 
 QIODevice *NetworkDiskCache::prepare(const QNetworkCacheMetaData &metaData)
 {
+    if (BrowserApplication::instance()->isTor())
+        return 0;
     if (m_private)
         return 0;
     return QNetworkDiskCache::prepare(metaData);
