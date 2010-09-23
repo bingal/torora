@@ -238,10 +238,11 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     /*Torora: Req 5.3*/
     /*FIXME: This won't work in Windows apparently.*/
     QSize size = this->size();
-    if (((size.height() / 50) != 0) &&
-       ((size.width() / 50) != 0)) {
+    if (((size.height() / 50) != 0) ||
+        ((size.width() / 50) != 0)) {
       size.setHeight((int)(size.height() / 50) * 50);
       size.setWidth((int)(size.width() / 50) * 50);
+      qDebug() << "size" << size;
       resize(size);
     }
     setSizeIncrement(50,50);
