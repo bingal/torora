@@ -23,20 +23,38 @@
 
 #include <QBasicTimer>
 #include <QObject>
+#include "browserapplication.h"
+#include "browsermainwindow.h"
 
 class TororaScreenObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(unsigned availHeight READ availHeight)
     Q_PROPERTY(unsigned availWidth READ availWidth)
+    Q_PROPERTY(unsigned height READ height)
+    Q_PROPERTY(unsigned width READ width)
+    Q_PROPERTY(unsigned pixelDepth READ pixelDepth)
+    Q_PROPERTY(unsigned colorDepth READ colorDepth)
 public:
     TororaScreenObject(QObject* parent = 0)
         : QObject(parent) { }
     unsigned availHeight() const {
-        return 9999;
+        return BrowserApplication::instance()->mainWindow()->size().height();
     }
     unsigned availWidth() const {
-        return 9999;
+        return BrowserApplication::instance()->mainWindow()->size().width();
+    }
+    unsigned height() const {
+        return BrowserApplication::instance()->mainWindow()->size().height();
+    }
+    unsigned width() const {
+        return BrowserApplication::instance()->mainWindow()->size().width();
+    }
+    unsigned pixelDepth() const {
+        return 24;
+    }
+    unsigned colorDepth() const {
+        return 24;
     }
 };
 
