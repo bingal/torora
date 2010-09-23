@@ -30,6 +30,7 @@
 #define NETWORKDISKCACHE_H
 
 #include <qnetworkdiskcache.h>
+#include <qdatetime.h>
 
 class NetworkDiskCache : public QNetworkDiskCache
 {
@@ -47,6 +48,7 @@ private slots:
 
 private:
     bool m_private;
+    QDateTime m_expireCache;
 };
 
 #endif // NETWORKDISKCACHE_H

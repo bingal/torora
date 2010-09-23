@@ -32,6 +32,7 @@
 
 #include <qdesktopservices.h>
 #include <qsettings.h>
+#include <qdebug.h>
 
 NetworkDiskCache::NetworkDiskCache(QObject *parent)
     : QNetworkDiskCache(parent)
@@ -42,6 +43,8 @@ NetworkDiskCache::NetworkDiskCache(QObject *parent)
     setCacheDirectory(diskCacheDirectory);
     connect(BrowserApplication::instance(), SIGNAL(privacyChanged(bool)),
             this, SLOT(privacyChanged(bool)));
+    m_expireCache = QDateTime::currentDateTime().addSecs(60*60);
+    clear();
 }
 
 void NetworkDiskCache::loadSettings()
@@ -60,8 +63,14 @@ void NetworkDiskCache::privacyChanged(bool isPrivate)
 
 QIODevice *NetworkDiskCache::prepare(const QNetworkCacheMetaData &metaData)
 {
-    if (BrowserApplication::instance()->isTor())
-        return 0;
+    /* Torora: Expire the cache every two hours */
+    if (BrowserApplication::instance()->isTor()) {
+        QDateTime now = QDateTime::currentDateTime();
+        if (now >= m_expireCache) {
+            clear();
+            m_expireCache = now.addSecs(60*60);
+        }
+    }
     if (m_private)
         return 0;
     return QNetworkDiskCache::prepare(metaData);
