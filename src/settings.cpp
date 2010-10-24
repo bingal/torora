@@ -91,6 +91,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
     , m_cacheEnabled(false)
 {
+    /* SOCKS Tor */
+    proxies << 9050;
     /* Privoxy */
     proxies << 8118;
     /* Polipo */
@@ -315,16 +317,18 @@ void SettingsDialog::loadFromSettings()
     /*Torora: Req 2.2*/
     if (BrowserApplication::isTor()) {
       proxySupport->setChecked(true);
-      proxyType->setCurrentIndex(2);
+      proxyType->setCurrentIndex(0);
       proxyType->setEnabled(false);
-      proxyName->setCurrentIndex(settings.value(QLatin1String("proxyName"),0).toInt());
-      proxyPort->setValue(proxies[settings.value(QLatin1String("proxyName")).toInt()]);
+      proxyName->setCurrentIndex(0);
+      proxyPort->setValue(proxies[0]);
+      proxyName->setEnabled(false);
+      proxyHostName->setText(settings.value(QLatin1String("hostName"),QLatin1String("127.0.0.1")).toString());
     } else {
       proxySupport->setChecked(settings.value(QLatin1String("enabled"), false).toBool());
       proxyType->setCurrentIndex(settings.value(QLatin1String("type"), 0).toInt());
       proxyPort->setValue(settings.value(QLatin1String("port"), 1080).toInt());
+      proxyHostName->setText(settings.value(QLatin1String("hostName")).toString());
     }
-    proxyHostName->setText(settings.value(QLatin1String("hostName")).toString());
     proxyUserName->setText(settings.value(QLatin1String("userName")).toString());
     proxyPassword->setText(settings.value(QLatin1String("password")).toString());
     settings.endGroup();

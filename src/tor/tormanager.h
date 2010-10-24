@@ -65,6 +65,7 @@ private slots:
     void updateTorStatus(bool connected) { m_torIsRunning = connected; }
     void updatePrivoxyStatus(bool connected) { m_privoxyIsRunning = connected; }
     void updatePolipoStatus(bool connected) { m_polipoIsRunning = connected; }
+    void updateUserProxyStatus(bool connected) { m_userProxyIsRunning = connected; }
     void torCheckComplete(bool error);
     void reportTorCheckResults(int page);
     void displayStatusResult();
@@ -95,6 +96,7 @@ private:
     bool m_torIsRunning;
     bool m_privoxyIsRunning;
     bool m_polipoIsRunning;
+    bool m_userProxyIsRunning;
     bool m_proxyConfigured;
     bool m_checkTorSilently;
     QHttp *http;
