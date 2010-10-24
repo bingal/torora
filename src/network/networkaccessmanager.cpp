@@ -137,9 +137,9 @@ QNetworkProxy NetworkAccessManager::currentProxy()
     settings.beginGroup(QLatin1String("proxy"));
     QNetworkProxy proxy;
     if (BrowserApplication::instance()->isTor()) {
-        proxy = QNetworkProxy::HttpProxy;
+        proxy = QNetworkProxy::Socks5Proxy;
         proxy.setHostName(QLatin1String("127.0.0.1"));
-        proxy.setPort(settings.value(QLatin1String("port"), 8118).toInt());
+        proxy.setPort(settings.value(QLatin1String("port"), 9050).toInt());
         proxy.setUser(settings.value(QLatin1String("userName")).toString());
         proxy.setPassword(settings.value(QLatin1String("password")).toString());
     }else if (settings.value(QLatin1String("enabled"), false).toBool()) {
