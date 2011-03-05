@@ -168,16 +168,12 @@ void NetworkAccessManager::loadSettings()
 
     /*Torora: Req 2.2*/
     if (BrowserApplication::instance()->isTor()) {
-        proxy = QNetworkProxy::HttpProxy;
-#if QT_VERSION < 0x040500
-        // Allows http browsing but not https browsing. Qt 4.5 is the only one
-        // that works for both.
-        proxy.setType(QNetworkProxy::HttpCachingProxy);
-#endif
+        proxy = QNetworkProxy::Socks5Proxy;
         proxy.setHostName(QLatin1String("127.0.0.1"));
-        proxy.setPort(settings.value(QLatin1String("port"), 8118).toInt());
+        proxy.setPort(settings.value(QLatin1String("port"), 9050).toInt());
         proxy.setUser(settings.value(QLatin1String("userName")).toString());
         proxy.setPassword(settings.value(QLatin1String("password")).toString());
+        setProxy(proxy);
     } else if (settings.value(QLatin1String("enabled"), false).toBool()) {
         int proxyType = settings.value(QLatin1String("type"), 0).toInt();
         if (proxyType == 0)
