@@ -41,7 +41,7 @@ webkit_trunk {
 
     QT -= webkit
     DEFINES += WEBKIT_TRUNK
-    include($$WEBKITDIR/WebKit.pri)
+    include($$WEBKITDIR/Source/WebKit.pri)
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 }
 
