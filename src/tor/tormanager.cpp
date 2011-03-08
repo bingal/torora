@@ -224,11 +224,7 @@ void TorManager::reportTorCheckResults(int page)
     QString tororaIssues;
     QString issuesfile;
 #if defined(TORORA)
-#if defined(TORORA_WEBKIT_BUILD)
-    issuesfile = QLatin1String(":/TORORA_WEBKIT_BUILD_ISSUES");
-#else
     issuesfile = QLatin1String(":/TORORA_ISSUES");
-#endif
 #else
     issuesfile = QLatin1String(":/ARORA_ISSUES");
 #endif
