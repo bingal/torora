@@ -74,6 +74,7 @@ class TororaNavigatorObject : public QObject
     Q_PROPERTY(QString useragent_vendorSub READ useragent_vendorSub)
     Q_PROPERTY(QString buildID READ buildID)
     Q_PROPERTY(QString language READ language)
+    Q_PROPERTY(QString plugins READ plugins)
 public:
     TororaNavigatorObject(QObject* parent = 0)
         : QObject(parent) { }
@@ -115,6 +116,9 @@ public:
     }
     QString language() const {
         return QLatin1String("en-US");
+    }
+    QString plugins() const {
+        return QLatin1String("");
     }
 };
 #endif // JSObjects_h
