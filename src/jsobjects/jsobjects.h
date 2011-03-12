@@ -120,5 +120,10 @@ public:
     QString plugins() const {
         return QLatin1String("");
     }
+    // Geolocation is not allowed or wanted!
+    // Should this be uncommented? Or is it safer for navigator to be ignorant of the feature completely?
+/*    QString geolocation() const {
+        return QLatin1String("");
+    }*/
 };
 #endif // JSObjects_h
