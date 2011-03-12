@@ -463,6 +463,9 @@ QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operat
     if (!m_acceptLanguage.isEmpty())
         req.setRawHeader("Accept-Language", m_acceptLanguage);
 
+    // The 'Do Not Track' header: http://datatracker.ietf.org/doc/draft-mayer-do-not-track
+    req.setRawHeader("DNT", "1");
+
     // Adblock
     if (op == QNetworkAccessManager::GetOperation) {
         if (!m_adblockNetwork)
