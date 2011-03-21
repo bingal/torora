@@ -246,6 +246,10 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
       resize(size);
     }
     setSizeIncrement(50,50);
+
+    // Torora sets private browsing on by default
+    BrowserApplication::setPrivate(true);
+    m_filePrivateBrowsingAction->setChecked(true);
 }
 
 BrowserMainWindow::~BrowserMainWindow()

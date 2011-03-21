@@ -17,20 +17,20 @@
       <li><a href='http://browserspy.dk/css-exploit.php'>Torora will also resist attempts to leak information about sites you've recently visited.</a></li>
       <li><a href='http://www.remote.org/jochen/sec/hfpa/hfpa.pdf'>Torora resists HTML form attacks by blocking access to the typical Tor and Privoxy/Polipo ports.</a></li>
       <li><a href='https://www.torproject.org/torbutton/design/#id3042129'>All cookies are removed on exit, or within 23 hours at latest.</a></li>
-      <li><a href='http://browserspy.dk/plugins.php'>The browser's cache is used, but cleared periodically.</a></li>
+      <li><a href='https://trac.webkit.org/wiki/Fingerprinting#PrivateBrowsinginWebKit'>Private Browsing is on by default.</a></li>
       <li>Torora will periodically check <a href='http://check.torproject.org'>http://check.torproject.org</a> to ensure you are using Tor.</li>
     </ul>
     <h2></h2>
     <img src="data:image/png;base64,WARNING_IMAGE_HERE" width="32" height="32"/>
     <h2>Bad Things About This Version of Torora</h2>
     <ul>
-     <li><a href='http://code.google.com/p/torora/issues/detail?id=6'>The value of window.name is leaked across navigations.</a></li>
-     <li><b>There may be other stuff we haven't thought of yet!</b> <a href='http://github.com/mwenge/torora/tree/master/doc'>Research and Specifications are not complete.</a></li>
+     <li><a href='http://code.google.com/p/torora/issues/list'>There are some Javascript and CSS attacks that are still open.</a></li>
     </ul>
     <h2></h2>
     <img src="data:image/png;base64,QUESTION_IMAGE_HERE" width="32" height="32"/>
     <h2>More Information</h2>
     <ul>
-      <li><a href='http://github.com/mwenge/torora/tree/master/doc'>Further reading on the Torora design is available here.</a></li>
+      <li><a href='https://trac.webkit.org/wiki/Fingerprinting'>An Introduction To Browser Fingerprinting.</a></li>
+      <li><a href='http://code.google.com/p/torora/wiki/Status'>An Overview of Torora's Current Coverage Against Fingerprinting Attacks.</a></li>
       <li><a href='http://www.torproject.org/torbutton/design/'>Mike Perry's Torbutton Design document is a comprehensive guide to the anonymity risks while using Tor.</a></li>
     </ul>
