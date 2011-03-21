@@ -1629,6 +1629,12 @@ void BrowserMainWindow::aboutToShowForwardMenu()
 void BrowserMainWindow::aboutToShowGeoBrowsingMenu()
 {
     m_geoBrowsingMenu->clear();
+
+    if (!BrowserApplication::instance()->torManager()->readyToUse()) {
+        BrowserApplication::instance()->torManager()->authenticate();
+        return;
+    }
+
     if (!currentTab())
         return;
     Countries* clist = BrowserApplication::instance()->torManager()->countries();
@@ -1655,10 +1661,12 @@ void BrowserMainWindow::showGeoBrowsingMenu()
 {
     if (!m_geoBrowsingMenu)
         return;
+
     if (!BrowserApplication::instance()->torManager()->readyToUse()) {
         BrowserApplication::instance()->torManager()->authenticate();
         return;
     }
+
     if (!m_geoBrowsingAction->menu()) {
         m_geoBrowsingAction->setMenu(m_geoBrowsingMenu);
         m_navigationBar->layout()->update();

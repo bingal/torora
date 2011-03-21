@@ -102,7 +102,6 @@ void TorControl::checkForServer()
 bool TorControl::geoBrowsingCapable()
 {
     /* If Tor version < 0.2.1.X then not supported */
-    qDebug() << m_versionTor << endl;
     if ((m_versionTor.mid(0,1).toInt() < 1) &&
        (m_versionTor.mid(2,1).toInt() < 3) &&
        (m_versionTor.mid(4,1).toInt() < 1))

@@ -8,5 +8,7 @@
     <file>ARORA_ISSUES</file>
     <file>startpage.html</file>
     <file>startpage.css</file>
+    <file>runserver.html</file>
+    <file>serverrunning.html</file>
 </qresource>
 </RCC>

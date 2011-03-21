@@ -494,12 +494,12 @@ void TorManager::passwordHelp()
     }
     QString tororaIssues;
     QString title, headline, intro, bullettwo, bulletthree, bulletfour, bulletfive, img;
-    headline = tr("To Use Mgeni You Need To Set Tor's Password.");
+    headline = tr("To Use Torora You Need To Set Tor's Password.");
     intro = tr("1. Right click the 'green onion' at the bottom right of your screen and choose 'Settings'.");
     bullettwo = tr("2. Select 'Advanced' in the 'Settings' dialog.");
     bulletthree = tr("3. Clear the 'Randomly Generate' check-box.");
     bulletfour = tr("4. Type in a password of your choosing and click 'OK'.");
-    bulletfive = tr("5. Click 'Done' below and enter this password when Mgeni requests it.");
+    bulletfive = tr("5. Click 'Done' below and enter this password when Torora requests it.");
     img = QLatin1String(":graphics/vidalia-password.png");
 
     QString html = QString(QLatin1String(file.readAll()))
@@ -607,7 +607,7 @@ void TorManager::runServer()
 
 void TorManager::serverRunning()
 {
-    QFile file(QLatin1String(":/serverunning.html"));
+    QFile file(QLatin1String(":/serverrunning.html"));
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "WebPage::handleUnsupportedContent" << "Unable to open serverunning.html";
         return;
