@@ -53,9 +53,10 @@ LocationBar::LocationBar(QWidget *parent)
     addWidget(m_torIndicator, RightSide);
 
     // privacy indicator at rightmost position
+#if !defined(ANDROID)
     m_privacyIndicator = new PrivacyIndicator(this);
     addWidget(m_privacyIndicator, RightSide);
-
+#endif
     // clear button on the right
     ClearButton *m_clearButton = new ClearButton(this);
     connect(m_clearButton, SIGNAL(clicked()),

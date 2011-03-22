@@ -118,7 +118,8 @@ void ClearPrivateData::accept()
     if (m_searchHistory->isChecked()) {
         QList<BrowserMainWindow*> mainWindows = BrowserApplication::instance()->mainWindows();
         for (int i = 0; i < mainWindows.count(); ++i) {
-            mainWindows.at(i)->toolbarSearch()->setText(QString());
+            if (mainWindows.at(i)->toolbarSearch())
+                mainWindows.at(i)->toolbarSearch()->setText(QString());
         }
     }
 

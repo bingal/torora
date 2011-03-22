@@ -39,7 +39,9 @@
 #include <qnetworkrequest.h>
 #include <qsettings.h>
 #include <qwebframe.h>
+#if !defined(QT_NO_UITOOLS)
 #include <quiloader.h>
+#endif
 
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
 #include <qwebelement.h>
@@ -366,6 +368,8 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
     Q_UNUSED(url);
     Q_UNUSED(paramNames);
     Q_UNUSED(paramValues);
+#if !defined(QT_NO_UITOOLS)
+
     if (classId == QLatin1String("QPushButton")) {
         for (int i = 1; i < paramNames.count(); ++i) {
             if (paramValues[i] == QString(QLatin1String("RunServerButton"))) {
@@ -391,6 +395,7 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
             }
         }
     }
+#endif
     return 0;
 }
 

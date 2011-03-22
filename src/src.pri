@@ -1,5 +1,8 @@
 CONFIG += qt warn_on
-CONFIG += uitools
+
+contains(QT_BUILD_PARTS, tools): CONFIG += uitools
+else : DEFINES += QT_NO_UITOOLS
+
 win32|os2 : Debug : CONFIG += console
 
 INCLUDEPATH += $$PWD

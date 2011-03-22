@@ -250,6 +250,12 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     // Torora sets private browsing on by default
     BrowserApplication::setPrivate(true);
     m_filePrivateBrowsingAction->setChecked(true);
+
+#if defined(ANDROID)
+    viewFullScreen(true);
+    m_tabWidget->tabBar()->setShowTabBarWhenOneTab(false);
+#endif
+
 }
 
 BrowserMainWindow::~BrowserMainWindow()
@@ -1079,8 +1085,9 @@ void BrowserMainWindow::setupToolBar()
             this, SLOT(aboutToShowBackMenu()));
     connect(m_historyBackMenu, SIGNAL(triggered(QAction *)),
             this, SLOT(openActionUrl(QAction *)));
+#if !defined(ANDROID)
     m_navigationBar->addAction(m_historyBackAction);
-
+#endif
     m_historyForwardAction->setIcon(style()->standardIcon(QStyle::SP_ArrowForward, 0, this));
     m_historyForwardMenu = new QMenu(this);
     connect(m_historyForwardMenu, SIGNAL(aboutToShow()),
@@ -1088,8 +1095,9 @@ void BrowserMainWindow::setupToolBar()
     connect(m_historyForwardMenu, SIGNAL(triggered(QAction *)),
             this, SLOT(openActionUrl(QAction *)));
     m_historyForwardAction->setMenu(m_historyForwardMenu);
+#if !defined(ANDROID)
     m_navigationBar->addAction(m_historyForwardAction);
-
+#endif
     m_stopReloadAction = new QAction(this);
     m_stopReloadAction->setIcon(m_reloadIcon);
     m_navigationBar->addAction(m_stopReloadAction);
@@ -1109,10 +1117,12 @@ void BrowserMainWindow::setupToolBar()
     m_navigationSplitter = new QSplitter(m_navigationBar);
     m_navigationSplitter->addWidget(m_tabWidget->locationBarStack());
 
+#if !defined(ANDROID)
     m_toolbarSearch = new ToolbarSearch(m_navigationBar);
     m_navigationSplitter->addWidget(m_toolbarSearch);
     connect(m_toolbarSearch, SIGNAL(search(const QUrl&, TabWidget::OpenUrlIn)),
             m_tabWidget, SLOT(loadUrl(const QUrl&, TabWidget::OpenUrlIn)));
+#endif
     m_navigationSplitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     m_tabWidget->locationBarStack()->setMinimumWidth(120);
     m_navigationSplitter->setCollapsible(0, false);
@@ -1510,6 +1520,8 @@ void BrowserMainWindow::goHome()
 
 void BrowserMainWindow::webSearch()
 {
+    if (!m_toolbarSearch)
+        return;
     m_toolbarSearch->selectAll();
     m_toolbarSearch->setFocus();
 }

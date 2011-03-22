@@ -204,7 +204,8 @@ void TorManager::torCheckComplete(bool error)
 void TorManager::setBrowsingEnabled(bool enabled)
 {
     BrowserApplication::instance()->mainWindow()->tabWidget()->setLocationBarEnabled(enabled);
-    BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(enabled);
+    if (BrowserApplication::instance()->mainWindow()->toolbarSearch())
+        BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->enableBookmarksToolbar(enabled);
     //BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->geoBrowsingAction()->setEnabled(enabled);

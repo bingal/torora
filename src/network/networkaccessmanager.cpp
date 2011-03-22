@@ -324,6 +324,12 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
 #ifdef NETWORKACCESSMANAGER_DEBUG
     qDebug() << __FUNCTION__;
 #endif
+
+#if defined(ANDROID)
+    reply->ignoreSslErrors();
+    return;
+#endif
+
     BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
 
     QSettings settings;
