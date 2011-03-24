@@ -109,6 +109,8 @@ protected:
     TororaNavigatorObject *m_tororaNavigatorObject;
 
 private:
+    void enforceJSObjectPrivacy(QWebFrame *frame, const QNetworkRequest& request);
+
     QNetworkRequest lastRequest;
     QWebPage::NavigationType lastRequestType;
 

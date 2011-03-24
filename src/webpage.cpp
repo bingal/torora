@@ -233,9 +233,11 @@ void WebPage::addExternalBinding(QWebFrame *frame)
         connect(frame, SIGNAL(javaScriptWindowObjectCleared()),
                 this, SLOT(addExternalBinding()));
     }
+    frame->addToJavaScriptWindowObject(QLatin1String("external"), m_javaScriptExternalObject);
+
+    //Reset privacy-sensitive JS Objects
     frame->addToJavaScriptWindowObject(QLatin1String("navigator"), m_tororaNavigatorObject);
     frame->addToJavaScriptWindowObject(QLatin1String("screen"), m_tororaScreenObject);
-    frame->addToJavaScriptWindowObject(QLatin1String("external"), m_javaScriptExternalObject);
 }
 
 QString WebPage::userAgent()
@@ -260,6 +262,7 @@ void WebPage::setUserAgent(const QString &userAgent)
 
 QString WebPage::userAgentForUrl(const QUrl &url) const
 {
+    Q_UNUSED(url);
     return QLatin1String("Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/528.16 (KHTML, like Gecko) Version/4.0 Safari/528.16");
 
     /* Disabled for Torora */
@@ -273,6 +276,8 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
 {
     lastRequest = request;
     lastRequestType = type;
+
+    enforceJSObjectPrivacy(frame, request);
 
     QString scheme = request.url().scheme();
     if (scheme == QLatin1String("mailto")
@@ -321,6 +326,16 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
     return accepted;
 }
 
+void WebPage::enforceJSObjectPrivacy(QWebFrame *frame, const QNetworkRequest& request)
+{
+    // Enforce a same-origin policy on window.name
+    // This still doesn't completely work yet, sometimes after navigating
+    // to a new domain from the address bar the window.name cookie is still
+    // present. It works well on click-throughs though.
+    // http://code.google.com/p/torora/issues/detail?id=6
+    if (!QUrl(frame->url().host()).isParentOf(request.url()))
+        frame->evaluateJavaScript(QLatin1String("window.name=''"));
+}
 void WebPage::loadSettings()
 {
     QSettings settings;
