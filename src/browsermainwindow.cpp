@@ -1583,7 +1583,11 @@ void BrowserMainWindow::loadProgress(int progress)
     } else {
         disconnect(m_stopReloadAction, SIGNAL(triggered()), m_viewStopAction, SLOT(trigger()));
         m_stopReloadAction->setIcon(m_reloadIcon);
-        connect(m_stopReloadAction, SIGNAL(triggered()), m_viewReloadAction, SLOT(trigger()));
+        if (!BrowserApplication::instance()->torManager()->usingTor()) {
+            disconnect(m_stopReloadAction, SIGNAL(triggered()), this, SLOT(slotCheckTor()));
+            connect(m_stopReloadAction, SIGNAL(triggered()), this, SLOT(slotCheckTor()));
+        } else
+            connect(m_stopReloadAction, SIGNAL(triggered()), m_viewReloadAction, SLOT(trigger()));
         updateStopReloadActionText(false);
     }
 }

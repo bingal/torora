@@ -175,6 +175,8 @@ void TorManager::polipoShutDownUnexpectedly()
 
 void TorManager::torCheckComplete(bool error)
 {
+    BrowserApplication::instance()->mainWindow()->stopReloadAction()->setEnabled(true);
+
     int result = INSTALLATION_BROKEN;
     if (!error) {
       QString target;
@@ -198,6 +200,7 @@ void TorManager::torCheckComplete(bool error)
           result = NOT_USING_TOR;
       }
     }
+    m_usingTor = (result == USING_TOR) ? true : false;
     reportTorCheckResults(result);
 }
 
@@ -206,9 +209,7 @@ void TorManager::setBrowsingEnabled(bool enabled)
     BrowserApplication::instance()->mainWindow()->tabWidget()->setLocationBarEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->toolbarSearch()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->enableBookmarksToolbar(enabled);
-    //BrowserApplication::instance()->mainWindow()->tabWidget()->setEnabled(enabled);
     BrowserApplication::instance()->mainWindow()->geoBrowsingAction()->setEnabled(enabled);
-    BrowserApplication::instance()->mainWindow()->stopReloadAction()->setEnabled(enabled);
 }
 
 void TorManager::reportTorCheckResults(int page)
@@ -381,6 +382,7 @@ void TorManager::checkTorInstallation(bool checkTorSilently)
 
     if (!m_checkTorSilently) {
       setBrowsingEnabled(false);
+      BrowserApplication::instance()->mainWindow()->stopReloadAction()->setEnabled(false);
       BrowserApplication::instance()->mainWindow()->setStatusBarMessagesEnabled(false);
       reportTorCheckResults(TOR_CHECK);
     }

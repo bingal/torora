@@ -57,6 +57,7 @@ public:
     void setGeoBrowsingLocation(int offset);
     Countries* countries(){ return m_countries; }
     bool readyToUse();
+    bool usingTor() { return m_usingTor; }
 
 signals:
     void geoBrowsingUpdate(int offset);
@@ -107,6 +108,7 @@ private:
     QTimer *m_timer;
     bool m_displayedAlready;
     QString m_country;
+    bool m_usingTor;
 };
 
 #endif //
