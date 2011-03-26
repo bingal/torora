@@ -48,14 +48,6 @@ LocationBar::LocationBar(QWidget *parent)
     m_siteIcon = new LocationBarSiteIcon(this);
     addWidget(m_siteIcon, LeftSide);
 
-    // tor indicator at rightmost position
-    m_torIndicator = new TorIndicator(this);
-    addWidget(m_torIndicator, RightSide);
-
-    // privacy indicator at rightmost position
-    m_privacyIndicator = new PrivacyIndicator(this);
-    addWidget(m_privacyIndicator, RightSide);
-
     // clear button on the right
     ClearButton *m_clearButton = new ClearButton(this);
     connect(m_clearButton, SIGNAL(clicked()),
@@ -63,6 +55,14 @@ LocationBar::LocationBar(QWidget *parent)
     connect(this, SIGNAL(textChanged(const QString&)),
             m_clearButton, SLOT(textChanged(const QString&)));
     addWidget(m_clearButton, RightSide);
+
+    // privacy indicator at rightmost position
+    m_privacyIndicator = new PrivacyIndicator(this);
+    addWidget(m_privacyIndicator, RightSide);
+
+    // tor indicator at rightmost position
+    m_torIndicator = new TorIndicator(this);
+    addWidget(m_torIndicator, RightSide);
 
     updateTextMargins();
     setUpdatesEnabled(true);
