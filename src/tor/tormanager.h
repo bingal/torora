@@ -50,8 +50,6 @@ public:
     virtual ~TorManager();
 
     bool torIsRunning(){ return m_torIsRunning;}
-    bool privoxyIsRunning(){ return m_privoxyIsRunning;}
-    bool polipoIsRunning(){ return m_polipoIsRunning;}
     void checkApps();
     void checkTorInstallation(bool checkTorSilently);
     void setGeoBrowsingLocation(int offset);
@@ -64,15 +62,10 @@ signals:
 
 private slots:
     void updateTorStatus(bool connected) { m_torIsRunning = connected; }
-    void updatePrivoxyStatus(bool connected) { m_privoxyIsRunning = connected; }
-    void updatePolipoStatus(bool connected) { m_polipoIsRunning = connected; }
-    void updateUserProxyStatus(bool connected) { m_userProxyIsRunning = connected; }
     void torCheckComplete(bool error);
     void reportTorCheckResults(int page);
     void displayStatusResult();
     void torShutDownUnexpectedly();
-    void polipoShutDownUnexpectedly();
-    void privoxyShutDownUnexpectedly();
 
 public slots:
     void checkTorSilently();
@@ -83,27 +76,18 @@ public slots:
     void enableRelay();
     void authenticate();
 private:
-    bool validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx);
     void setBrowsingEnabled(bool enabled);
     void passwordHelp();
     void connectToTor();
     void serverRunning();
 
     AppCheck *tor;
-    AppCheck *privoxy;
-    AppCheck *polipo;
-    AppCheck *userProxy;
     TorControl *torcontrol;
     bool m_torIsRunning;
-    bool m_privoxyIsRunning;
-    bool m_polipoIsRunning;
-    bool m_userProxyIsRunning;
     bool m_proxyConfigured;
     bool m_checkTorSilently;
     QHttp *http;
     QString m_statusbar;
-    QStringList privoxyConfigFiles;
-    QStringList polipoConfigFiles;
     Countries *m_countries;
     QTimer *m_timer;
     bool m_displayedAlready;

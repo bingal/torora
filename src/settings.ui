@@ -812,16 +812,6 @@
               <string>Tor (Direct Socks Connection)</string>
              </property>
             </item>
-            <item>
-             <property name="text">
-              <string>Privoxy</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Polipo</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item row="2" column="0">

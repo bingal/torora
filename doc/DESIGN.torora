@@ -51,12 +51,10 @@ These considerations leave us with the following requirements for Torora:
        Tor is no longer being used.
 
       Implementation Requirements Arising:
-        1. Querying the default ports of Tor and privoxy/polipo to ensure they
-           are running.
-           Files Altered: TODO
+        1. Querying the default ports of Tor to ensure they are running.
+            - Done
 
-        2. Inspect the list of running processes to ensure Tor/Privoxy/Polipo
-           are running.
+        2. Inspect the list of running processes to ensure Tor is running.
            Files Altered: TODO
 
         3. Regular checks at https://check.torproject.org
@@ -64,14 +62,7 @@ These considerations leave us with the following requirements for Torora:
 
            The interim between checks should probably be unpredictable.
 
-        4. Inspection of http headers to ensure privoxy is being used.
-           Files Altered: TODO
-
-        5. Can Torora query privoxy/polipo's configuration to ensure it is
-           using Tor?
-           Files Altered: TODO
-
-        6. Offer to delete browsing history/cookies when an interruption to use
+        4. Offer to delete browsing history/cookies when an interruption to use
            of Tor has been detected.
            Files Altered: TODO
 
@@ -88,7 +79,7 @@ These considerations leave us with the following requirements for Torora:
         1. 'Lock' Torora to Qt builds that are known to be safe.
            Files Altered: TODO
 
-        2. Enforce use of privoxy/tor - do no permit user to change proxy configuration
+        2. Enforce use of tor - do no permit user to change proxy configuration
            Files Altered: torora/src/settings.cpp, torora/src/networkaccessmanager.cpp
 
 
