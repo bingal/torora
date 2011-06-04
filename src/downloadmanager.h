@@ -79,6 +79,7 @@ class DownloadItem : public QWidget, public Ui_DownloadItem
 signals:
     void statusChanged();
     void progress(qint64 bytesReceived = 0, qint64 bytesTotal = 0);
+    void downloadFinished();
 
 public:
     DownloadItem(QNetworkReply *reply = 0, bool requestFileName = false, QWidget *parent = 0);
@@ -119,7 +120,10 @@ private:
     bool m_startedSaving;
     bool m_finishedDownloading;
     bool m_gettingFileName;
+    bool m_canceledFileSelect;
     QTime m_lastProgressTime;
+
+    friend class DownloadManager;
 };
 
 class AutoSaver;
@@ -167,11 +171,14 @@ private slots:
     void save() const;
     void updateRow(DownloadItem *item);
     void updateRow();
+    void finished();
 
 private:
     void addItem(DownloadItem *item);
     void updateItemCount();
     void load();
+    bool externalDownload(const QUrl &url);
+    void updateActiveItemCount();
 
     AutoSaver *m_autoSaver;
     DownloadModel *m_model;

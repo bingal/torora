@@ -102,6 +102,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     connect(fixedFontButton, SIGNAL(clicked()), this, SLOT(chooseFixedFont()));
     connect(languageButton, SIGNAL(clicked()), this, SLOT(chooseAcceptLanguage()));
     connect(downloadDirectoryButton, SIGNAL(clicked()), this, SLOT(chooseDownloadDirectory()));
+    connect(externalDownloadBrowse, SIGNAL(clicked()), this, SLOT(chooseDownloadProgram()));
     connect(styleSheetBrowseButton, SIGNAL(clicked()), this, SLOT(chooseStyleSheet()));
     connect(editAutoFillUserButton, SIGNAL(clicked()), this, SLOT(editAutoFillUser()));
     connect(proxyName, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProxyPort(int)));
@@ -139,11 +140,14 @@ void SettingsDialog::loadDefaults()
     enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
     enablePlugins->setChecked(defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
     enableImages->setChecked(defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
+    enableLocalStorage->setChecked(defaultSettings->testAttribute(QWebSettings::LocalStorageEnabled));
     clickToFlash->setChecked(false);
     cookieSessionCombo->setCurrentIndex(0);
     filterTrackingCookiesCheckbox->setChecked(false);
 
     autoFillPasswordFormsCheckBox->setChecked(false);
+    minimFontSizeCheckBox->setChecked(false);
+    minimumFontSizeSpinBox->setValue(9);
 }
 
 void SettingsDialog::loadFromSettings()
@@ -186,6 +190,8 @@ void SettingsDialog::loadFromSettings()
     downloadAsk->setChecked(alwaysPromptForFileName);
     QString downloadDirectory = settings.value(QLatin1String("downloadDirectory"), downloadsLocation->text()).toString();
     downloadsLocation->setText(downloadDirectory);
+    externalDownloadButton->setChecked(settings.value(QLatin1String("external"), false).toBool());
+    externalDownloadPath->setText(settings.value(QLatin1String("externalPath")).toString());
     settings.endGroup();
 
     // Appearance
@@ -200,8 +206,13 @@ void SettingsDialog::loadFromSettings()
     enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
     enablePlugins->setChecked(settings.value(QLatin1String("enablePlugins"), enablePlugins->isChecked()).toBool());
     enableImages->setChecked(settings.value(QLatin1String("enableImages"), enableImages->isChecked()).toBool());
+    enableLocalStorage->setChecked(settings.value(QLatin1String("enableLocalStorage"), enableLocalStorage->isChecked()).toBool());
     userStyleSheet->setText(QString::fromUtf8(settings.value(QLatin1String("userStyleSheet")).toUrl().toEncoded()));
     clickToFlash->setChecked(settings.value(QLatin1String("enableClickToFlash"), clickToFlash->isChecked()).toBool());
+    int minimumFontSize = settings.value(QLatin1String("minimumFontSize"), 0).toInt();
+    minimFontSizeCheckBox->setChecked(minimumFontSize != 0);
+    if (minimumFontSize != 0)
+        minimumFontSizeSpinBox->setValue(minimumFontSize);
     settings.endGroup();
 
     // Privacy
@@ -288,8 +299,17 @@ void SettingsDialog::loadFromSettings()
     openLinksFromAppsIn->setCurrentIndex(settings.value(QLatin1String("openLinksFromAppsIn"), TabWidget::NewSelectedTab).toInt());
     settings.endGroup();
 
+    // Accessibility
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    settings.beginGroup(QLatin1String("WebView"));
+    enableAccessKeys->setChecked(settings.value(QLatin1String("enableAccessKeys"), true).toBool());
+    settings.endGroup();
+#else
+    enableAccessKeys->setEnabled(false);
+#endif
+
     settings.beginGroup(QLatin1String("autofill"));
-    autoFillPasswordFormsCheckBox->setChecked(settings.value(QLatin1String("passwordForms"), false).toBool());
+    autoFillPasswordFormsCheckBox->setChecked(settings.value(QLatin1String("passwordForms"), true).toBool());
     settings.endGroup();
 }
 
@@ -308,6 +328,8 @@ void SettingsDialog::saveToSettings()
     settings.beginGroup(QLatin1String("downloadmanager"));
     settings.setValue(QLatin1String("alwaysPromptForFileName"), downloadAsk->isChecked());
     settings.setValue(QLatin1String("downloadDirectory"), downloadsLocation->text());
+    settings.setValue(QLatin1String("external"), externalDownloadButton->isChecked());
+    settings.setValue(QLatin1String("externalPath"), externalDownloadPath->text());
     settings.endGroup();
 
     settings.beginGroup(QLatin1String("history"));
@@ -338,12 +360,18 @@ void SettingsDialog::saveToSettings()
     settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
     settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
     settings.setValue(QLatin1String("enableImages"), enableImages->isChecked());
+    settings.setValue(QLatin1String("enableLocalStorage"), enableLocalStorage->isChecked());
     QString userStyleSheetString = userStyleSheet->text();
     if (QFile::exists(userStyleSheetString))
         settings.setValue(QLatin1String("userStyleSheet"), QUrl::fromLocalFile(userStyleSheetString));
     else
         settings.setValue(QLatin1String("userStyleSheet"), QUrl::fromEncoded(userStyleSheetString.toUtf8()));
     settings.setValue(QLatin1String("enableClickToFlash"), clickToFlash->isChecked());
+
+    if (minimFontSizeCheckBox->isChecked())
+        settings.setValue(QLatin1String("minimumFontSize"), minimumFontSizeSpinBox->value());
+    else
+        settings.setValue(QLatin1String("minimumFontSize"), 0);
     settings.endGroup();
 
     // Privacy
@@ -429,6 +457,13 @@ void SettingsDialog::saveToSettings()
     settings.setValue(QLatin1String("passwordForms"), autoFillPasswordFormsCheckBox->isChecked());
     settings.endGroup();
 
+    // Accessibility
+#if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
+    settings.beginGroup(QLatin1String("WebView"));
+    settings.setValue(QLatin1String("enableAccessKeys"), enableAccessKeys->isChecked());
+    settings.endGroup();
+#endif
+
     BrowserApplication::instance()->loadSettings();
     BrowserApplication::networkAccessManager()->loadSettings();
     BrowserApplication::cookieJar()->loadSettings();
@@ -471,6 +506,14 @@ void SettingsDialog::chooseDownloadDirectory()
 {
     QString fileName = QFileDialog::getExistingDirectory(this, tr("Choose Directory"), downloadsLocation->text());
     downloadsLocation->setText(fileName);
+}
+
+void SettingsDialog::chooseDownloadProgram()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose Program"), externalDownloadPath->text());
+    if (fileName.contains(QLatin1Char(' ')))
+        fileName = QString(QLatin1String("\"%1\"")).arg(fileName);
+    externalDownloadPath->setText(fileName);
 }
 
 void SettingsDialog::chooseFont()

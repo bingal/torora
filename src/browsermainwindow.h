@@ -75,6 +75,7 @@ class QSplitter;
 class QFrame;
 class HistoryMenu;
 class BookmarksMenuBarMenu;
+class UserAgentMenu;
 
 /*!
     The MainWindow of the Browser Application.
@@ -116,6 +117,7 @@ public slots:
 
 protected:
     void closeEvent(QCloseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void changeEvent(QEvent *event);
 
@@ -182,6 +184,7 @@ private:
     void loadDefaultState();
     void setupMenu();
     void setupToolBar();
+    void updateStopReloadActionText(bool loading);
 
 private:
     QMenu *m_fileMenu;
@@ -245,6 +248,7 @@ private:
     QAction *m_toolsEnableInspectorAction;
     QAction *m_toolsPreferencesAction;
     QAction *m_toolsSearchManagerAction;
+    UserAgentMenu *m_toolsUserAgentMenu;
     QAction *m_adBlockDialogAction;
 
     QMenu *m_helpMenu;

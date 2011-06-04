@@ -1,5 +1,6 @@
 /*
  * Copyright 2008 Christian Franke <cfchris6@ts2server.com>
+ * Copyright 2008-2009 Benjamin C. Meyer <ben@meyerhome.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 #include <qnetworkrequest.h>
 #include <qplaintextedit.h>
 #include <qshortcut.h>
+#include <qsettings.h>
 #include <qwebframe.h>
 #include <qwebpage.h>
 
@@ -47,7 +49,11 @@ SourceViewer::SourceViewer(const QString &source, const QString &title,
     , m_source(source)
 {
     setWindowTitle(tr("Source of Page %1").arg(title));
-    resize(640, 480);
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("SourceViewer"));
+    QSize size = settings.value(QLatin1String("size"), QSize(640, 480)).toSize();
+    resize(size);
 
     m_edit->setLineWrapMode(QPlainTextEdit::WidgetWidth);
     m_edit->setReadOnly(true);
@@ -83,6 +89,13 @@ SourceViewer::SourceViewer(const QString &source, const QString &title,
     m_reply = BrowserApplication::networkAccessManager()->get(request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(loadingFinished()));
     m_reply->setParent(this);
+}
+
+SourceViewer::~SourceViewer()
+{
+    QSettings settings;
+    settings.beginGroup(QLatin1String("SourceViewer"));
+    settings.setValue(QLatin1String("size"), size());
 }
 
 void SourceViewer::loadingFinished()

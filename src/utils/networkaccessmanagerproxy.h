@@ -49,6 +49,7 @@ protected:
     QNetworkReply *createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData = 0);
 
 private:
+    friend class NetworkCookieJarProxy;
     static NetworkAccessManagerProxy *m_primaryManager;
     WebPageProxy *m_webPage;
 

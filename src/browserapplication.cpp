@@ -110,15 +110,12 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("torora.net"));
     QCoreApplication::setApplicationName(QLatin1String("Mgeni"));
-    QString version = QLatin1String("0.1");
-    QString gitVersion = QLatin1String(GITCHANGENUMBER);
-    if (gitVersion != QLatin1String("0")
-        && !gitVersion.isEmpty())
-        version += QString(QLatin1String(" (Git: %1 %2)"))
-                    .arg(QLatin1String(GITCHANGENUMBER))
-                    .arg(QLatin1String(GITVERSION));
+    QCoreApplication::setApplicationVersion(QLatin1String("0.1"
+#ifdef GITVERSION
+    " (Git: " GITCHANGENUMBER " " GITVERSION ")"
+#endif
+    ));
 
-    QCoreApplication::setApplicationVersion(version);
 #ifndef AUTOTESTS
     connect(this, SIGNAL(messageReceived(QLocalSocket *)),
             this, SLOT(messageReceived(QLocalSocket *)));
@@ -291,7 +288,9 @@ void BrowserApplication::quitBrowser()
         }
 
         if (tabCount > 1) {
-            int ret = QMessageBox::warning(mainWindow(), QString(),
+            QWidget *widget = mainWindow();
+            QApplication::alert(widget);
+            int ret = QMessageBox::warning(widget, QString(),
                                tr("There are %1 windows and %2 tabs open\n"
                                   "Do you want to quit anyway?").arg(m_mainWindows.count()).arg(tabCount),
                                QMessageBox::Yes | QMessageBox::No,
@@ -390,6 +389,7 @@ void BrowserApplication::loadSettings()
     defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::PluginsEnabled, settings.value(QLatin1String("enablePlugins"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::AutoLoadImages, settings.value(QLatin1String("enableImages"), true).toBool());
+    defaultSettings->setAttribute(QWebSettings::LocalStorageEnabled, settings.value(QLatin1String("enableLocalStorage"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, settings.value(QLatin1String("enableInspector"), false).toBool());
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     defaultSettings->setAttribute(QWebSettings::DnsPrefetchEnabled, true);

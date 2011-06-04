@@ -81,6 +81,7 @@ class TabBar;
 class WebView;
 class WebActionMapper;
 class WebViewSearch;
+class QToolButton;
 
 /*!
     TabWidget that contains WebViews and a stack widget of associated line edits.
@@ -204,11 +205,12 @@ private:
     QList<QUrl> m_recentlyClosedTabs;
     QList<QByteArray> m_recentlyClosedTabsHistory;
     QList<WebActionMapper*> m_actions;
-    bool m_swappedDelayedWidget;
 
     QCompleter *m_lineEditCompleter;
     QStackedWidget *m_locationBars;
     TabBar *m_tabBar;
+    QToolButton *addTabButton;
+    QToolButton *closeTabButton;
 };
 
 #endif // TABWIDGET_H

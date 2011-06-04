@@ -37,7 +37,7 @@ HistoryCompletionView::HistoryCompletionView(QWidget *parent)
 
     QFontMetrics metrics = fontMetrics();
     verticalHeader()->setDefaultSectionSize(metrics.height());
-    
+
     // As URLs are always LRT, this should be LRT as well
     setLayoutDirection(Qt::LeftToRight);
 }
@@ -224,6 +224,37 @@ QStringList HistoryCompleter::splitPath(const QString &path) const
     // the actual filtering is done by the HistoryCompletionModel; we just
     // return a short dummy here so that QCompleter thinks we match everything
     return QStringList() << QLatin1String("a");
+}
+
+bool HistoryCompleter::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress && popup()->isVisible()) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Tab) {
+            QKeyEvent *newEvent = new QKeyEvent(QEvent::KeyPress,
+                                                Qt::Key_Down,
+                                                keyEvent->modifiers(),
+                                                QString());
+
+            if (!QCompleter::eventFilter(obj, newEvent))
+                obj->event(newEvent);
+            return true;
+        } else if (keyEvent->key() == Qt::Key_Backtab) {
+            QKeyEvent *newEvent = new QKeyEvent(QEvent::KeyPress,
+                                                Qt::Key_Up,
+                                                keyEvent->modifiers(),
+                                                keyEvent->text(),
+                                                keyEvent->isAutoRepeat(),
+                                                keyEvent->count());
+
+            if (!QCompleter::eventFilter(obj, newEvent))
+                obj->event(newEvent);
+            return true;
+        } else if (keyEvent->key() == Qt::Key_Escape) {
+            popup()->hide();
+        }
+    }
+    return QCompleter::eventFilter(obj, event);
 }
 
 void HistoryCompleter::updateFilter()

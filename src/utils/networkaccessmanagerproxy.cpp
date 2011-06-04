@@ -27,6 +27,7 @@
  */
 
 #include "networkaccessmanagerproxy.h"
+#include "networkaccessmanagerproxy_p.h"
 
 #include "webpageproxy.h"
 
@@ -55,9 +56,18 @@ void NetworkAccessManagerProxy::setPrimaryNetworkAccessManager(NetworkAccessMana
 {
     Q_ASSERT(manager);
     m_primaryManager = manager;
-    setCookieJar(m_primaryManager->cookieJar());
-    // Do not steal ownership!
-    cookieJar()->setParent(manager);
+    setCookieJar(new NetworkCookieJarProxy(this));
+
+    connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+            m_primaryManager, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)));
+    connect(this, SIGNAL(finished(QNetworkReply *)),
+            m_primaryManager, SIGNAL(finished(QNetworkReply *)));
+    connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
+            m_primaryManager, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
+#ifndef QT_NO_OPENSSL
+    connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
+            m_primaryManager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+#endif
 }
 
 QNetworkReply *NetworkAccessManagerProxy::createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData)

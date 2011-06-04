@@ -1,7 +1,7 @@
 CONFIG += qt warn_on
 CONFIG += uitools
 
-win32 : Debug : CONFIG += console
+win32|os2 : Debug : CONFIG += console
 
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
@@ -14,19 +14,12 @@ UI_DIR      = $$PWD/.ui
 MOC_DIR     = $$PWD/.moc
 OBJECTS_DIR = $$PWD/.obj
 
-
-win32 {
-    DEFINES += GITVERSION=0
-    DEFINES += GITCHANGENUMBER=0
-} else {
-    exists($$PWD/../.git/HEAD) {
-        GITVERSION=$$system(git log -n1 --pretty=format:%h)
-        DEFINES += GITVERSION=\"\\\"$$GITVERSION\\\"\"
+exists(../.git/HEAD) {
+    GITVERSION=$$system(git log -n1 --pretty=format:%h)
+    !isEmpty(GITVERSION) {
         GITCHANGENUMBER=$$system(git log --pretty=format:%h | wc -l)
+        DEFINES += GITVERSION=\"\\\"$$GITVERSION\\\"\"
         DEFINES += GITCHANGENUMBER=\"\\\"$$GITCHANGENUMBER\\\"\"
-    } else {
-        DEFINES += GITVERSION=\"\\\"0\\\"\"
-        DEFINES += GITCHANGENUMBER=\"\\\"0\\\"\"
     }
 }
 
@@ -104,7 +97,7 @@ include(opensearch/opensearch.pri)
 include(qwebplugins/qwebplugins.pri)
 include(utils/utils.pri)
 include(tor/tor.pri)
-
+include(useragent/useragent.pri)
 
 RESOURCES += \
     $$PWD/data/data.qrc \
@@ -121,6 +114,10 @@ DISTFILES += ../AUTHORS \
 win32 {
     RC_FILE = $$PWD/browser.rc
     LIBS += -luser32
+}
+
+os2 {
+    RC_FILE = $$PWD/browser_os2.rc
 }
 
 mac {

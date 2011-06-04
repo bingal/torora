@@ -117,6 +117,11 @@ WebPage::WebPage(QObject *parent)
     loadSettings();
 }
 
+WebPage::~WebPage()
+{
+    setNetworkAccessManager(0);
+}
+
 WebPluginFactory *WebPage::webPluginFactory()
 {
     if (!s_webPluginFactory)
@@ -131,7 +136,7 @@ QList<WebPageLinkedResource> WebPage::linkedResources(const QString &relation)
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     QUrl baseUrl = mainFrame()->baseUrl();
 
-    QList<QWebElement> linkElements = mainFrame()->findAllElements(QLatin1String("html > head > link"));
+    QWebElementCollection linkElements = mainFrame()->findAllElements(QLatin1String("html > head > link"));
 
     foreach (const QWebElement &linkElement, linkElements) {
         QString rel = linkElement.attribute(QLatin1String("rel"));
@@ -197,6 +202,11 @@ void WebPage::populateNetworkRequest(QNetworkRequest &request)
 
 void WebPage::addExternalBinding(QWebFrame *frame)
 {
+#if QT_VERSION < 0x040600
+    QWebSettings *defaultSettings = QWebSettings::globalSettings();
+    if (!defaultSettings->testAttribute(QWebSettings::JavascriptEnabled))
+        return;
+#endif
     if (!m_javaScriptExternalObject)
         m_javaScriptExternalObject = new JavaScriptExternalObject(this);
 
@@ -216,6 +226,26 @@ void WebPage::addExternalBinding(QWebFrame *frame)
                 this, SLOT(addExternalBinding()));
     }
     frame->addToJavaScriptWindowObject(QLatin1String("external"), m_javaScriptExternalObject);
+}
+
+QString WebPage::userAgent()
+{
+    return s_userAgent;
+}
+
+void WebPage::setUserAgent(const QString &userAgent)
+{
+    if (userAgent == s_userAgent)
+        return;
+
+    QSettings settings;
+    if (userAgent.isEmpty()) {
+        settings.remove(QLatin1String("userAgent"));
+    } else {
+        settings.setValue(QLatin1String("userAgent"), userAgent);
+    }
+
+    s_userAgent = userAgent;
 }
 
 QString WebPage::userAgentForUrl(const QUrl &url) const
@@ -248,11 +278,6 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
     }
 
     TabWidget::OpenUrlIn openIn = frame ? TabWidget::CurrentTab : TabWidget::NewWindow;
-    // If the user just clicked on the back or forward button on the toolbar
-    if (type == QWebPage::NavigationTypeBackOrForward) {
-        BrowserApplication::instance()->setEventMouseButtons(qApp->mouseButtons());
-        BrowserApplication::instance()->setEventKeyboardModifiers(qApp->keyboardModifiers());
-    }
     openIn = TabWidget::modifyWithUserBehavior(openIn);
 
     // handle the case where we want to do something different then
@@ -341,6 +366,36 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url,
     return 0;
 }
 
+// The chromium guys have documented many examples of incompatibilities that
+// different browsers have when they mime sniff.
+// http://src.chromium.org/viewvc/chrome/trunk/src/net/base/mime_sniffer.cc
+//
+// All WebKit ports should share a common set of rules to sniff content.
+// By having this here we are yet another browser that has different behavior :(
+// But sadly QtWebKit does no sniffing at all so we are forced to do something.
+static bool contentSniff(const QByteArray &data)
+{
+    if (data.contains("<!doctype")
+        || data.contains("<script")
+        || data.contains("<html")
+        || data.contains("<!--")
+        || data.contains("<head")
+        || data.contains("<iframe")
+        || data.contains("<h1")
+        || data.contains("<div")
+        || data.contains("<font")
+        || data.contains("<table")
+        || data.contains("<a")
+        || data.contains("<style")
+        || data.contains("<title")
+        || data.contains("<b")
+        || data.contains("<body")
+        || data.contains("<br")
+        || data.contains("<p"))
+        return true;
+    return false;
+}
+
 void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 {
     if (!reply)
@@ -379,6 +434,15 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
     QWebFrame *notFoundFrame = mainFrame();
     if (!notFoundFrame)
         return;
+
+    if (reply->header(QNetworkRequest::ContentTypeHeader).toString().isEmpty()) {
+        // do evil
+        QByteArray data = reply->readAll();
+        if (contentSniff(data)) {
+            notFoundFrame->setHtml(QLatin1String(data), replyUrl);
+            return;
+        }
+    }
 
     // Generate translated not found error page with an image
     QFile notFoundErrorFile(QLatin1String(":/notfound.html"));

@@ -86,6 +86,7 @@
 #include "tabwidget.h"
 #include "toolbarsearch.h"
 #include "tor/tormanager.h"
+#include "useragentmenu.h"
 #include "webview.h"
 #include "webviewsearch.h"
 
@@ -256,6 +257,31 @@ BrowserMainWindow::~BrowserMainWindow()
     m_autoSaver->saveIfNeccessary();
 }
 
+void BrowserMainWindow::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_HomePage:
+        m_historyHomeAction->trigger();
+        event->accept();
+        break;
+    case Qt::Key_Favorites:
+        m_bookmarksShowAllAction->trigger();
+        event->accept();
+        break;
+    case Qt::Key_Search:
+        m_toolsWebSearchAction->trigger();
+        event->accept();
+        break;
+    case Qt::Key_OpenUrl:
+        m_fileOpenLocationAction->trigger();
+        event->accept();
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+        break;
+    }
+}
+
 BrowserMainWindow *BrowserMainWindow::parentWindow(QWidget *widget)
 {
     while (widget) {
@@ -398,10 +424,6 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
         setSizeIncrement(50,50);*/
     }
 
-#if defined(Q_WS_MAC)
-    m_bookmarksToolbarFrame->setVisible(showBookmarksBar);
-#endif
-
     if (maximized)
         setWindowState(windowState() | Qt::WindowMaximized);
     if (fullScreen) {
@@ -432,6 +454,10 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
     } else {
         QMainWindow::restoreState(qMainWindowState);
     }
+
+#if defined(Q_WS_MAC)
+    m_bookmarksToolbarFrame->setVisible(m_bookmarksToolbar->isVisible());
+#endif
 
     return true;
 }
@@ -846,9 +872,13 @@ void BrowserMainWindow::setupMenu()
     m_toolsMenu->addAction(m_toolsEnableInspectorAction);
 
     m_toolsSearchManagerAction = new QAction(m_toolsMenu);
+    m_toolsSearchManagerAction->setMenuRole(QAction::NoRole);
     connect(m_toolsSearchManagerAction, SIGNAL(triggered()),
             this, SLOT(showSearchDialog()));
     m_toolsMenu->addAction(m_toolsSearchManagerAction);
+
+    m_toolsUserAgentMenu = new UserAgentMenu(m_toolsMenu);
+    m_toolsMenu->addMenu(m_toolsUserAgentMenu);
 
     m_adBlockDialogAction = new QAction(m_toolsMenu);
     connect(m_adBlockDialogAction, SIGNAL(triggered()),
@@ -856,7 +886,8 @@ void BrowserMainWindow::setupMenu()
     m_toolsMenu->addAction(m_adBlockDialogAction);
 
     m_toolsMenu->addSeparator();
-    m_toolsPreferencesAction = new QAction(m_editMenu);
+    m_toolsPreferencesAction = new QAction(m_toolsMenu);
+    m_toolsPreferencesAction->setMenuRole(QAction::PreferencesRole);
     connect(m_toolsPreferencesAction, SIGNAL(triggered()),
             this, SLOT(preferences()));
     m_toolsMenu->addAction(m_toolsPreferencesAction);
@@ -918,7 +949,7 @@ void BrowserMainWindow::aboutToShowTextEncodingMenu()
     currentCodec = codecs.indexOf(defaultTextEncoding);
 
     QAction *defaultEncoding = m_viewTextEncodingMenu->addAction(tr("Default"));
-    defaultEncoding->setData(-1);
+    defaultEncoding->setData(QString());
     defaultEncoding->setCheckable(true);
     if (currentCodec == -1)
         defaultEncoding->setChecked(true);
@@ -927,7 +958,7 @@ void BrowserMainWindow::aboutToShowTextEncodingMenu()
     for (int i = 0; i < codecs.count(); ++i) {
         const QString &codec = codecs.at(i);
         QAction *action = m_viewTextEncodingMenu->addAction(codec);
-        action->setData(i);
+        action->setData(codec);
         action->setCheckable(true);
         if (currentCodec == i)
             action->setChecked(true);
@@ -940,12 +971,11 @@ void BrowserMainWindow::viewTextEncoding(QAction *action)
     Q_UNUSED(action);
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     Q_ASSERT(action);
-    QList<QByteArray> codecs = QTextCodec::availableCodecs();
-    int offset = action->data().toInt();
-    if (offset < 0 || offset >= codecs.count())
+    QString codec = action->data().toString();
+    if (codec.isEmpty())
         QWebSettings::globalSettings()->setDefaultTextEncoding(QString());
     else
-        QWebSettings::globalSettings()->setDefaultTextEncoding(QLatin1String(codecs[offset]));
+        QWebSettings::globalSettings()->setDefaultTextEncoding(codec);
 #endif
 }
 
@@ -1018,6 +1048,7 @@ void BrowserMainWindow::retranslate()
     m_toolsPreferencesAction->setText(tr("Options..."));
     m_toolsPreferencesAction->setShortcut(tr("Ctrl+,"));
     m_toolsSearchManagerAction->setText(tr("Configure Search Engines..."));
+    m_toolsUserAgentMenu->setTitle(tr("User Agent"));
     m_adBlockDialogAction->setText(tr("&Ad Block..."));
 
     m_helpMenu->setTitle(tr("&Help"));
@@ -1028,6 +1059,9 @@ void BrowserMainWindow::retranslate()
     // Toolbar
     m_navigationBar->setWindowTitle(tr("Navigation"));
     m_bookmarksToolbar->setWindowTitle(tr("&Bookmarks"));
+
+    m_stopReloadAction->setText(tr("Reload / Stop"));
+    updateStopReloadActionText(false);
 }
 
 void BrowserMainWindow::setupToolBar()
@@ -1075,8 +1109,8 @@ void BrowserMainWindow::setupToolBar()
 
     m_toolbarSearch = new ToolbarSearch(m_navigationBar);
     m_navigationSplitter->addWidget(m_toolbarSearch);
-    connect(m_toolbarSearch, SIGNAL(search(const QUrl&)),
-            m_tabWidget, SLOT(loadUrl(const QUrl&)));
+    connect(m_toolbarSearch, SIGNAL(search(const QUrl&, TabWidget::OpenUrlIn)),
+            m_tabWidget, SLOT(loadUrl(const QUrl&, TabWidget::OpenUrlIn)));
     m_navigationSplitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     m_tabWidget->locationBarStack()->setMinimumWidth(120);
     m_navigationSplitter->setCollapsible(0, false);
@@ -1362,6 +1396,7 @@ void BrowserMainWindow::closeEvent(QCloseEvent *event)
         settings.beginGroup(QLatin1String("tabs"));
         bool confirm = settings.value(QLatin1String("confirmClosingMultipleTabs"), true).toBool();
         if (confirm) {
+            QApplication::alert(this);
             int ret = QMessageBox::warning(this, QString(),
                                            tr("Are you sure you want to close the window?"
                                               "  There are %1 tabs open").arg(m_tabWidget->count()),
@@ -1458,7 +1493,7 @@ void BrowserMainWindow::viewPageSource()
     QString title = currentTab()->title();
     QString markup = currentTab()->page()->mainFrame()->toHtml();
     QUrl url = currentTab()->url();
-    SourceViewer *viewer = new SourceViewer(markup, title, url, this);
+    SourceViewer *viewer = new SourceViewer(markup, title, url);
     viewer->setAttribute(Qt::WA_DeleteOnClose);
     viewer->show();
 }
@@ -1525,18 +1560,29 @@ ToolbarSearch *BrowserMainWindow::toolbarSearch() const
     return m_toolbarSearch;
 }
 
+void BrowserMainWindow::updateStopReloadActionText(bool loading)
+{
+    if (loading) {
+        m_stopReloadAction->setToolTip(tr("Stop loading the current page"));
+        m_stopReloadAction->setIconText(tr("Stop"));
+    } else {
+        m_stopReloadAction->setToolTip(tr("Reload the current page"));
+        m_stopReloadAction->setIconText(tr("Reload"));
+    }
+}
+
 void BrowserMainWindow::loadProgress(int progress)
 {
     if (progress < 100 && progress > 0) {
         disconnect(m_stopReloadAction, SIGNAL(triggered()), m_viewReloadAction, SLOT(trigger()));
         m_stopReloadAction->setIcon(m_stopIcon);
         connect(m_stopReloadAction, SIGNAL(triggered()), m_viewStopAction, SLOT(trigger()));
-        m_stopReloadAction->setToolTip(tr("Stop loading the current page"));
+        updateStopReloadActionText(true);
     } else {
         disconnect(m_stopReloadAction, SIGNAL(triggered()), m_viewStopAction, SLOT(trigger()));
         m_stopReloadAction->setIcon(m_reloadIcon);
         connect(m_stopReloadAction, SIGNAL(triggered()), m_viewReloadAction, SLOT(trigger()));
-        m_stopReloadAction->setToolTip(tr("Reload the current page"));
+        updateStopReloadActionText(false);
     }
 }
 

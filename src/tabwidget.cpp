@@ -107,14 +107,16 @@ TabWidget::TabWidget(QWidget *parent)
     , m_nextTabAction(0)
     , m_previousTabAction(0)
     , m_recentlyClosedTabsMenu(0)
-    , m_swappedDelayedWidget(false)
     , m_lineEditCompleter(0)
     , m_locationBars(0)
     , m_tabBar(new TabBar(this))
+    , addTabButton(0)
+    , closeTabButton(0)
 {
     setElideMode(Qt::ElideRight);
 
     new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_T), this, SLOT(openLastTab()));
+    new QShortcut(QKeySequence::Undo, this, SLOT(openLastTab()));
 
     connect(m_tabBar, SIGNAL(loadUrl(const QUrl&, TabWidget::OpenUrlIn)),
             this, SLOT(loadUrl(const QUrl&, TabWidget::OpenUrlIn)));
@@ -136,6 +138,10 @@ TabWidget::TabWidget(QWidget *parent)
 
     m_closeTabAction = new QAction(this);
     m_closeTabAction->setShortcuts(QKeySequence::Close);
+    m_closeTabAction->setIcon(QIcon(QLatin1String(":graphics/closetab.png")));
+#if QT_VERSION < 0x040600 || (QT_VERSION >= 0x040600 && !defined(Q_WS_X11))
+    m_closeTabAction->setIconVisibleInMenu(false);
+#endif
     connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
 
     m_bookmarkTabsAction = new QAction(this);
@@ -145,9 +151,6 @@ TabWidget::TabWidget(QWidget *parent)
 #if QT_VERSION < 0x040600 || (QT_VERSION >= 0x040600 && !defined(Q_WS_X11))
     m_newTabAction->setIconVisibleInMenu(false);
 #endif
-
-    QSettings settings;
-    settings.beginGroup(QLatin1String("tabs"));
 
     m_nextTabAction = new QAction(this);
     connect(m_nextTabAction, SIGNAL(triggered()), this, SLOT(nextTab()));
@@ -168,37 +171,15 @@ TabWidget::TabWidget(QWidget *parent)
     m_recentlyClosedTabsAction->setMenu(m_recentlyClosedTabsMenu);
     m_recentlyClosedTabsAction->setEnabled(false);
 
-    bool newTabButtonInRightCorner = settings.value(QLatin1String("newTabButtonInRightCorner"), true).toBool();
 #ifndef Q_WS_MAC // can't seem to figure out the background color :(
-    QToolButton *addTabButton = new QToolButton(this);
+    addTabButton = new QToolButton(this);
     addTabButton->setDefaultAction(m_newTabAction);
     addTabButton->setAutoRaise(true);
     addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    setCornerWidget(addTabButton, newTabButtonInRightCorner ? Qt::TopRightCorner : Qt::TopLeftCorner);
 #endif
 
-    bool oneCloseButton = settings.value(QLatin1String("oneCloseButton"), false).toBool();
-    m_closeTabAction->setIcon(QIcon(QLatin1String(":graphics/closetab.png")));
-#if QT_VERSION < 0x040600 || (QT_VERSION >= 0x040600 && !defined(Q_WS_X11))
-    m_closeTabAction->setIconVisibleInMenu(false);
-#endif
-    if (oneCloseButton) {
-#if QT_VERSION < 0x040600 || (QT_VERSION >= 0x040600 && !defined(Q_WS_X11))
-        m_closeTabAction->setIconVisibleInMenu(false);
-#endif
-        // corner buttons
-        QToolButton *closeTabButton = new QToolButton(this);
-        closeTabButton->setDefaultAction(m_closeTabAction);
-        closeTabButton->setAutoRaise(true);
-        closeTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        setCornerWidget(closeTabButton, newTabButtonInRightCorner ? Qt::TopLeftCorner : Qt::TopRightCorner);
-    } else {
-        m_tabBar->setTabsClosable(true);
-
-        connect(m_tabBar, SIGNAL(tabCloseRequested(int)),
-                this, SLOT(closeTab(int)));
-    }
-
+    connect(m_tabBar, SIGNAL(tabCloseRequested(int)),
+            this, SLOT(closeTab(int)));
     connect(this, SIGNAL(currentChanged(int)),
             this, SLOT(currentChanged(int)));
 
@@ -209,6 +190,7 @@ TabWidget::TabWidget(QWidget *parent)
 
     // Initialize Actions' labels
     retranslate();
+    loadSettings();
 }
 
 void TabWidget::historyCleared()
@@ -358,37 +340,12 @@ WebView *TabWidget::webView(int index) const
     QWidget *widget = this->widget(index);
     if (WebViewWithSearch *webViewWithSearch = qobject_cast<WebViewWithSearch*>(widget)) {
         return webViewWithSearch->m_webView;
-    } else if (widget) {
-        // optimization to delay creating the first webview
-        if (count() == 1) {
-            TabWidget *that = const_cast<TabWidget*>(this);
-            that->setUpdatesEnabled(false);
-            LocationBar *currentLocationBar = qobject_cast<LocationBar*>(m_locationBars->widget(0));
-            bool giveBackFocus = currentLocationBar->hasFocus();
-            m_locationBars->removeWidget(currentLocationBar);
-            m_locationBars->addWidget(new QWidget());
-            that->newTab();
-            that->closeTab(0);
-            QWidget *newEmptyLineEdit = m_locationBars->widget(0);
-            m_locationBars->removeWidget(newEmptyLineEdit);
-            newEmptyLineEdit->deleteLater();
-            m_locationBars->addWidget(currentLocationBar);
-            currentLocationBar->setWebView(currentWebView());
-            if (giveBackFocus)
-                currentLocationBar->setFocus();
-            that->setUpdatesEnabled(true);
-            that->m_swappedDelayedWidget = true;
-            return currentWebView();
-        }
     }
     return 0;
 }
 
 WebViewSearch *TabWidget::webViewSearch(int index) const
 {
-    // so the optimization can be performed
-    webView(index);
-
     QWidget *widget = this->widget(index);
     if (WebViewWithSearch *webViewWithSearch = qobject_cast<WebViewWithSearch*>(widget)) {
         return webViewWithSearch->m_webViewSearch;
@@ -440,21 +397,6 @@ WebView *TabWidget::makeNewTab(bool makeCurrent)
 #ifndef AUTOTESTS
     QWidget::setTabOrder(locationBar, qFindChild<ToolbarSearch*>(BrowserMainWindow::parentWindow(this)));
 #endif
-
-    // optimization to delay creating the more expensive WebView, history, etc
-    if (count() == 0) {
-        QWidget *emptyWidget = new QWidget;
-        QPalette p = emptyWidget->palette();
-        p.setColor(QPalette::Window, palette().color(QPalette::Base));
-        emptyWidget->setPalette(p);
-        emptyWidget->setAutoFillBackground(true);
-        disconnect(this, SIGNAL(currentChanged(int)),
-                   this, SLOT(currentChanged(int)));
-        addTab(emptyWidget, tr("Untitled"));
-        connect(this, SIGNAL(currentChanged(int)),
-                this, SLOT(currentChanged(int)));
-        return 0;
-    }
 
     // webview
     WebView *webView = new WebView;
@@ -641,7 +583,10 @@ void TabWidget::closeTab(int index)
         m_recentlyClosedTabsAction->setEnabled(true);
         m_recentlyClosedTabs.prepend(tab->url());
 #if QT_VERSION >= 0x040600
-        m_recentlyClosedTabsHistory.prepend(tab->history()->saveState());
+        QByteArray tabHistory;
+        QDataStream tabHistoryStream(&tabHistory, QIODevice::WriteOnly);
+        tabHistoryStream << *tab->history();
+        m_recentlyClosedTabsHistory.prepend(tabHistory);
 #else
         m_recentlyClosedTabsHistory.prepend(QByteArray());
 #endif
@@ -873,7 +818,6 @@ void TabWidget::loadString(const QString &string, OpenUrlIn tab)
         return;
 
     QUrl url = guessUrlFromString(string);
-    currentLocationBar()->setText(QString::fromUtf8(url.toEncoded()));
     loadUrl(url, tab);
 }
 
@@ -884,7 +828,11 @@ QUrl TabWidget::guessUrlFromString(const QString &string)
     if (url.isValid())
         return url;
 
+#if QT_VERSION >= 0x040600
+    url = QUrl::fromUserInput(string);
+#else
     url = WebView::guessUrlFromString(string);
+#endif
 
     if (url.scheme() == QLatin1String("about")
         && url.path() == QLatin1String("home"))
@@ -927,6 +875,29 @@ void TabWidget::loadSettings()
         if (v && v->page())
             v->loadSettings();
     }
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("tabs"));
+    bool newTabButtonInRightCorner = settings.value(QLatin1String("newTabButtonInRightCorner"), true).toBool();
+#ifndef Q_WS_MAC
+    setCornerWidget(addTabButton, newTabButtonInRightCorner ? Qt::TopRightCorner : Qt::TopLeftCorner);
+    addTabButton->show();
+#endif
+
+    bool oneCloseButton = settings.value(QLatin1String("oneCloseButton"), false).toBool();
+    if (oneCloseButton) {
+        if (!closeTabButton) {
+            closeTabButton = new QToolButton(this);
+            closeTabButton->setDefaultAction(m_closeTabAction);
+            closeTabButton->setAutoRaise(true);
+            closeTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        }
+        setCornerWidget(closeTabButton, newTabButtonInRightCorner ? Qt::TopLeftCorner : Qt::TopRightCorner);
+        closeTabButton->setVisible(oneCloseButton);
+    } else {
+        setCornerWidget(0, newTabButtonInRightCorner ? Qt::TopLeftCorner : Qt::TopRightCorner);
+    }
+    m_tabBar->setTabsClosable(!oneCloseButton);
 }
 
 /*
@@ -975,8 +946,12 @@ void TabWidget::loadUrl(const QUrl &url, OpenUrlIn tab, const QString &title)
     if (!url.isValid())
         return;
     WebView *webView = getView(tab, currentWebView());
-    if (webView)
+    if (webView) {
+        int index = webViewIndex(webView);
+        if (index != -1)
+            locationBar(index)->setText(QString::fromUtf8(url.toEncoded()));
         webView->loadUrl(url, title);
+    }
 }
 
 /*
@@ -1058,18 +1033,17 @@ QByteArray TabWidget::saveState() const
     QStringList tabs;
     QList<QByteArray> tabsHistory;
     for (int i = 0; i < count(); ++i) {
-        if (!m_swappedDelayedWidget) {
-            tabs.append(QString::null);
-            tabsHistory.append(QByteArray());
-            continue;
-        }
         if (WebView *tab = webView(i)) {
             tabs.append(QString::fromUtf8(tab->url().toEncoded()));
 #if QT_VERSION >= 0x040600
-            if (tab->history()->count() != 0)
-                tabsHistory.append(tab->history()->saveState());
-            else
-                tabsHistory.append(QByteArray());
+            if (tab->history()->count() != 0) {
+                QByteArray tabHistory;
+                QDataStream tabHistoryStream(&tabHistory, QIODevice::WriteOnly);
+                tabHistoryStream << *tab->history();
+                tabsHistory.append(tabHistory);
+            } else {
+                tabsHistory << QByteArray();
+            }
 #else
             tabsHistory.append(QByteArray());
 #endif
@@ -1131,8 +1105,10 @@ bool TabWidget::restoreState(const QByteArray &state)
 void TabWidget::createTab(const QByteArray &historyState, TabWidget::OpenUrlIn tab)
 {
 #if QT_VERSION >= 0x040600
-    if (WebView *webView = getView(tab, currentWebView()))
-        webView->history()->restoreState(historyState);
+    if (WebView *webView = getView(tab, currentWebView())) {
+        QDataStream historyStream(historyState);
+        historyStream >> *webView->history();
+    }
 #else
     qWarning() << "Warning: TabWidget::createTab should not be called, but it is...";
     Q_UNUSED(historyState);

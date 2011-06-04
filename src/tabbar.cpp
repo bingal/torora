@@ -219,8 +219,8 @@ void TabBar::closeOtherTabs()
 
 void TabBar::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (!childAt(event->pos())
-        && event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton
+        && tabAt(event->pos()) == -1) {
         emit newTab();
         return;
     }
@@ -258,8 +258,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
         int diffY = event->pos().y() - m_dragStartPos.y();
         if ((event->pos() - m_dragStartPos).manhattanLength() > QApplication::startDragDistance()
             && diffX < 3 && diffX > -3
-            && diffY < -10
-            ) {
+            && diffY < -10) {
             QDrag *drag = new QDrag(this);
             QMimeData *mimeData = new QMimeData;
             QList<QUrl> urls;

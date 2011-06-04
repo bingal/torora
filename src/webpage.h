@@ -74,10 +74,15 @@ signals:
 
 public:
     WebPage(QObject *parent = 0);
+    ~WebPage();
+
     void loadSettings();
 
     static WebPluginFactory *webPluginFactory();
     QList<WebPageLinkedResource> linkedResources(const QString &relation = QString());
+
+    static QString userAgent();
+    static void setUserAgent(const QString &userAgent);
 
 protected:
     bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request,

@@ -84,7 +84,7 @@ public:
     WebView(QWidget *parent = 0);
     WebPage *webPage() const { return m_page; }
 
-#if !(QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK))
+#if !(QT_VERSION >= 0x040600)
     static QUrl guessUrlFromString(const QString &url);
 #endif
     void loadSettings();
@@ -143,6 +143,7 @@ private slots:
 #if QT_VERSION >= 0x040600 || defined(WEBKIT_TRUNK)
     void addSearchEngine();
     void hideAccessKeys();
+    void accessKeyShortcut();
 #endif
 
 private:

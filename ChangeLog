@@ -1,3 +1,139 @@
+0.11.0
+Interface:
+    When the privacy indicator is visible clicking on it will result in private mode being turned off.
+    Add a way to modify the user agent string from within the application.
+    Support arguments for the external download program
+    Tweak the adblock dialog spacing and size.
+    Change the AdBlock dialog to use a simple check box instead of a group box.
+    Replace Stopped with Download Complete (like in ffx it's less confusing )
+    Update the copyright year in the about dialog to include 2010
+    Issue: 768: Fix spelling mistake
+    Issue: 821: Sort columns in cookie dialog by data values instead of string value. This fixes the dates being alphanumerically sorted.
+
+Behind the scene:
+    Issue: 891: Fix Text Encoding to work correctly
+    Issue: 826: Correctly save the history state of a tab when using Qt 4.6
+    Fix build breakage with QtWebKit 2.0.
+    Remove remnant of delayed QWebView creation. Fixes tab restore again.
+    Style fix: convert tabs to spaces.
+
+Build system:
+    Add an application icon for os2.
+    For finding the locale tools on os2 behave like win32
+    When building in debug mode on OS2 just like with Windows enable the console.
+    Move Arora's hooks to the git-hooks format to utilize git-hooks (See: http://github.com/icefox/git-hooks)
+    Default to lrelease and not lrelease-qt4 on non unix platforms.
+    QMAKE_EXTRA_UNIX_TARGETS is deprecated; use QMAKE_EXTRA_TARGETS instead.
+    Enable the raster graphics system by default for X11
+
+Translation:
+    Make "Show Hidden Files" translatable.
+    Issue: 811: Fix typos in the German translation
+    Replaced "leichtgewichtiger" with "schlanker" in translation with source "Lightweight WebKit-based wen browser"
+    Fixed capitalization typo whare the word "Tab" began with a lowercase "t"
+    Renamed Dutch translation file from nl_BE to nl.
+
+
+0.10.2
+The major issues:
+    - When compiling with Qt 4.6 Arora had been using some API that changes
+    shortly before the release of Qt 4.6.0 after an API review was done for
+    the new API in QtWebKit.  This release changes the code to build with the
+    final API that is found in Qt 4.6.0
+    - A segfault that could occur when opening a URL on a new window from the command-line.
+
+
+0.10.1
+The major issues:
+    Issue: 666 Sites were showing a "SSL handshake failure". With the new NetworkAccessManagerProxy the signals were being sent to the proxy and not the primary networkaccessmanager.
+    Issue: 683: Arora crashes when using privacy mode.
+	When switching to private mode the primary networkaccessmanagers swaps cookiejar's which caused a segfault. Introduce a CookieJarProxy class which will pass the cookie requests to the primary networkaccessmanager's cookiejar.
+
+Translations:
+    Add Portuguese translation from Américo Monteiro <a_monteiro@netcabo.pt>
+    Updated Turkish translation from Mehmet Nur Olcay <mnurolcay@gmail.com>
+    Issue: 682,677 Fix several FR spelling mistakes.
+
+Fixed Issues:
+    Issue: 79 Only tab down the completer when the popup is visible.
+    Issue: 221 When using Qt 4.6 hardcode a webpage to have a white background even when using a dark theme.
+    Issue: 472 Set the url on the location bar that matches the webview that we are loading the url in, not in the current location bar which might not be the correct one.
+    Issue: 637 Startup Crash with Qt 4.5.0 (not with any other version)
+    Issue: 679 Selecting Show only one close button instead of one for each tab requires an application restart to be applied.
+    Issue: 676 Fix openstreetmap.org's login saving and improve the Wallet password dialog when finding the login name.
+	Rather than using the document.form[0].name use document.form[0].elements["name"] this allows the name to contain things such as []'s without causing a problem.
+
+Other issues / changes
+    Add support for the home, favorites, search, and openurl multimedia keys found on some keyboards
+    Turn on AutoFill by default
+    Remove the accidental 100MB limit on the disk cache size in the settings dialog.
+    Make source viewer remember the window size and not block access to the main window
+
+0.10.0
+Interface
+- Issue #24: Add support for AdBlock
+- Issue #40: Support several common modifiers in the location bar for modifying the typed in url.
+    ctrl-enter       - append .com
+    ctrl-shift-enter - append .org
+    shift-enter      - append .net
+- Issue #79: Trap tab key to cycle through potential URLs in the location bar.
+- Issue #85: Alt+Enter on the location bar opens the url in a new tab.
+- Issue #119: Add Password Management / AutoFill
+- Issue #411: Save and restore the tab back/forward history
+- Issue #630: Limit download progress updates to 5 per second to reduces CPU use from 18% to 3% when downloading.
+- Issue #650: Save the toolbar location allowing the toolbars to be next to each other
+- Add ctrl-z shortcut to undo the closing of the last tab.
+- Behave better when access keys are enabled by adding a slight delay to make sure that the ctrl is actually for access keys and not for another shortcut such as ctrl-tab or ctrl-a
+- When arora crashed on the previous startup give the user a way to bypass the failsafe and restore their session if they really want.
+- Add the ability to set the length of a session cookie
+- Enable DNS prefetching and WebKit version in the about dialog when building against Qt 4.6.
+- Remember what tab you were on when you close the settings dialog
+- Add a browse button next to the style sheet line edit to help users find files and automatically translate them into url's.
+- Add icons to the menu actions on freedesktop systems.
+- Show the configure search engines action in the tools menu
+- Change default bookmarks to only have a link to htpp://arora-browser.org
+    Removed all of Qt development type entries
+    From discussion on http://arorabrowser.blogspot.com/2009/08/arora-090.html and also the Kubuntu guys strip the bookmarks in their release so it make sense.
+- Move the Preferences menu item to Tools|Options
+- Set placeholder text for the start page search box
+- Add a checkbox to hide/show hidden files in the directory listing.
+- Change the about dialog text so it can be selected with a mouse so users can copy the application version.
+- Allow urls to be dropped on the bookmark bar and bookmark menu
+
+Behind the scenes
+- Force the history completer to be LTR: same as the url line.
+- Create a new stills class, NetworkAcessManagerProxy that is useful for tracking what QWebPage a QWebReply came from.
+- Load QWebView settings when the View is created so m_enableAccessKeys will be read from settings
+- Rename lineedit -> locationbar functions & variables
+- Enhance SingleApplication so that the host can send messages back to the second application.
+    On Windows this is used to send the window id back to the application that was just started
+    so it can raise the arora window to the front.
+- Fix some old MSVC compile warnings
+- Make it possible to retranslate the bookmarks toolbar title
+- Set the maximumPagesInCache to 3 (default is 0) and provide a way for users to set this value through QSettings.
+- Add a path from the users directory to the locale search path
+- Added RTL support for the start page
+- Add support for multiple directories to LanguageManager.
+- Fix the naming of the QAction m_toolsEnableInspector to m_toolsEnableInspectorAction to be consistent with the rest of the code
+- Add new TreeSortFilterProxyModel class to utils that will only filter child nodes in a QAbstractItemModel. (under the BSD license)
+- Rename getConfigFile to dataFilePath
+- Rename dataDirectory to installedDataDirectory to give a much better description of what it does
+- Add missing drop functionality to the ModelMenu class. The implementation is symetric to the ModelToolBar class.
+- ModelMenu can now accept drops (both moving and copying) and can apply them to the underlying model.
+- Refactor BookmarksToolBar by making it inherit from ModelToolBar.
+- Add new ModelToolBar class, that is a subclass of QToolBar and an equivalent of ModelMenu for toolbars. It can be used to populate a toolbar with actions based on a given model.
+- Fix character encoding in directory listing.
+- Clean up the private browsing message box to make it easier to translate.
+
+Build system
+- Allow building against a shadow-built WebKit trunk
+- Ignore more misc generated build files on windows
+- Add Git hook to check commits for the proper copyright year
+- Ignore the doc directory which is generated by doxygen
+- Check for spaces at the start and end of an expression
+- Re-enable sharing the temporary compilation objects for all subprojects. Use the 'ordered' configuration to make sure that we walk through the subdirectories one by one and not all simultaneously when building in parallel.
+
+
 0.9.0
 Drop support for Qt 4.4.
 
