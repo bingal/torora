@@ -91,10 +91,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 {
     /* SOCKS Tor */
     proxies << 9050;
-    /* Privoxy */
-    proxies << 8118;
-    /* Polipo */
-    proxies << 8123;
 
     setupUi(this);
     connect(exceptionsButton, SIGNAL(clicked()), this, SLOT(showExceptions()));
@@ -280,8 +276,8 @@ void SettingsDialog::loadFromSettings()
       proxyType->setCurrentIndex(0);
       proxyType->setEnabled(false);
       proxyName->setCurrentIndex(0);
-      proxyPort->setValue(proxies[0]);
       proxyName->setEnabled(false);
+      proxyPort->setValue(proxies[0]);
       proxyHostName->setText(settings.value(QLatin1String("hostName"),QLatin1String("127.0.0.1")).toString());
     } else {
       proxySupport->setChecked(settings.value(QLatin1String("enabled"), false).toBool());

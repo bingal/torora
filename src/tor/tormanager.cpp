@@ -48,50 +48,14 @@
 #define INSTALLATION_BROKEN 3
 #define NOT_USING_TOR 4
 
-#define PRIVOXY 8118
-#define POLIPO  8123
-
 TorManager::TorManager()
 {
     tor=0L;
-    privoxy = 0L;
-    polipo = 0L;
-    userProxy = 0L;
     torcontrol = 0L;
     m_checkTorSilently = false;
     m_proxyConfigured = false;
     m_displayedAlready = false;
     m_torIsRunning = false;
-    m_privoxyIsRunning = false;
-    m_polipoIsRunning = false;
-
-#ifndef Q_OS_WIN
-    privoxyConfigFiles << QLatin1String("/etc/privoxy/config");
-    privoxyConfigFiles << QLatin1String("/usr/etc/privoxy/config");
-    privoxyConfigFiles << QLatin1String("/usr/local/etc/privoxy/config");
-#else
-    privoxyConfigFiles << QString(QLatin1String("c:\\program files\\Vidalia Bundle\\Privoxy\\config.txt"));
-    privoxyConfigFiles << QString(QLatin1String("c:\\program files\\Privoxy\\config.txt"));
-    privoxyConfigFiles << QString(QLatin1String("%1\\Vidalia Bundle\\Privoxy\\config.txt"))
-                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
-    privoxyConfigFiles << QString(QLatin1String("%1\\Privoxy\\config.txt"))
-                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
-    qDebug() << privoxyConfigFiles << endl;
-#endif
-
-#ifndef Q_OS_WIN
-    polipoConfigFiles << QLatin1String("/etc/polipo/config");
-    polipoConfigFiles << QLatin1String("/usr/etc/polipo/config");
-    polipoConfigFiles << QLatin1String("/usr/local/etc/polipo/config");
-#else
-    polipoConfigFiles << QString(QLatin1String("c:\\program files\\Polipo\\config.txt"));
-    polipoConfigFiles << QString(QLatin1String("c:\\program files\\Vidalia Bundle\\Polipo\\config.txt"));
-    polipoConfigFiles << QString(QLatin1String("%1\\Vidalia Bundle\\Polipo\\config.txt"))
-                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
-    polipoConfigFiles << QString(QLatin1String("%1\\Polipo\\config.txt"))
-                        .arg(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation));
-    qDebug() << polipoConfigFiles << endl;
-#endif
 
     checkApps();
     m_countries = new Countries();
@@ -99,57 +63,11 @@ TorManager::TorManager()
 
 void TorManager::checkApps()
 {
-    QNetworkProxy proxy = BrowserApplication::instance()->networkAccessManager()->currentProxy();
-    QRegExp polipoTorConf(QLatin1String("^([^#]+|)socksParentProxy[^#]+=[^#]+\"(localhost|127.0.0.1):9050\""));
-    QRegExp privoxyTorConf(QLatin1String("^([^#]+|)forward-socks4a[^#]+/[^#]+(localhost|127.0.0.1):9050 \\."));
-
     if (tor)
         delete tor;
     tor = new AppCheck( QLatin1String("localhost"), 9051, true );
     connect(tor, SIGNAL(connectedToApp(bool)), this, SLOT(updateTorStatus(bool)));
     connect(tor, SIGNAL(appShutDownUnexpectedly()), this, SLOT(torShutDownUnexpectedly()));
-
-    if (privoxy)
-        delete privoxy;
-    privoxy = new AppCheck( QLatin1String("localhost"), PRIVOXY );
-    connect(privoxy, SIGNAL(connectedToApp(bool)), this, SLOT(updatePrivoxyStatus(bool)));
-
-    if (polipo)
-        delete polipo;
-    polipo = new AppCheck( QLatin1String("localhost"), POLIPO );
-    connect(polipo, SIGNAL(connectedToApp(bool)), this, SLOT(updatePolipoStatus(bool)));
-
-    if (proxy.port() != PRIVOXY && proxy.port() != POLIPO) {
-        if (userProxy)
-            delete userProxy;
-        userProxy = new AppCheck( QLatin1String("localhost"), proxy.port() );
-        connect(userProxy, SIGNAL(connectedToApp(bool)),
-                this, SLOT(updateUserProxyStatus(bool)));
-    }
-
-    m_proxyConfigured = validProxyConfiguration((proxy.port()==POLIPO) ?
-                                                  polipoConfigFiles : privoxyConfigFiles,
-                                                (proxy.port()==POLIPO) ?
-                                                  polipoTorConf : privoxyTorConf);
-//    qDebug() << m_proxyConfigured << endl;
-}
-
-
-bool TorManager::validProxyConfiguration(const QStringList &proxyConfigFiles, QRegExp &rx)
-{
-    for ( QStringList::ConstIterator it = proxyConfigFiles.begin(); it != proxyConfigFiles.end(); ++it ) {
-        QFile file((*it));
-        if (!file.open(QFile::ReadOnly))
-            continue;
-        QTextStream stream(&file);
-
-        do {
-            if (rx.indexIn(stream.readLine()) != -1)
-                return true;
-        } while (!stream.atEnd());
-    }
-
-    return false; 
 }
 
 TorManager::~TorManager()
@@ -160,18 +78,6 @@ TorManager::~TorManager()
 void TorManager::torShutDownUnexpectedly()
 {
     m_torIsRunning = false;
-    reportTorCheckResults(INSTALLATION_BROKEN);
-}
-
-void TorManager::privoxyShutDownUnexpectedly()
-{
-    m_privoxyIsRunning = false;
-    reportTorCheckResults(INSTALLATION_BROKEN);
-}
-
-void TorManager::polipoShutDownUnexpectedly()
-{
-    m_polipoIsRunning = false;
     reportTorCheckResults(INSTALLATION_BROKEN);
 }
 
@@ -272,31 +178,11 @@ void TorManager::reportTorCheckResults(int page)
             headline = tr("Tor Is Not Running On Your Computer!");
             bulletone = tr("Check that you have installed Tor.");
             bullettwo = tr("Check that you have started Tor.");
-        } else if (proxy.port() == POLIPO && !m_polipoIsRunning) {
-            headline = tr("Polipo Privacy Proxy Is Not Running On Your Computer!");
-            bulletone = tr("Check that you have installed Polipo.");
-            bullettwo = tr("Check that you have started Polipo.");
-        } else if (proxy.port() == PRIVOXY && !m_privoxyIsRunning) {
-            headline = tr("Privoxy Is Not Running On Your Computer!");
-            bulletone = tr("Check that you have installed Privoxy.");
-            bullettwo = tr("Check that you have started Privoxy.");
         } else if (page == NOT_USING_TOR) {
+            headline = tr("Torora May Be By-Passing Tor!");
             bulletone = tr("Testing at https://check.torproject.org indicated that you are not using Tor.");
-            if (!m_proxyConfigured) {
-                headline = tr("Mgeni Is By-Passing Tor!");
-                bullettwo = tr("<b>A primitive check of your configuration suggests that %1 is not configured to use Tor.</b>")
-                          .arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
-                bulletfour = tr("<li>Check your configuration..</li>");
-            } else {
-                //Mgeni doesn't need to be so strict, so just pretend we've passed.
-                setBrowsingEnabled(true);
-                reportTorCheckResults(USING_TOR);
-                return;
-                headline = tr("Mgeni May Be By-Passing Tor!");
-                bullettwo = tr("Your set-up seems OK, Tor and %1 are running and seem to be correctly configured.").
-                            arg((proxy.port()==PRIVOXY)?QLatin1String("Privoxy"):QLatin1String("Polipo"));
-                bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
-            }
+            bullettwo = tr("Your set-up seems OK, Tor is running and seem to be correctly configured.");
+            bulletfour = tr("<li>Click 'Change Identity' in Vidalia or TorK and try again. The exit node used for the test may not be listed with the checking service yet.</li>");
         } else {
             //Mgeni doesn't need to be so strict, so just pretend we've passed.
             setBrowsingEnabled(true);
