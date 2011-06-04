@@ -303,6 +303,11 @@ void TorControl::socketReadyRead()
               case PREAUTHENTICATING:
                   if (line.contains(QLatin1String("250 OK"))){
                       m_state=AUTHENTICATING;
+                      /* If there's no auth method we can just make the control
+                         session ready for use now. Otherwise, we wait until it's
+                         required and prompt for a password then.*/
+                      if (m_authMethods.contains(QLatin1String("NULL")))
+                          authenticate();
                       continue;
                   }
                   if (line.contains(QLatin1String("250-VERSION Tor="))){
@@ -313,11 +318,6 @@ void TorControl::socketReadyRead()
                   if (line.contains(QLatin1String("250-AUTH METHODS="))){
                       line.remove(QLatin1String("250-AUTH METHODS="));
                       m_authMethods = line.split(QLatin1String(","));
-                      /* If there's no auth method we can just make the control
-                         session ready for use now. Otherwise, we wait until it's
-                         required and prompt for a password then.*/
-                      if (m_authMethods.contains(QLatin1String("NULL")))
-                          authenticate();
                   }
                   break;
           }
